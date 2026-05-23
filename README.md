@@ -1,60 +1,52 @@
-||||||| parent of 6c6fc8f (feat: add strucure project)
-=======
 # Du An Tot Nghiep
 
-## Huong dan cai dat moi truong (Windows)
+## Cai dat moi truong
 
-### Yeu cau
-- Python 3.11+ da duoc cai dat: https://www.python.org/downloads/
-- Kiem tra bang cach mo **Command Prompt** hoac **PowerShell** va chay:
-  ```
-  python --version
-  ```
+> Yeu cau: **Python 3.11+** da duoc cai san tren may.
 
 ---
 
-### Buoc 1: Clone hoac tai du an ve may
+### Buoc 1: Tao moi truong ao
 
+**Windows:**
+```cmd
+py -3.11 -m venv .venv
+```
+
+**Linux / macOS:**
 ```bash
-git clone <url-repository>
-cd Du_An_Tot_Nghiep
+python3.11 -m venv .venv
 ```
 
 ---
 
-### Buoc 2: Tao moi truong ao (.venv)
+### Buoc 2: Kich hoat moi truong ao
 
-Mo **Command Prompt** hoac **PowerShell**, chay lenh sau trong thu muc du an:
-
-```bash
-python -m venv .venv
-```
-
----
-
-### Buoc 3: Kich hoat moi truong ao
-
-**Command Prompt (cmd.exe):**
+**Windows (Command Prompt):**
 ```cmd
 .venv\Scripts\activate.bat
 ```
 
-**PowerShell:**
+**Windows (PowerShell):**
 ```powershell
 .venv\Scripts\Activate.ps1
 ```
 
-> **Luu y PowerShell:** Neu gap loi `execution policy`, chay lenh nay truoc:
+> Neu PowerShell bao loi, chay lenh nay truoc roi kich hoat lai:
 > ```powershell
 > Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 > ```
-> Sau do kich hoat lai.
 
-Sau khi kich hoat thanh cong, ban se thay `(.venv)` xuat hien o dau dong lenh.
+**Linux / macOS:**
+```bash
+source .venv/bin/activate
+```
+
+Kich hoat thanh cong se thay `(.venv)` o dau dong lenh.
 
 ---
 
-### Buoc 4: Cai dat thu vien
+### Buoc 3: Cai dat thu vien
 
 ```bash
 pip install -r requirements.txt
@@ -62,7 +54,7 @@ pip install -r requirements.txt
 
 ---
 
-### Buoc 5: Tat moi truong ao (khi xong viec)
+### Buoc 4: Tat moi truong ao (khi xong viec)
 
 ```bash
 deactivate
@@ -101,6 +93,5 @@ Du_An_Tot_Nghiep/
 
 ### Luu y
 
-- Thu muc `.venv` da co trong `.gitignore`, khong can push len git.
-- Moi thanh vien trong nhom tu tao `.venv` tren may cua minh theo huong dan tren.
->>>>>>> 6c6fc8f (feat: add strucure project)
+- Thu muc `.venv` khong duoc push len git (da co trong `.gitignore`).
+- Moi thanh vien tu tao `.venv` tren may cua minh theo huong dan tren.
