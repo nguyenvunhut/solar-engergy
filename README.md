@@ -61,3 +61,4 @@ The project uses the [NASA POWER API](https://power.larc.nasa.gov/) for meteorol
 ## License
 
 This project is for educational purposes.
+For academic use only.
