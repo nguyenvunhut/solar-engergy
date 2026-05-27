@@ -51,9 +51,7 @@ Kich hoat thanh cong se thay `(.venv)` o dau dong lenh.
 ```bash
 pip install -r requirements.txt
 ```
-
 ---
-
 ### Buoc 4: Tat moi truong ao (khi xong viec)
 
 ```bash
