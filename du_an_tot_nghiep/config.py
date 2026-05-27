@@ -1,13 +1,13 @@
+import os
 from pathlib import Path
 
 from dotenv import load_dotenv
 from loguru import logger
 
 # Load environment variables from .env file if it exists
-load_dotenv()
-
-# Paths
 PROJ_ROOT = Path(__file__).resolve().parents[1]
+load_dotenv(PROJ_ROOT / ".env")
+
 logger.info(f"PROJ_ROOT path is: {PROJ_ROOT}")
 
 DATA_DIR = PROJ_ROOT / "data"
@@ -20,6 +20,11 @@ MODELS_DIR = PROJ_ROOT / "models"
 
 REPORTS_DIR = PROJ_ROOT / "reports"
 FIGURES_DIR = REPORTS_DIR / "figures"
+
+# Supabase
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_ANON_KEY = os.getenv("SUPABASE_ANON_KEY")
+SUPABASE_SERVICE_ROLE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
 
 # If tqdm is installed, configure loguru with tqdm.write
 # https://github.com/Delgan/loguru/issues/135

@@ -1,5 +1,10 @@
 ./README_backup.md
 /data/
+create_branches.sh
+docs/crawl_data_v2.tex
+docs/docs/data_collection.md
+docs/github_setup.tex
+docs/gdrive_structure.tex
 
 # Mac OS-specific storage files
 .DS_Store

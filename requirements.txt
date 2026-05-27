@@ -1,4 +1,5 @@
 loguru
+supabase
 mkdocs
 pip
 python-dotenv
