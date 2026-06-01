@@ -1,5 +1,6 @@
 loguru
 supabase
+pg8000
 mkdocs
 pip
 python-dotenv
