@@ -3,8 +3,14 @@
 create_branches.sh
 docs/crawl_data_v2.tex
 docs/docs/data_collection.md
+docs/docs/schema.md
+docs/docs/schema.mmd
 docs/github_setup.tex
 docs/gdrive_structure.tex
+docs/schema_design_report.tex
+docs/git_workflow_guide.tex
+docs/db_connection_report.tex
+docs/create_table_report.tex
 
 # Mac OS-specific storage files
 .DS_Store
