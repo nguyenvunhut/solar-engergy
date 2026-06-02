@@ -761,6 +761,7 @@ geo\_id        & INT (PK) & Khóa chính định danh vị trí địa lý. \\
 latitude      & FLOAT    & Vĩ độ (số thực). \\
 longitude     & FLOAT    & Kinh độ (số thực). \\
 location\_name & VARCHAR  & Tên địa danh hành chính. \\
+capacity      & INT      & Tổng công suất của khu vực đặt trạm (kW). \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -777,11 +778,14 @@ location\_name & VARCHAR  & Tên địa danh hành chính. \\
 \toprule
 \textbf{Tên trường (Field)} & \textbf{Kiểu DL} & \textbf{Diễn giải vật lý} \\
 \midrule
-date\_id    & INT (PK) & Khóa chính đại diện ngày. \\
-full\_date  & DATE     & Trường lưu định dạng thời gian nguyên bản (YYYY-MM-DD). \\
-day        & INT      & Ngày trong tháng (số nguyên). \\
-month      & INT      & Tháng trong năm (số nguyên). \\
-year       & INT      & Năm phân tích (số nguyên). \\
+date\_id       & INT (PK) & Khóa chính đại diện ngày. \\
+full\_date     & DATE     & Trường lưu định dạng thời gian nguyên bản (YYYY-MM-DD). \\
+day            & INT      & Ngày trong tháng (số nguyên). \\
+month          & INT      & Tháng trong năm (số nguyên). \\
+year           & INT      & Năm phân tích (số nguyên). \\
+is\_holiday    & INT      & Đánh dấu ngày lễ (1: Ngày lễ, 0: Ngày thường). \\
+is\_semester   & INT      & Đánh dấu học kỳ (1: Trong kỳ học, 0: Kỳ nghỉ). \\
+is\_exam       & INT      & Đánh dấu mùa thi (1: Trong mùa thi, 0: Bình thường). \\
 \bottomrule
 \end{tabularx}
 \end{table}

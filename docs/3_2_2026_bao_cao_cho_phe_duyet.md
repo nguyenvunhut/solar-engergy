@@ -78,16 +78,12 @@
 
 ---
 
-## 2. Cột Bị Bỏ Trong create_table.sql — Cần Team Xem Lại
+## 2. Cột Bị Bỏ Trong create_table.sql — Đã Bổ Sung Thành Công ✅
 
-| Cột CSV | File nguồn | Lý do bỏ | Ảnh hưởng | Đề xuất |
-|---------|-----------|----------|-----------|---------|
-| `capacity` | campus_meta.csv | `dim_geography` **không có cột này** | Mất tổng công suất campus (vd: 26,000 kW) — cần để normalize solar output | Thêm `capacity INT` vào `dim_geography` |
-| `is_holiday` | calender.csv | `dim_date` **không có cột này** | Mất flag ngày lễ — ảnh hưởng lớn đến tiêu thụ điện campus | Thêm vào `dim_date` |
-| `is_semester` | calender.csv | `dim_date` **không có cột này** | Mất flag học kỳ — feature quan trọng cho XGBoost | Thêm vào `dim_date` |
-| `is_exam` | calender.csv | `dim_date` **không có cột này** | Mất flag mùa thi — ảnh hưởng pattern dùng điện | Thêm vào `dim_date` |
+Tất cả 4 cột bị thiếu trước đây đã được cập nhật thành công vào schema cơ sở dữ liệu (`create_table.sql`), các script ETL (`load_01_dims.py`), kiểm tra ánh xạ (`check_mapping.py`), script verify dữ liệu (`load_03_verify.py`), và tài liệu báo cáo đồ án tốt nghiệp (`DATN_OUTLIERS_REPORT.tex`):
 
-> ⚠️ **`create_table.sql` gốc thiếu 4 cột quan trọng. Cần bổ sung trước khi làm staging.**
+* **`capacity`** (từ `campus_meta.csv`): Đã thêm vào bảng `dim_geography` làm cột `capacity INT` để chuẩn hóa sản lượng điện.
+* **`is_holiday`**, **`is_semester`**, **`is_exam`** (từ `calender.csv`): Đã thêm vào bảng `dim_date` dưới dạng các cột `INT` phục vụ cho việc phân tích các đặc trưng mùa vụ và hành vi tiêu thụ điện.
 
 ---
 
@@ -175,17 +171,14 @@ fact_weather — so sánh temperature_2m theo SiteKey+timestamp:
 
 ---
 
-## 4. Cột Bị Bỏ — Lý Do & Đề Xuất
+## 4. Cột Bị Bỏ — Tình trạng: Đã Giải Quyết ✅
 
-| Cột CSV | File nguồn | Lý do bỏ | Ảnh hưởng | Đề xuất |
-|---------|-----------|----------|-----------|---------|
-| `capacity` | campus_meta.csv | `dim_geography` trong `create_table.sql` **không có cột này** | Mất thông tin tổng công suất campus (vd: 26,000 kW) — cần để normalize solar output khi phân tích | Thêm `capacity INT` vào `dim_geography` |
-| `is_holiday` | calender.csv | `dim_date` trong `create_table.sql` **không có cột này** | Mất flag ngày lễ — ảnh hưởng lớn đến tiêu thụ điện của campus | Thêm vào `dim_date` |
-| `is_semester` | calender.csv | `dim_date` trong `create_table.sql` **không có cột này** | Mất flag học kỳ — đây là feature quan trọng cho XGBoost (điện dùng khác nhau giữa kỳ học và nghỉ) | Thêm vào `dim_date` |
-| `is_exam` | calender.csv | `dim_date` trong `create_table.sql` **không có cột này** | Mất flag mùa thi — ảnh hưởng đến pattern sử dụng điện | Thêm vào `dim_date` |
-| `CampusKey` | Solar_Energy_Generation.csv | Chỉ dùng để lookup `geo_id`, không có cột tương ứng trong fact table | Không mất data — đã convert sang `geo_id` | Không cần thêm |
-
-> ⚠️ **Kết luận:** `create_table.sql` gốc thiếu 4 cột có giá trị phân tích. Cần team xác nhận bổ sung vào schema trước khi làm staging.
+Các cột quan trọng thiếu từ ban đầu đã được bổ sung vào schema và pipeline:
+* `capacity` (từ `campus_meta.csv`) $\rightarrow$ `dim_geography.capacity` (Đã thêm)
+* `is_holiday` (từ `calender.csv`) $\rightarrow$ `dim_date.is_holiday` (Đã thêm)
+* `is_semester` (từ `calender.csv`) $\rightarrow$ `dim_date.is_semester` (Đã thêm)
+* `is_exam` (từ `calender.csv`) $\rightarrow$ `dim_date.is_exam` (Đã thêm)
+* `CampusKey` (từ `Solar_Energy_Generation.csv`): Được sử dụng cho việc ánh xạ lookup `geo_id` mà không lưu trữ trực tiếp (Không đổi)
 
 ---
 
