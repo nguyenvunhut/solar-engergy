@@ -39,16 +39,16 @@ mapping = {
         "columns": {
             "id":       "dim_geography.geo_id (rename)",
             "name":     "dim_geography.location_name (rename)",
-            "capacity": "SKIP - khong co trong schema",
+            "capacity": "dim_geography.capacity",
         }
     },
     "calender.csv": {
         "table": "dim_date",
         "columns": {
             "date":        "dim_date.full_date + derive day/month/year",
-            "is_holiday":  "SKIP - khong co trong schema",
-            "is_semester": "SKIP - khong co trong schema",
-            "is_exam":     "SKIP - khong co trong schema",
+            "is_holiday":  "dim_date.is_holiday",
+            "is_semester": "dim_date.is_semester",
+            "is_exam":     "dim_date.is_exam",
         }
     },
     "open_meteo_weather_raw_2020_2022.csv": {

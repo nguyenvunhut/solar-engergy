@@ -57,8 +57,8 @@ if __name__ == "__main__":
         latlon = sites.groupby("CampusKey")[["lat","Lon"]].mean().reset_index()
         geo    = campus.merge(latlon, left_on="id", right_on="CampusKey", how="left")
         execute_values(cur,
-            "INSERT INTO dim_geography (geo_id,latitude,longitude,location_name) VALUES %s",
-            [(int(r["id"]), r["lat"], r["Lon"], r["name"]) for _, r in geo.iterrows()])
+            "INSERT INTO dim_geography (geo_id,latitude,longitude,location_name,capacity) VALUES %s",
+            [(int(r["id"]), r["lat"], r["Lon"], r["name"], None if pd.isna(r["capacity"]) else int(r["capacity"])) for _, r in geo.iterrows()])
         log(f"dim_geography: {len(geo)} rows")
 
         # 2. dim_solar_site
@@ -83,10 +83,23 @@ if __name__ == "__main__":
         # 3. dim_date
         cal = read_csv(s3, "calender.csv")
         cal["dt"] = pd.to_datetime(cal["date"])
-        rows = [(i+1, str(r.dt.date()), r.dt.day, r.dt.month, r.dt.year)
-                for i, r in enumerate(cal.itertuples())]
+        rows = []
+        for i, r in enumerate(cal.itertuples()):
+            is_holiday = int(r.is_holiday) if not pd.isna(r.is_holiday) else None
+            is_semester = int(r.is_semester) if not pd.isna(r.is_semester) else None
+            is_exam = int(r.is_exam) if not pd.isna(r.is_exam) else None
+            rows.append((
+                i+1, 
+                str(r.dt.date()), 
+                r.dt.day, 
+                r.dt.month, 
+                r.dt.year,
+                is_holiday,
+                is_semester,
+                is_exam
+            ))
         execute_values(cur,
-            "INSERT INTO dim_date (date_id,full_date,day,month,year) VALUES %s", rows)
+            "INSERT INTO dim_date (date_id,full_date,day,month,year,is_holiday,is_semester,is_exam) VALUES %s", rows)
         log(f"dim_date: {len(rows)} rows")
 
         # 4. dim_time — unique HH:MM từ cả 2 file
