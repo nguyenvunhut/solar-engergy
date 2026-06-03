@@ -22,6 +22,89 @@ Dự án nhằm mục đích xây dựng một hệ thống phân tích và xử
 ## 2. Kiến trúc Kho dữ liệu (Data Warehouse)
 Hệ thống lưu trữ trên nền tảng **Supabase (PostgreSQL)** sử dụng kiến trúc **Lược đồ Thiên hà (Galaxy Schema / Fact Constellation)** để đồng thời phục vụ hai bảng sự kiện có tần suất dữ liệu khác nhau (Sản lượng: 15 phút, Thời tiết: 1 giờ).
 
+### Sơ đồ cấu trúc cơ sở dữ liệu (Database Schema Diagram)
+
+```mermaid
+classDiagram
+    class dim_solar_site {
+        int site_id (PK)
+        string campus_name
+        float capacity_kw
+        int Number_of_panels
+        string Panel
+        string Inverter
+        string Optimizers
+        string Metric
+    }
+    class dim_geography {
+        int geo_id (PK)
+        float latitude
+        float longitude
+        string location_name
+        int capacity
+    }
+    class dim_date {
+        int date_id (PK)
+        date full_date
+        int day
+        int month
+        int year
+        int is_holiday
+        int is_semester
+        int is_exam
+    }
+    class dim_time {
+        int time_id (PK)
+        string time_string
+        int hour
+        int minute
+    }
+    class dim_weather_type {
+        int weather_type_id (PK)
+        int weather_code
+        int is_day
+        string weather_condition
+        string description
+    }
+    class fact_solar_energy_gen {
+        int gen_id (PK)
+        int site_id (FK)
+        int geo_id (FK)
+        int date_id (FK)
+        int time_id (FK)
+        float energy_generated_kwh
+    }
+    class fact_weather {
+        int weather_id (PK)
+        int geo_id (FK)
+        int date_id (FK)
+        int time_id (FK)
+        int weather_type_id (FK)
+        int is_day
+        int shortwave_radiation
+        float temperature_c
+        float cloud_cover_total
+        float cloud_cover_low
+        float cloud_cover_mid
+        float cloud_cover_high
+        int Diffuse_Solar_Radiation
+        int Direct_Normal_Irradiance
+        float wind_speed
+        float precipitation_mm
+        float Sunshine_Duration
+    }
+    
+    fact_solar_energy_gen --> dim_solar_site : FK_Gen_Site
+    fact_solar_energy_gen --> dim_geography : FK_Gen_Geo
+    fact_solar_energy_gen --> dim_date : FK_Gen_Date
+    fact_solar_energy_gen --> dim_time : FK_Gen_Time
+    
+    fact_weather --> dim_geography : FK_Weather_Geo
+    fact_weather --> dim_date : FK_Weather_Date
+    fact_weather --> dim_time : FK_Weather_Time
+    fact_weather --> dim_weather_type : FK_Weather_Type
+```
+
 Sơ đồ bảng chi tiết xem tại file thiết kế hệ thống [create_table.sql](file:///D:/Learning/FPT_polytechnic/Sem6/datn_outlier_hs_nlmt/ultils/create_table.sql).
 
 ### Bảng Dimension (Chiều dùng chung):
@@ -39,27 +122,73 @@ Sơ đồ bảng chi tiết xem tại file thiết kế hệ thống [create_tab
 
 ## 3. Quy trình ETL và Chuẩn hóa Dữ liệu
 
-### Bước 1: Trích xuất (Extract)
-* Dữ liệu sản lượng trạm được đọc từ các tệp CSV gốc.
-* Dữ liệu thời tiết được gọi tự động từ **Open-Meteo Archive API** sử dụng tọa độ của 42 trạm. Mã nguồn tích hợp cơ chế bắt lỗi giới hạn lượt truy cập (Rate Limit - HTTP 429) tự dừng 60 giây và thử lại để đảm bảo pipeline ổn định.
+### Sơ đồ luồng xử lý dữ liệu (Data Pipeline Flow)
 
-### Bước 2: Biến đổi (Transform)
-* **Xử lý lệch pha dữ liệu:** Quy trình tự động gom cụm dữ liệu sản lượng (từ 15 phút lên 1 giờ) để đồng bộ hóa hoàn toàn với dữ liệu thời tiết phục vụ mô hình học máy.
-* **Lọc nhiễu ban đêm (Night Noise Filter):** Loại bỏ sản lượng điện ảo ghi nhận vào ban đêm do rò rỉ dòng điện hoặc nhiễu thiết bị cảm biến (khi bức xạ mặt trời = 0).
-* **Nội suy (Interpolation):** Sử dụng phương pháp nội suy tuyến tính để điền các khoảng trống dữ liệu thời tiết bị khuyết thiếu.
-* **Phát hiện bất thường (Outliers):** Áp dụng phương pháp khoảng tứ phân vị (IQR) để loại bỏ các điểm đột biến nhiễu của cảm biến.
+```mermaid
+flowchart TD
+    subgraph Sources [Nguồn Dữ Liệu Thô]
+        A1[(Raw CSV Files)]
+        A2[Open-Meteo API]
+    end
+    
+    subgraph Extract [Trích Xuất - Extract]
+        B1[Đọc CSV nội bộ]
+        B2[Gọi API thời tiết]
+        B3{Rate Limit 429?}
+        B2 --> B3
+        B3 -- Có --> B4[Tạm dừng 60s & Thử lại]
+        B3 -- Không --> B5[Thu thập thành công]
+    end
+    
+    subgraph Transform [Biến Đổi - Transform]
+        C1[Đồng bộ chu kỳ 1 giờ]
+        C2[Lọc nhiễu ban đêm]
+        C3[Nội suy tuyến tính dữ liệu thiếu]
+        C4[Loại bỏ Outliers bằng IQR]
+        C1 --> C2 --> C3 --> C4
+    end
+    
+    subgraph Load [Nạp - Load]
+        D1[Kết nối Supabase Connection Pooler]
+        D2[Nạp dữ liệu qua pg8000]
+    end
+    
+    subgraph DWH [Kho Dữ Liệu Supabase]
+        E1[(Galaxy Schema)]
+    end
+    
+    A1 --> B1
+    A2 --> B2
+    B1 --> C1
+    B5 --> C1
+    C4 --> D1
+    D1 --> D2
+    D2 --> E1
+```
 
-### Bước 3: Nạp (Load)
-* Dữ liệu sau khi làm sạch được nạp vào Supabase thông qua thư viện kết nối **`pg8000`** (Pure Python, giúp chạy ổn định trên mọi môi trường và hệ điều hành).
-* Sử dụng kết nối qua **Supabase Connection Pooler** giúp quản lý luồng tải đồng thời hiệu quả từ nhiều thành viên nhóm mà không bị quá tải kết nối.
+### Chi tiết các bước:
+1. **Trích xuất (Extract)**:
+   * Dữ liệu sản lượng trạm được đọc từ các tệp CSV gốc.
+   * Dữ liệu thời tiết được gọi tự động từ **Open-Meteo Archive API** sử dụng tọa độ của 42 trạm. Mã nguồn tích hợp cơ chế bắt lỗi giới hạn lượt truy cập (Rate Limit - HTTP 429) tự dừng 60 giây và thử lại để đảm bảo pipeline ổn định.
+
+2. **Biến đổi (Transform)**:
+   * **Xử lý lệch pha dữ liệu:** Quy trình tự động gom cụm dữ liệu sản lượng (từ 15 phút lên 1 giờ) để đồng bộ hóa hoàn toàn với dữ liệu thời tiết phục vụ mô hình học máy.
+   * **Lọc nhiễu ban đêm (Night Noise Filter):** Loại bỏ sản lượng điện ảo ghi nhận vào ban đêm do rò rỉ dòng điện hoặc nhiễu thiết bị cảm biến (khi bức xạ mặt trời = 0).
+   * **Nội suy (Interpolation):** Sử dụng phương pháp nội suy tuyến tính để điền các khoảng trống dữ liệu thời tiết bị khuyết thiếu.
+   * **Phát hiện bất thường (Outliers):** Áp dụng phương pháp khoảng tứ phân vị (IQR) để loại bỏ các điểm đột biến nhiễu của cảm biến.
+
+3. **Nạp (Load)**:
+   * Dữ liệu sau khi làm sạch được nạp vào Supabase thông qua thư viện kết nối **`pg8000`** (Pure Python, giúp chạy ổn định trên mọi môi trường và hệ điều hành).
+   * Sử dụng kết nối qua **Supabase Connection Pooler** giúp quản lý luồng tải đồng thời hiệu quả từ nhiều thành viên nhóm mà không bị quá tải kết nối.
 
 ---
 
 ## 4. Các Insight Kinh doanh và Phân tích chuyên sâu (Business Insights)
 
-* **Hiện tượng suy hao do nhiệt (Thermal Degradation):** Dữ liệu cho thấy khi nhiệt độ môi trường vượt quá $25^\circ\text{C}$, hiệu suất chuyển đổi của các tấm pin PV bị suy giảm mạnh. Đây là lý do tại sao công suất buổi trưa có bức xạ cao nhất nhưng sản lượng điện thực tế đôi khi không đạt đỉnh kỳ vọng.
-* **Độ nhiễu ban đêm và Dòng rò (Night Noise):** Phát hiện dòng điện rò rỉ nhẹ tại một số trạm vào khung giờ đêm ($18\text{h} - 5\text{h}$). Nếu không lọc bỏ trong pha ETL, tổng sản lượng báo cáo hàng năm sẽ bị sai lệch lũy kế.
-* **Dự báo Baseline để Bảo trì Dự đoán (Predictive Maintenance):** Sử dụng mô hình ARIMA và Prophet để thiết lập sản lượng dự kiến (đường cơ sở). Nếu sản lượng thực tế sụt giảm đáng kể so với baseline trong khi bức xạ vẫn cao, hệ thống sẽ tự động phát tín hiệu cảnh báo tấm pin bị bám bụi bẩn nặng hoặc Inverter bị lỗi để cử đội kỹ thuật xử lý.
+> [!TIP]
+> * **Hiện tượng suy hao do nhiệt (Thermal Degradation):** Dữ liệu cho thấy khi nhiệt độ môi trường vượt quá $25^\circ\text{C}$, hiệu suất chuyển đổi của các tấm pin PV bị suy giảm mạnh. Đây là lý do tại sao công suất buổi trưa có bức xạ cao nhất nhưng sản lượng điện thực tế đôi khi không đạt đỉnh kỳ vọng.
+> * **Độ nhiễu ban đêm và Dòng rò (Night Noise):** Phát hiện dòng điện rò rỉ nhẹ tại một số trạm vào khung giờ đêm ($18\text{h} - 5\text{h}$). Nếu không lọc bỏ trong pha ETL, tổng sản lượng báo cáo hàng năm sẽ bị sai lệch lũy kế.
+> * **Dự báo Baseline để Bảo trì Dự đoán (Predictive Maintenance):** Sử dụng mô hình ARIMA và Prophet để thiết lập sản lượng dự kiến (đường cơ sở). Nếu sản lượng thực tế sụt giảm đáng kể so với baseline trong khi bức xạ vẫn cao, hệ thống sẽ tự động phát tín hiệu cảnh báo tấm pin bị bám bụi bẩn nặng hoặc Inverter bị lỗi để cử đội kỹ thuật xử lý.
 
 ---
 
