@@ -14,4 +14,9 @@ numpy
 psycopg2-binary
 sqlalchemy
 boto3
+
+# Crawl and geocoding
+requests
+geopy
+
 -e .
