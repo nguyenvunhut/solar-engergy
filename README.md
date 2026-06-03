@@ -183,7 +183,49 @@ deactivate
 
 ---
 
-## 7. Quy tắc Commit Git & Quản lý Dự án
+## 7. Quy chuẩn đặt tên tệp tin (File Naming Conventions)
+Để đảm bảo dự án được quản lý một cách khoa học, thống nhất, dễ tìm kiếm và tránh xung đột khi làm việc nhóm, toàn bộ thành viên cần tuân thủ nghiêm ngặt các quy tắc đặt tên file dưới đây:
+
+### 7.1 Nguyên tắc chung:
+* **Không dùng dấu tiếng Việt, không dùng khoảng trắng (Space).**
+* **Sử dụng chữ thường (lowercase) và dấu gạch dưới (`_`)** để phân tách các từ (snake_case), trừ các trường hợp đặc biệt được quy định dưới đây.
+* **Tên file ngắn gọn nhưng phải phản ánh rõ nội dung và mục đích.**
+
+### 7.2 Quy chuẩn theo từng loại tệp tin:
+
+1. **Dữ liệu thô và đã xử lý (`data/`):**
+   * **Dữ liệu thô (`data/raw/`):** `<nguồn_dữ_liệu>_<tên_trạm/vùng>_<khoảng_thời_gian>_raw.<đuôi_file>`
+     * *Ví dụ:* `solar_gen_bundoora_2020_2022_raw.csv` (Sản lượng điện), `open_meteo_weather_bendigo_2023_raw.csv` (Thời tiết từ API).
+   * **Dữ liệu trung gian/sạch (`data/interim/` & `data/processed/`):** `<loại_dữ_liệu>_<chu_kỳ>_<mô_tả_trạng_thái>.<đuôi_file>`
+     * *Ví dụ:* `weather_hourly_cleaned.csv` (Thời tiết theo giờ đã nội suy), `solar_gen_hourly_aggregated.csv` (Sản lượng gom cụm theo giờ).
+
+2. **Sổ tay nghiên cứu (`notebooks/`):**
+   * **Quy chuẩn:** Đánh số thứ tự tăng dần theo tiến trình phân tích khám phá + Tên ngắn gọn mô tả tác vụ.
+   * **Định dạng:** `<số_thứ_tự>_<tác_vụ_chính>_<chi_tiết>.ipynb` (Sử dụng hai chữ số ở đầu: `01_`, `02_`, `03_`...).
+     * *Ví dụ:* `01_eda_solar_generation.ipynb` (Khám phá sản lượng điện thô), `03_model_arima_baseline.ipynb` (Xây dựng mô hình ARIMA baseline).
+
+3. **Kịch bản ETL và Tiện ích (`ultils/` & `ultils/script/`):**
+   * **Kịch bản ETL (`ultils/script/etl/`):** Đánh số thứ tự luồng xử lý và chỉ định rõ Dimension (`dims`) hay Fact (`facts`).
+     * *Ví dụ:* [load_01_dims.py](file:///D:/Learning/FPT_polytechnic/Sem6/datn_outlier_hs_nlmt/ultils/script/etl/load_01_dims.py), [load_02_facts.py](file:///D:/Learning/FPT_polytechnic/Sem6/datn_outlier_hs_nlmt/ultils/script/etl/load_02_facts.py), [load_03_verify.py](file:///D:/Learning/FPT_polytechnic/Sem6/datn_outlier_hs_nlmt/ultils/script/etl/load_03_verify.py).
+   * **Kịch bản chất lượng / công cụ hỗ trợ:** `<hành_động>_<đối_tượng>.py`
+     * *Ví dụ:* `check_null.py`, `check_mapping.py`, `verify_upload.py`.
+
+4. **Mô hình học máy (`models/`):**
+   * **Quy chuẩn:** Tên mô hình + Đối tượng dự báo + Phiên bản (Version) + Ngày lưu (YYYYMMDD).
+   * **Định dạng:** `<tên_mô_hình>_<đối_tượng>_v<phiên_bản>_<ngày_lưu>.<đuôi_file>`
+     * *Ví dụ:* `prophet_solar_gen_v1.0_20260603.pkl`, `arima_solar_gen_v1.1_20260604.pkl`.
+
+5. **Báo cáo, Tài liệu đồ án (`reports/`):**
+   * **Báo cáo chính LaTeX / PDF:**
+     * File báo cáo gốc: `DATN_OUTLIERS_REPORT.tex` (Giữ nguyên tên gốc cố định để không hỏng luồng biên dịch).
+     * File xuất bản (PDF): `DATN_OUTLIERS_REPORT_v<phiên_bản>_ngay_<DDMMYYYY>.pdf`
+       * *Ví dụ:* `DATN_OUTLIERS_REPORT_v1.0_ngay_03062026.pdf`
+   * **Slide thuyết trình / Tài liệu phụ:** `<tên_tài_liệu>_v<phiên_bản>.<đuôi_file>`
+     * *Ví dụ:* `Slide_DATN_Outliers_v1.0.pptx`, `Poster_DATN_Outliers_v1.0.pdf`.
+
+---
+
+## 8. Quy tắc Commit Git & Quản lý Dự án
 Nhóm áp dụng quy tắc commit nghiêm ngặt theo định dạng Angular commit convention:
 ```
 <type>(<scope>): [JIRA-KEY] <subject>
