@@ -7,6 +7,18 @@
 
 ---
 
+## 📌 Mục lục (Table of Contents)
+* [1. Giới thiệu Dự án](#1-giới-thiệu-dự-án)
+* [2. Kiến trúc Kho dữ liệu (Data Warehouse)](#2-kiến-trúc-kho-dữ-liệu-data-warehouse)
+* [3. Quy trình ETL và Chuẩn hóa Dữ liệu](#3-quy-trình-etl-và-chuẩn-hóa-dữ-liệu)
+* [4. Các Insight Kinh doanh và Phân tích chuyên sâu (Business Insights)](#4-các-insight-kinh-doanh-và-phân-tích-chuyên-sâu-business-insights)
+* [5. Cấu trúc Thư mục Dự án](#5-cấu-trúc-thư-mục-dự-án)
+* [6. Hướng dẫn Cài đặt và Sử dụng](#6-hướng-dẫn-cài-đặt-và-sử-dụng)
+* [7. Quy chuẩn đặt tên tệp tin (File Naming Conventions)](#7-quy-chuẩn-đặt-tên-tệp-tin-file-naming-conventions)
+* [8. Quy tắc Commit Git và Quản lý Dự án](#8-quy-tắc-commit-git-và-quản-lý-dự-án)
+
+---
+
 ## 1. Giới thiệu Dự án
 Dự án nhằm mục đích xây dựng một hệ thống phân tích và xử lý dữ liệu toàn diện để phát hiện, xử lý các bất thường và dự báo sản lượng phát điện của 42 trạm điện quang điện (PV) tại Úc. Bằng cách tích hợp dữ liệu vận hành thực tế cùng dữ liệu khí tượng viễn thám từ Open-Meteo, dự án hỗ trợ các nhà quản lý tối ưu hóa hiệu suất vận hành, lên kế hoạch bảo trì chủ động và giảm thiểu rủi ro tài chính.
 
@@ -239,7 +251,7 @@ datn_outlier_hs_nlmt/
 
 ---
 
-## 6. Hướng dẫn Cài đặt & Sử dụng
+## 6. Hướng dẫn Cài đặt và Sử dụng
 
 > [!IMPORTANT]
 > Dự án yêu cầu phiên bản **Python 3.11+** được cấu hình sẵn trên máy.
@@ -354,7 +366,7 @@ deactivate
 
 ---
 
-## 8. Quy tắc Commit Git & Quản lý Dự án
+## 8. Quy tắc Commit Git và Quản lý Dự án
 Nhóm áp dụng quy tắc commit nghiêm ngặt theo định dạng Angular commit convention:
 ```
 <type>(<scope>): [JIRA-KEY] <subject>
