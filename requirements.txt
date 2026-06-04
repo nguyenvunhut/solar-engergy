@@ -1,9 +1,22 @@
 loguru
 supabase
+pg8000
 mkdocs
 pip
 python-dotenv
 ruff
 tqdm
 typer
+
+# Data pipeline
+pandas
+numpy
+psycopg2-binary
+sqlalchemy
+boto3
+
+# Crawl and geocoding
+requests
+geopy
+
 -e .
