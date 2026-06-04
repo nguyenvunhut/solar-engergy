@@ -1,7 +1,11 @@
 ./README_backup.md
-/data/
+data/raw/*
+data/processed/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
 create_branches.sh
 pgadmin/
+git_workflow.md
 
 # docs - tex reports (ignored, not pushed to git)
 docs/scrum_5_pipeline_foundation/2026_03_02_approval_report_TanDat.md
