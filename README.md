@@ -117,18 +117,18 @@ classDiagram
     fact_weather --> dim_weather_type : FK_Weather_Type
 ```
 
-Sơ đồ bảng chi tiết xem tại file thiết kế hệ thống [create_table.sql](file:///D:/Learning/FPT_polytechnic/Sem6/datn_outlier_hs_nlmt/ultils/create_table.sql).
+Sơ đồ bảng chi tiết xem tại file thiết kế hệ thống [create_table.sql](file:///D:/Learning/FPT_polytechnic/Sem6/datn_outlier_hs_nlmt/src/database/create_table.sql).
 
 ### Bảng Dimension (Chiều dùng chung):
-* [dim_solar_site](file:///D:/Learning/FPT_polytechnic/Sem6/datn_outlier_hs_nlmt/ultils/create_table.sql#L7-L16): Thông tin kỹ thuật trạm (Số tấm pin, Inverter, Công suất cực đại kWp...).
-* [dim_geography](file:///D:/Learning/FPT_polytechnic/Sem6/datn_outlier_hs_nlmt/ultils/create_table.sql#L18-L25): Tọa độ địa lý (Vĩ độ, kinh độ, tên khu vực).
-* [dim_date](file:///D:/Learning/FPT_polytechnic/Sem6/datn_outlier_hs_nlmt/ultils/create_table.sql#L27-L37): Trục ngày (ngày, tháng, năm, cờ ngày lễ/học kỳ/kỳ thi).
-* [dim_time](file:///D:/Learning/FPT_polytechnic/Sem6/datn_outlier_hs_nlmt/ultils/create_table.sql#L39-L45): Trục giờ (chu kỳ 15 phút).
-* [dim_weather_type](file:///D:/Learning/FPT_polytechnic/Sem6/datn_outlier_hs_nlmt/ultils/create_table.sql#L47-L54): Phân loại mã thời tiết WMO và ngày/đêm.
+* [dim_solar_site](file:///D:/Learning/FPT_polytechnic/Sem6/datn_outlier_hs_nlmt/src/database/create_table.sql#L7-L16): Thông tin kỹ thuật trạm (Số tấm pin, Inverter, Công suất cực đại kWp...).
+* [dim_geography](file:///D:/Learning/FPT_polytechnic/Sem6/datn_outlier_hs_nlmt/src/database/create_table.sql#L18-L25): Tọa độ địa lý (Vĩ độ, kinh độ, tên khu vực).
+* [dim_date](file:///D:/Learning/FPT_polytechnic/Sem6/datn_outlier_hs_nlmt/src/database/create_table.sql#L27-L37): Trục ngày (ngày, tháng, năm, cờ ngày lễ/học kỳ/kỳ thi).
+* [dim_time](file:///D:/Learning/FPT_polytechnic/Sem6/datn_outlier_hs_nlmt/src/database/create_table.sql#L39-L45): Trục giờ (chu kỳ 15 phút).
+* [dim_weather_type](file:///D:/Learning/FPT_polytechnic/Sem6/datn_outlier_hs_nlmt/src/database/create_table.sql#L47-L54): Phân loại mã thời tiết WMO và ngày/đêm.
 
 ### Bảng Fact (Sự kiện):
-* [fact_solar_energy_gen](file:///D:/Learning/FPT_polytechnic/Sem6/datn_outlier_hs_nlmt/ultils/create_table.sql#L61-L75): Đo lường sản lượng điện thực tế phát ra (`energy_generated_kwh`).
-* [fact_weather](file:///D:/Learning/FPT_polytechnic/Sem6/datn_outlier_hs_nlmt/ultils/create_table.sql#L77-L103): Lưu trữ các thông số thời tiết (nhiệt độ, bức xạ sóng ngắn, mây che phủ, lượng mưa, tốc độ gió...).
+* [fact_solar_energy_gen](file:///D:/Learning/FPT_polytechnic/Sem6/datn_outlier_hs_nlmt/src/database/create_table.sql#L61-L75): Đo lường sản lượng điện thực tế phát ra (`energy_generated_kwh`).
+* [fact_weather](file:///D:/Learning/FPT_polytechnic/Sem6/datn_outlier_hs_nlmt/src/database/create_table.sql#L77-L103): Lưu trữ các thông số thời tiết (nhiệt độ, bức xạ sóng ngắn, mây che phủ, lượng mưa, tốc độ gió...).
 
 ---
 
@@ -208,45 +208,63 @@ flowchart TD
 
 ```
 datn_outlier_hs_nlmt/
-├── data/
-│   ├── raw/                  <- Dữ liệu gốc thu thập ban đầu
-│   ├── interim/              <- Dữ liệu trung gian đang xử lý
-│   ├── processed/            <- Dữ liệu sạch đầu ra
-│   └── external/             <- Dữ liệu phụ từ bên ngoài
-├── notebooks/                <- Jupyter notebooks nghiên cứu và vẽ biểu đồ
-├── models/                   <- Lưu trữ các mô hình học máy đã huấn luyện
-├── reports/                  <- Báo cáo tốt nghiệp & Hình ảnh biểu đồ
-│   ├── DATN_OUTLIERS_REPORT.pdf  <- File báo cáo PDF chính thức
-│   ├── DATN_OUTLIERS_REPORT.tex  <- File nguồn LaTeX cấu trúc báo cáo
-│   └── figures/              <- Các biểu đồ báo cáo
-├── du_an_tot_nghiep/         <- Package Python lõi của dự án
-│   ├── config.py             <- Cấu hình tham số dự án
-│   ├── database.py           <- Kết nối và truy vấn CSDL
-│   ├── dataset.py            <- Tiền xử lý tập dữ liệu cho mô hình
-│   ├── features.py           <- Tạo đặc trưng huấn luyện
-│   ├── plots.py              <- Vẽ biểu đồ trực quan
-│   └── modeling/
-│       ├── train.py          <- Huấn luyện mô hình
-│       └── predict.py        <- Dự báo sản lượng điện
-├── ultils/                   <- Các công cụ và mã nguồn ETL phụ trợ
-│   ├── Crawl_data_Updatev2.ipynb <- Notebook crawl dữ liệu thời tiết tự động
-│   ├── commit_helper.py      <- Script hỗ trợ kiểm tra định dạng Git commit
-│   ├── create_table.sql      <- Lược đồ khởi tạo bảng trên Supabase
-│   ├── test_create_table.py  <- Script python kiểm tra kết nối & tạo bảng
-│   ├── test_insert_csv.py    <- Script test import dữ liệu
-│   └── script/
-│       ├── supabase_storage.py   <- Công cụ đồng bộ lưu trữ tệp lên cloud storage
-│       ├── etl/
-│       │   ├── load_01_dims.py   <- ETL tải dữ liệu vào các bảng Dimension
-│       │   ├── load_02_facts.py  <- ETL tải dữ liệu vào các bảng Fact
-│       │   └── load_03_verify.py <- Kiểm tra và xác thực dữ liệu sau nạp
-│       └── upload_dataraw/
-│           ├── check_mapping.py  <- Kiểm tra đối xạ ánh xạ cột dữ liệu
-│           ├── check_null.py     <- Thống kê tỷ lệ dữ liệu khuyết thiếu
-│           ├── upload_raw.py     <- Tải dữ liệu thô lên Cloud
-│           └── verify_upload.py  <- Xác thực tính toàn vẹn tệp tải lên
-├── requirements.txt          <- Danh sách các thư viện cần cài đặt
-└── pyproject.toml            <- Cấu hình cài đặt package dự án
+├── commit_helper.py          <- Script hỗ trợ kiểm tra định dạng Git commit
+├── data/                     <- Thư mục chứa dữ liệu dự án
+│   ├── processed/            <- Dữ liệu sạch đầu ra sau tiền xử lý
+│   └── raw/                  <- Dữ liệu gốc thu thập ban đầu
+├── docker-compose.yaml       <- Cấu hình môi trường dịch vụ Docker (ví dụ: DB)
+├── docs/                     <- Tài liệu hướng dẫn và báo cáo theo tiến độ Scrum
+│   ├── configurations_and_setups/ <- Tài liệu cấu hình và cài đặt môi trường
+│   ├── scrum_5_pipeline_foundation/ <- Báo cáo và tài liệu giai đoạn Scrum 5
+│   ├── scrum_6_business_logic_eda/  <- Báo cáo và tài liệu giai đoạn Scrum 6
+│   ├── scrum_7_visualization_forecasting/ <- Báo cáo và tài liệu giai đoạn Scrum 7
+│   └── scrum_8_project_delivery_defense/  <- Báo cáo và tài liệu giai đoạn Scrum 8
+├── Makefile                  <- Script tự động hóa các tác vụ phát triển (make setup, make run, etc.)
+├── mkdocs.yml                <- Cấu hình tạo trang tài liệu tĩnh MkDocs
+├── notebooks/                <- Jupyter notebooks phục vụ nghiên cứu và crawl dữ liệu
+│   ├── 01_crawl_latrobe.ipynb <- Notebook crawl dữ liệu trạm Latrobe
+│   └── 02_crawl_vietnam.ipynb <- Notebook crawl dữ liệu thời tiết Việt Nam
+├── pyproject.toml            <- Cấu hình cài đặt package và dependency của dự án
+├── references/               <- Các tài liệu tham khảo và đặc tả API
+│   ├── api_docs/             <- Tài liệu API
+│   └── research_papers/      <- Các bài báo nghiên cứu khoa học liên quan
+├── reports/                  <- Báo cáo tốt nghiệp chính thức và slide
+│   ├── dashboards/           <- Thiết kế dashboard trực quan hóa
+│   ├── figures/              <- Các hình ảnh, biểu đồ vẽ từ dữ liệu
+│   ├── official_thesis/      <- Báo cáo luận văn chính thức
+│   ├── DATN_OUTLIERS_REPORT.tex <- File nguồn LaTeX của báo cáo tốt nghiệp
+│   ├── DATN_OUTLIERS_REPORT.pdf <- File báo cáo PDF (biên dịch từ LaTeX)
+│   └── DATN_OUTLIERS_REPORT_V1.pdf <- Phiên bản 1 của báo cáo PDF
+├── requirements.txt          <- Danh sách các thư viện Python cần cài đặt
+├── src/                      <- Mã nguồn lõi (package) của dự án
+│   ├── __init__.py           <- Khởi tạo package
+│   ├── config.py             <- Cấu hình tham số hệ thống và môi trường
+│   ├── database.py           <- Các hàm kết nối và truy vấn cơ sở dữ liệu
+│   ├── dataset.py            <- Tiền xử lý và chuẩn bị dataset cho mô hình
+│   ├── features.py           <- Trích xuất và biến đổi đặc trưng (Feature Engineering)
+│   ├── plots.py              <- Mã nguồn vẽ biểu đồ phân tích dữ liệu
+│   ├── database/             <- Cơ sở dữ liệu và cấu trúc lưu trữ
+│   │   ├── create_table.sql  <- Lược đồ SQL khởi tạo các bảng trên Supabase
+│   │   └── supabase_storage.py <- Công cụ đồng bộ lưu trữ tệp lên Cloud Storage
+│   ├── etl/                  <- Các luồng xử lý trích xuất, biến đổi và nạp dữ liệu (ETL)
+│   │   ├── pipeline/         <- Pipeline nạp dữ liệu chính vào Kho dữ liệu
+│   │   │   ├── load_01_dims.py   <- ETL nạp dữ liệu vào bảng Dimension
+│   │   │   ├── load_02_facts.py  <- ETL nạp dữ liệu vào bảng Fact
+│   │   │   └── load_03_verify.py <- Kiểm tra, đối soát và xác thực dữ liệu sau nạp
+│   │   └── upload_dataraw/   <- Các công cụ kiểm tra và tải dữ liệu thô
+│   │       ├── CHECKLIST.md  <- Danh sách kiểm tra chất lượng dữ liệu thô
+│   │       ├── check_docker.sh   <- Kịch bản kiểm tra dịch vụ Docker
+│   │       ├── check_mapping.py  <- Kiểm tra ánh xạ giữa các nguồn dữ liệu
+│   │       ├── check_null.py     <- Thống kê tỷ lệ giá trị bị thiếu (Null)
+│   │       ├── upload_raw.py     <- Tải dữ liệu thô lên Cloud
+│   │       └── verify_upload.py  <- Xác thực tính toàn vẹn của tệp đã tải
+│   └── modeling/             <- Thư mục chứa các mô hình học máy
+│       ├── __init__.py       <- Khởi tạo package modeling
+│       ├── predict.py        <- Dự báo sản lượng điện mặt trời
+│       └── train.py          <- Huấn luyện mô hình
+└── tests/                    <- Các ca kiểm thử đơn vị (Unit Tests)
+    ├── test_db_connection.py <- Kiểm tra kết nối tới cơ sở dữ liệu
+    └── test_insert_csv.py    <- Kiểm tra việc nạp dữ liệu từ tệp CSV
 ```
 
 ---
@@ -301,20 +319,21 @@ pip install -r requirements.txt
 ### Bước 4: Chạy Pipeline ETL nạp dữ liệu vào Supabase
 1. Tạo tệp cấu hình `.env` dựa trên [env.example](file:///D:/Learning/FPT_polytechnic/Sem6/datn_outlier_hs_nlmt/.env.example) và điền thông tin kết nối Supabase của bạn.
 2. Khởi tạo cấu trúc các bảng dữ liệu:
+   Sơ đồ bảng được định nghĩa tại [create_table.sql](file:///D:/Learning/FPT_polytechnic/Sem6/datn_outlier_hs_nlmt/src/database/create_table.sql). Bạn có thể kiểm tra kết nối DB bằng cách chạy:
    ```bash
-   python ultils/test_create_table.py
+   python tests/test_db_connection.py
    ```
 3. Chạy ETL tải các bảng Dimension:
    ```bash
-   python ultils/script/etl/load_01_dims.py
+   python src/etl/pipeline/load_01_dims.py
    ```
 4. Chạy ETL tải các bảng Fact:
    ```bash
-   python ultils/script/etl/load_02_facts.py
+   python src/etl/pipeline/load_02_facts.py
    ```
 5. Chạy xác thực dữ liệu:
    ```bash
-   python ultils/script/etl/load_03_verify.py
+   python src/etl/pipeline/load_03_verify.py
    ```
 
 ### Bước 5: Hủy kích hoạt môi trường ảo (khi hoàn thành)
@@ -345,9 +364,9 @@ deactivate
    * **Định dạng:** `<sequence_number>_<main_task>_<detail>.ipynb` (Sử dụng hai chữ số ở đầu: `01_`, `02_`, `03_`...).
      * *Ví dụ:* `01_eda_solar_generation.ipynb` (Khám phá sản lượng điện thô), `03_model_arima_baseline.ipynb` (Xây dựng mô hình ARIMA baseline).
 
-3. **Kịch bản ETL và Tiện ích (`ultils/` & `ultils/script/`):**
-   * **Kịch bản ETL (`ultils/script/etl/`):** Đánh số thứ tự luồng xử lý và chỉ định rõ Dimension (`dims`) hay Fact (`facts`).
-     * *Ví dụ:* [load_01_dims.py](file:///D:/Learning/FPT_polytechnic/Sem6/datn_outlier_hs_nlmt/ultils/script/etl/load_01_dims.py), [load_02_facts.py](file:///D:/Learning/FPT_polytechnic/Sem6/datn_outlier_hs_nlmt/ultils/script/etl/load_02_facts.py), [load_03_verify.py](file:///D:/Learning/FPT_polytechnic/Sem6/datn_outlier_hs_nlmt/ultils/script/etl/load_03_verify.py).
+3. Kịch bản ETL và Tiện ích (`src/etl/pipeline/` & `src/etl/upload_dataraw/`):
+   * **Kịch bản ETL (`src/etl/pipeline/`):** Đánh số thứ tự luồng xử lý và chỉ định rõ Dimension (`dims`) hay Fact (`facts`).
+     * *Ví dụ:* [load_01_dims.py](file:///D:/Learning/FPT_polytechnic/Sem6/datn_outlier_hs_nlmt/src/etl/pipeline/load_01_dims.py), [load_02_facts.py](file:///D:/Learning/FPT_polytechnic/Sem6/datn_outlier_hs_nlmt/src/etl/pipeline/load_02_facts.py), [load_03_verify.py](file:///D:/Learning/FPT_polytechnic/Sem6/datn_outlier_hs_nlmt/src/etl/pipeline/load_03_verify.py).
    * **Kịch bản chất lượng / công cụ hỗ trợ:** `<action>_<target>.py`
      * *Ví dụ:* `check_null.py`, `check_mapping.py`, `verify_upload.py`.
 
@@ -374,4 +393,4 @@ Nhóm áp dụng quy tắc commit nghiêm ngặt theo định dạng Angular com
 
 **Ví dụ:** `feat(db): [SCRUM-40] add local ETL pipeline and supabase storage connector`
 
-*Bạn có thể sử dụng bộ hỗ trợ commit tích hợp sẵn tại file [commit_helper.py](file:///D:/Learning/FPT_polytechnic/Sem6/datn_outlier_hs_nlmt/ultils/commit_helper.py) để kiểm tra tính hợp lệ trước khi đẩy mã nguồn lên GitHub.*
+*Bạn có thể sử dụng bộ hỗ trợ commit tích hợp sẵn tại file [commit_helper.py](file:///D:/Learning/FPT_polytechnic/Sem6/datn_outlier_hs_nlmt/commit_helper.py) để kiểm tra tính hợp lệ trước khi đẩy mã nguồn lên GitHub.*
