@@ -3,20 +3,31 @@ Load fact tables từ MinIO vào PostgreSQL (chunk 50K rows)
 fact_solar_energy_gen → fact_weather
 """
 import io
+import os
+from pathlib import Path
 import pandas as pd
 import psycopg2
 from psycopg2.extras import execute_values
 import boto3
 from botocore.client import Config
+from dotenv import load_dotenv
+
+load_dotenv(Path(__file__).resolve().parents[3] / ".env")
 
 S3 = dict(
-    endpoint_url="http://localhost:9000",
-    aws_access_key_id="minioadmin",
-    aws_secret_access_key="minioadmin",
+    endpoint_url=os.getenv("MINIO_ENDPOINT", "http://localhost:9000"),
+    aws_access_key_id=os.getenv("MINIO_KEY", "minioadmin"),
+    aws_secret_access_key=os.getenv("MINIO_SECRET", "minioadmin"),
     config=Config(signature_version="s3v4"),
 )
-BUCKET = "raw-data"
-DB     = "host=localhost port=5432 dbname=postgres user=postgres password=postgres"
+BUCKET = os.getenv("MINIO_BUCKET", "raw-data")
+DB = (
+    f"host={os.getenv('DB_HOST', 'localhost')} "
+    f"port={os.getenv('DB_PORT', '5432')} "
+    f"dbname={os.getenv('DB_NAME', 'postgres')} "
+    f"user={os.getenv('DB_USER', 'postgres')} "
+    f"password={os.getenv('DB_PASSWORD', 'postgres')}"
+)
 CHUNK  = 50_000
 
 def get_lookups(cur):
