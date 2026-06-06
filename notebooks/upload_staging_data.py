@@ -40,58 +40,58 @@ log = logging.getLogger()
 
 # Map CSV → bảng Supabase 
 FILES = [
-    # stg_solar_energy_generation 
-    {
-        "path":       data("Solar_Energy_Generation.csv"),
-        "table":      "stg_solar_energy_generation",
-        "columns":    ["CampusKey", "SiteKey", "Timestamp", "SolarGeneration"],
-        "rename": {
-            "CampusKey":       "campuskey",
-            "SiteKey":         "sitekey",
-            "Timestamp":       "timestamp",
-            "SolarGeneration": "solargeneration",
-        },
-        "batch_size": 10000,
-    },
+    # # stg_solar_energy_generation 
+    # {
+    #     "path":       data("Solar_Energy_Generation.csv"),
+    #     "table":      "stg_solar_energy_generation",
+    #     "columns":    ["CampusKey", "SiteKey", "Timestamp", "SolarGeneration"],
+    #     "rename": {
+    #         "CampusKey":       "campuskey",
+    #         "SiteKey":         "sitekey",
+    #         "Timestamp":       "timestamp",
+    #         "SolarGeneration": "solargeneration",
+    #     },
+    #     "batch_size": 10000,
+    # },
 
-    # stg_solar_site_details 
-    {
-        "path":    data("Solar_Site_Details.csv"),
-        "table":   "stg_solar_site_details",
-        "columns": ["CampusKey", "SiteKey", "kWp", "Number of panels",
-                    "Panel", "Inverter", "Optimizers", "Metric", "lat", "Lon"],
-        "rename": {
-            "CampusKey":        "campuskey",
-            "SiteKey":          "sitekey",
-            "kWp":              "kwp",
-            "Number of panels": "number_of_panels",
-            "Panel":            "panel",
-            "Inverter":         "inverter",
-            "Optimizers":       "optimizers",
-            "Metric":           "metric",
-            "lat":              "lat",
-            "Lon":              "lon",
-        },
-        "batch_size": 1000,
-    },
+    # # stg_solar_site_details 
+    # {
+    #     "path":    data("Solar_Site_Details.csv"),
+    #     "table":   "stg_solar_site_details",
+    #     "columns": ["CampusKey", "SiteKey", "kWp", "Number of panels",
+    #                 "Panel", "Inverter", "Optimizers", "Metric", "lat", "Lon"],
+    #     "rename": {
+    #         "CampusKey":        "campuskey",
+    #         "SiteKey":          "sitekey",
+    #         "kWp":              "kwp",
+    #         "Number of panels": "number_of_panels",
+    #         "Panel":            "panel",
+    #         "Inverter":         "inverter",
+    #         "Optimizers":       "optimizers",
+    #         "Metric":           "metric",
+    #         "lat":              "lat",
+    #         "Lon":              "lon",
+    #     },
+    #     "batch_size": 1000,
+    # },
 
-    #  stg_open_meteo_weather 
-    {
-        "path":    data("open_meteo_weather_raw_2023.csv"),
-        "encoding": "utf-8-sig",
-        "table":   "stg_open_meteo_weather_raw_2023",
-        "columns": [
-            "timestamp", "shortwave_radiation", "direct_radiation",
-            "diffuse_radiation", "temperature_2m", "weather_code", "is_day",
-            "cloud_cover", "cloud_cover_low", "cloud_cover_mid",
-            "cloud_cover_high", "wind_speed_10m", "precipitation",
-            "sunshine_duration", "SiteKey", "latitude", "longitude",
-        ],
-        "rename": {
-            "SiteKey": "sitekey",
-        },
-        "batch_size": 5000,
-    },
+    # #  stg_open_meteo_weather 
+    # {
+    #     "path":    data("open_meteo_weather_raw_2023.csv"),
+    #     "encoding": "utf-8-sig",
+    #     "table":   "stg_open_meteo_weather_raw_2023",
+    #     "columns": [
+    #         "timestamp", "shortwave_radiation", "direct_radiation",
+    #         "diffuse_radiation", "temperature_2m", "weather_code", "is_day",
+    #         "cloud_cover", "cloud_cover_low", "cloud_cover_mid",
+    #         "cloud_cover_high", "wind_speed_10m", "precipitation",
+    #         "sunshine_duration", "SiteKey", "latitude", "longitude",
+    #     ],
+    #     "rename": {
+    #         "SiteKey": "sitekey",
+    #     },
+    #     "batch_size": 5000,
+    # },
 
     # stg_campus_Data
     {
@@ -167,6 +167,9 @@ def upload_file(cfg: dict, engine) -> bool:
     try:
         start = time.time()
         total = 0
+        with engine.begin() as conn:
+            conn.execute(text(f"TRUNCATE TABLE {SCHEMA}.{table} RESTART IDENTITY CASCADE;"))
+        log.info(f"Đã dọn sạch (TRUNCATE) bảng {SCHEMA}.{table}")
 
         for chunk in pd.read_csv(
             file_path,
@@ -203,7 +206,7 @@ def upload_file(cfg: dict, engine) -> bool:
         return False
 
 
-# Main ──────────────────────
+# Main 
 def main():
     log.info("=" * 55)
     log.info("   SOLAR DATA → SUPABASE STAGING")
