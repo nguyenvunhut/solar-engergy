@@ -92,6 +92,32 @@ FILES = [
         },
         "batch_size": 5000,
     },
+
+    # stg_campus_Data
+    {
+        "path":    data("campus_meta.csv"),
+        "table":   "stg_campus_meta",
+        "columns": ["id","name","capacity"],
+        "rename": {
+            "id":  "id",
+            "name": "name",
+            "capacity": "capacity",
+        },
+        "batch_size": 1000,
+    },
+     # stg_calendar
+    {
+        "path":    data("calender.csv"),
+        "table":   "stg_calender",
+        "columns": ["date","is_holiday","is_semester","is_exam"],
+        "rename": {
+            "date": "date",
+            "is_holiday": "is_holiday",
+            "is_semester": "is_semester",
+            "is_exam": "is_exam",
+        },
+        "batch_size": 1000,
+    },
 ]
 
 
