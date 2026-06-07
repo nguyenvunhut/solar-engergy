@@ -1,5 +1,5 @@
 """
-upload.py - Load dữ liệu CSV vào các bảng staging có sẵn trên Supabase
+upload_staging_data.py - Load dữ liệu CSV vào các bảng staging có sẵn trên Supabase
 Cài: pip install pandas sqlalchemy psycopg2-binary python-dotenv
 """
 
@@ -39,61 +39,61 @@ log = logging.getLogger()
 
 
 # Map CSV → bảng Supabase 
-FILES = [
-    # # stg_solar_energy_generation 
-    # {
-    #     "path":       data("Solar_Energy_Generation.csv"),
-    #     "table":      "stg_solar_energy_generation",
-    #     "columns":    ["CampusKey", "SiteKey", "Timestamp", "SolarGeneration"],
-    #     "rename": {
-    #         "CampusKey":       "campuskey",
-    #         "SiteKey":         "sitekey",
-    #         "Timestamp":       "timestamp",
-    #         "SolarGeneration": "solargeneration",
-    #     },
-    #     "batch_size": 10000,
-    # },
+FILES =[
+    # stg_solar_energy_generation 
+    {
+        "path":       data("Solar_Energy_Generation.csv"),
+        "table":      "stg_solar_energy_generation",
+        "columns":    ["CampusKey", "SiteKey", "Timestamp", "SolarGeneration"],
+        "rename": {
+            "CampusKey":       "campuskey",
+            "SiteKey":         "sitekey",
+            "Timestamp":       "timestamp",
+            "SolarGeneration": "solargeneration",
+        },
+        "batch_size": 10000,
+    },
 
-    # # stg_solar_site_details 
-    # {
-    #     "path":    data("Solar_Site_Details.csv"),
-    #     "table":   "stg_solar_site_details",
-    #     "columns": ["CampusKey", "SiteKey", "kWp", "Number of panels",
-    #                 "Panel", "Inverter", "Optimizers", "Metric", "lat", "Lon"],
-    #     "rename": {
-    #         "CampusKey":        "campuskey",
-    #         "SiteKey":          "sitekey",
-    #         "kWp":              "kwp",
-    #         "Number of panels": "number_of_panels",
-    #         "Panel":            "panel",
-    #         "Inverter":         "inverter",
-    #         "Optimizers":       "optimizers",
-    #         "Metric":           "metric",
-    #         "lat":              "lat",
-    #         "Lon":              "lon",
-    #     },
-    #     "batch_size": 1000,
-    # },
+    # stg_solar_site_details 
+    {
+        "path":    data("Solar_Site_Details.csv"),
+        "table":   "stg_solar_site_details",
+        "columns": ["CampusKey", "SiteKey", "kWp", "Number of panels",
+                    "Panel", "Inverter", "Optimizers", "Metric", "lat", "Lon"],
+        "rename": {
+            "CampusKey":        "campuskey",
+            "SiteKey":          "sitekey",
+            "kWp":              "kwp",
+            "Number of panels": "number_of_panels",
+            "Panel":            "panel",
+            "Inverter":         "inverter",
+            "Optimizers":       "optimizers",
+            "Metric":           "metric",
+            "lat":              "lat",
+            "Lon":              "lon",
+        },
+        "batch_size": 1000,
+    },
 
-    # #  stg_open_meteo_weather 
-    # {
-    #     "path":    data("open_meteo_weather_raw_2023.csv"),
-    #     "encoding": "utf-8-sig",
-    #     "table":   "stg_open_meteo_weather_raw_2023",
-    #     "columns": [
-    #         "timestamp", "shortwave_radiation", "direct_radiation",
-    #         "diffuse_radiation", "temperature_2m", "weather_code", "is_day",
-    #         "cloud_cover", "cloud_cover_low", "cloud_cover_mid",
-    #         "cloud_cover_high", "wind_speed_10m", "precipitation",
-    #         "sunshine_duration", "SiteKey", "latitude", "longitude",
-    #     ],
-    #     "rename": {
-    #         "SiteKey": "sitekey",
-    #     },
-    #     "batch_size": 5000,
-    # },
+    #  stg_open_meteo_weather 
+    {
+        "path":    data("open_meteo_weather_raw_2023.csv"),
+        "encoding": "utf-8-sig",
+        "table":   "stg_open_meteo_weather_raw_2023",
+        "columns": [
+            "timestamp", "shortwave_radiation", "direct_radiation",
+            "diffuse_radiation", "temperature_2m", "weather_code", "is_day",
+            "cloud_cover", "cloud_cover_low", "cloud_cover_mid",
+            "cloud_cover_high", "wind_speed_10m", "precipitation",
+            "sunshine_duration", "SiteKey", "latitude", "longitude",
+        ],
+        "rename": {
+            "SiteKey": "sitekey",
+        },
+        "batch_size": 5000,
+    },
 
-    # stg_campus_Data
+    # stg_campus_meta
     {
         "path":    data("campus_meta.csv"),
         "table":   "stg_campus_meta",
@@ -117,11 +117,11 @@ FILES = [
             "is_exam": "is_exam",
         },
         "batch_size": 1000,
-    },
-]
+    }
+    ]
 
 
-# Kết nối Supabase ──────────
+# Kết nối Supabase 
 def get_engine():
     url = (
         f"postgresql+psycopg2://{SUPABASE_USER}:{SUPABASE_PASSWORD}"
@@ -135,7 +135,7 @@ def get_engine():
     return engine
 
 
-# Lấy cột thực tế của bảng trên Supabase ───────────────────────────────
+# Lấy cột thực tế của bảng trên Supabase 
 def get_table_columns(engine, table: str) -> list[str]:
     sql = text("""
         SELECT column_name
@@ -148,7 +148,7 @@ def get_table_columns(engine, table: str) -> list[str]:
         return [row[0] for row in result]
 
 
-# Upload 1 file ─────────────
+# Upload 1 file CSV vào bảng staging tương ứng trên Supabase
 def upload_file(cfg: dict, engine) -> bool:
     file_path  = Path(cfg["path"])
     table      = cfg["table"]
@@ -223,7 +223,7 @@ def main():
             fail += 1
 
     log.info("=" * 55)
-    log.info(f"🎉 Hoàn thành: {ok} thành công  |  {fail} thất bại")
+    log.info(f"Hoàn thành: {ok} thành công  |  {fail} thất bại")
     engine.dispose()
 
 
