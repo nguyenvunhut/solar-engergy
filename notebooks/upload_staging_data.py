@@ -1,12 +1,11 @@
 """
-upload_staging_data.py - Load dữ liệu CSV vào các bảng staging có sẵn trên Supabase
+upload.py - Load dữ liệu CSV từ Supabase Storage vào các bảng staging
 Cài: pip install pandas sqlalchemy psycopg2-binary python-dotenv
 """
 
-import os
 import logging
 import time
-from pathlib import Path
+import os
 
 import pandas as pd
 from dotenv import load_dotenv
@@ -14,21 +13,18 @@ from sqlalchemy import create_engine, text
 
 load_dotenv()
 
-# Đường dẫn tuyệt đối từ vị trí file upload.py
-BASE_DIR = os.path.dirname(os.getcwd())
-DATA_DIR = os.path.join(BASE_DIR, "data", "raw")
-
-def data(filename):
-    """Trả về đường dẫn tuyệt đối đến file CSV trong thư mục data/raw/"""
-    return os.path.join(DATA_DIR, filename)
-
-# Kết nối 
+#  Kết nối 
 SUPABASE_HOST     = os.getenv("DB_HOST")
 SUPABASE_PORT     = os.getenv("DB_PORT", "5432")
 SUPABASE_DB       = os.getenv("DB_NAME", "postgres")
 SUPABASE_USER     = os.getenv("DB_USER")
 SUPABASE_PASSWORD = os.getenv("DB_PASSWORD")
-SCHEMA            = "staging"
+
+# URL gốc của Supabase Storage bucket (lấy trong Storage → Settings)
+# 
+STORAGE_BASE_URL  = os.getenv("STORAGE_BASE_URL", "https://gocnjdtutobgalyqomwz.supabase.co/storage/v1/object/public/raw_solar_data")
+
+SCHEMA = "staging"
 
 logging.basicConfig(
     level=logging.INFO,
@@ -38,13 +34,19 @@ logging.basicConfig(
 log = logging.getLogger()
 
 
-# Map CSV → bảng Supabase 
-FILES =[
-    # stg_solar_energy_generation 
+#  Helper: ghép URL
+def storage(filename: str) -> str:
+    """Trả về public URL đến file CSV trong Supabase Storage."""
+    return f"{STORAGE_BASE_URL.rstrip('/')}/{filename}"
+
+
+#  Map file → bảng Supabase 
+FILES = [
+    #  stg_solar_energy_generation 
     {
-        "path":       data("Solar_Energy_Generation.csv"),
+        "url":        storage("Solar_Energy_Generation.csv"),
         "table":      "stg_solar_energy_generation",
-        "columns":    ["CampusKey", "SiteKey", "Timestamp", "SolarGeneration"],
+         "columns":    ["CampusKey", "SiteKey", "Timestamp", "SolarGeneration"],
         "rename": {
             "CampusKey":       "campuskey",
             "SiteKey":         "sitekey",
@@ -54,9 +56,9 @@ FILES =[
         "batch_size": 10000,
     },
 
-    # stg_solar_site_details 
+    #  stg_solar_site_details 
     {
-        "path":    data("Solar_Site_Details.csv"),
+        "url":     storage("Solar_Site_Details.csv"),
         "table":   "stg_solar_site_details",
         "columns": ["CampusKey", "SiteKey", "kWp", "Number of panels",
                     "Panel", "Inverter", "Optimizers", "Metric", "lat", "Lon"],
@@ -77,9 +79,8 @@ FILES =[
 
     #  stg_open_meteo_weather 
     {
-        "path":    data("open_meteo_weather_raw_2023.csv"),
-        "encoding": "utf-8-sig",
-        "table":   "stg_open_meteo_weather_raw_2023",
+        "url":     storage("open_meteo_weather_raw_2020_2022.csv"),
+        "table":   "stg_open_meteo_weather_raw",
         "columns": [
             "timestamp", "shortwave_radiation", "direct_radiation",
             "diffuse_radiation", "temperature_2m", "weather_code", "is_day",
@@ -92,22 +93,21 @@ FILES =[
         },
         "batch_size": 5000,
     },
-
     # stg_campus_meta
     {
-        "path":    data("campus_meta.csv"),
+        "url":    storage("campus_meta.csv"),
         "table":   "stg_campus_meta",
         "columns": ["id","name","capacity"],
         "rename": {
             "id":  "id",
             "name": "name",
-            "capacity": "capacity",
+            "capacity": "capicity",
         },
         "batch_size": 1000,
     },
      # stg_calendar
     {
-        "path":    data("calender.csv"),
+        "url":    storage("calender.csv"),
         "table":   "stg_calender",
         "columns": ["date","is_holiday","is_semester","is_exam"],
         "rename": {
@@ -117,11 +117,11 @@ FILES =[
             "is_exam": "is_exam",
         },
         "batch_size": 1000,
-    }
-    ]
+    },
+]
 
 
-# Kết nối Supabase 
+#  Kết nối Supabase 
 def get_engine():
     url = (
         f"postgresql+psycopg2://{SUPABASE_USER}:{SUPABASE_PASSWORD}"
@@ -135,7 +135,7 @@ def get_engine():
     return engine
 
 
-# Lấy cột thực tế của bảng trên Supabase 
+#  Lấy cột thực tế của bảng trên Supabase 
 def get_table_columns(engine, table: str) -> list[str]:
     sql = text("""
         SELECT column_name
@@ -148,37 +148,42 @@ def get_table_columns(engine, table: str) -> list[str]:
         return [row[0] for row in result]
 
 
-# Upload 1 file CSV vào bảng staging tương ứng trên Supabase
+#  Upload 1 file 
 def upload_file(cfg: dict, engine) -> bool:
-    file_path  = Path(cfg["path"])
+    url        = cfg["url"]
     table      = cfg["table"]
     columns    = cfg["columns"]
     rename     = cfg.get("rename", {})
     batch_size = cfg.get("batch_size", 5000)
-    encoding   = cfg.get("encoding", "utf-8") 
 
-    if not file_path.exists():
-        log.warning(f"Không tìm thấy: {file_path.name}  →  bỏ qua\n")
-        return False
+    filename = url.split("/")[-1]
+    db_cols  = get_table_columns(engine, table)
 
-    db_cols = get_table_columns(engine, table)
-    log.info(f"{file_path.name}  →  {SCHEMA}.{table}")
+    log.info(f"{filename}  →  {SCHEMA}.{table}")
+    log.info(f" {url}")
 
     try:
+        with engine.begin() as conn:
+            conn.execute(text(f"TRUNCATE TABLE {SCHEMA}.{table} RESTART IDENTITY CASCADE"))
+        log.info(f" Đã truncate {SCHEMA}.{table}")
         start = time.time()
         total = 0
-        with engine.begin() as conn:
-            conn.execute(text(f"TRUNCATE TABLE {SCHEMA}.{table} RESTART IDENTITY CASCADE;"))
-        log.info(f"Đã dọn sạch (TRUNCATE) bảng {SCHEMA}.{table}")
 
+        # pd.read_csv đọc thẳng từ URL — không cần tải tay
         for chunk in pd.read_csv(
-            file_path,
+            url,
             dtype=str,
+            sep=";",
             usecols=columns,
-            encoding=encoding,
+            encoding="utf-8",
             chunksize=batch_size,
             on_bad_lines="skip",
         ):
+            chunk.columns = chunk.columns.str.strip()
+ 
+            # Chỉ lấy các cột cần thiết có trong file
+            available = [c for c in columns if c in chunk.columns]
+            chunk = chunk[available]
             chunk = chunk.rename(columns=rename)
 
             valid_cols = [c for c in chunk.columns if c in db_cols]
@@ -206,11 +211,11 @@ def upload_file(cfg: dict, engine) -> bool:
         return False
 
 
-# Main 
+#  Main 
 def main():
     log.info("=" * 55)
     log.info("   SOLAR DATA → SUPABASE STAGING")
-    log.info(f"   Data dir: {DATA_DIR}")
+    log.info(f"   Storage: {STORAGE_BASE_URL}")
     log.info("=" * 55 + "\n")
 
     engine = get_engine()
