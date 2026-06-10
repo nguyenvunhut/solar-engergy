@@ -1,13 +1,15 @@
 import boto3
 import os
-from botocore.client import Config
-
-# Config — đổi 3 dòng này khi lên Supabase
-ENDPOINT  = "http://localhost:9000"
-KEY       = "minioadmin"
-SECRET    = "minioadmin"
-BUCKET    = "raw-data"
 from pathlib import Path
+from botocore.client import Config
+from dotenv import load_dotenv
+
+load_dotenv(Path(__file__).resolve().parents[3] / ".env")
+
+ENDPOINT  = os.getenv("MINIO_ENDPOINT", "http://localhost:9000")
+KEY       = os.getenv("MINIO_KEY", "minioadmin")
+SECRET    = os.getenv("MINIO_SECRET", "minioadmin")
+BUCKET    = os.getenv("MINIO_BUCKET", "raw-data")
 DATA_DIR  = str(Path(__file__).resolve().parents[3] / "data" / "raw")
 
 s3 = boto3.client(

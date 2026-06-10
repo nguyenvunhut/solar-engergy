@@ -11,12 +11,25 @@ typer
 # Data pipeline
 pandas
 numpy
+pyarrow
 psycopg2-binary
 sqlalchemy
 boto3
+
+# Notebooks and EDA
+jupyter
+notebook
+ipykernel
+matplotlib
+seaborn
+scipy
+scikit-learn
+statsmodels
+xgboost
+lightgbm
 
 # Crawl and geocoding
 requests
 geopy
 
--e .
+# -e .
