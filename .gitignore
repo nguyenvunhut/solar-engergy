@@ -41,6 +41,9 @@ reports/**/*.toc
 reports/**/*.synctex.gz
 reports/**/*.fls
 reports/**/*.fdb_latexmk
+reports/Section*.tex
+reports/appendix.tex
+reports/report config.tex
 !reports/figures/
 !reports/figures/**
 !reports/dashboards/
