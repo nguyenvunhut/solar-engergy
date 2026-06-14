@@ -30,6 +30,46 @@ data/raw/*
 data/processed/*
 !data/raw/.gitkeep
 !data/processed/.gitkeep
+
+# Local report outputs generated from notebooks/scripts.
+# Keep figures and dashboards available for approved commits.
+reports/**/*.csv
+reports/**/*.aux
+reports/**/*.log
+reports/**/*.out
+reports/**/*.toc
+reports/**/*.synctex.gz
+reports/**/*.fls
+reports/**/*.fdb_latexmk
+!reports/figures/
+!reports/figures/**
+!reports/dashboards/
+!reports/dashboards/**
+!reports/dashboard/
+!reports/dashboard/**
+
+# Local outlier/EDA artifact folders. Keep official_thesis, figures, dashboard(s).
+**/correlation_feature_analysis/
+**/final_final_final/
+**/final_rolling_compare/
+**/local_full_outlier_visualization/
+**/outlier_cut_experiment/
+**/phase1_univariate_validation/
+**/radiation_context_outlier/
+**/radiation_quantile_context/
+**/solar_day_night_hourly_outlier/
+**/solar_radiation_context_outlier/
+**/solar_site_hourly_boxplots/
+**/solar_time_block_outlier_review/
+**/staging_buffer_outlier/
+**/outlier_audit/
+**/outlier_audit_quantile/
+**/outlier_evidence/
+**/outlier_flag_pipeline/
+**/outlier_flag_pipeline_rolling_only/
+
+# Local generated outlier report drafts.
+docs/scrum_6_business_logic_eda/2026_06_10_bao_cao_outlier_cut_experiment_pandas_TanDat.tex
 create_branches.sh
 pgadmin/
 git_workflow.md
