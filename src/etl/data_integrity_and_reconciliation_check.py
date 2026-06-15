@@ -13,7 +13,7 @@ load_dotenv(find_dotenv())
 
 
 # 2. CÁC HÀM XỬ LÝ (FUNCTIONS)
-def get_engine():
+def get_engine() -> any:
     """Hàm khởi tạo kết nối tới Supabase bằng SQLAlchemy"""
     SUPABASE_USER = os.getenv("DB_USER", "postgres")
     SUPABASE_PASSWORD = os.getenv("DB_PASSWORD", "your_password")
@@ -36,7 +36,7 @@ def get_engine():
     return engine
 
 
-def run_quality_check(engine):
+def run_quality_check(engine: any) -> None:
     """Hàm chạy câu truy vấn kiểm tra Null và Duplicate cho các bảng Dim/Fact trong Staging"""
 
     sql_query = """
@@ -92,7 +92,7 @@ def run_quality_check(engine):
     log.info("===========================================\n")
 
 
-def compare_staging_vs_dw(engine):
+def compare_staging_vs_dw(engine: any) -> None:
     """Hàm đối chiếu số lượng dòng (Row Count) giữa Staging và Data Warehouse"""
 
     sql_query = """
@@ -135,7 +135,7 @@ def compare_staging_vs_dw(engine):
 
 
 # 3. HÀM MAIN (ĐIỀU PHỐI)
-def main():
+def main() -> None:
     STORAGE_BASE_URL = os.getenv("STORAGE_BASE_URL", "Local/Cloud")
 
     log.info("=" * 55)

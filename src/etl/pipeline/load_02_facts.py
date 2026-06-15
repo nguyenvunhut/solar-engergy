@@ -33,7 +33,7 @@ DB = (
 CHUNK = 50_000
 
 
-def get_lookups(cur):
+def get_lookups(cur: any) -> tuple[dict, dict, dict, dict]:
     cur.execute("SELECT full_date::text, date_id FROM dim_date")
     date_map = {r[0]: r[1] for r in cur.fetchall()}
 

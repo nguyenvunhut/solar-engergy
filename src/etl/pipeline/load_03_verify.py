@@ -36,19 +36,19 @@ PASS = "[PASS]"
 FAIL = "[FAIL]"
 
 
-def read_csv(s3, key):
+def read_csv(s3: any, key: str) -> pd.DataFrame:
     obj = s3.get_object(Bucket=BUCKET, Key=key)
     return pd.read_csv(io.BytesIO(obj["Body"].read()))
 
 
-def section(t):
+def section(t: str) -> None:
     print(f"\n{'=' * 60}\n  {t}\n{'=' * 60}")
 
 
 issues = []
 
 
-def check(ok, msg):
+def check(ok: bool, msg: str) -> None:
     status = PASS if ok else FAIL
     print(f"  {status} {msg}")
     if not ok:

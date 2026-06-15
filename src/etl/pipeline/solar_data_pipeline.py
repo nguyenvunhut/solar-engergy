@@ -18,7 +18,7 @@ OUTPUT_DIR = "pipeline_output"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 
-def export_csv(df: pd.DataFrame, filename: str):
+def export_csv(df: pd.DataFrame, filename: str) -> None:
     """Xuất DataFrame ra file CSV vào OUTPUT_DIR."""
     path = os.path.join(OUTPUT_DIR, filename)
     df.to_csv(path, index=False)
@@ -55,7 +55,7 @@ NIGHT_END = 5  # 05:30 → Kết thúc ban đêm
 # KHỞI TẠO KẾT NỐI DATABASE
 
 
-def get_engine():
+def get_engine() -> any:
     url = (
         f"postgresql+psycopg2://{SUPABASE_USER}:{SUPABASE_PASSWORD}"
         f"@{SUPABASE_HOST}:{SUPABASE_PORT}/{SUPABASE_DB}"
@@ -71,7 +71,7 @@ def get_engine():
 # THUẬT TOÁN XỬ LÝ TOÁN HỌC & LOGIC PHÂN TÍCH
 
 
-def get_null_gaps(series: pd.Series):
+def get_null_gaps(series: pd.Series) -> list[tuple[int, int, int]]:
     """Phát hiện và trả về list[(start_idx, end_idx, gap_size)] của các chuỗi NaN."""
     gaps = []
     in_gap = False
@@ -192,7 +192,7 @@ def regression_imputation_large_gaps_strict(
 # CHƯƠNG TRÌNH CHÍNH (MAIN )
 
 
-def main():
+def main() -> None:
     log.info("=" * 65)
     log.info("  SOLAR DATA PIPELINE — SUPABASE INTEGRATION")
     log.info("=" * 65)

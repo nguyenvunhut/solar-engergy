@@ -70,7 +70,7 @@ def qname(schema: str, table: str) -> str:
     return f"{quote_ident(schema)}.{quote_ident(table)}"
 
 
-def connect_pg8000():
+def connect_pg8000() -> any:
     load_dotenv(ENV_FILE)
     required = ["DB_HOST", "DB_PORT", "DB_NAME", "DB_USER", "DB_PASSWORD"]
     missing = [name for name in required if not os.getenv(name)]
@@ -87,7 +87,7 @@ def connect_pg8000():
     )
 
 
-def connect_psycopg2():
+def connect_psycopg2() -> any:
     load_dotenv(ENV_FILE)
     required = ["DB_HOST", "DB_PORT", "DB_NAME", "DB_USER", "DB_PASSWORD"]
     missing = [name for name in required if not os.getenv(name)]
@@ -104,7 +104,7 @@ def connect_psycopg2():
     )
 
 
-def fetch_one(cur, sql: str, params: tuple = ()) -> object:
+def fetch_one(cur: any, sql: str, params: tuple = ()) -> object:
     cur.execute(sql, params)
     row = cur.fetchone()
     return row[0] if row else None
@@ -119,7 +119,7 @@ def normalize_energy_text(value: str) -> str:
     return f"{Decimal(value).quantize(ENERGY_ROUND_QUANT):.12f}"
 
 
-def fingerprint_supabase(conn) -> dict[str, object]:
+def fingerprint_supabase(conn: any) -> dict[str, object]:
     cur = conn.cursor()
     try:
         cur.execute(
@@ -348,7 +348,7 @@ def run_verify_source(args: argparse.Namespace) -> int:
     return 0
 
 
-def inspect_staging(conn) -> None:
+def inspect_staging(conn: any) -> None:
     cur = conn.cursor()
     try:
         cur.execute(
@@ -397,7 +397,7 @@ def inspect_staging(conn) -> None:
         cur.close()
 
 
-def create_target_table(conn) -> None:
+def create_target_table(conn: any) -> None:
     cur = conn.cursor()
     try:
         cur.execute(
@@ -483,7 +483,7 @@ def read_csv_batches(path: Path, batch_size: int) -> Iterable[list[tuple]]:
         yield batch
 
 
-def truncate_target(conn) -> None:
+def truncate_target(conn: any) -> None:
     cur = conn.cursor()
     try:
         cur.execute(f"TRUNCATE TABLE {qname(SCHEMA, TARGET_TABLE)}")
@@ -491,7 +491,7 @@ def truncate_target(conn) -> None:
         cur.close()
 
 
-def insert_batch(conn, batch: list[tuple]) -> None:
+def insert_batch(conn: any, batch: list[tuple]) -> None:
     cur = conn.cursor()
     try:
         execute_values(
@@ -518,7 +518,7 @@ def insert_batch(conn, batch: list[tuple]) -> None:
         cur.close()
 
 
-def verify_target(conn, expected: CsvAudit) -> None:
+def verify_target(conn: any, expected: CsvAudit) -> None:
     cur = conn.cursor()
     try:
         cur.execute(

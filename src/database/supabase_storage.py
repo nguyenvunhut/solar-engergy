@@ -27,11 +27,11 @@ S3 = dict(
 BUCKET = os.getenv("SUPABASE_BUCKET", "raw-data")
 
 
-def get_client():
+def get_client() -> boto3.client:
     return boto3.client("s3", **S3)
 
 
-def list_files(prefix=""):
+def list_files(prefix: str = "") -> list[str]:
     s3 = get_client()
     res = s3.list_objects_v2(Bucket=BUCKET, Prefix=prefix)
     return [obj["Key"] for obj in res.get("Contents", [])]
@@ -44,7 +44,7 @@ def read_csv(key: str) -> pd.DataFrame:
     return pd.read_csv(io.BytesIO(obj["Body"].read()))
 
 
-def upload_file(local_path: str, key: str):
+def upload_file(local_path: str, key: str) -> None:
     s3 = get_client()
     s3.upload_file(local_path, BUCKET, key)
     print(f"Uploaded: {key}")

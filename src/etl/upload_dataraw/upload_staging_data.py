@@ -145,7 +145,7 @@ FILES = [
 
 
 #  Kết nối Supabase
-def get_engine():
+def get_engine() -> any:
     url = (
         f"postgresql+psycopg2://{SUPABASE_USER}:{SUPABASE_PASSWORD}"
         f"@{SUPABASE_HOST}:{SUPABASE_PORT}/{SUPABASE_DB}"
@@ -159,7 +159,7 @@ def get_engine():
 
 
 #  Lấy cột thực tế của bảng trên Supabase
-def get_table_columns(engine, table: str) -> list[str]:
+def get_table_columns(engine: any, table: str) -> list[str]:
     sql = text("""
         SELECT column_name
         FROM information_schema.columns
@@ -172,7 +172,7 @@ def get_table_columns(engine, table: str) -> list[str]:
 
 
 #  Upload 1 file
-def upload_file(cfg: dict, engine) -> bool:
+def upload_file(cfg: dict, engine: any) -> bool:
     url = cfg["url"]
     table = cfg["table"]
     columns = cfg["columns"]
@@ -237,7 +237,7 @@ def upload_file(cfg: dict, engine) -> bool:
 
 
 #  Main
-def main():
+def main() -> None:
     log.info("=" * 55)
     log.info("   SOLAR DATA → SUPABASE STAGING")
     log.info(f"   Storage: {STORAGE_BASE_URL}")

@@ -59,12 +59,12 @@ WMO = {
 }
 
 
-def read_csv(s3, key):
+def read_csv(s3: any, key: str) -> pd.DataFrame:
     obj = s3.get_object(Bucket=BUCKET, Key=key)
     return pd.read_csv(io.BytesIO(obj["Body"].read()))
 
 
-def log(msg):
+def log(msg: str) -> None:
     print(f"  [OK] {msg}")
 
 

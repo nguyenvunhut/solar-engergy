@@ -260,7 +260,7 @@ TRUNCATE_ORDER = (
 )
 
 
-def connect_pg8000():
+def connect_pg8000() -> any:
     import pg8000.dbapi
 
     load_dotenv(ENV_FILE)
@@ -279,7 +279,7 @@ def connect_pg8000():
     )
 
 
-def count_select(conn, sql: str) -> int:
+def count_select(conn: any, sql: str) -> int:
     cur = conn.cursor()
     cur.execute(f"SELECT COUNT(*) FROM ({sql}) AS q")
     value = int(cur.fetchone()[0])
@@ -287,7 +287,7 @@ def count_select(conn, sql: str) -> int:
     return value
 
 
-def count_table(conn, table: str) -> int:
+def count_table(conn: any, table: str) -> int:
     cur = conn.cursor()
     cur.execute(f"SELECT COUNT(*) FROM {SCHEMA}.{table}")
     value = int(cur.fetchone()[0])
@@ -295,14 +295,14 @@ def count_table(conn, table: str) -> int:
     return value
 
 
-def truncate_buffers(conn) -> None:
+def truncate_buffers(conn: any) -> None:
     table_list = ", ".join(f"{SCHEMA}.{table}" for table in TRUNCATE_ORDER)
     cur = conn.cursor()
     cur.execute(f"TRUNCATE TABLE {table_list} RESTART IDENTITY")
     cur.close()
 
 
-def execute_load(conn, spec: LoadSpec) -> int:
+def execute_load(conn: any, spec: LoadSpec) -> int:
     cur = conn.cursor()
     cur.execute(spec.insert_sql)
     cur.close()
