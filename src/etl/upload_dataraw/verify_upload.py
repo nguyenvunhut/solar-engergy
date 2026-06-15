@@ -1,18 +1,17 @@
-import boto3
-import os
-import io
 import hashlib
-import csv
+import os
 from pathlib import Path
+
+import boto3
 from botocore.client import Config
 from dotenv import load_dotenv
 
 load_dotenv(Path(__file__).resolve().parents[3] / ".env")
 
 ENDPOINT = os.getenv("MINIO_ENDPOINT", "http://localhost:9000")
-KEY      = os.getenv("MINIO_KEY", "minioadmin")
-SECRET   = os.getenv("MINIO_SECRET", "minioadmin")
-BUCKET   = os.getenv("MINIO_BUCKET", "raw-data")
+KEY = os.getenv("MINIO_KEY", "minioadmin")
+SECRET = os.getenv("MINIO_SECRET", "minioadmin")
+BUCKET = os.getenv("MINIO_BUCKET", "raw-data")
 DATA_DIR = str(Path(__file__).resolve().parents[3] / "data" / "raw")
 
 s3 = boto3.client(
@@ -26,15 +25,19 @@ s3 = boto3.client(
 PASS = "[PASS]"
 FAIL = "[FAIL]"
 
+
 def md5(content: bytes) -> str:
     return hashlib.md5(content).hexdigest()
 
-print(f"\n{'='*60}")
+
+print(f"\n{'=' * 60}")
 print("  VERIFY UPLOAD INTEGRITY: Local vs MinIO")
-print(f"{'='*60}\n")
+print(f"{'=' * 60}\n")
 
 issues = []
-objects = {o["Key"]: o["Size"] for o in s3.list_objects_v2(Bucket=BUCKET).get("Contents", [])}
+objects = {
+    o["Key"]: o["Size"] for o in s3.list_objects_v2(Bucket=BUCKET).get("Contents", [])
+}
 
 for fname in sorted(os.listdir(DATA_DIR)):
     if not fname.endswith(".csv"):
@@ -57,7 +60,9 @@ for fname in sorted(os.listdir(DATA_DIR)):
     local_md5 = md5(local_bytes)
     minio_md5 = md5(minio_bytes)
     checksum_ok = local_md5 == minio_md5
-    print(f"    {PASS if checksum_ok else FAIL} MD5 checksum: {'match' if checksum_ok else f'MISMATCH  local={local_md5}  minio={minio_md5}'}")
+    print(
+        f"    {PASS if checksum_ok else FAIL} MD5 checksum: {'match' if checksum_ok else f'MISMATCH  local={local_md5}  minio={minio_md5}'}"
+    )
     if not checksum_ok:
         issues.append(f"{fname}: MD5 mismatch — file bị corrupt")
 
@@ -71,7 +76,9 @@ for fname in sorted(os.listdir(DATA_DIR)):
     local_rows = len(local_lines) - 1
     minio_rows = len(minio_lines) - 1
     rows_ok = local_rows == minio_rows
-    print(f"    {PASS if rows_ok else FAIL} Rows: local={local_rows:,} | minio={minio_rows:,}")
+    print(
+        f"    {PASS if rows_ok else FAIL} Rows: local={local_rows:,} | minio={minio_rows:,}"
+    )
     if not rows_ok:
         issues.append(f"{fname}: row count mismatch")
 
@@ -79,18 +86,30 @@ for fname in sorted(os.listdir(DATA_DIR)):
     local_cols = local_lines[0].strip().split(",")
     minio_cols = minio_lines[0].strip().split(",")
     cols_ok = local_cols == minio_cols
-    print(f"    {PASS if cols_ok else FAIL} Columns ({len(local_cols)}): {'match' if cols_ok else f'MISMATCH'}")
+    print(
+        f"    {PASS if cols_ok else FAIL} Columns ({len(local_cols)}): {'match' if cols_ok else 'MISMATCH'}"
+    )
     if not cols_ok:
         missing = set(local_cols) - set(minio_cols)
-        extra   = set(minio_cols) - set(local_cols)
-        if missing: print(f"          Missing cols: {missing}")
-        if extra:   print(f"          Extra cols:   {extra}")
+        extra = set(minio_cols) - set(local_cols)
+        if missing:
+            print(f"          Missing cols: {missing}")
+        if extra:
+            print(f"          Extra cols:   {extra}")
         issues.append(f"{fname}: column mismatch")
 
     # 5. Sample data — so sánh 3 dòng đầu và 3 dòng cuối
     for label, local_row, minio_row in [
-        ("Row 1", local_lines[1] if len(local_lines) > 1 else "", minio_lines[1] if len(minio_lines) > 1 else ""),
-        ("Row 2", local_lines[2] if len(local_lines) > 2 else "", minio_lines[2] if len(minio_lines) > 2 else ""),
+        (
+            "Row 1",
+            local_lines[1] if len(local_lines) > 1 else "",
+            minio_lines[1] if len(minio_lines) > 1 else "",
+        ),
+        (
+            "Row 2",
+            local_lines[2] if len(local_lines) > 2 else "",
+            minio_lines[2] if len(minio_lines) > 2 else "",
+        ),
         ("Last ", local_lines[-1], minio_lines[-1]),
     ]:
         ok = local_row == minio_row
@@ -100,7 +119,7 @@ for fname in sorted(os.listdir(DATA_DIR)):
 
     print()
 
-print(f"{'='*60}")
+print(f"{'=' * 60}")
 if not issues:
     print(f"  {PASS} Tất cả files toàn vẹn — sẵn sàng ETL!\n")
 else:

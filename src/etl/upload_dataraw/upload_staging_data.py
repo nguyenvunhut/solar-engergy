@@ -4,25 +4,28 @@ Cài: pip install pandas sqlalchemy psycopg2-binary python-dotenv
 """
 
 import logging
-import time
 import os
+import time
 
-import pandas as pd
 from dotenv import load_dotenv
+import pandas as pd
 from sqlalchemy import create_engine, text
 
 load_dotenv()
 
-#  Kết nối 
-SUPABASE_HOST     = os.getenv("DB_HOST")
-SUPABASE_PORT     = os.getenv("DB_PORT", "5432")
-SUPABASE_DB       = os.getenv("DB_NAME", "postgres")
-SUPABASE_USER     = os.getenv("DB_USER")
+#  Kết nối
+SUPABASE_HOST = os.getenv("DB_HOST")
+SUPABASE_PORT = os.getenv("DB_PORT", "5432")
+SUPABASE_DB = os.getenv("DB_NAME", "postgres")
+SUPABASE_USER = os.getenv("DB_USER")
 SUPABASE_PASSWORD = os.getenv("DB_PASSWORD")
 
 # URL gốc của Supabase Storage bucket (lấy trong Storage → Settings)
-# 
-STORAGE_BASE_URL  = os.getenv("STORAGE_BASE_URL", "https://gocnjdtutobgalyqomwz.supabase.co/storage/v1/object/public/raw_solar_data")
+#
+STORAGE_BASE_URL = os.getenv(
+    "STORAGE_BASE_URL",
+    "https://gocnjdtutobgalyqomwz.supabase.co/storage/v1/object/public/raw_solar_data",
+)
 
 SCHEMA = "staging"
 
@@ -40,53 +43,73 @@ def storage(filename: str) -> str:
     return f"{STORAGE_BASE_URL.rstrip('/')}/{filename}"
 
 
-#  Map file → bảng Supabase 
+#  Map file → bảng Supabase
 FILES = [
-    #  stg_solar_energy_generation 
+    #  stg_solar_energy_generation
     {
-        "url":        storage("Solar_Energy_Generation.csv"),
-        "table":      "stg_solar_energy_generation",
-         "columns":    ["CampusKey", "SiteKey", "Timestamp", "SolarGeneration"],
+        "url": storage("Solar_Energy_Generation.csv"),
+        "table": "stg_solar_energy_generation",
+        "columns": ["CampusKey", "SiteKey", "Timestamp", "SolarGeneration"],
         "rename": {
-            "CampusKey":       "campuskey",
-            "SiteKey":         "sitekey",
-            "Timestamp":       "timestamp",
+            "CampusKey": "campuskey",
+            "SiteKey": "sitekey",
+            "Timestamp": "timestamp",
             "SolarGeneration": "solargeneration",
         },
         "batch_size": 10000,
     },
-
-    #  stg_solar_site_details 
+    #  stg_solar_site_details
     {
-        "url":     storage("Solar_Site_Details.csv"),
-        "table":   "stg_solar_site_details",
-        "columns": ["CampusKey", "SiteKey", "kWp", "Number of panels",
-                    "Panel", "Inverter", "Optimizers", "Metric", "lat", "Lon"],
+        "url": storage("Solar_Site_Details.csv"),
+        "table": "stg_solar_site_details",
+        "columns": [
+            "CampusKey",
+            "SiteKey",
+            "kWp",
+            "Number of panels",
+            "Panel",
+            "Inverter",
+            "Optimizers",
+            "Metric",
+            "lat",
+            "Lon",
+        ],
         "rename": {
-            "CampusKey":        "campuskey",
-            "SiteKey":          "sitekey",
-            "kWp":              "kwp",
+            "CampusKey": "campuskey",
+            "SiteKey": "sitekey",
+            "kWp": "kwp",
             "Number of panels": "number_of_panels",
-            "Panel":            "panel",
-            "Inverter":         "inverter",
-            "Optimizers":       "optimizers",
-            "Metric":           "metric",
-            "lat":              "lat",
-            "Lon":              "lon",
+            "Panel": "panel",
+            "Inverter": "inverter",
+            "Optimizers": "optimizers",
+            "Metric": "metric",
+            "lat": "lat",
+            "Lon": "lon",
         },
         "batch_size": 1000,
     },
-
-    #  stg_open_meteo_weather 
+    #  stg_open_meteo_weather
     {
-        "url":     storage("open_meteo_weather_raw_2020_2022.csv"),
-        "table":   "stg_open_meteo_weather_raw",
+        "url": storage("open_meteo_weather_raw_2020_2022.csv"),
+        "table": "stg_open_meteo_weather_raw",
         "columns": [
-            "timestamp", "shortwave_radiation", "direct_radiation",
-            "diffuse_radiation", "temperature_2m", "weather_code", "is_day",
-            "cloud_cover", "cloud_cover_low", "cloud_cover_mid",
-            "cloud_cover_high", "wind_speed_10m", "precipitation",
-            "sunshine_duration", "SiteKey", "latitude", "longitude",
+            "timestamp",
+            "shortwave_radiation",
+            "direct_radiation",
+            "diffuse_radiation",
+            "temperature_2m",
+            "weather_code",
+            "is_day",
+            "cloud_cover",
+            "cloud_cover_low",
+            "cloud_cover_mid",
+            "cloud_cover_high",
+            "wind_speed_10m",
+            "precipitation",
+            "sunshine_duration",
+            "SiteKey",
+            "latitude",
+            "longitude",
         ],
         "rename": {
             "SiteKey": "sitekey",
@@ -95,21 +118,21 @@ FILES = [
     },
     # stg_campus_meta
     {
-        "url":    storage("campus_meta.csv"),
-        "table":   "stg_campus_meta",
-        "columns": ["id","name","capacity"],
+        "url": storage("campus_meta.csv"),
+        "table": "stg_campus_meta",
+        "columns": ["id", "name", "capacity"],
         "rename": {
-            "id":  "id",
+            "id": "id",
             "name": "name",
             "capacity": "capicity",
         },
         "batch_size": 1000,
     },
-     # stg_calendar
+    # stg_calendar
     {
-        "url":    storage("calender.csv"),
-        "table":   "stg_calender",
-        "columns": ["date","is_holiday","is_semester","is_exam"],
+        "url": storage("calender.csv"),
+        "table": "stg_calender",
+        "columns": ["date", "is_holiday", "is_semester", "is_exam"],
         "rename": {
             "date": "date",
             "is_holiday": "is_holiday",
@@ -121,7 +144,7 @@ FILES = [
 ]
 
 
-#  Kết nối Supabase 
+#  Kết nối Supabase
 def get_engine():
     url = (
         f"postgresql+psycopg2://{SUPABASE_USER}:{SUPABASE_PASSWORD}"
@@ -135,7 +158,7 @@ def get_engine():
     return engine
 
 
-#  Lấy cột thực tế của bảng trên Supabase 
+#  Lấy cột thực tế của bảng trên Supabase
 def get_table_columns(engine, table: str) -> list[str]:
     sql = text("""
         SELECT column_name
@@ -148,23 +171,25 @@ def get_table_columns(engine, table: str) -> list[str]:
         return [row[0] for row in result]
 
 
-#  Upload 1 file 
+#  Upload 1 file
 def upload_file(cfg: dict, engine) -> bool:
-    url        = cfg["url"]
-    table      = cfg["table"]
-    columns    = cfg["columns"]
-    rename     = cfg.get("rename", {})
+    url = cfg["url"]
+    table = cfg["table"]
+    columns = cfg["columns"]
+    rename = cfg.get("rename", {})
     batch_size = cfg.get("batch_size", 5000)
 
     filename = url.split("/")[-1]
-    db_cols  = get_table_columns(engine, table)
+    db_cols = get_table_columns(engine, table)
 
     log.info(f"{filename}  →  {SCHEMA}.{table}")
     log.info(f" {url}")
 
     try:
         with engine.begin() as conn:
-            conn.execute(text(f"TRUNCATE TABLE {SCHEMA}.{table} RESTART IDENTITY CASCADE"))
+            conn.execute(
+                text(f"TRUNCATE TABLE {SCHEMA}.{table} RESTART IDENTITY CASCADE")
+            )
         log.info(f" Đã truncate {SCHEMA}.{table}")
         start = time.time()
         total = 0
@@ -180,7 +205,7 @@ def upload_file(cfg: dict, engine) -> bool:
             on_bad_lines="skip",
         ):
             chunk.columns = chunk.columns.str.strip()
- 
+
             # Chỉ lấy các cột cần thiết có trong file
             available = [c for c in columns if c in chunk.columns]
             chunk = chunk[available]
@@ -191,12 +216,12 @@ def upload_file(cfg: dict, engine) -> bool:
             chunk.dropna(how="all", inplace=True)
 
             chunk.to_sql(
-                name      = table,
-                con       = engine,
-                schema    = SCHEMA,
-                if_exists = "append",
-                index     = False,
-                method    = "multi",
+                name=table,
+                con=engine,
+                schema=SCHEMA,
+                if_exists="append",
+                index=False,
+                method="multi",
             )
 
             total += len(chunk)
@@ -211,7 +236,7 @@ def upload_file(cfg: dict, engine) -> bool:
         return False
 
 
-#  Main 
+#  Main
 def main():
     log.info("=" * 55)
     log.info("   SOLAR DATA → SUPABASE STAGING")

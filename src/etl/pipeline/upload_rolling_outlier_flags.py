@@ -20,28 +20,38 @@ from __future__ import annotations
 
 import argparse
 import csv
-import os
 from dataclasses import dataclass
 from decimal import Decimal
+import os
 from pathlib import Path
 from typing import Iterable
 
+from dotenv import load_dotenv
 import pg8000.dbapi
 import psycopg2
 from psycopg2.extras import execute_values
-from dotenv import load_dotenv
-
 
 ROOT = Path(__file__).resolve().parents[3]
 ENV_FILE = ROOT / ".env"
-DEFAULT_FULL_CSV = ROOT / "reports/outlier_flag_pipeline_rolling_only/01_full_generation_rolling_flags.csv"
-DEFAULT_UPLOAD_CSV = ROOT / "reports/outlier_flag_pipeline_rolling_only/02_rolling_iqr_candidates.csv"
+DEFAULT_FULL_CSV = (
+    ROOT
+    / "reports/outlier_flag_pipeline_rolling_only/01_full_generation_rolling_flags.csv"
+)
+DEFAULT_UPLOAD_CSV = (
+    ROOT / "reports/outlier_flag_pipeline_rolling_only/02_rolling_iqr_candidates.csv"
+)
 
 SCHEMA = "staging"
 TARGET_TABLE = "fact_solar_energy_gen_rolling_outlier_flags"
 SOURCE_FACT_TABLE = "fact_solar_energy_gen"
 
-REQUIRED_COLUMNS = ["sitekey", "timestamp", "energy_generated_kwh", "hour", "rolling_outlier_flag"]
+REQUIRED_COLUMNS = [
+    "sitekey",
+    "timestamp",
+    "energy_generated_kwh",
+    "hour",
+    "rolling_outlier_flag",
+]
 
 
 @dataclass(frozen=True)
@@ -199,8 +209,16 @@ def fingerprint_csv_md5_compatible(path: Path) -> dict[str, object]:
             key = f"{sitekey}|{timestamp}"
 
             sitekeys.add(sitekey)
-            min_timestamp = timestamp if min_timestamp is None or timestamp < min_timestamp else min_timestamp
-            max_timestamp = timestamp if max_timestamp is None or timestamp > max_timestamp else max_timestamp
+            min_timestamp = (
+                timestamp
+                if min_timestamp is None or timestamp < min_timestamp
+                else min_timestamp
+            )
+            max_timestamp = (
+                timestamp
+                if max_timestamp is None or timestamp > max_timestamp
+                else max_timestamp
+            )
             flagged_rows += int(flag)
             site_sum += Decimal(md5_60(sitekey))
             timestamp_sum += Decimal(md5_60(timestamp))
@@ -263,7 +281,12 @@ def run_verify_source(args: argparse.Namespace) -> int:
             local_fp["max_timestamp"],
             db_fp["max_timestamp"] == local_fp["max_timestamp"],
         ),
-        ("site_sum", db_fp["site_sum"], local_fp["site_sum"], db_fp["site_sum"] == local_fp["site_sum"]),
+        (
+            "site_sum",
+            db_fp["site_sum"],
+            local_fp["site_sum"],
+            db_fp["site_sum"] == local_fp["site_sum"],
+        ),
         (
             "timestamp_sum",
             db_fp["timestamp_sum"],
@@ -278,8 +301,17 @@ def run_verify_source(args: argparse.Namespace) -> int:
         ),
     ]
 
-    energy_diff = abs(Decimal(str(db_fp["energy_sum"])) - Decimal(str(local_fp["energy_sum"])))
-    checks.append(("energy_sum_abs_diff", "0 tolerance <= 0.01", energy_diff, energy_diff <= Decimal("0.01")))
+    energy_diff = abs(
+        Decimal(str(db_fp["energy_sum"])) - Decimal(str(local_fp["energy_sum"]))
+    )
+    checks.append(
+        (
+            "energy_sum_abs_diff",
+            "0 tolerance <= 0.01",
+            energy_diff,
+            energy_diff <= Decimal("0.01"),
+        )
+    )
 
     ok = True
     for name, db_value, local_value, passed in checks:
@@ -287,7 +319,9 @@ def run_verify_source(args: argparse.Namespace) -> int:
         status = "PASS" if passed else "FAIL"
         print(f"  {status:<4s} {name:<22s} supabase={db_value} local={local_value}")
 
-    value_checksum_passed = db_fp["key_value_checksum"] == local_fp["key_value_checksum"]
+    value_checksum_passed = (
+        db_fp["key_value_checksum"] == local_fp["key_value_checksum"]
+    )
     value_checksum_status = "PASS" if value_checksum_passed else "WARN"
     print(
         f"  {value_checksum_status:<4s} {'key_value_checksum':<22s} "
@@ -296,7 +330,9 @@ def run_verify_source(args: argparse.Namespace) -> int:
 
     print()
     print(f"  local flagged_rows = {local_fp['flagged_rows']:,}")
-    print(f"  local flag_pct     = {local_fp['flagged_rows'] / local_fp['rows'] * 100:.12f}%")
+    print(
+        f"  local flag_pct     = {local_fp['flagged_rows'] / local_fp['rows'] * 100:.12f}%"
+    )
     if not value_checksum_passed:
         print(
             "  note: key_value_checksum is warning-only because double precision values can "
@@ -305,7 +341,9 @@ def run_verify_source(args: argparse.Namespace) -> int:
         )
 
     if not ok:
-        raise RuntimeError("Source verification failed: local CSV does not match Supabase source")
+        raise RuntimeError(
+            "Source verification failed: local CSV does not match Supabase source"
+        )
     print("Source verification passed.")
     return 0
 
@@ -327,8 +365,12 @@ def inspect_staging(conn) -> None:
         print(f"Tables/views found: {len(tables)}")
         for table_name, table_type in tables:
             try:
-                row_count = fetch_one(cur, f"SELECT COUNT(*) FROM {qname(SCHEMA, table_name)}")
-            except Exception as exc:  # keep inspect usable even if one object is not countable
+                row_count = fetch_one(
+                    cur, f"SELECT COUNT(*) FROM {qname(SCHEMA, table_name)}"
+                )
+            except (
+                Exception
+            ) as exc:  # keep inspect usable even if one object is not countable
                 row_count = f"ERROR: {exc}"
             print(f"  - {table_name:<48s} {table_type:<12s} rows={row_count}")
 
@@ -555,7 +597,10 @@ def run_apply_to_fact(_: argparse.Namespace) -> int:
     cur = conn.cursor()
     try:
         cur.execute("SET statement_timeout = '10min'")
-        print("BEGIN apply rolling_outlier_flag to staging.fact_solar_energy_gen", flush=True)
+        print(
+            "BEGIN apply rolling_outlier_flag to staging.fact_solar_energy_gen",
+            flush=True,
+        )
 
         cur.execute(
             f"""
@@ -573,7 +618,12 @@ def run_apply_to_fact(_: argparse.Namespace) -> int:
             f"duplicate_rows={flag_dupes:,} true_flags={flag_true:,}",
             flush=True,
         )
-        if (flag_rows, flag_distinct, flag_dupes, flag_true) != (100822, 100822, 0, 100822):
+        if (flag_rows, flag_distinct, flag_dupes, flag_true) != (
+            100822,
+            100822,
+            0,
+            100822,
+        ):
             raise RuntimeError("ABORT: flag table precheck failed")
 
         cur.execute(
@@ -589,7 +639,9 @@ def run_apply_to_fact(_: argparse.Namespace) -> int:
         unmatched = int(cur.fetchone()[0])
         print(f"unmatched flag rows to fact={unmatched:,}", flush=True)
         if unmatched != 0:
-            raise RuntimeError("ABORT: some flag rows do not match fact by sitekey+timestamp")
+            raise RuntimeError(
+                "ABORT: some flag rows do not match fact by sitekey+timestamp"
+            )
 
         cur.execute(
             f"""
@@ -618,7 +670,9 @@ def run_apply_to_fact(_: argparse.Namespace) -> int:
         )
 
         print("Reset all fact flags to false", flush=True)
-        cur.execute(f"UPDATE {qname(SCHEMA, SOURCE_FACT_TABLE)} SET rolling_outlier_flag = false")
+        cur.execute(
+            f"UPDATE {qname(SCHEMA, SOURCE_FACT_TABLE)} SET rolling_outlier_flag = false"
+        )
         print(f"rows reset false={cur.rowcount:,}", flush=True)
         if cur.rowcount != fact_rows:
             raise RuntimeError("ABORT: reset rowcount mismatch")
@@ -689,7 +743,10 @@ def run_apply_to_fact(_: argparse.Namespace) -> int:
             raise RuntimeError("ABORT: mapping verification failed")
 
         conn.commit()
-        print("COMMIT OK: rolling_outlier_flag applied to staging.fact_solar_energy_gen safely", flush=True)
+        print(
+            "COMMIT OK: rolling_outlier_flag applied to staging.fact_solar_energy_gen safely",
+            flush=True,
+        )
         return 0
     except Exception:
         conn.rollback()
@@ -717,7 +774,9 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest="command", required=True)
 
-    inspect_parser = sub.add_parser("inspect", help="Read-only check of staging tables and columns")
+    inspect_parser = sub.add_parser(
+        "inspect", help="Read-only check of staging tables and columns"
+    )
     inspect_parser.set_defaults(func=run_inspect)
 
     verify_parser = sub.add_parser(
@@ -727,11 +786,17 @@ def build_parser() -> argparse.ArgumentParser:
     verify_parser.add_argument("--csv", type=Path, default=DEFAULT_FULL_CSV)
     verify_parser.set_defaults(func=run_verify_source)
 
-    upload_parser = sub.add_parser("upload", help="Upload rolling flags to a separate review table")
+    upload_parser = sub.add_parser(
+        "upload", help="Upload rolling flags to a separate review table"
+    )
     upload_parser.add_argument("--csv", type=Path, default=DEFAULT_UPLOAD_CSV)
     upload_parser.add_argument("--batch-size", type=int, default=5000)
-    upload_parser.add_argument("--replace", action="store_true", help="Truncate target table before loading")
-    upload_parser.add_argument("--execute", action="store_true", help="Actually write to Supabase")
+    upload_parser.add_argument(
+        "--replace", action="store_true", help="Truncate target table before loading"
+    )
+    upload_parser.add_argument(
+        "--execute", action="store_true", help="Actually write to Supabase"
+    )
     upload_parser.set_defaults(func=run_upload)
 
     apply_parser = sub.add_parser(

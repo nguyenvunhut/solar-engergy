@@ -15,7 +15,6 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-
 REPO = Path(__file__).resolve().parents[3]
 ENV_FILE = REPO / ".env"
 SCHEMA = "staging"
@@ -90,7 +89,15 @@ class LoadSpec:
 LOAD_SPECS: tuple[LoadSpec, ...] = (
     LoadSpec(
         table="dim_date",
-        columns=("full_date", "day", "month", "year", "is_holiday", "is_semester", "is_exam"),
+        columns=(
+            "full_date",
+            "day",
+            "month",
+            "year",
+            "is_holiday",
+            "is_semester",
+            "is_exam",
+        ),
         select_sql="""
             SELECT
                 to_date(date, 'DD/MM/YYYY') AS full_date,
@@ -317,7 +324,9 @@ def run(args: argparse.Namespace) -> int:
             print(f"  - {spec.table:<24s} {planned_counts[spec.table]:>12,}")
 
         if not args.execute:
-            print("\nDry-run only. Re-run with --execute to truncate and load buffer tables.")
+            print(
+                "\nDry-run only. Re-run with --execute to truncate and load buffer tables."
+            )
             return 0
 
         print("\nTruncating buffer tables...")
@@ -328,9 +337,13 @@ def run(args: argparse.Namespace) -> int:
             loaded = execute_load(conn, spec)
             expected = planned_counts[spec.table]
             status = "OK" if loaded == expected else "MISMATCH"
-            print(f"  - {spec.table:<24s} loaded={loaded:>12,} expected={expected:>12,} [{status}]")
+            print(
+                f"  - {spec.table:<24s} loaded={loaded:>12,} expected={expected:>12,} [{status}]"
+            )
             if loaded != expected:
-                raise RuntimeError(f"{spec.table} loaded {loaded:,}, expected {expected:,}")
+                raise RuntimeError(
+                    f"{spec.table} loaded {loaded:,}, expected {expected:,}"
+                )
 
         conn.commit()
         print("\nDone. Buffer tables loaded successfully.")

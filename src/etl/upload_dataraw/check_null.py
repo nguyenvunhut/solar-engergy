@@ -1,7 +1,10 @@
+from pathlib import Path
+
 import pandas as pd
 
-from pathlib import Path
-FILE = str(Path(__file__).resolve().parents[3] / "data" / "raw" / "Solar_Energy_Generation.csv")
+FILE = str(
+    Path(__file__).resolve().parents[3] / "data" / "raw" / "Solar_Energy_Generation.csv"
+)
 
 df = pd.read_csv(FILE)
 total = len(df)
