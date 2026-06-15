@@ -144,6 +144,10 @@
     keepspaces        = true,
     numbers           = left,
     numbersep         = 5pt,
+    showspaces        = false,
+    showstringspaces  = false,
+    showtabs          = false,
+    tabsize           = 4,
     frame             = single,
     rulecolor         = \color{codegray},
 }
@@ -186,6 +190,9 @@
     \renewcommand{\footrulewidth}{0.4pt}
 }
 
+% =============================================================================
+%                           BẮT ĐẦU TÀI LIỆU
+% =============================================================================
 \begin{document}
 
 % ────────────────────────────────────────────────────────────────────
@@ -322,41 +329,1275 @@ Qua quá trình Phân tích Khám phá Dữ liệu (EDA), nhóm đã rút ra cá
 % ====================================================================
 %  CHƯƠNG 1: TỔNG QUAN ĐỀ TÀI VÀ BÀI TOÁN NGHIÊN CỨU
 % ====================================================================
-\input{Section1}
+\chapter{Tổng quan Đề tài và Bài toán Nghiên cứu}
+\label{chap:tongquan}
+
+\section{Bối cảnh thực tế và lý do chọn đề tài}
+\label{sec:lydo}
+
+Năng lượng mặt trời đang ngày càng đóng vai trò quan trọng trong cơ cấu năng lượng tái tạo toàn cầu. Theo Cơ quan Năng lượng Quốc tế (IEA), công suất lắp đặt điện mặt trời trên toàn thế giới đã vượt mốc 1.600~GW vào cuối năm 2023, với tốc độ tăng trưởng trung bình 25\%/năm trong thập kỷ qua. Tại Việt Nam, chính sách khuyến khích phát triển điện mặt trời áp mái và điện mặt trời tập trung đã đưa tổng công suất lắp đặt lên hơn 16.500~MW. Tuy nhiên, hiệu suất thực tế của các hệ thống quang điện (PV) thường sai lệch đáng kể so với giá trị thiết kế do ảnh hưởng của nhiều yếu tố như: điều kiện thời tiết biến đổi, suy giảm chất lượng tấm pin, bụi bẩn, bóng che và lỗi thiết bị.
+
+Bài toán phân tích hiệu suất và phát hiện sớm các bất thường trong vận hành là then chốt giúp tối ưu hoá hiệu quả đầu tư và nâng cao độ tin cậy của lưới điện. Lý do nhóm chọn đề tài này bao gồm:
+\begin{itemize}[noitemsep]
+    \item \textbf{Tính thực tiễn:} Dự báo sản lượng và phát hiện bất thường có ứng dụng trực tiếp cho các doanh nghiệp vận hành nhà máy điện mặt trời.
+    \item \textbf{Tính liên ngành:} Kết hợp phân tích dữ liệu, thống kê, học máy và kiến trúc kho dữ liệu trong một đề tài thống nhất.
+    \item \textbf{Nguồn dữ liệu mở:} Dữ liệu từ Open-Meteo API miễn phí, chất lượng cao và phủ rộng toàn cầu.
+    \item \textbf{So sánh đa vùng:} Phân tích đồng thời dữ liệu từ nhiều khu vực tại Úc để đánh giá tổng quát về hiệu suất PV.
+\end{itemize}
+
+
+\section{Bài toán kinh doanh và các khó khăn cần giải quyết}
+\label{sec:problem}
+
+Trong vận hành thực tế các trạm điện mặt trời, ban quản lý thường đối mặt với các khó khăn lớn:
+\begin{itemize}[noitemsep]
+    \item \textbf{Tác động thời tiết bất định:} Sự thay đổi của mây che phủ, bức xạ và nhiệt độ môi trường khiến sản lượng điện biến động liên tục, gây khó khăn cho việc điều phối lưới điện.
+    \item \textbf{Suy hao và hỏng hóc thiết bị:} Các tấm pin bị bám bụi, inverter bị lỗi phần sụn hoặc quá nhiệt làm suy giảm đáng kể hiệu suất phát điện mà không được phát hiện kịp thời.
+    \item \textbf{Sai lệch số liệu giám sát:} Cảm biến đo bức xạ hoặc cảm biến CT đo dòng điện bị nhiễu xung điện đột ngột hoặc lệch pha tần suất dữ liệu (Granularity Mismatch) giữa dữ liệu sản lượng (15 phút) và dữ liệu thời tiết (1 giờ) khiến phân tích sai lệch.
+\end{itemize}
+Hệ quả của việc không giải quyết các vấn đề trên là doanh nghiệp ra quyết định chậm trễ, tổn thất tài chính lớn do mất sản lượng, và dữ liệu thu thập bị bẩn dẫn đến các mô hình dự báo không chính xác.
+
+\section{Mục tiêu dự án và Kết quả dự kiến}
+\label{sec:muctieu}
+
+Dự án tốt nghiệp đặt ra các mục tiêu cốt lõi sau:
+\begin{enumerate}[noitemsep]
+    \item Thiết kế và triển khai kho dữ liệu (\textit{Data Warehouse}) tích hợp đồng bộ dữ liệu sản lượng và thời tiết theo mô hình Galaxy Schema (Fact Constellation) kết hợp phân nhánh Data Marts chuyên biệt.
+    \item Xây dựng pipeline dữ liệu tự động làm sạch (xử lý khuyết thiếu, lọc nhiễu ban đêm, phát hiện bất thường cảm biến).
+    \item Thực hiện phân tích khám phá chuyên sâu (EDA) để rút ra các insight vận hành quan trọng như hiện tượng suy giảm hiệu suất do nhiệt độ và độ nhiễu ban đêm.
+    \item Xây dựng hệ thống dữ liệu đáp ứng đồng thời hiệu năng truy vấn báo cáo (OLAP) và hiệu năng huấn luyện/dự báo học máy (MLOps) mà không làm quá tải tài nguyên Cloud.
+    \item Huấn luyện các mô hình dự báo sản lượng Baseline (ARIMA, Prophet) và so sánh hiệu năng.
+\end{enumerate}
+\textbf{Kết quả dự kiến (Sneak Peek):} Một hệ thống Dashboard Tableau trực quan hóa mượt mà cho phép các nhà quản lý theo dõi toàn diện hiệu suất vận hành của 42 trạm tại Úc, tự động cảnh báo lỗi cảm biến và hiển thị dự báo sản lượng cho các chu kỳ tiếp theo với độ tin cậy cao.
+
+
+\section{Đối tượng và phạm vi nghiên cứu}
+\label{sec:phamvi}
+
+\begin{itemize}[noitemsep]
+    \item \textbf{Đối tượng nghiên cứu:} Hiệu suất phát điện của hệ thống quang điện (PV) và các yếu tố khí tượng viễn thám (bức xạ sóng ngắn, nhiệt độ, độ phủ mây, lượng mưa).
+    \item \textbf{Phạm vi không gian:} 42 trạm điện mặt trời tại Úc.
+    \item \textbf{Phạm vi thời gian:} Dữ liệu lịch sử từ 01/01/2020 đến 30/04/2022.
+\end{itemize}
+
+\section{Bố cục báo cáo}
+\label{sec:bocuc}
+
+Báo cáo dự án tốt nghiệp được cấu trúc thành 7 chương chính như sau:
+\begin{itemize}[noitemsep]
+    \item \textbf{Chương 1:} Tổng quan Đề tài và Bài toán Nghiên cứu.
+    \item \textbf{Chương 2:} Cơ sở Lý thuyết (các mô hình dự báo, phát hiện outlier và DWH).
+    \item \textbf{Chương 3:} Thu thập Dữ liệu và Thiết kế Kho dữ liệu.
+    \item \textbf{Chương 4:} Quy trình ETL, Làm sạch và Biến đổi Dữ liệu.
+    \item \textbf{Chương 5:} Phân tích Khám phá Dữ liệu (EDA) và Trực quan hóa.
+    \item \textbf{Chương 6:} Mô hình hóa và Dự báo Sản lượng Baseline.
+    \item \textbf{Chương 7:} Đánh giá Dự án, Đề xuất và Theo dõi Vận hành.
+\end{itemize}
+
 
 % ====================================================================
 %  CHƯƠNG 2: CƠ SỞ LÝ THUYẾT
 % ====================================================================
-\input{Section2}
+\chapter{Cơ sở Lý thuyết}
+\label{chap:lythuyet}
+
+\section{Tổng quan về Năng lượng mặt trời và Bức xạ quang điện}
+\label{sec:solar_theory}
+
+Hệ thống quang điện (PV) chuyển đổi năng lượng bức xạ mặt trời trực tiếp thành điện năng thông qua hiệu ứng quang điện trong chất bán dẫn. Hiệu suất chuyển đổi và khả năng vận hành của hệ thống phụ thuộc chặt chẽ vào các chỉ số lý thuyết sau:
+\begin{itemize}[noitemsep]
+    \item \textbf{Performance Ratio (PR):} Tỷ lệ đánh giá hiệu suất nguồn lưới, được xác định bằng tỷ số giữa sản lượng điện thực tế tạo ra và sản lượng lý thuyết trong điều kiện bức xạ lý tưởng. PR phản ánh mức độ tổn hao năng lượng do nhiệt độ, bụi bẩn và hiệu suất của bộ biến đổi (Inverter).
+    \item \textbf{Capacity Factor (CF):} Hệ số công suất, được tính bằng tỷ lệ giữa sản lượng điện thực tế thu được trong một khoảng thời gian so với sản lượng điện tối đa mà trạm có thể phát nếu vận hành liên tục ở công suất thiết kế cực đại.
+    \item \textbf{Specific Yield:} Sản lượng điện đặc trưng, biểu thị lượng điện năng tạo ra trên mỗi đơn vị công suất đỉnh lắp đặt (đo bằng đơn vị kWh/kWp), hỗ trợ so sánh hiệu suất giữa các trạm có quy mô khác nhau.
+\end{itemize}
+
+\section{Kiến trúc Kho dữ liệu đa chiều (Data Warehouse)}
+\label{sec:dwh_theory}
+
+Kiến trúc kho dữ liệu đa chiều được thiết kế theo phương pháp luận của Ralph Kimball, tập trung vào việc mô hình hóa dữ liệu nhằm tối ưu hóa hiệu năng truy vấn cho các bài toán phân tích thông minh (BI) và học máy.
+
+\subsection{Mô hình hóa đa chiều (Dimensional Modeling)}
+Mô hình hóa đa chiều phân tách dữ liệu thành hai nhóm chính:
+\begin{itemize}
+    \item \textbf{Bảng sự kiện (Fact Table):} Lưu trữ các chỉ số đo lường định lượng (Measures) phát sinh từ các sự kiện nghiệp vụ (ví dụ: sản lượng điện phát ra, các thông số thời tiết đo được). Bảng Fact thường chứa khối lượng dữ liệu rất lớn và liên kết với các bảng chiều qua các khóa ngoại.
+    \item \textbf{Bảng chiều (Dimension Table):} Lưu trữ các thuộc tính mô tả ngữ cảnh của sự kiện (thời gian, địa điểm, thông tin kỹ thuật của thiết bị). Các bảng chiều cung cấp các trục phân tích chéo, làm bộ lọc cho các câu lệnh truy vấn dữ liệu.
+\end{itemize}
+
+\subsection{Lược đồ Thiên hà (Galaxy Schema)}
+Trong các hệ thống phân tích tích hợp nhiều quy trình nghiệp vụ, lược đồ Thiên hà (Galaxy Schema hay Fact Constellation Schema) được sử dụng khi có nhiều bảng sự kiện dùng chung các bảng chiều được chuẩn hóa (Conformed Dimensions). Mô hình này cho phép:
+\begin{itemize}
+    \item Hợp nhất nhiều luồng sự kiện có tần suất ghi nhận khác nhau (ví dụ: dữ liệu đo sản lượng điện theo chu kỳ phút và dữ liệu thời tiết theo chu kỳ giờ) mà không gây trùng lặp thông tin thừa.
+    \item Thực hiện phân tích liên thông (Drill-through) giữa các bảng sự kiện khác nhau dựa trên các chiều chung như thời gian và không gian địa lý.
+\end{itemize}
+
+\subsection{Phương pháp tiếp cận Top-Down (Triết lý kiến trúc của Bill Inmon)}
+Trái ngược với phương pháp tiếp cận Bottom-Up của Ralph Kimball - vốn tập trung xây dựng các Data Mart trước rồi mới tích hợp thành một kho dữ liệu tổng thể - triết ly Top-Down của Bill Inmon định nghĩa kho dữ liệu (Data Warehouse) là một thực thể lưu trữ tập trung, duy nhất và đóng vai trò là Single Source of Truth (Nguồn sự thật duy nhất) của toàn bộ doanh nghiệp.
+\begin{itemize}
+    \item \textbf{Bản chất luồng dữ liệu:} Dữ liệu từ các hệ thống nguồn (Operational Systems) sau khi trích xuất sẽ được đổ trực tiếp vào một kho lưu trữ trung tâm được chuẩn hóa cấu trúc chặt chẽ. Từ lõi dữ liệu sạch thống nhất này, các phân nhánh dữ liệu chuyên biệt phục vụ cho các mục đích cụ thể (Data Marts) mới được phân tách và cấu trúc lại.
+    \item \textbf{Ưu điểm lý thuyết:} Đảm bảo tính nhất quán dữ liệu tối đa trên toàn hệ thống, triệt tiêu hoàn toàn rủi ro sai lệch số liệu giữa các phòng ban hoặc giữa các tác vụ phân tích khác nhau (như báo cáo trực quan hóa và huấn luyện học máy).
+\end{itemize}
+
+
+Dưới đây là bảng đối sánh chi tiết giữa hai phương pháp tiếp cận kinh điển của Bill Inmon và Ralph Kimball:
+\vspace{1em}
+% Tăng khoảng cách đệm (padding) giữa chữ và đường viền ô để bảng thoáng, dễ đọc hơn
+\renewcommand{\arraystretch}{1.5} 
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{p{3.5cm} p{5.5cm} p{5.5cm}}
+\toprule
+
+\textbf{Tiêu chí đối sánh} & \textbf{Tiếp cận Top-Down (Bill Inmon)} & \textbf{Tiếp cận Bottom-Up (Ralph Kimball)} \\ 
+\midrule
+
+\textbf{Kiến trúc tổng thể} & 
+Tập trung (Centralized DWH) trước, phân tán (Data Marts) sau. & 
+Phân tán (Data Marts) trước, hợp nhất (DWH) sau. \\
+
+\textbf{Mô hình hóa tầng lõi} & 
+Chuẩn hóa cấu trúc để giảm thiểu tối đa dư thừa dữ liệu (3NF). & 
+Mô hình hóa đa chiều (Dimensional Modeling) dựa trên các bảng Fact và Dimension. \\
+
+\textbf{Tính nhất quán} & 
+Rất cao, do mọi dữ liệu tiêu thụ đều được kế thừa từ một nguồn lõi duy nhất. & 
+Khó kiểm soát hơn, dễ xảy ra hiện tượng lệch pha định nghĩa giữa các Data Mart độc lập. \\
+
+\textbf{Độ linh hoạt hạ tầng} & 
+Thích hợp cho hệ thống tích hợp lớn, đa mục đích sử dụng (BI, Data Science, Data Streaming). & 
+Thích hợp cho các dự án cần triển khai nhanh, tập trung giải quyết một quy trình nghiệp vụ đơn lẻ. \\
+\bottomrule
+\end{tabular}
+\caption{Bảng so sánh lý thuyết Inmon vs. Kimball}
+\label{tab:comparison}
+\end{table}
+
+\section{Quy trình Trích xuất, Biến đổi và Nạp dữ liệu (ETL Pipeline)}
+\label{sec:etl_theory}
+
+Quy trình ETL (Extract - Transform - Load) đóng vai trò nền tảng trong việc làm sạch và chuẩn hóa dữ liệu trước khi đưa vào kho lưu trữ tập trung.
+
+\subsection{Lý thuyết về Nội suy dữ liệu khuyết thiếu (Data Imputation)}
+Dữ liệu chuỗi thời gian từ các thiết bị đo lường vật lý thường gặp hiện tượng mất mát dữ liệu do lỗi truyền thông hoặc hỏng hóc cảm biến. Các phương pháp toán học được áp dụng để khôi phục dữ liệu khuyết bao gồm:
+\begin{itemize}
+    \item \textbf{Nội suy dựa trên ràng buộc vật lý (Constraint-based Imputation):} Sử dụng các quy luật vật lý tự nhiên để gán giá trị trực tiếp. Đối với năng lượng mặt trời, sản lượng điện tối đa vào ban đêm được gán cứng bằng 0 dựa trên điều kiện bức xạ mặt trời triệt tiêu.
+    
+    \item \textbf{Nội suy tuyến tính (Linear Interpolation):} Giả định dữ liệu thay đổi đều giữa các mốc thời gian lân cận, phù hợp cho các khoảng khuyết ngắn:
+    \begin{equation}
+        y = y_1 + \frac{x - x_1}{x_2 - x_1} (y_2 - y_1)
+    \end{equation}
+
+    \item \textbf{Nội suy Cubic Spline:} Sử dụng các đa thức bậc ba cục bộ để tạo ra đường nội suy mượt mà và bảo toàn đạo hàm cấp một và cấp hai tại các điểm nút. Cho tập hợp các điểm $(x_i, y_i)$ với $i = 0, 1, \dots, n$, hàm nội suy $S(x)$ trên khoảng $[x_i, x_{i+1}]$ được định nghĩa là:
+    \begin{equation}
+        S_i(x) = a_i + b_i(x - x_i) + c_i(x - x_i)^2 + d_i(x - x_i)^3
+    \end{equation}
+    Để đảm bảo tính liên tục của hàm, các hệ số phải thỏa mãn các điều kiện biên và trơn:
+    \begin{align}
+        S_i(x_i) &= y_i, \quad S_i(x_{i+1}) = y_{i+1} \\
+        S'_i(x_{i+1}) &= S'_{i+1}(x_{i+1}) \\
+        S''_i(x_{i+1}) &= S''_{i+1}(x_{i+1})
+    \end{align}
+    Với điều kiện biên tự nhiên thông dụng: $S''(x_0) = S''(x_n) = 0$.
+
+    \item \textbf{Nội suy dựa trên mô hình hồi quy (Regression Imputation):} Khôi phục giá trị khuyết thiếu bằng cách ước lượng dựa trên các biến độc lập liên quan. Giả thuyết mô hình tuyến tính có dạng:
+    \begin{equation}
+        Y = X\beta + \varepsilon
+    \end{equation}
+    Trong đó $Y$ là biến cần nội suy, $X$ là ma trận các biến dự báo quan sát được (các biến khí tượng lân cận, các trễ thời gian). Vectơ hệ số hồi quy $\hat{\beta}$ được ước lượng bằng phương pháp bình phương tối thiểu cực tiểu (OLS) trên tập dữ liệu đầy đủ $X_{\text{obs}}$ và $Y_{\text{obs}}$:
+    \begin{equation}
+        \hat{\beta} = (X_{\text{obs}}^T X_{\text{obs}})^{-1} X_{\text{obs}}^T Y_{\text{obs}}
+    \end{equation}
+    Giá trị khuyết thiếu của bản ghi thứ $m$ sau đó được bù đắp bằng:
+    \begin{equation}
+        \hat{y}_m = x_m \hat{\beta}
+    \end{equation}
+\end{itemize}
+
+\subsection{Chiến lược nạp dữ liệu tối ưu hóa giao dịch}
+Khi xử lý các bảng sự kiện có quy mô hàng triệu bản ghi, việc nạp dữ liệu trực tiếp dễ gây tắc nghẽn tài nguyên và khóa bảng cơ sở dữ liệu. Các kỹ thuật toán học và hệ thống được áp dụng bao gồm:
+\begin{itemize}
+    \item \textbf{Nạp theo phân đoạn (Batching):} Phân chia giao dịch lớn thành các nhóm nhỏ dựa trên các phân đoạn thời gian (ví dụ: theo tháng) để giảm tải cho nhật ký giao dịch (Transaction Log).
+    \item \textbf{Sinh khóa đại diện tự động (Surrogate Key Generation):} Thiết lập cơ chế tạo khóa tự động tăng tiến tuần tự để tối ưu chỉ mục (Index) và tránh trùng lặp dữ liệu trong môi trường phân tán.
+    \item \textbf{Kiểm chứng toàn vẹn sau nạp (Post-load Validation):} So sánh tổng kiểm tra bản ghi giữa các tầng lưu trữ nhằm phát hiện lỗi mất mát dữ liệu và kích hoạt cơ chế hoàn tác (Rollback) khi xảy ra sai sót.
+\end{itemize}
+
+\section{Các phương pháp Phát hiện bất thường dữ liệu (Anomaly Detection)}
+\label{sec:anomaly_theory}
+
+Phát hiện bất thường dữ liệu nhằm nhận diện các hành vi bất thường của thiết bị hoặc lỗi ghi nhận số liệu.
+
+\subsection{Phương pháp thống kê Z-Score}
+Z-Score xác định mức độ lệch của một điểm dữ liệu so với giá trị trung bình theo đơn vị độ lệch chuẩn:
+\begin{equation}
+    Z = \frac{x - \mu}{\sigma}
+\end{equation}
+Trong đó $\mu$ là giá trị trung bình và $\sigma$ là độ lệch chuẩn của phân phối. Điểm dữ liệu bị coi là ngoại lai (Outlier) nếu nằm ngoài khoảng giới hạn thường gặp (ví dụ: $|Z| > 3$).
+
+\subsection{Phương pháp khoảng tứ phân vị IQR (Interquartile Range)}
+IQR là công cụ thống kê mạnh mẽ không phụ thuộc vào giả định phân phối chuẩn của dữ liệu. Khoảng tứ phân vị được xác định bởi:
+\begin{equation}
+    \text{IQR} = Q_3 - Q_1
+\end{equation}
+Trong đó $Q_1$ và $Q_3$ lần lượt là tứ phân vị thứ nhất (25\%) và thứ ba (75\%). Ngưỡng phát hiện bất thường được thiết lập tại giới hạn:
+\begin{equation}
+    [\text{Lower Bound}, \text{Upper Bound}] = [Q_1 - 1.5 \cdot \text{IQR}, Q_3 + 1.5 \cdot \text{IQR}]
+\end{equation}
+
+\subsection{Phương pháp Trung bình trượt và IQR cục bộ (Rolling IQR)}
+Đối với chuỗi thời gian có tính xu hướng và mùa vụ mạnh, việc sử dụng các chỉ số thống kê toàn cục dễ dẫn đến kết quả sai lệch. Do đó, phương pháp Rolling IQR cục bộ phân nhóm theo thực thể được áp dụng thông qua thuật toán sau:
+\begin{enumerate}
+    \item Cho chuỗi thời gian sản lượng điện $y(s, t)$ của trạm $s$ tại thời điểm $t$, ta tính trung bình trượt cục bộ trong cửa sổ thời gian $W$ có độ dài 1 giờ:
+    \begin{equation}
+        \mu(s, t) = \frac{1}{|W|} \sum_{\tau \in W} y(s, \tau)
+    \end{equation}
+    \item Xác định độ lệch tuyệt đối $d(s, t)$ của điểm dữ liệu so với trung bình trượt cục bộ:
+    \begin{equation}
+        d(s, t) = |y(s, t) - \mu(s, t)|
+    \end{equation}
+    \item Gom nhóm toàn bộ độ lệch $d(s, t)$ theo tổ hợp thực thể trạm $s$ và giờ trong ngày $h = \text{hour}(t) \in [0, 23]$ để tạo ra tập hợp cục bộ $G_{s, h}$.
+    \item Với mỗi tập hợp $G_{s, h}$, tính toán khoảng tứ phân vị cục bộ:
+    \begin{equation}
+        \text{IQR}_{s, h} = Q_3(G_{s, h}) - Q_1(G_{s, h})
+    \end{equation}
+    \item Ngưỡng biên trên bất thường $U_{s, h}$ của nhóm được xác định là:
+    \begin{equation}
+        U_{s, h} = Q_3(G_{s, h}) + 1.5 \cdot \text{IQR}_{s, h}
+    \end{equation}
+    \item Bản ghi tại thời điểm $t$ thuộc trạm $s$ bị gắn cờ ngoại lai nếu hiệu số lệch tuyệt đối vượt quá giới hạn trên cục bộ:
+    \begin{equation}
+        f(s, t) = \begin{cases} 1 & \text{nếu } d(s, t) > U_{s, h} \\ 0 & \text{ngược lại} \end{cases}
+    \end{equation}
+\end{enumerate}
+
+\section{Cơ sở thuật toán Dự báo chuỗi thời gian}
+\label{sec:forecast_theory}
+
+\begin{itemize}[noitemsep]
+    \item \textbf{Mô hình ARIMA:} Mô hình AutoRegressive Integrated Moving Average kết hợp các thành phần tự hồi quy (p), sai phân (d) và trung bình trượt (q):
+    \begin{equation}
+        \phi(B)(1-B)^d X_t = \theta(B) \varepsilon_t
+    \end{equation}
+    \item \textbf{Mô hình Prophet:} Mô hình phân tách chuỗi thời gian do Meta phát triển, xử lý tốt tính mùa vụ mạnh và các giá trị khuyết thiếu:
+    \begin{equation}
+        y(t) = g(t) + s(t) + h(t) + \varepsilon_t
+    \end{equation}
+    với $g(t)$ đại diện cho xu hướng, $s(t)$ cho tính mùa vụ, $h(t)$ cho ngày lễ và $\varepsilon_t$ cho sai số ngẫu nhiên.
+\end{itemize}
+
 
 % ====================================================================
 %  CHƯƠNG 3: THU THẬP DỮ LIỆU VÀ THIẾT KẾ KHO DỮ LIỆU
 % ====================================================================
-\input{Section3}
+\chapter{Thu thập Dữ liệu và Thiết kế Kiến trúc Kho dữ liệu}
+\label{chap:thuthap_kho}
+
+\section{Kiến trúc Tổng thể Hệ thống Dữ liệu (Data Architecture Overview)}
+\label{sec:data_architecture}
+
+Nhằm đáp ứng đồng thời hai mục tiêu cốt lõi của dự án là (1) Trực quan hóa dữ liệu phục vụ quản trị (Business Intelligence) và (2) Xây dựng mô hình học máy dự báo (Machine Learning), hệ thống dữ liệu của dự án được thiết kế theo kiến trúc đa tầng (Multi-tier Architecture). Luồng dữ liệu (Data Flow) di chuyển qua 4 lớp chính như sau:
+
+\begin{enumerate}[noitemsep]
+    \item \textbf{Raw Data (Dữ liệu thô):} Dữ liệu lịch sử dạng file \texttt{.csv} từ các trạm vật lý và dữ liệu khí tượng viễn thám trích xuất qua Open-Meteo API.
+    \item \textbf{Staging Area (Vùng dữ liệu tạm):} Nơi tiếp nhận và lưu trữ nguyên bản (1:1) dữ liệu thô vào hệ quản trị CSDL. Lớp này đóng vai trò như một bộ đệm (buffer) để giảm tải cho các nguồn cấp dữ liệu và chuẩn bị cho quá trình chuyển đổi.
+    \item \textbf{Data Warehouse (Kho dữ liệu trung tâm):} Tổ chức theo mô hình \textit{Fact Constellation Schema} (Lược đồ Thiên hà), lưu trữ dữ liệu đã qua làm sạch, chuẩn hóa (Cleansing \& Transformation). Đây là Single Source of Truth của toàn bộ hệ thống.
+    \item \textbf{Data Marts (Siêu thị dữ liệu):} Từ Data Warehouse, dữ liệu được phân nhánh thành hai Data Mart độc lập, được thiết kế đặc thù (Tailored-design) để tối ưu hóa hiệu năng truy vấn cho công cụ BI (Tableau) và định dạng chuẩn (Wide-table) cho việc huấn luyện mô hình ML.
+\end{enumerate}
+
+\subsection{Tiếp cận Top-Down (Inmon Approach)}
+\label{subsec:top_down_rationale}
+
+Hệ thống lưu trữ và xử lý dữ liệu của dự án được xây dựng dựa trên phương pháp tiếp cận \textit{Top-Down} (từ trên xuống) theo triết lý thiết kế kho dữ liệu của Bill Inmon. Luồng dữ liệu di chuyển một chiều từ các nguồn thô, tập trung tại một Kho dữ liệu trung tâm duy nhất (Single Source of Truth), sau đó mới phân rã thành các Siêu thị dữ liệu (Data Marts) chuyên biệt. 
+
+Việc lựa chọn kiến trúc \textit{Top-Down} thay vì \textit{Bottom-Up} (gôm các Data Mart độc lập lại thành DWH) mang lại ba lợi ích chiến lược cho hệ thống dự báo điện mặt trời của dự án:
+
+\begin{itemize}
+    \item \textbf{Đảm bảo tính nhất quán tối đa (Data Consistency):} Vì dữ liệu sản lượng và khí tượng được làm sạch, xử lý Outliers và đồng bộ hóa ngay tại tầng Data Warehouse trung tâm, hai nhánh Data Mart (BI và ML) phía sau sẽ luôn kế thừa cùng một tập dữ liệu chuẩn. Điều này triệt tiêu hoàn toàn hiện tượng lệch pha số liệu (ví dụ: sản lượng tổng hiển thị trên Dashboard Tableau khác với tổng sản lượng mà mô hình Machine Learning nhận được để huấn luyện).
+    \item \textbf{Khả năng mở rộng kiến trúc (Scalability):} Trong tương lai, nếu doanh nghiệp muốn mở rộng thêm các mục đích sử dụng dữ liệu mới (ví dụ: nhánh Data Mart dành cho bộ phận Tài chính tính toán doanh thu bán điện FiT, hoặc bộ phận Kiểm toán Carbon), kỹ sư dữ liệu chỉ cần tạo thêm các phân nhánh (Views/Materialized Views) từ Data Warehouse trung tâm mà không cần thiết kế lại luồng ETL/ELT gốc từ các trạm pin.
+    \item \textbf{Tối ưu hóa quản trị dữ liệu (Centralized Data Governance):} Việc kiểm soát chất lượng dữ liệu, phân quyền truy cập, và định nghĩa các thuật ngữ nghiệp vụ (Metadata) được thực hiện tập trung tại Supabase DWH, giúp giảm thiểu chi phí vận hành và bảo trì hệ thống.
+\end{itemize}
+
+\section{Phương pháp thu thập dữ liệu thô (Extract)}
+\label{sec:datannguon}
+
+Dự án thu thập dữ liệu từ hai nguồn chính:
+\begin{enumerate}[noitemsep]
+    \item \textbf{Dữ liệu giám sát trạm phát điện thực tế:} Ghi nhận sản lượng điện của 42 trạm tại Úc dưới dạng tệp tin CSV cục bộ và các thông tin cấu hình trạm.
+    \item \textbf{Dữ liệu khí tượng viễn thám:} Thu thập từ Open-Meteo API. Quy trình gọi API sử dụng tọa độ địa lý (vĩ độ, kinh độ) của các trạm để tải về chuỗi thời gian khí tượng theo giờ bao gồm bức xạ sóng ngắn, nhiệt độ, lượng mưa và mây che phủ.
+\end{enumerate}
+
+\subsection{Trích xuất dữ liệu khí tượng qua Open-Meteo API}
+Dữ liệu khí tượng viễn thám được thu thập tự động thông qua Open-Meteo Archive API. Quy trình sử dụng thư viện \texttt{requests} và \texttt{pandas} để đọc tọa độ (vĩ độ, kinh độ) của 42 trạm phát từ tệp danh mục \texttt{Solar\_Site\_Details.csv}. Các biến số quan trọng như bức xạ sóng ngắn (\texttt{shortwave\_radiation}), nhiệt độ (\texttt{temperature\_2m}), mã thời tiết (\texttt{weather\_code}), và trạng thái ngày/đêm (\texttt{is\_day}) được trích xuất theo chu kỳ giờ.
+
+Để đảm bảo tính ổn định khi gọi API hàng loạt, mã nguồn được tích hợp cơ chế tự động xử lý lỗi vượt quá giới hạn truy cập (Rate Limit - HTTP 429). Khi máy chủ trả về mã 429, hệ thống sẽ tạm dừng (\texttt{time.sleep}) 60 giây trước khi thử lại, giúp luồng trích xuất không bị gián đoạn.
+
+\begin{lstlisting}[language=Python, caption={Mã nguồn Python trích xuất dữ liệu khí tượng từ Open-Meteo API}, label={lst:api_weather}]
+import requests
+import pandas as pd
+import time
+
+# 1. Khoi tao cau hinh tham so API
+START_DATE = "2023-01-01"
+END_DATE = "2023-12-31"
+FINAL_OUTPUT_FILE = "open_meteo_weather_raw_2023.csv"
+
+HOURLY_COLUMNS = [
+    "shortwave_radiation", "direct_radiation", 
+    "diffuse_radiation", "temperature_2m", 
+    "weather_code", "is_day", "cloud_cover",
+    "wind_speed_10m", "precipitation", "sunshine_duration"
+]
+
+# Doc toa do tu danh muc tram
+site_df = pd.read_csv('/content/Solar_Site_Details(1).csv')
+url = "https://archive-api.open-meteo.com/v1/archive"
+all_data_frames = []
+
+# 2. Vong lap lay du lieu va xu ly Rate Limit
+for index, row in site_df.iterrows():
+    params = {
+        "latitude": row['lat'],
+        "longitude": row['Lon'],
+        "start_date": START_DATE,
+        "end_date": END_DATE,
+        "hourly": ",".join(HOURLY_COLUMNS),
+        "timezone": "Asia/Ho_Chi_Minh"
+    }
+    
+    success = False
+    while not success:
+        try:
+            response = requests.get(
+            url, 
+            params=params, 
+            timeout=120)
+            
+            if response.status_code == 200:
+                data = response.json()
+                if "hourly" in data:
+                    df_site = pd.DataFrame(
+                    {"timestamp": data["hourly"]["time"]}
+                    )
+                    for col in HOURLY_COLUMNS:
+                        df_site[col] = data["hourly"].get(col)
+                    
+                    df_site["SiteKey"] = row.get('SiteKey', index)
+                    all_data_frames.append(df_site)
+                    success = True
+            elif response.status_code == 429:
+                print("Rate limited. Waiting 60s...")
+                time.sleep(60)
+            else:
+                success = True # Bo qua neu loi dinh dang khac
+        except Exception as e:
+            time.sleep(5)
+            success = True
+
+# Xuat tep du lieu tong hop
+if all_data_frames:
+    final_df = pd.concat(all_data_frames, ignore_index=True)
+    final_df['timestamp'] = pd.to_datetime(final_df['timestamp'])
+    final_df.to_csv(FINAL_OUTPUT_FILE, index=False)
+\end{lstlisting}
+
+\subsection{Thiết lập kết nối cơ sở dữ liệu Supabase}
+Để lưu trữ và xử lý tập dữ liệu sau khi trích xuất, dự án cấu hình hệ quản trị cơ sở dữ liệu PostgreSQL trên nền tảng Supabase (Khu vực Southeast Asia). Điểm đặc thù trong kiến trúc kết nối và nạp (Load) dữ liệu của nhóm:
+\begin{itemize}[noitemsep]
+    \item \textbf{Sử dụng Connection Pooler:} Do Supabase free tier không hỗ trợ kết nối trực tiếp qua IPv4, dự án cấu hình kết nối thông qua Supabase Pooler \\(host \texttt{aws-1-ap-southeast-1.pooler.supabase.com}, cổng 5432). Giao thức này hỗ trợ IPv4 ổn định cho môi trường làm việc nhóm, đồng thời quản lý và tái sử dụng các phiên kết nối để tránh tình trạng quá tải (Connection Overload).
+    \item \textbf{Tối ưu hóa Thư viện kết nối (\texttt{pg8000}):} Thay vì sử dụng thư viện \texttt{psycopg2} truyền thống, dự án chuyển sang sử dụng \texttt{pg8000}. Đây là thư viện Pure Python, giúp khắc phục triệt để lỗi thiếu hụt các thư viện hệ thống (\texttt{libz.so.1}, \texttt{libstdc++.so.6}) trên môi trường NixOS, đảm bảo mã nguồn có thể chạy mượt mà trên mọi hệ điều hành.
+    \item \textbf{Bảo mật hệ thống:} Toàn bộ thông tin nhạy cảm bao gồm Mật khẩu cơ sở dữ liệu và Project ID được mã hóa và truyền qua tệp \texttt{.env} thay vì khai báo trực tiếp trong mã nguồn. Mã nguồn nạp dữ liệu vào kho được xử lý cách ly, cam kết không rò rỉ (commit) mật khẩu lên nền tảng GitHub.
+\end{itemize}
+Bộ dữ liệu thô được lưu trữ thành các tệp tin CSV: \texttt{campus\_meta.csv}, \texttt{Solar\_Site\_Details.csv},\\ \texttt{calender.csv}, \texttt{Solar\_Energy\_Generation.csv}, và \texttt{open\_meteo\_weather\_raw\_2023.csv}.
+
+% ====================================================================
+% MỤC MỚI BỔ SUNG: TỪ ĐIỂN DỮ LIỆU & META DATA
+% ====================================================================
+\section{Data Dictionary \& Metadata}
+\label{sec:data_dictionary}
+
+Sau quá trình trích xuất và thu thập, bộ dữ liệu thô được cô đọng lại thành 5 tệp tin cốt lõi (Core Datasets). Việc xây dựng từ điển dữ liệu (Data Dictionary) ở giai đoạn này giúp định nghĩa rõ ràng cấu trúc, kiểu dữ liệu và ý nghĩa của từng trường thông tin gốc trước khi thực hiện các bước biến đổi (Transform) và đưa vào Kho dữ liệu.
+
+\subsection{Dữ liệu Thông tin Cơ sở hạ tầng (\texttt{campus\_meta.csv})}
+Tệp lưu trữ thông tin định danh cấp cao nhất về các khu vực/cơ sở dự án. Quy mô: 5 dòng.
+\begin{table}[H]
+\centering
+\caption{Từ điển dữ liệu tệp \texttt{campus\_meta.csv}}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabularx}{\textwidth}{p{3.5cm} c p{2cm} X}
+\toprule
+\textbf{Tên trường} & \textbf{Kiểu DL} & \textbf{Đơn vị} & \textbf{Ý nghĩa \& Mô tả kỹ thuật} \\
+\midrule
+id       & Integer & -  & Mã định danh duy nhất (Primary Key) cho từng cơ sở. \\
+name     & VARCHAR  & -  & Tên gọi chính thức của cơ sở (VD: Bundoora, Bendigo...). \\
+capacity & Integer & kW & Sức chứa, quy mô hoạt động hoặc mức công suất thiết kế. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\newpage
+\subsection{Dữ liệu Thông tin Kỹ thuật Trạm (\texttt{Solar\_Site\_Details.csv})}
+Tệp lưu trữ chi tiết cấu hình kỹ thuật, thiết bị lắp đặt và tọa độ địa lý của các trạm phát điện. Quy mô: 42 dòng.
+\begin{table}[H]
+\centering
+\caption{Từ điển dữ liệu tệp \texttt{Solar\_Site\_Details.csv}}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabularx}{\textwidth}{p{3.5cm} c p{2cm} X}
+\toprule
+\textbf{Tên trường} & \textbf{Kiểu DL} & \textbf{Đơn vị} & \textbf{Ý nghĩa \& Mô tả kỹ thuật} \\
+\midrule
+CampusKey        & Integer & -   & Mã định danh cơ sở nơi đặt trạm điện. \\
+SiteKey          & Integer & -   & Mã định danh duy nhất của từng trạm phát điện. \\
+kWp              & Float   & kWp & Công suất đỉnh tối đa của hệ thống. \\
+Number of panels & Float   & Tấm & Tổng số lượng tấm pin mặt trời được lắp đặt. \\
+Panel            & String  & -   & Thương hiệu và công suất định mức của tấm pin. \\
+Inverter         & String  & -   & Thông tin bộ biến đổi dòng điện (Inverter). \\
+Optimizers       & String  & -   & Thông tin bộ tối ưu hóa công suất đi kèm. \\
+Metric           & String  & -   & Đơn vị đo lường sản lượng điện năng. \\
+lat              & Float   & Độ ($^\circ$) & Vĩ độ địa lý (Latitude). \\
+Lon              & Float   & Độ ($^\circ$) & Kinh độ địa lý (Longitude). \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Dữ liệu Sản lượng Điện (\texttt{Solar\_Energy\_Generation.csv})}
+Bảng dữ liệu chuỗi thời gian (Fact Table) chứa sản lượng phát điện thực tế được ghi nhận liên tục theo chu kỳ 15 phút. Quy mô: 2.731.947 dòng.
+\begin{table}[H]
+\centering
+\caption{Từ điển dữ liệu tệp \texttt{Solar\_Energy\_Generation.csv}}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabularx}{\textwidth}{p{3.5cm} c p{2cm} X}
+\toprule
+\textbf{Tên trường} & \textbf{Kiểu DL} & \textbf{Đơn vị} & \textbf{Ý nghĩa \& Mô tả kỹ thuật} \\
+\midrule
+CampusKey       & Integer  & -   & Mã định danh cơ sở liên kết. \\
+SiteKey         & Integer  & -   & Mã định danh trạm phát điện mặt trời cụ thể. \\
+Timestamp       & DateTime & -   & Mốc thời gian đo đạc dữ liệu sản lượng (Chu kỳ 15 phút). \\
+SolarGeneration & Float    & kWh & Sản lượng điện năng thực tế tạo ra trong khoảng 15 phút đó. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Dữ liệu Thông tin Lịch trình (\texttt{calender.csv})}
+Bảng dữ liệu đánh dấu các sự kiện thời gian theo cấp độ ngày, giúp phân tích các yếu tố hành vi ảnh hưởng đến nhu cầu tiêu thụ và vận hành. Quy mô: 2.313 dòng.
+\begin{table}[H]
+\centering
+\caption{Từ điển dữ liệu tệp \texttt{calender.csv}}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabularx}{\textwidth}{p{3.5cm} c p{2cm} X}
+\toprule
+\textbf{Tên trường} & \textbf{Kiểu DL} & \textbf{Đơn vị} & \textbf{Ý nghĩa \& Mô tả kỹ thuật} \\
+\midrule
+date         & Date    & - & Mốc thời gian theo ngày (định dạng DD/MM/YYYY). \\
+is\_holiday  & Boolean & - & Cờ đánh dấu ngày nghỉ lễ (1: Lễ, 0: Ngày thường). \\
+is\_semester & Boolean & - & Cờ đánh dấu ngày nằm trong giai đoạn học kỳ chính thức. \\
+is\_exam     & Boolean & - & Cờ đánh dấu ngày diễn ra kỳ thi tại cơ sở. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Dữ liệu Khí tượng Viễn thám (\texttt{open\_meteo\_weather\_raw.csv})}
+Chuỗi thời gian chứa các chỉ số khí tượng được trích xuất qua API tương ứng với tọa độ từng trạm phát. Quy mô: 367.920 dòng.
+\begin{table}[H]
+\centering
+\caption{Từ điển dữ liệu tệp \texttt{open\_meteo\_weather\_raw.csv}}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabularx}{\textwidth}{p{3.8cm} c p{2cm} X}
+\toprule
+\textbf{Tên trường} & \textbf{Kiểu DL} & \textbf{Đơn vị} & \textbf{Ý nghĩa \& Mô tả kỹ thuật} \\
+\midrule
+shortwave\_radiation & Float   & W/m$^2$ & Tổng bức xạ sóng ngắn bề mặt. Feature có tương quan cao nhất với sản lượng điện. \\
+direct\_radiation    & Float   & W/m$^2$ & Bức xạ mặt trời chiếu trực tiếp tới bề mặt. \\
+diffuse\_radiation   & Float   & W/m$^2$ & Bức xạ mặt trời bị khuếch tán (do mây, bụi, sương mù). \\
+temperature\_2m      & Float   & $^\circ$C & Nhiệt độ không khí ở độ cao 2 mét. Phục vụ đánh giá suy giảm nhiệt. \\
+weather\_code        & Integer & -       & Mã thời tiết theo chuẩn WMO (0: Quang đãng, 51-67: Mưa...). Phân loại Categorical tốt cho ML. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+% ====================================================================
+\section{Thiết kế kiến trúc Kho dữ liệu đa chiều (Data Warehouse)}
+\label{sec:star_schema}
+
+Quá trình thiết kế kho dữ liệu (Data Warehouse - DWH) được thực hiện theo phương pháp từ trên xuống (Top-down) kết hợp mô hình đa chiều của Kimball. Nhằm giải quyết bài toán dữ liệu lớn và độ lệch pha thời gian (Granularity Mismatch) giữa dữ liệu sản lượng (15 phút) và dữ liệu khí tượng (1 giờ), hệ thống được thiết kế theo cấu trúc \textbf{Lược đồ Thiên hà (Galaxy Schema / Fact Constellation)}. Quá trình này bao gồm 3 cấp độ mô hình hóa: Conceptual, Logical, và Physical.
+
+\subsection{Mô hình Dữ liệu Khái niệm (Conceptual Data Model)}
+Ở mức khái niệm, hệ thống xác định các thực thể kinh doanh cốt lõi và mối quan hệ giữa chúng mà không đi sâu vào chi tiết kỹ thuật. Mô hình khái niệm của hệ thống được phân rã thành các thực thể (như minh họa tại Hình \ref{fig:conceptual_model}):
+\begin{itemize}[noitemsep]
+    \item \textbf{Thực thể trung tâm (Đo lường năng lượng):} Là nơi hội tụ các chỉ số đo lường hiệu suất.
+    \item \textbf{Các thực thể ngữ cảnh (Nguyên nhân/Điều kiện):} Bao gồm \textit{Trạm năng lượng (Solar site)}, \textit{Vị trí địa lý}, \textit{Ngày (Date)} và \textit{Thời tiết}.
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{images/conceptual_model.png}
+    \caption{Sơ đồ Mô hình Dữ liệu Khái niệm (Conceptual Data Model)}
+    \label{fig:conceptual_model}
+\end{figure}
+
+Mối quan hệ cốt lõi: Vị trí địa lý, Thời tiết và Ngày có quan hệ 1-M (one-many) với Đo lường năng lượng, giúp ban quản lý hiểu rõ dữ liệu sản lượng và thời tiết dưới góc nhìn không gian và thời gian.
+
+\subsection{Mô hình Dữ liệu Logic (Logical Data Model)}
+Mô hình logic cụ thể hóa các thực thể thành các bảng và xác định các thuộc tính (attributes), khóa chính (Primary Key), khóa ngoại (Foreign Key). Dựa trên thiết kế kiến trúc (xem Hình \ref{fig:logical_model}), hệ thống gồm 5 bảng chiều và 2 bảng sự kiện:
+
+\begin{enumerate}[label=\arabic*., noitemsep]
+    \item \textbf{Các bảng chiều dùng chung (Conformed Dimensions):}
+    \begin{itemize}[noitemsep]
+        \item \texttt{dim\_solar\_site}: Khóa chính \texttt{site\_id}. Lưu thông tin thiết bị: \texttt{campus\_name}, \texttt{capacity\_kw}, \texttt{Number\_of\_panels}, \texttt{Panel}, \texttt{Inverter}, \texttt{Optimizers}, \texttt{Metric}.
+        \item \texttt{dim\_geography}: Khóa chính \texttt{geo\_id}. Định vị không gian: \texttt{latitude}, \texttt{longitude}, \texttt{location\_name}.
+        \item \texttt{dim\_date}: Khóa chính \texttt{date\_id}. Trục ngày: \texttt{full\_date}, \texttt{day}, \texttt{month}, \texttt{year}.
+        \item \texttt{dim\_time}: Khóa chính \texttt{time\_id}. Trục giờ chi tiết (chu kỳ 15p): \texttt{time\_string}, \texttt{hour}, \texttt{minute}.
+        \item \texttt{dim\_weather\_type}: Khóa chính \texttt{weather\_type\_id}. Phân loại trạng thái: \texttt{weather\_code}, \texttt{is\_day}, \texttt{weather\_condition}, \texttt{description}.
+    \end{itemize}
+    \item \textbf{Các bảng sự kiện (Fact Tables):}
+    \begin{itemize}[noitemsep]
+        \item \texttt{fact\_solar\_energy\_gen}: Khóa chính \texttt{gen\_id}. Kết nối với Site, Geo, Date, Time. Đo lường sản lượng \texttt{energy\_generated\_kwh}.
+        \item \texttt{fact\_weather}: Khóa chính \texttt{weather\_id}. Kết nối với Geo, Date, Time, Weather\_type. Chứa các chỉ số viễn thám như \texttt{shortwave\_radiation}, \texttt{temperature\_c}, \texttt{cloud\_cover\_total}, \texttt{wind\_speed}, \texttt{precipitation\_mm}.
+    \end{itemize}
+\end{enumerate}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{images/logical_model.png}
+    \caption{Sơ đồ Mô hình Dữ liệu Logic (Logical Data Model)}
+    \label{fig:logical_model}
+\end{figure}
+
+\subsection{Mô hình Dữ liệu Vật lý (Physical Data Model)}
+Mô hình vật lý định nghĩa cách thức dữ liệu được lưu trữ thực tế trên hệ quản trị cơ sở dữ liệu (sơ đồ ở Hình \ref{fig:physical_model}). Ở bước này, các kiểu dữ liệu (Data Types) cụ thể (INT, FLOAT, VARCHAR, DATE) và ràng buộc khóa ngoại (Foreign Keys) được thiết lập để tối ưu hóa không gian lưu trữ và tốc độ truy vấn. Chi tiết cấu trúc vật lý của các bảng chiều được mô tả từ Bảng \ref{tab:dim_solar_site} đến Bảng \ref{tab:dim_weather_type}. Các bảng sự kiện sản lượng và thời tiết được mô tả tương ứng trong Bảng \ref{tab:fact_gen_spec} và Bảng \ref{tab:fact_weather_spec}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{images/physical_model.png}
+    \caption{Sơ đồ Mô hình Dữ liệu Vật lý (Physical Data Model)}
+    \label{fig:physical_model}
+\end{figure}
+
+% =====================================================================
+% BẢNG 1: DIM SOLAR SITE
+% =====================================================================
+\begin{table}[H]
+\centering
+\caption{Cấu trúc vật lý bảng chiều trạm năng lượng (\texttt{dim\_solar\_site})}
+\label{tab:dim_solar_site}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabularx}{\textwidth}{p{4.5cm} c X}
+\toprule
+\textbf{Tên trường (Field)} & \textbf{Kiểu DL} & \textbf{Diễn giải vật lý} \\
+\midrule
+site\_id           & INT (PK) & Khóa chính của trạm. \\
+campus\_name       & VARCHAR  & Tên khu vực đặt trạm dưới dạng chuỗi ký tự. \\
+capacity\_kw       & FLOAT    & Công suất thiết kế (số thực). \\
+Number\_of\_panels & INT      & Tổng số lượng tấm pin (số nguyên). \\
+Panel              & VARCHAR  & Thương hiệu/loại tấm pin (chuỗi ký tự). \\
+Inverter           & VARCHAR  & Thông tin bộ biến đổi điện (chuỗi ký tự). \\
+Optimizers         & VARCHAR  & Bộ tối ưu hóa (chuỗi ký tự). \\
+Metric             & VARCHAR  & Ghi chú/tiêu chuẩn đo lường (chuỗi ký tự). \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+% =====================================================================
+% BẢNG 2: DIM GEOGRAPHY
+% =====================================================================
+\begin{table}[H]
+\centering
+\caption{Cấu trúc vật lý bảng chiều địa lý (\texttt{dim\_geography})}
+\label{tab:dim_geography}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabularx}{\textwidth}{p{4.5cm} c X}
+\toprule
+\textbf{Tên trường (Field)} & \textbf{Kiểu DL} & \textbf{Diễn giải vật lý} \\
+\midrule
+geo\_id        & INT (PK) & Khóa chính định danh vị trí địa lý. \\
+latitude      & FLOAT    & Vĩ độ (số thực). \\
+longitude     & FLOAT    & Kinh độ (số thực). \\
+location\_name & VARCHAR  & Tên địa danh hành chính. \\
+capacity      & INT      & Tổng công suất của khu vực đặt trạm (kW). \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+% =====================================================================
+% BẢNG 3: DIM DATE
+% =====================================================================
+\begin{table}[H]
+\centering
+\caption{Cấu trúc vật lý bảng chiều ngày (\texttt{dim\_date})}
+\label{tab:dim_date}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabularx}{\textwidth}{p{4.5cm} c X}
+\toprule
+\textbf{Tên trường (Field)} & \textbf{Kiểu DL} & \textbf{Diễn giải vật lý} \\
+\midrule
+date\_id       & INT (PK) & Khóa chính đại diện ngày. \\
+full\_date     & DATE     & Trường lưu định dạng thời gian nguyên bản (YYYY-MM-DD). \\
+day            & INT      & Ngày trong tháng (số nguyên). \\
+month          & INT      & Tháng trong năm (số nguyên). \\
+year           & INT      & Năm phân tích (số nguyên). \\
+is\_holiday    & INT      & Đánh dấu ngày lễ (1: Ngày lễ, 0: Ngày thường). \\
+is\_semester   & INT      & Đánh dấu học kỳ (1: Trong kỳ học, 0: Kỳ nghỉ). \\
+is\_exam       & INT      & Đánh dấu mùa thi (1: Trong mùa thi, 0: Bình thường). \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+% =====================================================================
+% BẢNG 4: DIM TIME
+% =====================================================================
+\begin{table}[H]
+\centering
+\caption{Cấu trúc vật lý bảng chiều thời gian (\texttt{dim\_time})}
+\label{tab:dim_time}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabularx}{\textwidth}{p{4.5cm} c X}
+\toprule
+\textbf{Tên trường (Field)} & \textbf{Kiểu DL} & \textbf{Diễn giải vật lý} \\
+\midrule
+time\_id     & INT (PK) & Khóa chính mốc thời gian. \\
+time\_string & VARCHAR  & Chuỗi ký tự biểu diễn giờ (HH:MM). \\
+hour         & INT      & Giờ trong ngày (số nguyên). \\
+minute       & INT      & Phút (số nguyên). \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+% =====================================================================
+% BẢNG 5: DIM WEATHER TYPE
+% =====================================================================
+\begin{table}[H]
+\centering
+\caption{Cấu trúc vật lý bảng chiều danh mục thời tiết (\texttt{dim\_weather\_type})}
+\label{tab:dim_weather_type}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabularx}{\textwidth}{p{4.5cm} c X}
+\toprule
+\textbf{Tên trường (Field)} & \textbf{Kiểu DL} & \textbf{Diễn giải vật lý} \\
+\midrule
+weather\_type\_id    & INT (PK) & Khóa chính danh mục thời tiết. \\
+weather\_code       & INT      & Mã trạng thái WMO (số nguyên). \\
+is\_day             & INT      & Trạng thái ánh sáng (1: Ngày, 0: Đêm) lưu dạng số nguyên. \\
+weather\_condition  & VARCHAR  & Tên điều kiện thời tiết tổng quát. \\
+description         & VARCHAR  & Chuỗi văn bản mô tả chi tiết diễn biến thời tiết. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+% =====================================================================
+% BẢNG 6: FACT SOLAR ENERGY GEN
+% =====================================================================
+\begin{table}[H]
+\centering
+\caption{Cấu trúc vật lý bảng sự kiện sản lượng (\texttt{fact\_solar\_energy\_gen})}
+\label{tab:fact_gen_spec}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabularx}{\textwidth}{p{4.5cm} c X}
+\toprule
+\textbf{Tên trường (Field)} & \textbf{Kiểu DL} & \textbf{Diễn giải mục đích vật lý} \\
+\midrule
+gen\_id & INT & Khóa chính định danh từng dòng sự kiện (Auto-increment). \\
+site\_id & INT & Khóa ngoại trỏ đến \texttt{dim\_solar\_site.site\_id}. \\
+geo\_id & INT & Khóa ngoại trỏ đến \texttt{dim\_geography.geo\_id}. \\
+date\_id & INT & Khóa ngoại trỏ đến \texttt{dim\_date.date\_id}. \\
+time\_id & INT & Khóa ngoại trỏ đến \texttt{dim\_time.time\_id}. \\
+energy\_generated\_kwh & FLOAT & Sản lượng điện năng sinh ra (kiểu số thực để tính toán độ chính xác cao). \\
+rolling\_outlier\_flag & BOOLEAN & Cờ đánh dấu dòng dữ liệu sản lượng là ngoại lai (phát hiện bằng Rolling IQR). \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+% =====================================================================
+% BẢNG 7: FACT WEATHER
+% =====================================================================
+\begin{table}[H]
+\centering
+\caption{Cấu trúc vật lý bảng sự kiện thời tiết (\texttt{fact\_weather})}
+\label{tab:fact_weather_spec}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabularx}{\textwidth}{p{5cm} c X}
+\toprule
+\textbf{Tên trường (Field)} & \textbf{Kiểu DL} & \textbf{Diễn giải mục đích vật lý} \\
+\midrule
+weather\_id & INT & Khóa chính định danh dòng lịch sử thời tiết. \\
+geo\_id & INT & Khóa ngoại trỏ đến \texttt{dim\_geography.geo\_id}. \\
+date\_id & INT & Khóa ngoại trỏ đến \texttt{dim\_date.date\_id}. \\
+time\_id & INT & Khóa ngoại trỏ đến \texttt{dim\_time.time\_id}. \\
+weather\_type\_id & INT & Khóa ngoại trỏ đến \texttt{dim\_weather\_type.weather\_type\_id}. \\
+is\_day & INT & Chỉ số phân tách chu kỳ ánh sáng (số nguyên: 1/0). \\
+shortwave\_radiation & INT & Bức xạ sóng ngắn (số nguyên). \\
+temperature\_c & FLOAT & Nhiệt độ không khí (số thực). \\
+cloud\_cover\_total & FLOAT & Tổng độ che phủ mây (số thực, tỷ lệ \%). \\
+cloud\_cover\_low & FLOAT & Tỷ lệ mây tầng thấp (số thực). \\
+cloud\_cover\_mid & FLOAT & Tỷ lệ mây tầng trung (số thực). \\
+cloud\_cover\_high & FLOAT & Tỷ lệ mây tầng cao (số thực). \\
+Diffuse\_Solar\_Radiation & INT & Ánh sáng tán xạ (số nguyên). \\
+Direct\_Normal\_Irradiance & INT & Bức xạ chiếu thẳng (số nguyên). \\
+wind\_speed & FLOAT & Tốc độ gió (số thực). \\
+precipitation\_mm & FLOAT & Tổng lượng mưa tích tụ (số thực). \\
+Sunshine\_Duration & FLOAT & Thời lượng nắng (số thực). \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\newpage
+\subsection{Kịch bản SQL Khởi tạo Cơ sở Dữ liệu}
+\label{subsec:sql_scripts}
+
+Để triển khai thiết kế vật lý lên hệ quản trị cơ sở dữ liệu Supabase PostgreSQL, dự án sử dụng các kịch bản SQL khởi tạo tự động. Các kịch bản này phân tách rõ rệt cấu trúc giữa tầng đệm (Staging Area) và tầng kho dữ liệu chính thức (Data Warehouse).
+
+\subsubsection{Kịch bản khởi tạo lớp đệm Staging (Schema Staging)}
+Các bảng trích xuất thô (\texttt{stg\_*}) được thiết kế với kiểu dữ liệu chuỗi linh hoạt (\texttt{VARCHAR}) nhằm hạn chế tối đa lỗi gián đoạn tiến trình trích xuất (Extract) khi nguồn cấp thay đổi định dạng dữ liệu đột ngột. Kịch bản dưới đây thực hiện tạo lập cấu trúc các bảng đệm thô và các bảng đệm đã chuyển kiểu trong schema \texttt{staging}:
+
+\begin{lstlisting}[language=SQL, caption={Kịch bản SQL khởi tạo schema staging và các bảng đệm dữ liệu}, label={lst:create_staging}]
+-- 1. Khoi tao Schema staging
+CREATE SCHEMA IF NOT EXISTS staging;
+-- 2. Bang Staging tho chua san luong dien
+CREATE TABLE staging.stg_solar_energy_generation (
+  CampusKey VARCHAR(255),
+  SiteKey VARCHAR(255),
+  Timestamp VARCHAR(255),
+  SolarGeneration VARCHAR(255)
+);
+
+-- 3. Bang dem chuyen kieu fact_solar_energy_gen trong staging
+CREATE TABLE staging.fact_solar_energy_gen (
+    SiteKey VARCHAR(255),
+    timestamp TIMESTAMP,
+    energy_generated_kwh FLOAT,
+    rolling_outlier_flag BOOLEAN DEFAULT false
+);
+
+-- 4. Bang dem chuyen kieu dim_date trong staging
+CREATE TABLE staging.dim_date (
+    full_date DATE,
+    day INT,
+    month INT,
+    year INT,
+    is_holiday VARCHAR(50),
+    is_semester VARCHAR(50),
+    is_exam VARCHAR(50)
+);
+\end{lstlisting}
+
+\newpage
+
+\subsubsection{Kịch bản khởi tạo tầng Data Warehouse (Public Schema)}
+Tầng Data Warehouse chính thức được cấu hình các ràng buộc toàn vẹn cơ sở dữ liệu chặt chẽ bao gồm khóa chính, khóa ngoại liên kết giữa bảng sự kiện và bảng chiều, đảm bảo không tồn tại dữ liệu mồ côi:
+
+\begin{lstlisting}[language=SQL, caption={Kịch bản SQL khởi tạo cac bang chieu va bang su kien trong Data Warehouse}, label={lst:create_table}]
+-- 1. Khoi tao bang chieu dim_date
+CREATE TABLE dim_date (
+    date_id INT PRIMARY KEY,
+    full_date DATE,
+    day INT,
+    month INT,
+    year INT,
+    is_holiday INT,
+    is_semester INT,
+    is_exam INT
+);
+
+-- 2. Khoi tao bang su kien san luong dien fact_solar_energy_gen
+CREATE TABLE fact_solar_energy_gen (
+    gen_id INT PRIMARY KEY,
+    site_id INT,
+    geo_id INT,
+    date_id INT,
+    time_id INT,
+    energy_generated_kwh FLOAT,
+    rolling_outlier_flag BOOLEAN DEFAULT false,
+    
+    -- Thiet lap cac rang buoc khoa ngoai
+    CONSTRAINT FK_Gen_Site FOREIGN KEY (site_id) REFERENCES dim_solar_site(site_id),
+    CONSTRAINT FK_Gen_Geo FOREIGN KEY (geo_id) REFERENCES dim_geography(geo_id),
+    CONSTRAINT FK_Gen_Date FOREIGN KEY (date_id) REFERENCES dim_date(date_id),
+    CONSTRAINT FK_Gen_Time FOREIGN KEY (time_id) REFERENCES dim_time(time_id)
+);
+\end{lstlisting}
+
+\section{Kiểm tra tính toàn vẹn và bảo mật dữ liệu}
+\label{sec:data_integrity}
+Để đảm bảo tính toàn vẹn dữ liệu (Data Integrity) trong CSDL vật lý, các ràng buộc tham chiếu (Referential Constraints) được cấu hình nghiêm ngặt theo quan hệ Một - Nhiều (1-M). Mọi bản ghi trong các bảng Fact bắt buộc phải có khóa tham chiếu tồn tại trong các bảng Dimension tương ứng, ngăn chặn tuyệt đối tình trạng dữ liệu mồ côi (orphan records) khi thực hiện luồng ETL.
+
 
 % ====================================================================
 %  CHƯƠNG 4: QUY TRÌNH ETL VÀ CHUẨN HÓA DỮ LIỆU
 % ====================================================================
-\input{Section4}
+\chapter{Quy trình ETL và Chuẩn hóa Dữ liệu}
+\label{chap:etl_cleaning}
+
+\section{Tổng quan Kiến trúc Pipeline Xử lý Dữ liệu}
+\label{sec:pipeline_overview}
+
+Để xây dựng một hệ thống phân tích dữ liệu sản lượng điện mặt trời ổn định và tin cậy, dự án thiết lập quy trình trích xuất, biến đổi và nạp dữ liệu (ETL Pipeline) tự động hóa bằng ngôn ngữ Python. Luồng di chuyển dữ liệu (Data Flow) được chia làm 3 tầng lõi rõ rệt nhằm đáp ứng triết lý thiết kế kho dữ liệu tập trung (Top-Down Approach):
+
+\begin{enumerate}[noitemsep]
+    \item \textbf{Tầng Trích xuất (Extract):} Dữ liệu lịch sử từ các tệp tin CSV vật lý ghi nhận tại trạm pin và dữ liệu khí tượng viễn thám từ Open-Meteo API được thu thập và lưu trữ tập trung tại thùng chứa (Bucket) \texttt{raw-data} của hệ thống lưu trữ đối tượng MinIO S3. Các tệp tin cốt lõi bao gồm \texttt{campus\_meta.csv}, \texttt{Solar\_Site\_Details.csv}, \texttt{calender.csv}, \texttt{Solar\_Energy\_Generation.csv}, và \texttt{open\_meteo\_weather\_raw\_2020\_2022.csv}.
+    \item \textbf{Tầng Biến đổi (Transform):} Sử dụng các thư viện tính toán hiệu năng cao như \texttt{pandas}, \texttt{numpy}, và \texttt{scikit-learn} để thực hiện chuẩn hóa kiểu dữ liệu thời gian, điền khuyết thiếu bằng chiến lược lai (Hybrid Imputation), gán cờ ngoại lai thông qua phân tích biến động trung bình trượt cục bộ, và đồng bộ granularity thời gian.
+    \item \textbf{Tầng Nạp (Load):} Dữ liệu sau biến đổi được đẩy vào hệ quản trị cơ sở dữ liệu Supabase PostgreSQL thông qua hai schema chuyên biệt: \texttt{staging} (bộ đệm trung gian) và \texttt{datawarehouse} (kho dữ liệu chuẩn hóa đa chiều phục vụ BI và ML).
+\end{enumerate}
+
+Để khắc phục các hạn chế về môi trường triển khai thực tế, mã nguồn ETL của dự án tích hợp hai giải pháp hệ thống quan trọng:
+\begin{itemize}
+    \item \textbf{Sử dụng Thư viện kết nối thuần Python (\texttt{pg8000}):} Khác với thư viện \texttt{psycopg2} vốn yêu cầu biên dịch các thư viện hệ thống nhị phân C (dễ gây lỗi thiếu \texttt{libz.so.1} hoặc \texttt{libstdc++.so.6} trên môi trường ảo hóa NixOS), thư viện \texttt{pg8000} hoạt động hoàn toàn độc lập, đảm bảo tính di động cao của mã nguồn.
+    \item \textbf{Cấu hình Connection Pooler thông qua IPv4:} Do Supabase chỉ hỗ trợ truy cập IPv6 trực tiếp cho gói tài khoản miễn phí, dự án cấu hình Pooler trung gian của Supabase tại cổng \texttt{5432} để duy trì kết nối IPv4 ổn định cho toàn bộ thành viên nhóm, đồng thời giảm tải luồng kết nối đồng thời lên máy chủ.
+\end{itemize}
+
+Dưới đây là mã nguồn cấu hình kết nối tối ưu hóa bằng thư viện \texttt{pg8000}:
+
+\begin{lstlisting}[language=Python, caption={Mã nguồn thiết lập kết nối cơ sở dữ liệu qua Pooler bằng pg8000}, label={lst:pg8000_conn}]
+def connect_pg8000() -> any:
+    import pg8000.dbapi
+    load_dotenv(ENV_FILE)
+    required = ["DB_HOST", "DB_PORT", "DB_NAME", "DB_USER", "DB_PASSWORD"]
+    missing = [name for name in required if not os.getenv(name)]
+    if missing:
+        raise RuntimeError(f"Missing env vars in {ENV_FILE}: {', '.join(missing)}")
+
+    return pg8000.dbapi.connect(
+        host=os.environ["DB_HOST"],
+        port=int(os.environ.get("DB_PORT", "5432")),
+        database=os.environ["DB_NAME"],
+        user=os.environ["DB_USER"],
+        password=os.environ["DB_PASSWORD"],
+        ssl_context=True,
+    )
+\end{lstlisting}
+
+\subsection{Thiết lập Tiến trình Nạp Dữ liệu Thứ tự}
+Để bảo toàn tính toàn vẹn tham chiếu khóa ngoại (Foreign Key Constraints), tiến trình tải dữ liệu vào kho được kiểm soát nghiêm ngặt theo thứ tự phụ thuộc. File \texttt{load\_01\_dims.py} chịu trách nhiệm tẩy trống dữ liệu cũ bằng lệnh \texttt{TRUNCATE CASCADE} và tải lại các bảng chiều độc lập theo trình tự tuyến tính:
+\begin{equation*}
+\text{dim\_geography} \longrightarrow \text{dim\_solar\_site} \longrightarrow \text{dim\_date} \longrightarrow \text{dim\_time} \longrightarrow \text{dim\_weather\_type}
+\end{equation*}
+
+Ngay sau khi các bảng chiều được nạp thành công, tệp tin \texttt{load\_02\_facts.py} tiến hành đọc các bảng sự kiện quy mô lớn từ MinIO và ánh xạ các khóa tự nhiên sang khóa đại diện (Surrogate Keys) bằng các bộ từ điển tra cứu (Lookups) đã lưu trong bộ nhớ tạm (In-memory dicts). Để tránh hiện tượng nghẽn bộ nhớ đệm (RAM Out-Of-Memory) khi xử lý tập dữ liệu sản lượng hơn 2,7 triệu dòng, luồng nạp sử dụng cơ chế chia nhỏ dữ liệu thành từng khối (chunksize = 50.000 dòng) và thực thi lệnh chèn hàng loạt \texttt{execute\_values} tối ưu hóa hiệu năng IO.
+
+\subsection{Cơ chế Quản lý Giao dịch và An toàn Dữ liệu}
+Toàn bộ tiến trình nạp được bọc trong một khối giao dịch cơ sở dữ liệu duy nhất (Explicit DB Transaction). Chế độ tự động xác nhận (\texttt{autocommit}) được tắt hoàn toàn. 
+\begin{itemize}
+    \item Nếu xuất hiện bất kỳ lỗi hệ thống hoặc vi phạm ràng buộc dữ liệu nào (ví dụ: khóa ngoại không tồn tại), lệnh \texttt{conn.rollback()} sẽ lập tức hoàn tác mọi thay đổi để đưa kho dữ liệu về trạng thái an toàn trước đó.
+    \item Chỉ khi toàn bộ dữ liệu của phân đoạn được ghi thành công không lỗi, lệnh \texttt{conn.commit()} mới được phát ra để ghi nhận vĩnh viễn các thay đổi vào đĩa cứng.
+\end{itemize}
+
+\section{Đánh giá Chất lượng và Khám phá Dữ liệu (EDA ban đầu)}
+\label{sec:data_quality}
+
+Trước khi thực hiện các phép toán làm sạch, nhóm tiến hành một bước hồ sơ hóa dữ liệu (Data Profiling) nhằm phát hiện các vấn đề về chất lượng dữ liệu thô. Tiến trình này được tự động hóa thông qua kịch bản \texttt{data\_integrity\_and\_reconciliation\_check.py}. 
+
+Công cụ thực hiện quét toàn bộ các bảng trong schema \texttt{staging} để thống kê: (1) Tổng số dòng dữ liệu hiện có, (2) Số lượng bản ghi bị khuyết thiếu khóa chính (NULL PK), và (3) Số lượng bản ghi bị trùng lặp khóa tự nhiên (Duplicate PKs). 
+
+\begin{table}[H]
+\centering
+\caption{Bảng thống kê kiểm tra chất lượng dữ liệu ban đầu trong Staging}
+\label{tab:data_quality_report}
+\renewcommand{\arraystretch}{1.3}
+% Sử dụng >{\centering\arraybackslash}X để biến các cột số liệu thành cột tự động căn giữa và tự động xuống dòng
+\begin{tabularx}{\textwidth}{l >{\centering\arraybackslash}X >{\centering\arraybackslash}X >{\centering\arraybackslash}X c}
+\toprule
+\textbf{Tên bảng dữ liệu} & \textbf{Tổng số dòng} & \textbf{Số dòng trùng lặp} & \textbf{Số dòng khuyết PK} & \textbf{Trạng thái} \\
+\midrule
+\texttt{dim\_geography}    & 5          & 0                  & 0                 & OK \\
+\texttt{dim\_solar\_site}  & 42         & 0                  & 0                 & OK \\
+\texttt{dim\_date}         & 2.312       & 0                  & 0                 & OK \\
+\texttt{dim\_time}         & 96         & 0                  & 0                 & OK \\
+\texttt{dim\_weather\_type}& 22         & 0                  & 0                 & OK \\
+\texttt{fact\_weather}     & 367.920     & 0                  & 0                 & OK \\
+\texttt{fact\_solar\_energy\_gen} & 2.731.946 & 0            & 0                 & OK \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Kết quả phân tích ban đầu cho thấy cấu trúc khung của các bảng chiều và bảng thời tiết rất sạch, không xuất hiện hiện tượng trùng lặp dòng. Tuy nhiên, bảng sự kiện sản lượng thô \texttt{fact\_solar\_energy\_gen} chứa tới 107.452 ô dữ liệu bị khuyết giá trị sản lượng (\texttt{SolarGeneration} mang giá trị \texttt{NaN}), chiếm khoảng 3,93\% tổng số quan trắc đo đạc của cả năm. Đây là đối tượng trọng tâm cần xử lý tại tầng làm sạch dữ liệu.
+
+\subsection{Các Cột Thực Tế và Ánh Xạ Dữ Liệu Trong Pipeline}
+Trong giai đoạn nạp dữ liệu từ các tệp thô vào bảng đệm (Staging layer), hệ thống thực hiện chuyển đổi kiểu dữ liệu (casting) và đổi tên trường để phù hợp với định dạng kho dữ liệu. Chi tiết các trường thông tin thực tế được ánh xạ từ tệp thô lên bảng sự kiện được thống kê dưới đây:
+
+\subsubsection{Cấu trúc ánh xạ bảng sự kiện sản lượng (\texttt{fact\_solar\_energy\_gen})}
+Bảng này ghi nhận sản lượng điện thực tế theo chu kỳ 15 phút của từng trạm phát:
+\begin{itemize}
+    \item \texttt{sitekey} (Ánh xạ từ cột \texttt{SiteKey} trong tệp thô, định dạng chuỗi chuyển sang \texttt{VARCHAR} hoặc \texttt{INT}): Mã định danh duy nhất của từng trạm phát.
+    \item \texttt{timestamp} (Ánh xạ từ cột \texttt{Timestamp} dạng text thô, xử lý chuyển đổi định dạng \texttt{YYYY-MM-DD HH24:MI:SS} sang kiểu dữ liệu \texttt{TIMESTAMP} chuẩn): Mốc thời gian quan trắc sản lượng.
+    \item \texttt{energy\_generated\_kwh} (Ánh xạ từ cột \texttt{SolarGeneration} thô, làm sạch ký tự lạ và chuyển đổi thành \texttt{DOUBLE PRECISION} hoặc \texttt{FLOAT}): Sản lượng điện mặt trời thực tế thu được trong 15 phút (đơn vị kWh).
+\end{itemize}
+
+\subsubsection{Cấu trúc ánh xạ bảng sự kiện thời tiết (\texttt{fact\_weather})}
+Bảng này tích hợp các chỉ số thời tiết theo chu kỳ chẵn giờ từ Open-Meteo API ứng với tọa độ trạm phát:
+\begin{itemize}
+    \item \texttt{sitekey} (Ánh xạ từ \texttt{SiteKey}): Khóa liên kết trạm phát điện.
+    \item \texttt{timestamp} (Ánh xạ từ \texttt{timestamp} thô, chuyển sang kiểu \texttt{TIMESTAMP}): Mốc thời gian chẵn giờ của dữ liệu khí tượng.
+    \item \texttt{weather\_code} (Ánh xạ từ \texttt{weather\_code}, chuyển kiểu \texttt{INT}): Mã trạng thái thời tiết chuẩn WMO.
+    \item \texttt{is\_day} (Ánh xạ từ \texttt{is\_day}, kiểu \texttt{INT}): Cờ phân tách trạng thái ngày/đêm (1: Ngày, 0: Đêm).
+    \item \texttt{shortwave\_radiation} (Ánh xạ từ \texttt{shortwave\_radiation}, kiểu \texttt{NUMERIC}): Tổng bức xạ sóng ngắn mặt trời bề mặt ($\text{W/m}^2$).
+    \item \texttt{temperature\_c} (Ánh xạ từ \texttt{temperature\_2m}, kiểu \texttt{NUMERIC}): Nhiệt độ không khí ở độ cao 2 mét ($^\circ\text{C}$).
+    \item \texttt{cloud\_cover\_total} (Ánh xạ từ \texttt{cloud\_cover}, kiểu \texttt{NUMERIC}): Tỷ lệ che phủ mây tổng thể (\%).
+    \item \texttt{cloud\_cover\_low} (Ánh xạ từ \texttt{cloud\_cover\_low}, kiểu \texttt{NUMERIC}): Tỷ lệ mây tầng thấp (\%).
+    \item \texttt{cloud\_cover\_mid} (Ánh xạ từ \texttt{cloud\_cover\_mid}, kiểu \texttt{NUMERIC}): Tỷ lệ mây tầng trung (\%).
+    \item \texttt{cloud\_cover\_high} (Ánh xạ từ \texttt{cloud\_cover\_high}, kiểu \texttt{NUMERIC}): Tỷ lệ mây tầng cao (\%).
+    \item \texttt{diffuse\_solar\_radiation} (Ánh xạ từ \texttt{diffuse\_radiation}, kiểu \texttt{NUMERIC}): Bức xạ mặt trời khuếch tán ($\text{W/m}^2$).
+    \item \texttt{direct\_normal\_irradiance} (Ánh xạ từ \texttt{direct\_radiation}, kiểu \texttt{NUMERIC}): Bức xạ mặt trời trực tiếp bề mặt ($\text{W/m}^2$).
+    \item \texttt{wind\_speed} (Ánh xạ từ \texttt{wind\_speed\_10m}, kiểu \texttt{NUMERIC}): Tốc độ gió ở độ cao 10 mét ($\text{m/s}$).
+    \item \texttt{precipitation\_mm} (Ánh xạ từ \texttt{precipitation}, kiểu \texttt{NUMERIC}): Tổng lượng mưa tích tụ trong giờ (mm).
+    \item \texttt{sunshine\_duration} (Ánh xạ từ \texttt{sunshine\_duration}, kiểu \texttt{NUMERIC}): Thời lượng nắng thực tế (giây).
+\end{itemize}
+
+\section{Làm sạch và Chuẩn hóa Dữ liệu (Data Cleaning)}
+\label{sec:cleaning}
+
+\subsection{Xử lý Dữ liệu Khuyết thiếu và Lỗi Logic}
+\label{subsec:null_imputation}
+
+Để phục hồi dữ liệu khuyết thiếu cho trường sản lượng phát điện (\texttt{energy\_generated\_kwh}), dự án áp dụng chiến lược nội suy lai nghiêm ngặt (Hybrid Imputation Strategy) tích hợp giữa các bộ quy tắc nghiệp vụ vật lý và mô hình học máy trong file \texttt{solar\_data\_pipeline.py}. Tiến trình xử lý gồm hai giai đoạn chính:
+
+\subsubsection{Giai đoạn 1: Lọc vật lý ban đêm (Rule-Based Night Zeroing)}
+Đối với các trạm phát điện mặt trời quang điện, sản lượng điện năng luôn bằng 0 vào ban đêm do không có bức xạ mặt trời. Nếu sử dụng các thuật toán nội suy thuần toán học (như tuyến tính hay spline) trên các khoảng trống kéo dài qua đêm, hệ thống sẽ sinh ra các giá trị sản lượng ảo (dương) phi vật lý. 
+
+Do đó, thuật toán tiến hành rà soát mốc thời gian và áp đặt giá trị 0 ngay lập tức nếu thỏa mãn một trong hai điều kiện logic sau:
+\begin{itemize}
+    \item \textbf{Khung giờ ban đêm tự nhiên:} Mốc thời gian đo đạc nằm trong khoảng từ 18:30 chiều hôm trước đến 05:30 sáng hôm sau ($T \ge 18.5$ hoặc $T < 5.5$).
+    \item \textbf{Điều kiện thời tiết triệt tiêu:} Giá trị bức xạ sóng ngắn mặt trời (\texttt{shortwave\_radiation}) bằng 0 hoặc cờ chỉ số ánh sáng ngày \texttt{is\_day} bằng 0 trong tập dữ liệu thời tiết (được đồng bộ hóa sang dòng sản lượng tương ứng bằng thuật toán ghép nối mốc gần nhất \texttt{pd.merge\_asof} với ngưỡng sai lệch thời gian tối đa là 30 phút).
+\end{itemize}
+Giai đoạn này đã xử lý thành công 94.618 ô dữ liệu trống (chiếm tới 88,1\% tổng số giá trị khuyết thiếu ban đầu), gán chúng về giá trị \texttt{0.0} một cách chính xác.
+
+Mã nguồn Python hiện thực thuật toán lọc vật lý ban đêm:
+
+\begin{lstlisting}[language=Python, caption={Mã nguồn Python hiện thực bộ quy tắc Night-Zeroing vật lý}, label={lst:night_zero}]
+def rule_based_night_zero(
+    solar_df: pd.DataFrame, weather_df: pd.DataFrame, site_key: int
+) -> tuple:
+    gen = solar_df["energy_generated_kwh"].copy()
+    ts = solar_df["timestamp"]
+
+    # Xac dinh gio dem tu nhien
+    hour = ts.dt.hour + ts.dt.minute / 60
+    is_night = (hour >= NIGHT_START + 0.5) | (hour < NIGHT_END + 0.5)
+
+    # Ket noi voi open_meteo de lay thong tin buc xa song ngan
+    w = weather_df[weather_df["sitekey"] == site_key][
+        ["timestamp", "shortwave_radiation", "is_day"]
+    ].copy()
+    w = w.rename(columns={"timestamp": "timestamp"})
+    w["timestamp"] = pd.to_datetime(w["timestamp"])
+
+    merged = pd.merge_asof(
+        solar_df[["timestamp"]].reset_index(),
+        w.sort_values("timestamp"),
+        on="timestamp",
+        tolerance=pd.Timedelta("30min"),
+        direction="nearest",
+    ).set_index("index")
+
+    # Dieu kien buc xa song ngan bang 0 hoac co dem is_day = 0
+    zero_radiation = (merged["shortwave_radiation"].fillna(0) == 0) | (
+        merged["is_day"].fillna(0) == 0
+    )
+    mask_zero = is_night.values | zero_radiation.values
+
+    n_filled = (mask_zero & gen.isna()).sum()
+    gen[mask_zero & gen.isna()] = 0.0
+    return gen, n_filled
+\end{lstlisting}
+
+\subsubsection{Giai đoạn 2: Nội suy phân cấp theo quy mô khoảng trống (Imputation Gaps classification)}
+Đối với 12.834 ô dữ liệu khuyết thiếu phát sinh vào ban ngày (khi có bức xạ), thuật toán tiến hành phân tích độ dài chuỗi khuyết liên tiếp (Gap size) của từng trạm phát độc lập để áp dụng phương pháp điền khuyết tối ưu:
+
+\begin{enumerate}[label=\alph*., leftmargin=*]
+    \item \textbf{Khoảng khuyết ngắn ($\le 2$ dòng liên tiếp, tương đương $\le 30$ phút):} Áp dụng phương pháp nội suy tuyến tính (\textit{Linear Interpolation}) theo thời gian. Do khoảng thời gian gián đoạn rất ngắn, biến động của ánh sáng mặt trời được coi là thay đổi tuyến tính đều giữa điểm biên trước và biên sau khoảng khuyết.
+    \item \textbf{Khoảng khuyết trung bình (Từ 3 đến 8 dòng liên tiếp, tương đương từ 45 phút đến 2 tiếng):} Áp dụng phương pháp nội suy \textit{Cubic Spline}. Đường cong bậc ba giúp mô phỏng mượt mà sự trồi sụt tự nhiên của sản lượng điện do mây che phủ đi qua trạm pin. Để tránh hiện tượng sập nhiễu ma trận khi gặp các khoảng khuyết lớn lân cận, thuật toán xây dựng một bản sao tạm thời được điền tuyến tính để làm mịn dữ liệu mốc trước khi tính toán spline bậc ba thực tế.
+    \item \textbf{Khoảng khuyết diện rộng ($> 8$ dòng liên tiếp, tương đương $> 2$ tiếng):} Trong trường hợp này, dữ liệu bị mất quá dài khiến các phương pháp nội suy chuỗi đơn biến (Tuyến tính/Spline) mất khả năng phục hồi chính xác xu hướng thực tế. Nhóm thiết lập mô hình hồi quy đa biến (\textit{Multivariate Regression Imputation}) độc lập cho từng trạm phát.
+    
+    Mô hình Hồi quy Tuyến tính (\texttt{LinearRegression} từ thư viện \texttt{scikit-learn}) được huấn luyện trên tập các bản ghi sạch (đầy đủ thông tin) của chính trạm đó. Các biến đầu vào (Features) bao gồm: bức xạ sóng ngắn mặt trời (\texttt{shortwave\_radiation}), bức xạ chiếu trực tiếp (\texttt{direct\_normal\_irradiance}), bức xạ khuếch tán (\texttt{diffuse\_solar\_radiation}) và nhiệt độ không khí ở độ cao 2m (\texttt{temperature\_c}). 
+    
+    Sau khi huấn luyện, mô hình sẽ dự đoán sản lượng điện năng cho các khoảng khuyết diện rộng dựa trên dữ liệu khí tượng thực tế tại tọa độ trạm phát đó. Kết quả dự đoán được cắt giới hạn dưới bằng 0 (\texttt{clip(lower=0)}) để loại bỏ các giá trị âm sinh ra do sai số hồi quy.
+\end{enumerate}
+
+Mã nguồn Python thực thi hồi quy đa biến điền khuyết diện rộng ban ngày:
+
+\begin{lstlisting}[language=Python, caption={Mã nguồn Python thực thi Multivariate Regression Imputation cho các khoảng khuyết lớn}, label={lst:regression_impute}]
+def regression_imputation_large_gaps_strict(
+    solar_sub: pd.DataFrame,
+    weather_df: pd.DataFrame,
+    site_key: int,
+    large_gap_indices: set,
+) -> tuple:
+    FEATURES = [
+        "shortwave_radiation",
+        "direct_normal_irradiance",
+        "diffuse_solar_radiation",
+        "temperature_c",
+    ]
+
+    w = weather_df[weather_df["sitekey"] == site_key][["timestamp"] + FEATURES].copy()
+    w = w.rename(columns={"timestamp": "timestamp"})
+    w["timestamp"] = pd.to_datetime(w["timestamp"])
+
+    merged = pd.merge_asof(
+        solar_sub[["timestamp", "energy_generated_kwh"]].reset_index(),
+        w.sort_values("timestamp"),
+        on="timestamp",
+        tolerance=pd.Timedelta("60min"),
+        direction="nearest",
+    ).set_index("index")
+
+    train_mask = merged["energy_generated_kwh"].notna() & merged[FEATURES].notna().all(
+        axis=1
+    )
+    pred_mask = merged["energy_generated_kwh"].isna() & merged[FEATURES].notna().all(
+        axis=1
+    )
+
+    filled = 0
+    if train_mask.sum() < 10:
+        return solar_sub["energy_generated_kwh"].values, 0
+
+    X_train = merged.loc[train_mask, FEATURES].values
+    y_train = merged.loc[train_mask, "energy_generated_kwh"].values
+
+    # Chuan hoa thong so dac trung dau vao
+    scaler = StandardScaler()
+    X_train_sc = scaler.fit_transform(X_train)
+
+    model = LinearRegression()
+    model.fit(X_train_sc, y_train)
+
+    if pred_mask.sum() > 0:
+        X_pred = merged.loc[pred_mask, FEATURES].values
+        X_pred_sc = scaler.transform(X_pred)
+        y_pred = model.predict(X_pred_sc)
+
+        result = solar_sub["energy_generated_kwh"].copy()
+        pred_indices = merged[pred_mask].index.tolist()
+
+        for pos, idx in enumerate(pred_indices):
+            local_pos = solar_sub.index.get_loc(idx) if idx in solar_sub.index else None
+            # Chi ghi vao cac vi tri thuoc khoang khuyet lon
+            if local_pos is not None and local_pos in large_gap_indices:
+                result.iloc[local_pos] = max(0.0, y_pred[pos])
+                filled += 1
+
+        return result.values, filled
+    return solar_sub["energy_generated_kwh"].values, 0
+\end{lstlisting}
+
+Tổng hợp kết quả sau quy trình làm sạch dữ liệu khuyết thiếu:
+\begin{itemize}
+    \item Tổng số ô trống ban đầu: 107.452 ô (3,93\% dữ liệu).
+    \item Số ô được điền qua lọc ban đêm (Night Zero): 94.618 ô.
+    \item Số ô được điền qua nội suy tuyến tính (Linear): 3.652 ô.
+    \item Số ô được điền qua nội suy đường cong (Cubic Spline): 5.124 ô.
+    \item Số ô được điền qua mô hình học máy hồi quy (Regression): 4.058 ô.
+    \item Số ô NULL còn lại trong kho dữ liệu: 0 ô (Điền khuyết thành công 100\%).
+\end{itemize}
+
+\subsection{Xử lý Dữ liệu Ngoại lai (Outliers) và Lọc nhiễu}
+\label{subsec:outlier_processing}
+
+Bên cạnh lỗi mất mát dữ liệu, hệ thống thu thập thông tin từ cảm biến dòng điện (CT) của các trạm phát thường xuyên gặp hiện tượng nhiễu đột biến (Spikes) do xung nhiễu lưới điện, bụi bẩn bám tạm thời hoặc lỗi truyền dữ liệu gây ra các đỉnh công suất vượt xa công suất thiết kế cực đại ($kWp$).
+
+Để nhận diện các bất thường này mà không bị ảnh hưởng bởi tính mùa vụ và tính chu kỳ ngày đêm cực mạnh của điện mặt trời, nhóm áp dụng phương pháp \textbf{Grouped Rolling IQR cục bộ} trong file \texttt{upload\_rolling\_outlier\_flags.py}. 
+
+\subsubsection{Quy trình tính toán và gắn cờ ngoại lai}
+Thuật toán tính toán độ lệch tuyệt đối của từng điểm dữ liệu sản lượng so với trung bình trượt trong cửa sổ 1 giờ tự trượt theo thời gian. Sau đó, toàn bộ các độ lệch này được gom nhóm theo tổ hợp trạm (\texttt{sitekey}) và giờ trong ngày (\texttt{hour}) để tính toán khoảng tứ phân vị cục bộ ($\text{IQR}_{s, h} = Q_3 - Q_1$). Bản ghi nào có độ lệch tuyệt đối vượt quá ngưỡng giới hạn cục bộ ($Q_3 + 1.5 \cdot \text{IQR}_{s, h}$) sẽ bị gắn cờ ngoại lai \texttt{rolling\_outlier\_flag = true}.
+
+\subsubsection{Quy trình đẩy cờ an toàn vào Kho dữ liệu trung tâm}
+Để cập nhật cờ ngoại lai này lên Supabase DWH mà không làm gián đoạn hệ thống và đảm bảo an toàn giao dịch tuyệt đối, nhóm xây dựng một pipeline 4 bước như sau:
+\begin{enumerate}
+    \item \textbf{Xác thực nguồn dữ liệu (Source Verification Check):} Trước khi thực hiện bất kỳ thao tác ghi nào, tập tin \texttt{upload\_rolling\_outlier\_flags.py} tiến hành đối chiếu cấu trúc vân tay dữ liệu (Data Fingerprint Check) giữa tệp CSV kết quả phân tích ngoại lai và bảng sự kiện \texttt{fact\_solar\_energy\_gen} trên Supabase. 
+    
+    Quy trình kiểm tra tính toán tổng băm MD5 của chuỗi khóa ghép (\texttt{sitekey|timestamp}), tổng sản lượng năng lượng (\texttt{energy\_sum}) với sai số cho phép $\le 0.01$, và tổng số dòng dữ liệu. Bước này đảm bảo dữ liệu chạy cờ ngoại lai và dữ liệu trên cơ sở dữ liệu hoàn toàn đồng nhất về cấu trúc cột và số lượng dòng (2.731.946 dòng), ngăn ngừa lỗi lệch dòng (Data Shift).
+    
+    \item \textbf{Nạp danh sách ứng viên (Sparse Candidate Upload):} Thay vì tải lên lại toàn bộ 2,73 triệu dòng dữ liệu (rất chậm và dễ gây nghẽn kết nối), thuật toán chỉ lọc ra các bản ghi bị gắn cờ ngoại lai thực sự (\texttt{rolling\_outlier\_flag = true}) gồm 100.822 dòng. Danh sách ứng viên này được đẩy vào một bảng tạm trung gian có cấu trúc chỉ mục khóa chính tối ưu: \texttt{staging.fact\_solar\_energy\_gen\_rolling\_outlier\_flags}.
+    
+    \item \textbf{Kiểm tra tính toàn vẹn khóa ngoại (Referential Check):} Thực hiện truy vấn kiểm tra chéo (Anti-Join) để đảm bảo toàn bộ 100.822 khóa trong bảng tạm đều tồn tại khớp 1:1 trong bảng sự kiện chính. Kết quả trả về 0 dòng lỗi trước khi tiến hành cập nhật.
+    
+    \item \textbf{Cập nhật giao dịch hàng loạt (Bulk Join Update):} Tiến trình mở một khối giao dịch an toàn trên cơ sở dữ liệu, thực hiện gán toàn bộ cờ \texttt{rolling\_outlier\_flag = false} cho cả bảng sự kiện chính (2.731.946 dòng), sau đó thực hiện lệnh cập nhật \texttt{UPDATE ... FROM ... WHERE} nối bảng tạm với bảng chính theo khóa trùng khớp (\texttt{sitekey}, \texttt{timestamp}) để chuyển các dòng ngoại lai sang trạng thái \texttt{true}.
+\end{enumerate}
+
+Dưới đây là một phần mã nguồn Python thực hiện so sánh đối chiếu vân tay (Fingerprint) dữ liệu để bảo vệ chống ghi đè lỗi dữ liệu:
+
+\begin{lstlisting}[language=Python, caption={Mã nguồn Python kiểm tra vân tay dữ liệu (Fingerprint) trước khi cập nhật}, label={lst:data_fingerprint}]
+def fingerprint_supabase(conn: any) -> dict[str, object]:
+    cur = conn.cursor()
+    try:
+        cur.execute(
+            f"""
+            SELECT
+                COUNT(*)::bigint AS rows,
+                COUNT(DISTINCT sitekey)::bigint AS distinct_sitekeys,
+                MIN(to_char(timestamp, 'YYYY-MM-DD HH24:MI:SS')) AS min_timestamp,
+                MAX(to_char(timestamp, 'YYYY-MM-DD HH24:MI:SS')) AS max_timestamp,
+                SUM(('x' || substr(md5(sitekey::text), 1, 15))::bit(60)::bigint)::numeric AS site_sum,
+                SUM(('x' || substr(md5(to_char(timestamp, 'YYYY-MM-DD HH24:MI:SS')), 1, 15))::bit(60)::bigint)::numeric AS timestamp_sum,
+                SUM(energy_generated_kwh::numeric) AS energy_sum,
+                SUM(
+                    ('x' || substr(
+                        md5(sitekey::text || '|' || to_char(timestamp, 'YYYY-MM-DD HH24:MI:SS')),
+                        1,
+                        15
+                    ))::bit(60)::bigint
+                )::numeric AS key_checksum
+            FROM {qname(SCHEMA, SOURCE_FACT_TABLE)}
+            """
+        )
+        row = cur.fetchone()
+        return {
+            "rows": int(row[0]),
+            "distinct_sitekeys": int(row[1]),
+            "min_timestamp": row[2],
+            "max_timestamp": row[3],
+            "site_sum": Decimal(str(row[4] or 0)),
+            "timestamp_sum": Decimal(str(row[5] or 0)),
+            "energy_sum": Decimal(str(row[6] or 0)),
+            "key_checksum": Decimal(str(row[7] or 0)),
+        }
+    finally:
+        cur.close()
+\end{lstlisting}
+
+Kết quả chạy pipeline thực tế đã gắn cờ thành công **100.822 dòng ngoại lai** (chiếm **3,69\%** tổng số dòng dữ liệu). Phân phối cờ sau kiểm chứng khớp hoàn hảo với các chỉ số thống kê toán học của mô hình mẫu:
+\begin{itemize}
+    \item Tổng số dòng dữ liệu kiểm tra: 2.731.946 dòng.
+    \item Số lượng dòng gắn cờ ngoại lai (\texttt{true}): 100.822 dòng (3,69\%).
+    \item Số lượng dòng dữ liệu sạch bình thường (\texttt{false}): 2.631.124 dòng (96,31\%).
+    \item Số lượng dòng mang giá trị rỗng (\texttt{null}): 0 dòng.
+\end{itemize}
+
+\section{Biến đổi và Trích xuất Đặc trưng (Feature Engineering)}
+\label{sec:transformation}
+
+Sau khi dữ liệu sản lượng và thời tiết được làm sạch tại tầng kho dữ liệu, tiến trình thực hiện tính toán biến đổi cấu trúc để chuẩn bị dữ liệu đầu vào tối ưu cho mô hình dự báo học máy.
+
+\subsection{Giải quyết độ lệch tần suất ghi nhận (Granularity Alignment)}
+Một thách thức lớn trong dữ liệu của dự án là độ lệch tần suất (Granularity Mismatch) giữa hai nguồn thông tin nghiệp vụ:
+\begin{itemize}
+    \item Dữ liệu sản lượng điện được ghi nhận với tần suất cao (15 phút một dòng).
+    \item Dữ liệu khí tượng viễn thám chỉ có sẵn theo chu kỳ giờ (60 phút một dòng).
+\end{itemize}
+
+Để giải quyết sự lệch pha này mà không làm mất mát thông tin xu hướng của bức xạ mặt trời, nhóm thiết lập thuật toán gom cụm (Aggregation) đưa dữ liệu về cùng chu kỳ giờ (1-hour grain). Chỉ số sản lượng điện mặt trời \texttt{energy\_generated\_kwh} trong 4 chu kỳ 15 phút của cùng một giờ được tính tổng cộng dồn (Sum Aggregation):
+\begin{equation}
+E_{\text{hour}} = \sum_{i=1}^{4} E_{15\text{min}, i}
+\end{equation}
+Trong khi đó, các biến thời tiết đại diện cho giờ đó được giữ nguyên giá trị trung bình giờ. Thuật toán ghép nối sử dụng hàm kết hợp chính xác mốc thời gian chẵn giờ, giúp tạo ra một bảng dữ liệu phẳng góc nhìn rộng (Wide-table) thống nhất, đảm bảo tính liên kết chặt chẽ và không có dữ liệu rò rỉ thời gian (Data Leakage).
+
+\subsection{Trích xuất các đặc trưng thời gian và lịch trình học tập}
+Điện năng mặt trời mang tính chu kỳ tự nhiên rất mạnh phụ thuộc vào quỹ đạo chuyển động của Trái Đất. Dự án tiến hành trích xuất các đặc trưng thời gian đa tầng từ trường mốc thời gian \texttt{timestamp}:
+\begin{itemize}
+    \item \textbf{Đặc trưng giờ trong ngày (Hour):} Giá trị từ 0 đến 23, xác định góc chiếu mặt trời.
+    \item \textbf{Đặc trưng tháng trong năm (Month):} Xác định tính mùa vụ thời tiết (Mùa hè bức xạ cao, mùa đông bức xạ thấp ở Nam bán cầu).
+    \item \textbf{Đặc trưng ngày trong tuần (Day of Week):} Hỗ trợ phân tích hành vi tiêu thụ điện năng tại các khu học xá (Campus).
+\end{itemize}
+
+Đặc biệt, nhóm tích hợp thành công dữ liệu lịch học tập (\texttt{calender.csv}) của cơ sở đào tạo thông qua ba đặc trưng nhị phân:
+\begin{itemize}
+    \item \texttt{is\_holiday}: Đánh dấu các ngày nghỉ lễ quốc gia hoặc ngày nghỉ nội bộ.
+    \item \texttt{is\_semester}: Đánh dấu thời điểm đang trong học kỳ chính thức (nhu cầu sử dụng thiết bị điện cao đột biến).
+    \item \texttt{is\_exam}: Đánh dấu giai đoạn thi cử tập trung.
+\end{itemize}
+Sự kết hợp các thuộc tính lịch trình này giúp mô hình học máy phân biệt rõ rệt giữa biến động sản lượng do thời tiết tự nhiên và biến động tiêu thụ do hành vi con người gây ra, cải thiện độ chính xác dự báo sản lượng thực dùng tại các điểm nút phụ tải trạm.
+
 
 % ====================================================================
 %  CHƯƠNG 5: TRỰC QUAN DỮ LIỆU VÀ XÂY DỰNG DASHBOARD
 % ====================================================================
-\input{Section5}
+\chapter{Trực quan Dữ liệu và Xây dựng Dashboard}
+\label{chap:dashboard}
+
+\section{Chiến lược Kết nối Dữ liệu và Thiết kế UI/UX}
+\label{sec:dashboard_strategy}
+\textit{[Kết nối các bảng Fact và Dimension từ Supabase vào công cụ BI (Tableau) thông qua các Relationship (1-M). Lựa chọn bộ màu sắc và bố cục Dashboard theo quy luật Gestalt để làm nổi bật các chỉ số quan trọng.]}
+
+\section{Chi tiết Hệ thống Dashboard Phân tích}
+\label{sec:dashboard_details}
+\subsection{Dashboard 1: Tổng quan Vận hành (Executive Overview)}
+\textit{[Cung cấp cái nhìn toàn cảnh về sản lượng điện tổng, công suất hoạt động trung bình, và xu hướng theo thời gian của 42 trạm phát.]}
+
+\subsection{Dashboard 2: Phân tích Hiệu suất và Khí hậu}
+\textit{[Phân tích tương quan giữa sản lượng điện với nhiệt độ và bức xạ. Phát hiện các mốc suy giảm hiệu suất.]}
+
+\subsection{Dashboard 3: Giám sát Bất thường và Lỗi Cảm biến}
+\textit{[Trực quan hóa các điểm dữ liệu bất thường (Outliers), tần suất xuất hiện lỗi tại các trạm để kỹ sư có kế hoạch bảo trì.]}
+
 
 % ====================================================================
 %  CHƯƠNG 6: KHAI PHÁ DỮ LIỆU VÀ BUSINESS INSIGHTS
 % ====================================================================
-\input{Section6}
+\chapter{Khai phá Dữ liệu và Business Insights}
+\label{chap:insights}
+
+Theo tinh thần phân tích chuyên sâu (Đừng chỉ mô tả $\rightarrow$ phải giải thích), chương này tập trung vào việc bóc tách các điểm nghẽn vận hành và đưa ra các phát hiện có giá trị kinh doanh (Business Insights) dựa trên logic dữ liệu, thay vì chỉ dựa vào các biểu đồ bề nổi. Các mô hình học máy cơ sở (ARIMA/Prophet) được tích hợp như một công cụ chẩn đoán bổ trợ.
+
+\section{Insight 1: Hiện tượng suy giảm hiệu suất do nhiệt độ (Thermal Degradation)}
+\textit{[Dữ liệu chứng minh rằng khi nhiệt độ môi trường vượt quá ngưỡng giới hạn (ví dụ: $25^\circ\text{C}$), hiệu suất chuyển đổi quang điện của tấm pin sụt giảm đáng kể. Điều này giải thích tại sao vào buổi trưa bức xạ cao nhất nhưng công suất lại không đạt đỉnh.]}
+
+\section{Insight 2: Điểm mù vận hành từ ``Độ nhiễu ban đêm''}
+\textit{[Phát hiện hàng loạt trạm ghi nhận sản lượng phát điện vào ban đêm. Nguyên nhân được phân tích là do nhiễu xung điện từ biến tần (Inverter) hoặc dòng rò. Nếu không lọc bỏ, dữ liệu này sẽ làm sai lệch nghiêm trọng các báo cáo tổng sản lượng.]}
+
+\section{Insight 3: Ứng dụng Mô hình dự báo (Baseline) để tối ưu vận hành}
+\textit{[Ứng dụng mô hình Time-Series (như Prophet) để thiết lập đường cơ sở (Baseline) dự báo sản lượng. Sự chênh lệch lớn giữa sản lượng thực tế và Baseline đóng vai trò là ``cờ báo'' (Alert) để ban quản lý cử đội bảo trì đến kiểm tra các tấm pin bị bụi bẩn bám dính hoặc hỏng hóc.]}
+
 
 % ====================================================================
 %  CHƯƠNG 7: KẾT LUẬN VÀ HƯỚNG PHÁT TRIỂN
 % ====================================================================
-\input{Section7}
+\chapter{Kết luận và Hướng phát triển}
+\label{chap:conclusion}
+
+\section{Kết luận Tổng quan}
+\label{sec:conclusion}
+\textit{[Tóm tắt lại việc hoàn thành các mục tiêu dự án: Xây dựng thành công Data Warehouse, làm sạch dữ liệu nhiễu, và phát triển hệ thống Dashboard trực quan giúp doanh nghiệp chuyển đổi từ quản lý thụ động sang giám sát dựa trên dữ liệu.]}
+
+\section{Khuyến nghị Chiến lược (Actionable Insights)}
+\label{sec:recommendations}
+\textit{[Đề xuất các hành động cụ thể: Lắp đặt hệ thống làm mát tự động để giảm suy hao nhiệt, thiết lập quy trình kiểm tra Inverter định kỳ để khắc phục độ nhiễu ban đêm, và ứng dụng kết quả dự báo để lập kế hoạch vệ sinh tấm pin.]}
+
+\section{Hạn chế của Dự án}
+\label{sec:limitations}
+\textit{[Những giới hạn về phần cứng, thời gian xử lý dữ liệu lớn, hoặc sự thiếu hụt của các mô hình học sâu (Deep Learning) phức tạp hơn.]}
+
+\section{Hướng phát triển trong tương lai}
+\label{sec:future_work}
+\subsection{Nâng cấp Hệ thống Phân tích Dự đoán (Predictive Analytics)}
+\textit{[Tích hợp các mô hình Machine Learning mạnh mẽ hơn (XGBoost, LSTM) để dự báo biến động công suất theo thời gian thực.]}
+
+\subsection{Tự động hóa và Đưa lên Đám mây (Cloud \& Automation)}
+\textit{[Triển khai toàn bộ Pipeline ETL lên các dịch vụ Cloud như AWS/GCP để xử lý luồng dữ liệu Streaming từ các cảm biến IoT.]}
+
+\newpage
+% ====================================================================
+%  PHỤ LỤC A: KẾ HẠCH THỰC HIỆN
+% ====================================================================
+\chapter*{Phụ lục A: Kế hoạch Thực hiện}
+\addcontentsline{toc}{chapter}{Phụ lục A: Kế hoạch Thực hiện}
+\label{app:kehoach}
+\textit{[Bảng phân công nhiệm vụ chi tiết và kế hoạch 14 tuần thực hiện dự án của các thành viên.]}
+
 
 % ====================================================================
-%  PHỤ LỤC & TÀI LIỆU THAM KHẢO
+%  PHỤ LỤC B: CẤU TRÚC MÃ NGUỒN
 % ====================================================================
-\input{appendix}
+\chapter*{Phụ lục B: Cấu trúc Mã nguồn}
+\addcontentsline{toc}{chapter}{Phụ lục B: Cấu trúc Mã nguồn}
+\label{app:code}
+\textit{[Sơ đồ cấu trúc thư mục của package Python du\_an\_tot\_nghiep và các script tiện ích.]}
+
+
+% ====================================================================
+%  TÀI LIỆU THAM KHẢO
+% ====================================================================
+\chapter*{Tài liệu Tham khảo}
+\addcontentsline{toc}{chapter}{Tài liệu Tham khảo}
+\label{chap:thamkhao}
+
+\begin{enumerate}[label={[\arabic*]}, noitemsep]
+    \item Box, G. E. P., Jenkins, G. M., Reinsel, G. C., \& Ljung, G. M. (2015). \textit{Time Series Analysis: Forecasting and Control}. 5th ed. Wiley.
+    \item Taylor, S. J., \& Letham, B. (2018). Forecasting at Scale. \textit{The American Statistician}, 72(1), 37--45.
+    \item Breiman, L. (2001). Random Forests. \textit{Machine Learning}, 45(1), 5--32.
+    \item Chen, T., \& Guestrin, C. (2016). XGBoost: A Scalable Tree Boosting System. \textit{Proceedings of KDD 2016}, 785--794.
+    \item Hochreiter, S., \& Schmidhuber, J. (1997). Long Short-Term Memory. \textit{Neural Computation}, 9(8), 1735--1780.
+    \item Vaswani, A., et al. (2017). Attention Is All You Need. \textit{Proceedings of NeurIPS 2017}, 5998--6008.
+    \item Kimball, R., \& Ross, M. (2013). \textit{The Data Warehouse Toolkit}. 3rd ed. Wiley.
+    \item NASA POWER Project. (2024). \url{https://power.larc.nasa.gov/}.
+    \item Supabase Documentation. (2024). \url{https://supabase.com/docs}.
+    \item IEA -- International Energy Agency. (2024). \url{https://www.iea.org/reports/renewables-2024}.
+    \item Chandola, V., Banerjee, A., \& Kumar, V. (2009). Anomaly Detection: A Survey. \textit{ACM Computing Surveys}, 41(3), Article 15.
+    \item Tukey, J. W. (1977). \textit{Exploratory Data Analysis}. Addison-Wesley.
+\end{enumerate}
 
 \end{document}

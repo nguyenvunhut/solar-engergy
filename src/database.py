@@ -1,5 +1,6 @@
-from supabase import create_client, Client
-from src.config import SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY
+from supabase import Client, create_client
+
+from src.config import SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY, SUPABASE_URL
 
 
 def get_client() -> Client:
@@ -12,5 +13,7 @@ def get_client() -> Client:
 def get_admin_client() -> Client:
     """Client danh cho ETL / admin (service role key, bypass RLS)."""
     if not SUPABASE_URL or not SUPABASE_SERVICE_ROLE_KEY:
-        raise ValueError("Thieu SUPABASE_URL hoac SUPABASE_SERVICE_ROLE_KEY trong file .env")
+        raise ValueError(
+            "Thieu SUPABASE_URL hoac SUPABASE_SERVICE_ROLE_KEY trong file .env"
+        )
     return create_client(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)

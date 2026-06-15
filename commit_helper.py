@@ -5,14 +5,14 @@ import sys
 import subprocess
 import re
 
-def get_current_branch():
+def get_current_branch() -> str:
     try:
         branch = subprocess.check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"]).decode("utf-8").strip()
         return branch
     except Exception:
         return ""
 
-def main():
+def main() -> None:
     print("==================================================")
     print("     QUY CHUẨN COMMIT MESSAGE - THE OUTLIERS      ")
     print("==================================================")

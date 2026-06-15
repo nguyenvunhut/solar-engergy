@@ -15,7 +15,6 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-
 REPO = Path(__file__).resolve().parents[3]
 ENV_FILE = REPO / ".env"
 SCHEMA = "staging"
@@ -90,7 +89,15 @@ class LoadSpec:
 LOAD_SPECS: tuple[LoadSpec, ...] = (
     LoadSpec(
         table="dim_date",
-        columns=("full_date", "day", "month", "year", "is_holiday", "is_semester", "is_exam"),
+        columns=(
+            "full_date",
+            "day",
+            "month",
+            "year",
+            "is_holiday",
+            "is_semester",
+            "is_exam",
+        ),
         select_sql="""
             SELECT
                 to_date(date, 'DD/MM/YYYY') AS full_date,
@@ -253,7 +260,7 @@ TRUNCATE_ORDER = (
 )
 
 
-def connect_pg8000():
+def connect_pg8000() -> any:
     import pg8000.dbapi
 
     load_dotenv(ENV_FILE)
@@ -272,7 +279,7 @@ def connect_pg8000():
     )
 
 
-def count_select(conn, sql: str) -> int:
+def count_select(conn: any, sql: str) -> int:
     cur = conn.cursor()
     cur.execute(f"SELECT COUNT(*) FROM ({sql}) AS q")
     value = int(cur.fetchone()[0])
@@ -280,7 +287,7 @@ def count_select(conn, sql: str) -> int:
     return value
 
 
-def count_table(conn, table: str) -> int:
+def count_table(conn: any, table: str) -> int:
     cur = conn.cursor()
     cur.execute(f"SELECT COUNT(*) FROM {SCHEMA}.{table}")
     value = int(cur.fetchone()[0])
@@ -288,14 +295,14 @@ def count_table(conn, table: str) -> int:
     return value
 
 
-def truncate_buffers(conn) -> None:
+def truncate_buffers(conn: any) -> None:
     table_list = ", ".join(f"{SCHEMA}.{table}" for table in TRUNCATE_ORDER)
     cur = conn.cursor()
     cur.execute(f"TRUNCATE TABLE {table_list} RESTART IDENTITY")
     cur.close()
 
 
-def execute_load(conn, spec: LoadSpec) -> int:
+def execute_load(conn: any, spec: LoadSpec) -> int:
     cur = conn.cursor()
     cur.execute(spec.insert_sql)
     cur.close()
@@ -317,7 +324,9 @@ def run(args: argparse.Namespace) -> int:
             print(f"  - {spec.table:<24s} {planned_counts[spec.table]:>12,}")
 
         if not args.execute:
-            print("\nDry-run only. Re-run with --execute to truncate and load buffer tables.")
+            print(
+                "\nDry-run only. Re-run with --execute to truncate and load buffer tables."
+            )
             return 0
 
         print("\nTruncating buffer tables...")
@@ -328,9 +337,13 @@ def run(args: argparse.Namespace) -> int:
             loaded = execute_load(conn, spec)
             expected = planned_counts[spec.table]
             status = "OK" if loaded == expected else "MISMATCH"
-            print(f"  - {spec.table:<24s} loaded={loaded:>12,} expected={expected:>12,} [{status}]")
+            print(
+                f"  - {spec.table:<24s} loaded={loaded:>12,} expected={expected:>12,} [{status}]"
+            )
             if loaded != expected:
-                raise RuntimeError(f"{spec.table} loaded {loaded:,}, expected {expected:,}")
+                raise RuntimeError(
+                    f"{spec.table} loaded {loaded:,}, expected {expected:,}"
+                )
 
         conn.commit()
         print("\nDone. Buffer tables loaded successfully.")

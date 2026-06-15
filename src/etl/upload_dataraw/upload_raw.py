@@ -1,16 +1,17 @@
-import boto3
 import os
 from pathlib import Path
+
+import boto3
 from botocore.client import Config
 from dotenv import load_dotenv
 
 load_dotenv(Path(__file__).resolve().parents[3] / ".env")
 
-ENDPOINT  = os.getenv("MINIO_ENDPOINT", "http://localhost:9000")
-KEY       = os.getenv("MINIO_KEY", "minioadmin")
-SECRET    = os.getenv("MINIO_SECRET", "minioadmin")
-BUCKET    = os.getenv("MINIO_BUCKET", "raw-data")
-DATA_DIR  = str(Path(__file__).resolve().parents[3] / "data" / "raw")
+ENDPOINT = os.getenv("MINIO_ENDPOINT", "http://localhost:9000")
+KEY = os.getenv("MINIO_KEY", "minioadmin")
+SECRET = os.getenv("MINIO_SECRET", "minioadmin")
+BUCKET = os.getenv("MINIO_BUCKET", "raw-data")
+DATA_DIR = str(Path(__file__).resolve().parents[3] / "data" / "raw")
 
 s3 = boto3.client(
     "s3",
@@ -29,7 +30,9 @@ else:
     print(f"[OK] Bucket already exists: {BUCKET}")
 
 # Lấy danh sách file đang có trên MinIO
-existing_files = {o["Key"] for o in s3.list_objects_v2(Bucket=BUCKET).get("Contents", [])}
+existing_files = {
+    o["Key"] for o in s3.list_objects_v2(Bucket=BUCKET).get("Contents", [])
+}
 
 # Upload từng file CSV
 for fname in sorted(os.listdir(DATA_DIR)):

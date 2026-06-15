@@ -60,7 +60,7 @@ create_environment:
 ## Make dataset
 .PHONY: data
 data: requirements
-	$(PYTHON_INTERPRETER) du_an_tot_nghiep/dataset.py
+	$(PYTHON_INTERPRETER) src/dataset.py
 
 
 #################################################################################
