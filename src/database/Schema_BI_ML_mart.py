@@ -52,19 +52,18 @@ def build_bi_mart(engine):
     DROP TABLE IF EXISTS bi_mart.dim_geography CASCADE;
     DROP TABLE IF EXISTS bi_mart.dim_date CASCADE;
     DROP TABLE IF EXISTS bi_mart.dim_weather_type CASCADE;
-    DROP TABLE IF EXISTS bi_mart.obt_solar_performance_hourly CASCADE;
 
     -- Tạo Dimension vật lý & Khóa chính
-    CREATE TABLE bi_mart.dim_solar_site AS SELECT * FROM public.dim_solar_site;
+    CREATE TABLE bi_mart.dim_solar_site AS SELECT * FROM datawarehouse.dim_solar_site;
     ALTER TABLE bi_mart.dim_solar_site ADD PRIMARY KEY (site_id);
 
-    CREATE TABLE bi_mart.dim_geography AS SELECT * FROM public.dim_geography;
+    CREATE TABLE bi_mart.dim_geography AS SELECT * FROM datawarehouse.dim_geography;
     ALTER TABLE bi_mart.dim_geography ADD PRIMARY KEY (geo_id);
 
-    CREATE TABLE bi_mart.dim_date AS SELECT * FROM public.dim_date;
+    CREATE TABLE bi_mart.dim_date AS SELECT * FROM datawarehouse.dim_date;
     ALTER TABLE bi_mart.dim_date ADD PRIMARY KEY (date_id);
 
-    CREATE TABLE bi_mart.dim_weather_type AS SELECT * FROM public.dim_weather_type;
+    CREATE TABLE bi_mart.dim_weather_type AS SELECT * FROM datawarehouse.dim_weather_type;
     ALTER TABLE bi_mart.dim_weather_type ADD PRIMARY KEY (weather_type_id);
 
     -- Tạo Bảng FACT (Kết hợp Sản lượng 15p sạch + Thời tiết 1h)
@@ -73,18 +72,11 @@ def build_bi_mart(engine):
         SELECT 
             f.site_id, f.geo_id, f.date_id, t.hour AS hourly_bucket,
             SUM(f.energy_generated_kwh) AS total_energy
-        FROM public.fact_solar_energy_gen f
-        JOIN public.dim_time t ON f.time_id = t.time_id
-        JOIN public.dim_date d ON f.date_id = d.date_id
+        FROM datawarehouse.fact_solar_energy_gen f
+        JOIN datawarehouse.dim_time t ON f.time_id = t.time_id
         
-        -- Nối xuyên môi trường (ép kiểu varchar -> int, bóc tách timestamp)
-        LEFT JOIN staging.fact_solar_energy_gen_rolling_outlier_flags o
-            ON f.site_id = o.sitekey::INT 
-           AND d.full_date = o.timestamp::date 
-           AND t.hour = EXTRACT(HOUR FROM o.timestamp)
-           AND t.minute = EXTRACT(MINUTE FROM o.timestamp)
-
-        WHERE COALESCE(o.rolling_outlier_flag, false) = false
+        -- LỌC NHIỄU TRỰC TIẾP (Không cần JOIN Staging nữa)
+        WHERE COALESCE(f.rolling_outlier_flag, false) = false
         GROUP BY f.site_id, f.geo_id, f.date_id, t.hour
     )
     SELECT 
@@ -93,8 +85,8 @@ def build_bi_mart(engine):
     FROM Clean_Hourly_Gen gen
     LEFT JOIN (
         SELECT fw.*, dw.hour as weather_hour 
-        FROM public.fact_weather fw
-        JOIN public.dim_time dw ON fw.time_id = dw.time_id
+        FROM datawarehouse.fact_weather fw
+        JOIN datawarehouse.dim_time dw ON fw.time_id = dw.time_id
     ) w 
     ON gen.geo_id = w.geo_id AND gen.date_id = w.date_id AND gen.hourly_bucket = w.weather_hour;
 
@@ -103,8 +95,8 @@ def build_bi_mart(engine):
     
     UPDATE bi_mart.fact_solar_performance_hourly fct
     SET weather_type_id = w.weather_type_id
-    FROM public.fact_weather w
-    JOIN public.dim_time dw ON w.time_id = dw.time_id
+    FROM datawarehouse.fact_weather w
+    JOIN datawarehouse.dim_time dw ON w.time_id = dw.time_id
     WHERE fct.geo_id = w.geo_id AND fct.date_id = w.date_id AND fct.hourly_bucket = dw.hour;
 
     ALTER TABLE bi_mart.fact_solar_performance_hourly ADD CONSTRAINT fk_bi_fact_site FOREIGN KEY (site_id) REFERENCES bi_mart.dim_solar_site(site_id);
@@ -135,23 +127,19 @@ def build_ml_mart(engine):
         f.energy_generated_kwh,
         t.hour, d.day, d.month, d.year,
         w.shortwave_radiation, w.temperature_c, w.cloud_cover_total, w.precipitation_mm,
-        COALESCE(o.rolling_outlier_flag, false) AS is_outlier
-    FROM public.fact_solar_energy_gen f
-    JOIN public.dim_time t ON f.time_id = t.time_id
-    JOIN public.dim_date d ON f.date_id = d.date_id
-
-    -- Nối Cờ Outlier
-    LEFT JOIN staging.fact_solar_energy_gen_rolling_outlier_flags o
-        ON f.site_id = o.sitekey::INT 
-       AND d.full_date = o.timestamp::date
-       AND t.hour = EXTRACT(HOUR FROM o.timestamp)
-       AND t.minute = EXTRACT(MINUTE FROM o.timestamp)
+        
+        
+        COALESCE(f.rolling_outlier_flag, false) AS is_outlier
+        
+    FROM datawarehouse.fact_solar_energy_gen f
+    JOIN datawarehouse.dim_time t ON f.time_id = t.time_id
+    JOIN datawarehouse.dim_date d ON f.date_id = d.date_id
 
     -- Nối Thời tiết
     LEFT JOIN (
         SELECT fw.*, dw.hour as weather_hour 
-        FROM public.fact_weather fw
-        JOIN public.dim_time dw ON fw.time_id = dw.time_id
+        FROM datawarehouse.fact_weather fw
+        JOIN datawarehouse.dim_time dw ON fw.time_id = dw.time_id
     ) w 
     ON f.geo_id = w.geo_id AND f.date_id = w.date_id AND t.hour = w.weather_hour;
     """
