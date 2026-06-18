@@ -53,7 +53,6 @@ reports/report config.tex
 
 # personal notes or test files
 tests/test_db_connection_nhutvu.py
-tests/analytics
 tests/analysis_output/*
 
 # Local outlier/EDA artifact folders. Keep official_thesis, figures, dashboard(s).

@@ -9,10 +9,10 @@ from pathlib import Path
 from datetime import datetime
 
 # Add project root to path
-PROJECT_ROOT = Path(__file__).resolve().parents[0]
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from analytics import (
+from tests.analytics import (
     WarehouseAnalytics,
     DistributionAnalyzer,
     DataProfiler,
@@ -37,7 +37,7 @@ ssl_context.verify_mode = ssl.CERT_NONE
 engine = create_engine(db_uri, connect_args={"ssl_context": ssl_context})
 
 
-def setup_output_directory(base_dir: str = "analysis_output") -> Path:
+def setup_output_directory(base_dir: str = "./analysis_output") -> Path:
     """Create timestamped output directory."""
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     output_dir = Path(base_dir) / timestamp
@@ -122,7 +122,7 @@ def run_all_analyses(engine, output_dir: Path) -> None:
 def main():
     """Main entry point."""
     try:
-        output_dir = setup_output_directory(str(PROJECT_ROOT / "analysis_output"))
+        output_dir = setup_output_directory()
         run_all_analyses(engine, output_dir)
         print("\n[OK] All analyses completed successfully!")
         return 0
