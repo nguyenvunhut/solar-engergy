@@ -32,4 +32,6 @@ lightgbm
 requests
 geopy
 
+dvc[s3]
+
 # -e .
