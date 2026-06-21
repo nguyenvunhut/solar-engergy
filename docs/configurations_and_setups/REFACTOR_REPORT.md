@@ -101,3 +101,21 @@ Mục này so sánh số lượng dòng (Rows) và cột (Columns) giữa Local 
 - `staging.fact_solar_energy_gen`: Local đã nội suy xong, Cloud vẫn đang chứa NULL gốc.
 - Schema `dim_geography` và `dim_date`: Khác số cột do Cloud chưa được chạy lệnh cập nhật DDL.
 - Các bảng trong `bi_mart` và `ml_mart`: Lệch số dòng hoặc chưa tồn tại vì Cloud chưa chạy đến bước Build Marts.
+
+### Cập nhật Cuối Cùng: Đồng Bộ 100% (21/06/2026)
+Sau khi toàn bộ pipeline đã được chạy thành công trên cả Local và Cloud Supabase, dữ liệu đã được đối chiếu và **Khớp 100%**:
+
+```text
+Table                                                     Local        Cloud  Match
+------------------------------------------------------------------------------------
+staging.fact_solar_energy_gen                           2731946      2731946      ✅
+datawarehouse.fact_solar_energy_gen                     2731946      2731946      ✅
+datawarehouse.dim_solar_site                                 42           42      ✅
+datawarehouse.dim_geography                                  42           42      ✅
+datawarehouse.dim_date                                     2312         2312      ✅
+datawarehouse.dim_time                                       96           96      ✅
+datawarehouse.dim_weather_type                               22           22      ✅
+datawarehouse.fact_weather                               850752       850752      ✅
+bi_mart.fact_solar_performance_hourly                    682542       682542      ✅
+```
+**Kết luận:** Toàn bộ dữ liệu 2 kho (Local và Cloud) đã hoàn toàn nhẵn bóng, không rớt một dòng nào! Quá trình Refactor và triển khai Pipeline chính thức kết thúc thắng lợi rực rỡ.

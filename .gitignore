@@ -309,3 +309,7 @@ docs/scrum_6_business_logic_eda/2026_06_14_ke_hoach_pipeline_ml_forecast_TanDat.
 docs/scrum_6_business_logic_eda/2026_06_14_khuyen_nghi_thiet_ke_mart_ml_TanDat.tex
 generate_diff_report.py
 validate_cloud_vs_local.py
+
+# Ignore new LaTeX reports
+docs/scrum_7_visualization_forecasting/*.tex
+docs/scrum_8_project_delivery_defense/*.tex
