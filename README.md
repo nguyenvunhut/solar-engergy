@@ -1,3 +1,178 @@
+# Bắt đầu nhanh với Pipeline Refactor
+
+### 1. Clone repository
+
+`git clone` phải dùng URL của repository, không dùng URL `blob` của một file:
+
+```bash
+git clone https://github.com/tandat8896/datn_outlier_hs_nlmt.git
+cd datn_outlier_hs_nlmt
+git switch feature/data-extract-pipeline
+```
+
+File kiểm tra kết nối được lưu tại:
+
+```text
+tests/test_db_connection.py
+```
+
+Link xem trên GitHub:
+[tests/test_db_connection.py](https://github.com/tandat8896/datn_outlier_hs_nlmt/blob/main/tests/test_db_connection.py)
+
+### 2. Cấu trúc thư mục Pipeline
+
+```text
+datn_outlier_hs_nlmt/
+├── .dvc/                            # Cấu hình DVC remote
+├── .dvcignore                       # File/thư mục DVC bỏ qua
+├── config/
+│   ├── 01_extract/                  # Cấu hình tải dữ liệu
+│   ├── 02_transform/                # Transform, imputation và outlier
+│   ├── 03_load/                     # Object Storage, staging và warehouse
+│   ├── 04_machine_learning/         # Cấu hình BI Mart và ML Mart
+│   └── 05_run_pipeline/             # Cấu hình orchestrator
+├── data/
+│   ├── raw/                         # Dữ liệu CSV gốc
+│   └── processed/                   # Parquet và dữ liệu trung gian
+├── reports/                         # Báo cáo, audit và kết quả outlier
+├── pictures/                        # Hình ảnh phân tích outlier
+├── srcs/
+│   ├── 00_database/                 # Khởi tạo schema và bảng
+│   ├── 00_utils/                    # Kết nối database và storage
+│   ├── 01_extract/                  # Kaggle và Open-Meteo
+│   ├── 02_transform/                # Buffer, imputation và outlier
+│   ├── 03_load/                     # Storage → staging → warehouse
+│   ├── 04_build_data_marts/         # BI Mart và ML Mart
+│   ├── 05_machine_learning/         # Mã Machine Learning
+│   └── 06_run_pipeline/main.py      # Điểm chạy pipeline duy nhất
+├── tests/
+│   └── test_db_connection.py
+├── .env.example
+└── requirements.txt
+```
+
+### 3. Cài đặt môi trường
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+### 4. Đồng bộ dữ liệu bằng DVC
+
+Repository đã cấu hình remote DVC tên `supabase`:
+
+```text
+s3://mlmart
+```
+
+Endpoint sử dụng Supabase Storage S3-compatible. Không ghi access key hoặc
+secret key trực tiếp vào `.dvc/config`.
+
+Đặt credentials trong biến môi trường:
+
+```bash
+export AWS_ACCESS_KEY_ID="$SUPABASE_S3_ACCESS_KEY"
+export AWS_SECRET_ACCESS_KEY="$SUPABASE_S3_SECRET_KEY"
+```
+
+Hoặc lưu credentials vào cấu hình DVC local, file này không được commit:
+
+```bash
+dvc remote modify --local supabase access_key_id "$SUPABASE_S3_ACCESS_KEY"
+dvc remote modify --local supabase secret_access_key "$SUPABASE_S3_SECRET_KEY"
+```
+
+Tải dữ liệu đã được DVC quản lý:
+
+```bash
+dvc pull
+```
+
+Khi cập nhật dữ liệu lớn:
+
+```bash
+dvc add data/<duong-dan-du-lieu>
+git add data/<duong-dan-du-lieu>.dvc .gitignore
+dvc push
+```
+
+> Không commit `.dvc/config.local`, access key hoặc secret key lên GitHub.
+
+### 5. Cấu hình Database
+
+Tạo file `.env` từ mẫu:
+
+```bash
+cp .env.example .env
+```
+
+Điền thông tin kết nối PostgreSQL/Supabase vào `.env`:
+
+```dotenv
+DB_HOST=your-database-host
+DB_PORT=5432
+DB_NAME=postgres
+DB_USER=your-database-user
+DB_PASSWORD=your-database-password
+```
+
+### 6. Kiểm tra kết nối Database
+
+```bash
+python tests/test_db_connection.py
+```
+
+> **Cảnh báo:** Script hiện tại tạo `test_table` và insert một dòng kiểm tra.
+> Không chạy trên Supabase production nếu chưa được phép ghi dữ liệu.
+
+### 7. Thứ tự chạy Pipeline
+
+Ba bước chuẩn bị dữ liệu thô:
+
+```bash
+python srcs/01_extract/01_download_kaggle_raw.py
+python srcs/01_extract/02_download_open_meteo_raw.py
+python srcs/03_load/01_upload_raw_to_object_storage/01_run_upload.py
+```
+
+Chạy từng stage để dễ kiểm tra và rollback:
+
+```bash
+python srcs/06_run_pipeline/main.py --stage staging
+python srcs/06_run_pipeline/main.py --stage transform
+python srcs/06_run_pipeline/main.py --stage imputation
+python srcs/06_run_pipeline/main.py --stage generate_outliers
+python srcs/06_run_pipeline/main.py --stage outlier
+python srcs/06_run_pipeline/main.py --stage load
+python srcs/06_run_pipeline/main.py --stage marts
+```
+
+Luồng xử lý:
+
+```text
+Object Storage
+→ Raw Staging
+→ Buffer
+→ Hybrid Imputation
+→ Generate Outliers
+→ Apply Outlier Flags
+→ Data Warehouse
+→ BI Mart và ML Mart
+```
+
+Sau khi đã kiểm tra từng stage thành công, có thể chạy toàn bộ:
+
+```bash
+python srcs/06_run_pipeline/main.py --stage all
+```
+
+Hướng dẫn chi tiết:
+[HUONG_DAN_CHAY_CLOUD.md](docs/configurations_and_setups/HUONG_DAN_CHAY_CLOUD.md)
+
+---
+
 # Phân tích Hiệu suất và Dự báo Sản lượng Hệ thống Điện Mặt Trời
 
 > [!NOTE]
