@@ -1,0 +1,30 @@
+step:
+  name: 04_bi_mart
+
+database:
+  source_schema: datawarehouse
+  target_schema: bi_mart
+
+# Thông số tài chính
+financial:
+  # Giá mua điện FIT (Feed-in Tariff) - đơn vị: VNĐ/kWh
+  fit_rate_vnd_per_kwh: 1938
+
+# Thông số môi trường
+environmental:
+  # Hệ số phát thải CO2 của lưới điện Việt Nam - đơn vị: kg CO2/kWh
+  co2_emission_factor_kg_per_kwh: 0.7222
+  # Lượng CO2 mà 1 cây hấp thụ trung bình/năm - đơn vị: kg CO2/cây
+  co2_per_tree_kg: 21.77
+
+# Thông số hiệu suất tấm pin (Performance Ratio)
+performance:
+  # PR chuẩn danh định (nominal PR) của hệ thống
+  nominal_pr: 0.85
+  # Hệ số sụt giảm hiệu suất do nhiệt độ - đơn vị: %/°C
+  temp_coefficient_per_deg: 0.004
+  # Hệ số ước tính nhiệt độ tấm pin từ bức xạ - đơn vị: °C/(W/m²)
+  noct_radiation_factor: 0.03
+  # Ngưỡng bức xạ tối thiểu để coi là ban ngày - đơn vị: W/m²
+  # Dưới ngưỡng này coi PR = 0 (ban đêm / nhiễu cảm biến)
+  min_radiation_threshold_wm2: 50

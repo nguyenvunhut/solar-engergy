@@ -297,3 +297,20 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# Local Overleaf source; publish the compiled PDF only
+docs/scrum_7_visualization_forecasting/2026_06_19_ke_hoach_eda_bi_ml_TanDat.tex
+
+# Explicit ignores requested by user
+docs/configurations_and_setups/Section3.tex
+docs/scrum_6_business_logic_eda/2026_06_10_*_TanDat.tex
+docs/scrum_6_business_logic_eda/2026_06_10_visualization_correlation.pdf
+docs/scrum_6_business_logic_eda/2026_06_14_ke_hoach_pipeline_ml_forecast_TanDat.tex
+docs/scrum_6_business_logic_eda/2026_06_14_khuyen_nghi_thiet_ke_mart_ml_TanDat.tex
+generate_diff_report.py
+validate_cloud_vs_local.py
+
+# Ignore new LaTeX reports
+docs/scrum_7_visualization_forecasting/*.tex
+docs/scrum_8_project_delivery_defense/*.tex
+src/

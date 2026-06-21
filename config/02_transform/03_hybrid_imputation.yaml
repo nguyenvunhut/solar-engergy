@@ -1,0 +1,29 @@
+step:
+  name: 03_hybrid_imputation
+
+database:
+  schema: staging
+  solar_table: fact_solar_energy_gen
+  weather_table: fact_weather
+
+imputation:
+  gap_linear_max_rows: 2
+  gap_cubic_max_rows: 8
+  night_start_hour: 18.5
+  night_end_hour: 5.5
+  night_weather_tolerance: 30min
+  regression_weather_tolerance: 60min
+  regression_min_training_rows: 10
+  regression_features:
+    - shortwave_radiation
+    - direct_normal_irradiance
+    - diffuse_solar_radiation
+    - temperature_c
+
+output:
+  directory: pipeline_output
+  export_intermediate_csv: false
+  final_csv: result_05_final_cleaned.csv
+
+runtime:
+  database_copy_chunk_size: 100000
