@@ -1,0 +1,12 @@
+step:
+  name: 02_transform_buffers
+
+database:
+  schema: staging
+
+timestamp_parsing:
+  iso_regex: '^\d{4}-\d{2}-\d{2} '
+  fallback_format: "DD/MM/YYYY HH24:MI"
+
+calendar:
+  date_format: "DD/MM/YYYY"

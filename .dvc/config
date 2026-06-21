@@ -1,0 +1,5 @@
+[core]
+    remote = supabase
+['remote "supabase"']
+    url = s3://mlmart
+    endpointurl = https://gocnjdtutobgalyqomwz.storage.supabase.co/storage/v1/s3

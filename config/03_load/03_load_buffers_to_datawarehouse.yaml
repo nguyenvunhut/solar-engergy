@@ -1,0 +1,6 @@
+step:
+  name: 03_load_buffers_to_datawarehouse
+
+database:
+  source_schema: staging
+  target_schema: datawarehouse

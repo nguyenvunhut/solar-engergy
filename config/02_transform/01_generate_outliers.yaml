@@ -1,0 +1,46 @@
+step:
+  name: 02_generate_outliers
+
+database:
+  schema: staging
+  source_fact_table: fact_solar_energy_gen
+  outlier_table: fact_solar_energy_gen_rolling_outlier_flags
+
+paths:
+  # Thư mục chứa file Parquet tạm (đầu ra của 01_export_parquet.py)
+  parquet_dir: data/processed/temp_staging_buffers
+
+  # Đầu vào của 03_export_csv.py: file kết quả rolling IQR từ 02_iqr_rolling.py
+  rolling_iqr_csv: reports/final_rolling_compare/05_full_rolling_iqr_candidates.csv
+
+  # Thư mục đầu ra của 02_iqr_rolling.py
+  iqr_out_dir: reports/final_rolling_compare
+
+  # Thư mục đầu ra ảnh boxplot của 02_iqr_rolling.py
+  iqr_pic_dir: pictures/final_rolling_compare
+
+  # Thư mục đầu ra cuối cùng của 03_export_csv.py (CSV dùng để apply vào buffer)
+  outlier_out_dir: reports/outlier_flag_pipeline_rolling_only
+
+  # File CSV đầu ra đầy đủ (full flags) - dùng bởi main.py -> apply_outlier_flags
+  full_outlier_csv: reports/outlier_flag_pipeline_rolling_only/01_full_generation_rolling_flags.csv
+
+  # File CSV sparse (chỉ outlier rows) - dùng bởi main.py -> apply_outlier_flags
+  sparse_outlier_csv: reports/outlier_flag_pipeline_rolling_only/02_rolling_iqr_candidates.csv
+
+algorithm:
+  # Hệ số IQR để xác định ngưỡng outlier: upper = Q3 + iqr_multiplier * IQR
+  iqr_multiplier: 1.5
+
+  # Cửa sổ rolling time-series để tính mean (pandas offset string)
+  rolling_window: "1h"
+
+  # Span cho Exponential Weighted Mean (EWM)
+  ewm_span: 4
+
+  # Số lượng quan sát tối thiểu trong cửa sổ rolling để tính giá trị
+  rolling_min_periods: 1
+
+runtime:
+  parquet_chunk_size: 200000
+  upload_batch_size: 5000
