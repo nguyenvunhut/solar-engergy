@@ -1,0 +1,48 @@
+step:
+  name: 02_download_open_meteo_raw
+
+open_meteo:
+  endpoint: https://archive-api.open-meteo.com/v1/archive
+
+  input_file: data/raw/Solar_Site_Details.csv
+  output_file: data/raw/open_meteo_weather_raw_2020_2022.csv
+  overwrite: false
+
+  start_date: "2020-01-01"
+  end_date: "2022-04-23"
+  timezone: Asia/Ho_Chi_Minh
+  timestamp_transform:
+    source_timezone: Asia/Ho_Chi_Minh
+    target_timezone: Australia/Sydney
+
+  site_columns:
+    id: SiteKey
+    latitude: lat
+    longitude: Lon
+
+  hourly_columns:
+    - shortwave_radiation
+    - direct_radiation
+    - diffuse_radiation
+    - temperature_2m
+    - weather_code
+    - is_day
+    - cloud_cover
+    - cloud_cover_low
+    - cloud_cover_mid
+    - cloud_cover_high
+    - wind_speed_10m
+    - precipitation
+    - sunshine_duration
+
+  request:
+    timeout_seconds: 120
+    delay_between_sites_seconds: 0.5
+    max_attempts: 5
+    retry_delay_seconds: 5
+    rate_limit_delay_seconds: 60
+
+  expected:
+    site_count: 42
+    rows_per_site: 20256
+    total_rows: 850752

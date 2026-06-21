@@ -1,0 +1,6 @@
+step:
+  name: 04_ml_mart
+
+database:
+  source_schema: datawarehouse
+  target_schema: ml_mart

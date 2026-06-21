@@ -32,6 +32,9 @@ lightgbm
 requests
 geopy
 
+# Extract and HTTP
+kaggle
+
 dvc[s3]
 
 # -e .

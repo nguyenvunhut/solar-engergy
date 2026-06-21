@@ -1,0 +1,20 @@
+step:
+  name: 01_download_kaggle_raw
+
+kaggle:
+  dataset: pythonafroz/solar-power-generation-and-energy-consumption-data
+  output_dir: data/raw
+  overwrite: false
+
+  files:
+    - name: Solar_Energy_Generation.csv
+      remote_path: unisolar/unisolar/Solar_Energy_Generation.csv
+
+    - name: Solar_Site_Details.csv
+      remote_path: unisolar/unisolar/Solar_Site_Details.csv
+
+    - name: calender.csv
+      remote_path: archive/calender.csv
+
+    - name: campus_meta.csv
+      remote_path: archive/campus_meta.csv
