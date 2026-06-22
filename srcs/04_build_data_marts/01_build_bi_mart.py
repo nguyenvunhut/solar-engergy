@@ -50,7 +50,7 @@ def build_bi_mart(engine):
             SUM(f.energy_generated_kwh) AS total_energy
         FROM {_SOURCE_SCHEMA}.fact_solar_energy_gen f
         JOIN {_SOURCE_SCHEMA}.dim_time t ON f.time_id = t.time_id
-        WHERE COALESCE(f.rolling_outlier_flag, false) = false
+        -- WHERE COALESCE(f.rolling_outlier_flag, false) = false
         GROUP BY f.site_id, f.geo_id, f.date_id, t.hour
     )
     SELECT 
@@ -77,6 +77,7 @@ def build_bi_mart(engine):
     CREATE INDEX idx_fact_fk_geo_date ON {_TARGET_SCHEMA}.fact_solar_performance_hourly (geo_id, date_id);
     """
     log.info(">> Bắt đầu build BI Mart...")
+    log.info(f"Đang đắp dữ liệu vào host: {engine.url.host}, database: {engine.url.database}")
     with engine.begin() as conn:
         statements = [s.strip() for s in sql_script.split(';') if s.strip()]
         log.info("BI Mart có %s SQL statements cần thực thi", len(statements))

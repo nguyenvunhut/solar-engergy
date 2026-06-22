@@ -103,9 +103,9 @@ warehouse_loader = load_module(
     "pipeline_warehouse_loader",
     "srcs/03_load/03_load_buffers_to_datawarehouse/01_run_load_datawarehouse.py",
 )
-legacy_bi_view_loader = load_module(
-    "pipeline_legacy_bi_view_loader",
-    "srcs/03_load/06_load_bi_mart_old.py",
+bi_view_builder = load_module(
+    "pipeline_bi_view_builder",
+    "srcs/04_build_data_marts/03_build_bi_view.py",
 )
 bi_mart_builder = load_module(
     "pipeline_bi_mart",
@@ -262,8 +262,8 @@ def run_marts() -> None:
         log.info("Bắt đầu BI Mart")
         bi_mart_builder.build_bi_mart(engine)
         log.info("BI Mart thành công")
-        log.info("Bắt đầu load BI hourly measures view từ bước 03_load")
-        legacy_bi_view_loader.create_bi_mart_hourly_view(engine)
+        log.info("Bắt đầu build BI hourly measures view")
+        bi_view_builder.build_bi_view(engine)
         log.info("BI hourly measures view thành công")
         log.info("Bắt đầu ML Mart")
         ml_mart_builder.build_ml_mart(engine)
@@ -272,6 +272,16 @@ def run_marts() -> None:
         engine.dispose()
         log.info("Đã đóng SQLAlchemy engine của Data Marts")
 
+
+def run_bi_view() -> None:
+    """Build BI Mart Hourly View independently."""
+    log.info("Mở SQLAlchemy engine cho BI View")
+    engine = database.get_sqlalchemy_engine()
+    try:
+        bi_view_builder.build_bi_view(engine)
+    finally:
+        engine.dispose()
+        log.info("Đã đóng SQLAlchemy engine của BI View")
 
 def run_stage(stage_number: int, title: str, runner) -> None:
     """Run one pipeline stage with consistent operational logging."""
@@ -361,6 +371,10 @@ def run_pipeline(stage: str, *, dry_run: bool) -> None:
             print("\n[7/7] Data Warehouse → Data Marts")
             run_stage(7, "Data Warehouse → Data Marts", run_marts)
 
+    if stage == "bi_view":
+        print("\n[Standalone] Build BI Mart Hourly View")
+        run_stage(8, "Build BI Mart Hourly View", run_bi_view)
+
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
@@ -374,6 +388,7 @@ def parse_args() -> argparse.Namespace:
             "outlier",
             "load",
             "marts",
+            "bi_view",
             "all",
         ),
         default="all",
