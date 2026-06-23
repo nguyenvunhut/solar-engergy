@@ -18,12 +18,12 @@ def send_test_alert():
     webhook_url = os.getenv("DISCORD_WEBHOOK_URL")
     
     if not webhook_url:
-        print("❌ LỖI: Không tìm thấy DISCORD_WEBHOOK_URL trong biến môi trường.")
+        print("LOI: Khong tim thay DISCORD_WEBHOOK_URL trong bien moi truong.")
         sys.exit(1)
         
     payload = {
         "embeds": [{
-            "title": "🧪 TEST HỆ THỐNG GITHUB ACTIONS & WEBHOOK",
+            "title": "TEST HE THONG GITHUB ACTIONS & WEBHOOK",
             "description": "Tin nhắn này xác nhận GitHub Actions của nhóm đã đọc được Secret và kết nối thành công với Discord.\n\n**Trạng thái:** Sẵn sàng tích hợp vào luồng Data Pipeline chính!",
             "color": 3447003, # Mã màu xanh dương an toàn
             "footer": {"text": "Dự án Kho dữ liệu Năng lượng - The Outliers"}
@@ -33,9 +33,9 @@ def send_test_alert():
     try:
         response = requests.post(webhook_url, json=payload, timeout=10)
         response.raise_for_status()
-        print("✅ Đã bắn tin nhắn test sang Discord thành công!")
+        print("Da ban tin nhan test sang Discord thanh cong!")
     except requests.exceptions.RequestException as e:
-        print(f"❌ Lỗi khi gửi webhook: {e}")
+        print(f"Loi khi gui webhook: {e}")
         sys.exit(1)
 
 if __name__ == "__main__":

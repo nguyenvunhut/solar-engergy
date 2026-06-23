@@ -12,7 +12,7 @@ if sys.stderr and hasattr(sys.stderr, 'reconfigure'):
 load_dotenv()
 
 def setup_test_environment():
-    print("==== BẮT ĐẦU TẠO BẢNG TEST VÀ MATERIALIZED VIEW ====")
+    print("==== BAT DAU TAO BANG TEST VA MATERIALIZED VIEW ====")
     
     db_host = os.getenv("DB_HOST")
     db_port = os.getenv("DB_PORT", "5432")
@@ -21,18 +21,18 @@ def setup_test_environment():
     db_password = os.getenv("DB_PASSWORD")
 
     if not all([db_host, db_name, db_user, db_password]):
-        print("❌ Lỗi: Thiếu thông tin cấu hình kết nối Database (DB_HOST, DB_NAME, DB_USER, DB_PASSWORD).")
+        print("Loi: Thieu thong tin cau hinh ket noi Database (DB_HOST, DB_NAME, DB_USER, DB_PASSWORD).")
         sys.exit(1)
 
     try:
-        print(f"🔌 Đang kết nối Database: {db_host}...")
+        print(f"Dang ket noi Database: {db_host}...")
         conn = psycopg2.connect(
             host=db_host, port=db_port, dbname=db_name, user=db_user, password=db_password
         )
         conn.autocommit = True
         cursor = conn.cursor()
 
-        print("1️⃣ Khởi tạo Schema và Table Staging...")
+        print("1. Khoi tao Schema va Table Staging...")
         cursor.execute("CREATE SCHEMA IF NOT EXISTS staging;")
         cursor.execute("""
             DROP TABLE IF EXISTS staging.test_daily_solar_data CASCADE;
@@ -47,7 +47,7 @@ def setup_test_environment():
             );
         """)
 
-        print("2️⃣ Load Sample Data vào Staging...")
+        print("2. Load Sample Data vao Staging...")
         # Insert dữ liệu mẫu kéo dài trong vài ngày để test các hàm Window (WTD, MTD, YTD)
         sample_data = """
             INSERT INTO staging.test_daily_solar_data (report_date, site_id, p_stc, e_daily, e_target_daily, daily_revenue, daily_co2_avoided)
@@ -60,7 +60,7 @@ def setup_test_environment():
         """
         cursor.execute(sample_data)
 
-        print("3️⃣ Khởi tạo Schema BI Mart và Materialized View...")
+        print("3. Khoi tao Schema BI Mart va Materialized View...")
         cursor.execute("CREATE SCHEMA IF NOT EXISTS bi_mart;")
         cursor.execute("DROP MATERIALIZED VIEW IF EXISTS bi_mart.mv_example_view CASCADE;")
         
@@ -114,13 +114,13 @@ def setup_test_environment():
         """
         cursor.execute(mv_sql)
 
-        print("✅ Thành công! Đã tạo bảng staging, insert data sample và build bi_mart.mv_example_view xong.")
+        print("Thanh cong! Da tao bang staging, insert data sample va build bi_mart.mv_example_view xong.")
 
         cursor.close()
         conn.close()
 
     except Exception as e:
-        print(f"❌ Lỗi trong quá trình tạo: {e}")
+        print(f"Loi trong qua trinh tao: {e}")
         sys.exit(1)
 
 if __name__ == "__main__":
