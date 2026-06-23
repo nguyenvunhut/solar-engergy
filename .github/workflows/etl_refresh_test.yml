@@ -6,8 +6,8 @@ on:
       - test
   workflow_dispatch:
   schedule:
-    # Chạy tự động 1 giờ 1 lần
-    - cron: '0 * * * *'
+    # Chạy tự động vào phút thứ 25 mỗi giờ để tránh nghẽn server Github Actions
+    - cron: '25 * * * *'
 
 jobs:
   test_etl_refresh:
