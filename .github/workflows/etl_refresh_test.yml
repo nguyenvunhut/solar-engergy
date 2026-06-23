@@ -28,6 +28,7 @@ jobs:
 
       - name: Run ETL Refresh Test
         env:
+          APP_VERSION: "v1.0.${{ github.run_number }}"
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
           DB_HOST: ${{ secrets.DB_HOST }}
           DB_PORT: ${{ secrets.DB_PORT || '5432' }}

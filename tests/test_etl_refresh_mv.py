@@ -24,12 +24,14 @@ def send_discord_webhook(status, message):
     # Xanh lá nếu thành công, Đỏ nếu thất bại
     color = 3066993 if status == "SUCCESS" else 15158332
     
+    app_version = os.getenv("APP_VERSION", "v1.0.0")
+    
     payload = {
         "embeds": [{
-            "title": "BAO CAO ETL TEST: REFRESH MATERIALIZED VIEW",
+            "title": f"BAO CAO ETL TEST: REFRESH MATERIALIZED VIEW ({app_version})",
             "description": message,
             "color": color,
-            "footer": {"text": "Dự án Năng lượng Mặt trời - Automation CI/CD"}
+            "footer": {"text": f"Dự án Năng lượng Mặt trời - Automation CI/CD | Phiên bản: {app_version}"}
         }]
     }
 
@@ -41,7 +43,8 @@ def send_discord_webhook(status, message):
         print(f"Loi khi gui webhook sang Discord: {e}")
 
 def run_etl_refresh_test():
-    print("==== BẮT ĐẦU CHẠY THỬ LUỒNG ETL REFRESH MV VÀ WEBHOOK ====")
+    app_version = os.getenv("APP_VERSION", "v1.0.0")
+    print(f"==== BẮT ĐẦU CHẠY THỬ LUỒNG ETL REFRESH MV VÀ WEBHOOK (Version: {app_version}) ====")
     
     # Lưu ý: Thay tên 'bi_mart.mv_example_view' bằng tên MV thực tế trong Supabase
     mv_name = "bi_mart.mv_example_view"
