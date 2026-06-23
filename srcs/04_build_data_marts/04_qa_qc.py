@@ -8,7 +8,7 @@ from sqlalchemy.exc import SQLAlchemyError
 
 # 1. CẤU HÌNH LOGGING
 logging.basicConfig(
-    level=logging.WARNING, 
+    level=logging.INFO, 
     format="%(asctime)s - %(levelname)s - %(message)s"
 )
 log = logging.getLogger(__name__)
@@ -48,7 +48,6 @@ def run_qa_qc_check(engine: Engine) -> None:
                 site_id,
                 ROUND(SUM(energy_generated_kwh)::numeric, 4) AS dwh_total_energy
             FROM datawarehouse.fact_solar_energy_gen
-            -- WHERE rolling_outlier_flag = FALSE 
             GROUP BY date_id, site_id
         ),
         bi_mart_hourly AS (
@@ -56,7 +55,8 @@ def run_qa_qc_check(engine: Engine) -> None:
                 date_id,
                 site_id,
                 ROUND(SUM(e_hourly)::numeric, 4) AS bi_total_energy
-            FROM bi_mart.vw_bi_mart_hourly_measures
+            -- ĐÃ SỬA LẠI TÊN VIEW Ở DÒNG DƯỚI ĐÂY CHO KHỚP VỚI DATABASE
+            FROM bi_mart.vw_bi_mart_hourly_measures_replace
             GROUP BY date_id, site_id
         )
         SELECT 
@@ -77,26 +77,28 @@ def run_qa_qc_check(engine: Engine) -> None:
             result = conn.execute(qa_qc_sql)
             rows = result.fetchall()
             
-            print("\n" + "="*60)
-            print("KẾT QUẢ KIỂM TRA ĐỐI CHIẾU DỮ LIỆU (QA/QC)")
-            print("="*60)
+            log.info("="*60)
+            log.info("BẮT ĐẦU KIỂM TRA ĐỐI CHIẾU DỮ LIỆU")
+            log.info("="*60)
             
             if not rows:
-                print("\nTUYỆT VỜI! Dữ liệu khớp 100%.\n")
+                log.info("Không phát hiện chênh lệch.")
             else:
-                print(f"\nPHÁT HIỆN LỆCH DỮ LIỆU TẠI {len(rows)} DÒNG!")
-                print("Dưới đây là 15 dòng lỗi tiêu biểu:\n")
+                log.warning(f"PHÁT HIỆN LỆCH DỮ LIỆU TẠI {len(rows)} DÒNG!")
+                log.warning("Dưới đây là (tối đa) 15 dòng lỗi tiêu biểu:")
                 
-                print(f"{'Date ID':<12} | {'Site ID':<10} | {'DWH Total':<15} | {'BI Mart Total':<15} | {'Variance':<10}")
-                print("-" * 80)
+                header = f"{'Date ID':<12} | {'Site ID':<10} | {'DWH Total':<15} | {'BI Mart Total':<15} | {'Variance':<10}"
+                separator = "-" * 80
                 
-                # Chỉ in tối đa 15 dòng để không bị trôi Terminal
+                log.warning(header)
+                log.warning(separator)
+                
                 for row in rows[:15]:
-                    print(f"{row.date_id:<12} | {row.site_id:<10} | {row.dwh_total_energy:<15} | {row.bi_total_energy:<15} | {row.variance:<10}")
-                print("-" * 80)
+                    log.warning(f"{row.date_id:<12} | {row.site_id:<10} | {row.dwh_total_energy:<15} | {row.bi_total_energy:<15} | {row.variance:<10}")
+                
+                log.warning(separator)
                 if len(rows) > 15:
-                    print(f"... (Còn {len(rows) - 15} dòng lỗi khác bị ẩn)")
-                print("\n")
+                    log.warning(f"... (Còn {len(rows) - 15} dòng lỗi khác bị ẩn để tránh trôi log)")
                 
     except SQLAlchemyError as e:
         log.error(f"Lỗi khi chạy script QA/QC: {e}")
@@ -106,12 +108,14 @@ def run_qa_qc_check(engine: Engine) -> None:
 def main() -> None:
     try:
         engine = create_db_engine()
+        log.info("Khởi tạo kết nối Database thành công.")
         run_qa_qc_check(engine)
     except Exception as e:
         log.critical(f"Tiến trình bị gián đoạn: {e}")
     finally:
         if 'engine' in locals():
             engine.dispose()
+            log.info("Đã đóng kết nối Database an toàn.")
 
 if __name__ == "__main__":
     main()
