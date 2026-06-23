@@ -1,6 +1,7 @@
 import os
 import sys
 import time
+import traceback
 import psycopg2
 import requests
 from dotenv import load_dotenv
@@ -52,7 +53,9 @@ def run_etl_refresh_test():
     db_password = os.getenv("DB_PASSWORD")
 
     if not all([db_host, db_name, db_user, db_password]):
-        print("❌ Lỗi: Thiếu thông tin kết nối DB (DB_HOST, DB_NAME, DB_USER, DB_PASSWORD).")
+        error_msg = "❌ **LỖI CẤU HÌNH (Configuration Error)**\nThiếu thông tin kết nối Database (DB_HOST, DB_NAME, DB_USER, DB_PASSWORD). Vui lòng kiểm tra lại GitHub Secrets."
+        print(error_msg)
+        send_discord_webhook("ERROR", error_msg)
         sys.exit(1)
 
     start_time = time.time()
@@ -86,12 +89,31 @@ def run_etl_refresh_test():
         cursor.close()
         conn.close()
 
-    except Exception as e:
+    except psycopg2.OperationalError as e:
         duration = round(time.time() - start_time, 2)
         error_details = str(e).strip()
-        print(f"❌ Quá trình ETL gặp lỗi: {error_details}")
+        print(f"❌ Lỗi kết nối Database: {error_details}")
         
-        msg = f"❌ **Trạng thái:** THẤT BẠI\n📌 **Tiến trình:** Kết nối DB & Refresh MV\n⏱ **Thời gian xử lý:** `{duration}s`\n⚠️ **Chi tiết lỗi:**\n```sql\n{error_details[:500]}\n```"
+        msg = f"❌ **Trạng thái:** LỖI KẾT NỐI (OperationalError)\n📌 **Tiến trình:** `Kết nối Supabase`\n⏱ **Thời gian chạy:** `{duration}s`\n💡 **Nguyên nhân:** Sai thông tin Host, Port, Password, hoặc Supabase đang chặn IP/bảo trì.\n⚠️ **Chi tiết lỗi:**\n```sql\n{error_details[:500]}\n```"
+        send_discord_webhook("ERROR", msg)
+        sys.exit(1)
+
+    except psycopg2.ProgrammingError as e:
+        duration = round(time.time() - start_time, 2)
+        error_details = str(e).strip()
+        print(f"❌ Lỗi cú pháp SQL: {error_details}")
+        
+        msg = f"❌ **Trạng thái:** LỖI CÚ PHÁP (ProgrammingError)\n📌 **Tiến trình:** `Thực thi SQL`\n⏱ **Thời gian chạy:** `{duration}s`\n💡 **Nguyên nhân:** Lỗi cú pháp SQL, tên bảng/view sai, hoặc tài khoản thiếu quyền truy cập (Permission denied).\n⚠️ **Chi tiết lỗi:**\n```sql\n{error_details[:500]}\n```"
+        send_discord_webhook("ERROR", msg)
+        sys.exit(1)
+
+    except Exception as e:
+        duration = round(time.time() - start_time, 2)
+        tb = traceback.format_exc()
+        error_details = str(e).strip()
+        print(f"❌ Lỗi hệ thống: {error_details}")
+        
+        msg = f"❌ **Trạng thái:** LỖI HỆ THỐNG KHÔNG XÁC ĐỊNH\n📌 **Tiến trình:** `Khởi tạo Python/ETL`\n⏱ **Thời gian chạy:** `{duration}s`\n⚠️ **Loại lỗi:** `{e.__class__.__name__}`\n⚠️ **Chi tiết:**\n```python\n{error_details[:300]}\n```\n🔍 **Traceback:**\n```python\n{tb[-500:]}\n```"
         send_discord_webhook("ERROR", msg)
         sys.exit(1)
 
