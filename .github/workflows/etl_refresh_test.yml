@@ -6,8 +6,8 @@ on:
       - test
   workflow_dispatch:
   schedule:
-    # Chạy tự động vào lúc 00:00 (Nửa đêm) giờ UTC mỗi ngày (Tương đương 7h sáng giờ VN)
-    - cron: '0 0 * * *'
+    # Chạy tự động 1 giờ 1 lần
+    - cron: '0 * * * *'
 
 jobs:
   test_etl_refresh:
