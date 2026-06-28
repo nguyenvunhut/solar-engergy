@@ -10,9 +10,6 @@ AGENTS.local.md
 CLAUDE.local.md
 NIXOS_LOCAL_SETUP.md
 
-# Local notebooks/scripts drafts. Use `git add -f <path>` when approved.
-notebooks/*
-!notebooks/final_iqr_rolling_compare.ipynb
 ultils/
 
 # Local editor and NixOS files
