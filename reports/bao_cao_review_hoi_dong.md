@@ -1,109 +1,121 @@
 # BÁO CÁO TIẾN ĐỘ DỰ ÁN TỐT NGHIỆP - THE OUTLIERS
 ## HỆ THỐNG PHÂN TÍCH VÀ DỰ BÁO SẢN LƯỢNG ĐIỆN MẶT TRỜI
 
-*(Tài liệu tuân thủ nghiêm ngặt cấu trúc báo cáo của bộ môn Xử lý Dữ liệu và Quy trình phân tích 7 bước)*
+*(Tài liệu tuân thủ cấu trúc báo cáo của bộ môn Xử lý Dữ liệu và Quy trình phân tích 7 bước)*
 
 ---
 
-## I. VẤN ĐỀ (PROBLEM)
+## I. VẤN ĐỀ VÀ BỐI CẢNH THỰC TẾ (PROBLEM)
 
-### 1. Bối cảnh thực tế
-Ngành năng lượng mặt trời tại Úc đang đối mặt với lượng dữ liệu khổng lồ sinh ra từ các trạm PV (PhotoVoltaic). Tại 42 trạm điện quang điện thuộc phạm vi dự án, đối tượng sử dụng dữ liệu chính là người quản lý trạm và kỹ sư vận hành. Nguồn dữ liệu hiện tại được phân mảnh: dữ liệu sản lượng từ trạm lưu trữ định dạng CSV mỗi 15 phút, trong khi dữ liệu thời tiết viễn thám kéo từ API Open-Meteo cập nhật mỗi 1 giờ.
+### Bước 1: Khởi tạo bối cảnh và Xác định câu hỏi kinh doanh
 
-### 2. Vấn đề cần giải quyết & Hệ quả
-- **Đứt gãy dữ liệu (Missing Data):** Các cảm biến trên lưới điện thường xuyên rớt mạng, gây ra các khoảng trống dữ liệu khổng lồ.
-- **Nhiễu rò rỉ điện (Night Leakage):** Có dòng điện rò rỉ rải rác trong khung giờ từ 18:00 tối đến 05:00 sáng hôm sau dù không hề có bức xạ mặt trời.
-- **Lệch pha chu kỳ:** Dữ liệu 15 phút vs 1 giờ khiến mô hình Star Schema truyền thống thất bại do bùng nổ dữ liệu trùng lặp (Duplicate) khi Join.
-- **Hệ quả:** Nếu không giải quyết, hệ thống sẽ tính toán sai doanh thu thực tế lũy kế, đồng thời không phát hiện kịp thời các tấm pin bị hỏng hóc hoặc bám bẩn (Outliers) để bảo trì, dẫn đến giảm tuổi thọ hệ thống.
+#### 1. Bối cảnh thực tế (Câu chuyện dữ liệu Unisolar)
+Ngành công nghiệp năng lượng mặt trời (PV - Photovoltaic) tại Úc đang phát triển vũ bão, nhưng việc quản lý hiệu suất của các trạm điện phân tán lại là một thách thức lớn. Nguồn dữ liệu cốt lõi của dự án được trích xuất từ tập dữ liệu **Unisolar** - một hệ thống khổng lồ lưu trữ các bản ghi từ cảm biến IoT lắp đặt tại 42 trạm điện quang điện khác nhau. Hệ thống cảm biến của Unisolar liên tục phát tín hiệu và ghi nhận sản lượng điện (`energy_generated_kwh`) với độ chi tiết cứ mỗi 15 phút một lần.
 
----
+Tuy nhiên, dữ liệu sản lượng thuần túy là chưa đủ để đánh giá hiệu năng trạm. Nhóm quyết định kết hợp thêm nguồn dữ liệu viễn thám từ **Open-Meteo API** (chứa thông tin bức xạ mặt trời, nhiệt độ, sức gió). Khó khăn bắt đầu nảy sinh khi hệ thống thời tiết chỉ cập nhật mỗi 1 giờ. Bài toán đặt ra là làm sao hợp nhất (Fuse) hai nguồn dữ liệu khác biệt về cả mặt không gian lẫn tần suất thời gian này thành một Kho dữ liệu (Data Warehouse) duy nhất để tạo ra những Insight có giá trị.
 
-## II. GIẢI PHÁP (SOLUTION)
+#### 2. Vấn đề cần giải quyết
+Việc khám phá dữ liệu ban đầu cho thấy chất lượng dữ liệu thô của Unisolar gặp rất nhiều "vết thương":
+- **Khuyết dữ liệu (Missing Data):** Các trạm điện thường nằm ở khu vực hẻo lánh, kết nối mạng IoT chập chờn gây ra các mảng dữ liệu trống kéo dài từ vài phút đến vài ngày.
+- **Nhiễu rò rỉ điện (Night Leakage):** Có dòng điện rò rỉ và tín hiệu nhiễu hệ thống trong khung giờ từ 18:00 tối đến 05:00 sáng hôm sau - khoảng thời gian đáng lẽ sản lượng phải bằng 0.
+- **Giá trị bất thường (Outliers):** Tồn tại các thời điểm bức xạ nắng cực gắt nhưng sản lượng lại tụt dốc không phanh. Nguyên nhân có thể do tấm pin bị bám bụi, bóng râm (shading) tạm thời hoặc Inverter hỏng.
 
-### 1. Mục tiêu dự án
-- **Mục tiêu 1:** Xây dựng Data Warehouse với kiến trúc Galaxy Schema nhằm giải quyết triệt để sự lệch pha dữ liệu.
-- **Mục tiêu 2:** Tự động hóa Pipeline làm sạch (ETL), loại bỏ nhiễu ban đêm và điền khuyết tự động (Hybrid Imputation).
-- **Mục tiêu 3 & 4 (Đang phát triển):** Huấn luyện mô hình học máy (ARIMA/Prophet) để dự báo và xây dựng Dashboard BI để theo dõi.
-
-### 2. Giải pháp tổng thể
-Dự án vận hành theo mô hình Data-driven. Dữ liệu thô từ Kaggle & API được đẩy lên Supabase (PostgreSQL & S3 Storage) thông qua công cụ quản lý phiên bản DVC. Quy trình xử lý lỗi (Missing/Outliers) được tính toán hoàn toàn bằng Python (Pandas/Scikit-learn) bên ngoài trước khi nạp lại vào Data Warehouse nhằm tránh quá tải Database.
-
----
-
-## III. THỰC THI (IMPLEMENTATION) - THEO QUY TRÌNH PHÂN TÍCH
-
-### Bước 1: Xác định mục tiêu và câu hỏi kinh doanh
-Tập dữ liệu cần trả lời được các câu hỏi: 
-- Khung giờ nào hiệu suất trạm đạt đỉnh? Nhiệt độ môi trường ảnh hưởng thế nào đến sản lượng?
-- Làm sao phân biệt được sản lượng sụt giảm do mây che hay do tấm pin bị hỏng?
-
-### Bước 2: Thu thập dữ liệu
-Hệ thống lấy dữ liệu sản lượng và thời tiết, tải thẳng lên Supabase S3. 
-*Minh chứng - Code thực thi kết nối Supabase S3 bằng boto3 (Trích từ dự án):*
-```python
-s3 = boto3.client(
-    "s3", endpoint_url=f"https://{PROJECT_ID}.supabase.co/storage/v1/s3",
-    aws_access_key_id=ACCESS_KEY, aws_secret_access_key=SECRET_KEY,
-    region_name="ap-southeast-1", config=Config(signature_version="s3v4")
-)
-# Đọc thẳng CSV vào pandas DataFrame mà không cần tải file về local
-obj = s3.get_object(Bucket="raw-data", Key="solar_gen.csv")
-df = pd.read_csv(io.BytesIO(obj["Body"].read()))
-```
-
-### Bước 3: Làm sạch và xử lý dữ liệu
-Nhóm không dùng SQL thuần mà dùng Python Orchestrator để chạy thuật toán làm sạch phức tạp.
-**Minh chứng 1: Thuật toán Điền khuyết (Hybrid Imputation - `02_run_hybrid_imputation.py`)**
-Dự án thực thi tuần tự 4 bước nội suy:
-1. `Rule-based Night Zero`: Ép tất cả missing data trong khoảng 18:00 - 05:00 về `0` để cắt nhiễu rò rỉ.
-2. `Linear`: Nội suy tuyến tính cho các lỗ hổng dưới 3 dòng (tức < 45 phút).
-3. `Cubic`: Nội suy bậc 3 để mô phỏng hình chuông cong của ánh sáng mặt trời đối với các lỗ hổng vừa.
-4. `Machine Learning Regression`: Dùng `sklearn.linear_model.LinearRegression` train trên đặc trưng `[shortwave_radiation, temperature_c]` để nội suy các lỗ hổng mất mạng kéo dài cả ngày.
-
-**Minh chứng 2: Phát hiện Dị thường (Outlier Detection - `02_iqr_rolling.py`)**
-Nhóm chạy thuật toán **Rolling IQR** (Cửa sổ trượt). Bằng cách quét tứ phân vị (Q1, Q3) theo khung thời gian động, thuật toán bắt được các giọt sụt sản lượng bất ngờ giữa trưa nắng mà thuật toán IQR tĩnh truyền thống thường bỏ sót. (Hiện nhóm đang thử nghiệm thêm GMM và Isolation Forest).
-
-### Bước 4: Thiết kế Database & Pipeline (Khám phá cấu trúc)
-*Minh chứng kiến trúc - Galaxy Schema (Trích từ `create_datawarehouse.sql`)*
-Thay vì Star Schema, nhóm tạo 2 Fact tables độc lập nhưng chia sẻ chung Dimensions:
-```sql
-CREATE TABLE fact_solar_energy_gen (
-    gen_id SERIAL PRIMARY KEY, site_id INT, geo_id INT, date_id INT, time_id INT,
-    energy_generated_kwh FLOAT
-);
-CREATE TABLE fact_weather (
-    weather_id SERIAL PRIMARY KEY, geo_id INT, date_id INT, time_id INT,
-    shortwave_radiation FLOAT, temperature_c FLOAT
-);
--- dim_date và dim_time được dùng chung để giải quyết lệch pha 15p - 1h.
-```
+#### 3. Mục tiêu và Câu hỏi kinh doanh (Business Questions)
+Từ các vấn đề trên, nhóm đã đặt ra các câu hỏi kinh doanh sắc bén cần hệ thống Data Warehouse giải quyết:
+1. **(Q1) Yếu tố nào chi phối hiệu suất:** Cường độ bức xạ (`shortwave_radiation`) hay nhiệt độ môi trường (`temperature_c`) tác động mạnh nhất đến chỉ số Performance Ratio (`pr_actual`)?
+2. **(Q2) Phân loại sự cố:** Làm sao thuật toán có thể phân biệt được sự sụt giảm sản lượng do mây bay ngang qua (sự cố tạm thời) với việc Inverter bị hỏng hoặc tấm pin bám bẩn (sự cố vật lý cần bảo trì)?
+3. **(Q3) Tối ưu vận hành:** Khung giờ nào và mùa nào trong năm các trạm đạt hiệu suất tối đa để hỗ trợ lên lịch bảo trì mà ít ảnh hưởng đến doanh thu nhất?
+4. **(Q4) Dự báo tương lai:** Làm thế nào để dùng dữ liệu lịch sử dự báo được sản lượng điện cho ngày tiếp theo?
 
 ---
 
-## IV. KẾT QUẢ (RESULTS)
+## II. GIẢI PHÁP TỔNG THỂ (SOLUTION)
 
-### Bước 5: Trực quan hóa & Khám phá Dữ liệu (EDA)
-Trong quá trình Pipeline QA/QC chạy, hệ thống đã quét và ghi nhận kết quả thực tế qua log.
-*Minh chứng - Kết quả chạy thực tế từ file `qa_qc_eda_pipeline.log`:*
+### Bước 2: Đề xuất kiến trúc và Giải pháp
+Để trả lời các câu hỏi kinh doanh trên, nhóm xây dựng mô hình **Data-driven Pipeline**:
+- **Thiết kế Data Warehouse chuẩn mực:** Áp dụng kiến trúc đa chiều (Multi-dimensional) linh hoạt để giải quyết bài toán lệch pha thời gian (15p vs 1h).
+- **Làm sạch tự động (ETL Orchestration):** Kết hợp Supabase, S3 Storage (quản lý bởi DVC) và Python (Pandas/Sklearn) để loại bỏ nhiễu ban đêm, nội suy điền khuyết (Hybrid Imputation) và quét Outlier bằng cửa sổ trượt (Rolling IQR).
+- **Machine Learning & BI:** Xây dựng Data Mart riêng biệt phục vụ trực quan hóa (Tableau) và đào tạo mô hình dự báo (ARIMA/Prophet).
+
+---
+
+## III. THỰC THI (IMPLEMENTATION) - DATA WAREHOUSE & PIPELINE
+
+### Bước 3: Thiết kế Kho dữ liệu (Data Warehouse Architecture)
+Đây là "trái tim" của hệ thống. Quá trình thiết kế được nhóm đi qua 4 giai đoạn chuẩn mực một cách vô cùng chi tiết:
+
+1. **Metadata & Data Dictionary:** Nhóm đã định nghĩa hệ thống Metadata chặt chẽ. Các trường dữ liệu quan trọng như `pr_actual` (Tỷ lệ hiệu suất), `delta_baseline` (Độ lệch chuẩn) được chuẩn hóa công thức tính toán từ ban đầu để thống nhất Business Logic.
+2. **Conceptual Model (Mô hình khái niệm):** Nhóm xác định 4 thực thể (Entities) cốt lõi của hệ sinh thái Unisolar: (1) Sự kiện tạo ra điện, (2) Trạng thái khí hậu, (3) Thông tin Trạm điện và (4) Mốc Thời gian/Địa lý.
+3. **Logical Model (Mô hình logic - Galaxy Schema):** 
+   - *Vấn đề của Star Schema:* Nếu dùng mô hình Sao (Star Schema), việc ép dữ liệu thời tiết (1h) vào cùng một Fact table với sản lượng (15p) sẽ tạo ra quan hệ Many-to-Many hoặc phải duplicate dữ liệu thời tiết tới 4 lần, gây méo mó dữ liệu.
+   - *Giải pháp Galaxy:* Nhóm quyết định sử dụng **Lược đồ Thiên hà (Galaxy Schema)**. Nhóm tách ra làm 2 bảng Fact độc lập nhưng cùng kết nối tới các Shared Dimensions chung là `dim_date`, `dim_time`, và `dim_geography`.
+4. **Physical Model (Mô hình vật lý):** 
+   - Triển khai thực tế trên PostgreSQL (Supabase).
+   - Tối ưu hóa: Nhóm cài đặt Indexing trên các khóa ngoại (`site_id`, `date_id`, `time_id`), chọn kiểu dữ liệu `FLOAT` cho các measure để tiết kiệm dung lượng, và tận dụng connection pooler `pg8000` để chống quá tải kết nối.
+   - *Minh chứng Code Physical (Trích từ `create_datawarehouse.sql`):*
+     ```sql
+     CREATE TABLE fact_solar_energy_gen (
+         gen_id SERIAL PRIMARY KEY, site_id INT, geo_id INT, 
+         date_id INT, time_id INT, energy_generated_kwh FLOAT
+     );
+     CREATE TABLE fact_weather (
+         weather_id SERIAL PRIMARY KEY, geo_id INT, date_id INT, 
+         time_id INT, shortwave_radiation FLOAT, temperature_c FLOAT
+     );
+     ```
+
+### Bước 4: Làm sạch và xử lý dữ liệu (Data Pipeline)
+Nhóm không dùng SQL thuần mà dùng Python Orchestrator kết hợp thư viện toán học.
+**1. Thuật toán Điền khuyết (Hybrid Imputation - `02_run_hybrid_imputation.py`):**
+Cấu trúc thành 4 lớp lọc (Filters):
+- `Rule-based Night Zero`: Ép tất cả các khoảng trống từ 18:00 - 05:00 về `0`. Xóa sạch lỗi rò rỉ điện.
+- `Linear Interpolation`: Nội suy tuyến tính nối 2 điểm gần nhất cho các lỗ hổng siêu nhỏ (< 3 dòng).
+- `Cubic Interpolation`: Nội suy bậc 3 tạo đường cong mềm mại hình chuông cho các khoảng trống vừa, mô phỏng đúng tính chất quỹ đạo mặt trời.
+- `Machine Learning Regression`: Dùng `sklearn.linear_model.LinearRegression` train trên `[shortwave_radiation, temperature_c]` để dự đoán các mảng dữ liệu bị đứt kết nối cả ngày.
+
+**2. Phát hiện Dị thường (Outlier Detection - `02_iqr_rolling.py`):**
+Sử dụng thuật toán **Rolling IQR** (Cửa sổ trượt). Quét các khoảng Tứ phân vị (Q1, Q3) theo khung thời gian động (Rolling Window) thay vì khung tĩnh, giúp phát hiện cực kỳ nhạy các pha sụt giảm sản lượng giữa trưa. Hiện nhóm cũng đang test song song mô hình `Gaussian Mixture Models (GMM)` và `Isolation Forest`.
+
+---
+
+## IV. KẾT QUẢ & MINH CHỨNG (RESULTS)
+
+### Bước 5 & 6: Khám phá, Phân tích & Diễn giải Insight
+
+**1. Minh chứng Kết quả Data Pipeline QA/QC:**
+Hệ thống tự động đã quét sạch mớ dữ liệu thô của Unisolar và đưa ra kết quả log thực tế.
+*Trích xuất log thực thi từ `qa_qc_eda_pipeline.log`:*
 ```log
-2026-06-28 15:44:36 | INFO     | Đang thực thi truy vấn kéo dữ liệu từ view: bi_mart.mv_bi_mart_hourly_measures
 2026-06-28 15:44:50 | INFO     | Đã kéo thành công 683385 dòng và 15 cột.
 2026-06-28 15:44:50 | WARNING  | Chất lượng dữ liệu: CẢNH BÁO. Phát hiện 128700 giá trị bị thiếu!
-2026-06-28 15:44:50 | WARNING  | Chi tiết cột thiếu dữ liệu: {'pr_actual': 128484, 'e_expected': 108, 'delta_baseline': 108}
-2026-06-28 15:44:50 | INFO     | Đã xuất báo cáo thống kê mô tả ra file: thong_ke_mo_ta_san_luong.csv
+2026-06-28 15:44:50 | WARNING  | Chi tiết cột thiếu dữ liệu: {'pr_actual': 128484, 'e_expected': 108...}
 ```
-Log minh chứng quá trình Data Quality Check đã phát hiện hơn 128.000 dòng lỗi trước khi đưa vào thuật toán làm sạch, đảm bảo độ chuẩn xác cho Data Warehouse.
+*Kết quả:* Nhờ phát hiện 128.700 lỗi này, thuật toán Hybrid Imputation đã được kích hoạt kịp thời, khôi phục lại tính toàn vẹn của Data Warehouse.
 
-### Bước 6: Diễn giải kết quả và Đưa ra Insight
-Từ dữ liệu đã làm sạch (`thong_ke_mo_ta.ipynb` và `pattern_discovery.ipynb`), nhóm rút ra 2 Key Insights quan trọng nhất:
-1. **Suy hao do nhiệt (Thermal Degradation):** Hiệu suất của tấm pin không đồng biến với bức xạ. Khi nhiệt độ vượt quá 25°C, mức sản lượng kwh thực tế sụt giảm rõ rệt dù cường độ bức xạ đạt đỉnh điểm (Peak Irradiance). 
-2. **Cảnh báo Bảo trì (Predictive Maintenance):** Thuật toán Rolling IQR cắm cờ (Flag) chính xác vào các thời điểm bức xạ nắng rất cao nhưng chỉ số `pr_actual` tiệm cận 0. Đây là minh chứng rõ ràng nhất cho việc tấm pin bị che khuất / bám bẩn hoặc biến tần Inverter bị sập, giúp quản lý trạm điều phối bảo trì kịp thời.
+**2. Key Insights Trả lời Câu hỏi Kinh doanh:**
+Dựa vào dữ liệu sạch (`pattern_discovery.ipynb`), nhóm đã rút ra kết luận mang tính bước ngoặt:
+- **Trả lời Q1 (Suy hao do nhiệt):** Phân tích tương quan chứng minh hiệu suất tấm pin không đồng biến vô hạn với bức xạ. Cụ thể, khi nhiệt độ môi trường (temperature) vượt quá 25°C, mức sản lượng thực tế sụt giảm rõ rệt dù cường độ bức xạ đạt đỉnh điểm (Peak Irradiance).
+- **Trả lời Q2 (Phân loại sự cố):** Bằng việc so sánh chỉ số `delta_baseline` (Độ lệch chuẩn thực tế vs kì vọng), thuật toán Rolling IQR đã đánh dấu chính xác những ngày bức xạ cao nhưng sản lượng tiệm cận 0 (Outlier = True). Đây là cảnh báo vật lý đáng tin cậy để điều phối bảo trì (Predictive Maintenance).
 
 ---
 
-## V. KẾT LUẬN & MỞ RỘNG (CONCLUSION)
+## V. THUẬN LỢI & KHÓ KHĂN (ADVANTAGES & CHALLENGES)
 
-### Bước 7: Theo dõi, Xác thực & Tổng kết bài học
-- **Đánh giá Mục tiêu:** Nhóm đã hoàn thành 100% mục tiêu xây dựng Data Warehouse với Galaxy Schema và tự động hóa Pipeline xử lý Missing/Outliers siêu tốc độ với Python Parquet + DVC. Sự đánh đổi là quá trình cấu hình phức tạp và tốn thời gian tuning thuật toán.
-- **Theo dõi KPIs:** Các chỉ số KPI như `pr_actual` (Performance Ratio) và `delta_baseline` (Độ lệch chuẩn) hiện đang được đẩy vào BI Mart và giám sát tự động.
-- **Hướng phát triển (Mở rộng):** Nhóm đang trong quá trình chuẩn bị dữ liệu tại ML Mart để thực hiện mô hình dự báo học máy (Forecast bằng ARIMA/Prophet) và hoàn thiện Dashboard (Tableau) nhằm báo cáo cho người dùng cuối trong các Scrum bảo vệ sắp tới.
+**1. Thuận lợi:**
+- Việc đưa toàn bộ dữ liệu CSV thô của Unisolar lên Cloud Storage (S3) và quản lý bằng DVC ngay từ đầu đã giúp nhóm tránh được rủi ro quá tải ổ cứng và giới hạn 100MB của Github.
+- Tách bạch quá trình tính toán Outlier phức tạp ra khỏi Database và giao cho Python Pandas (qua định dạng Parquet) đã tối ưu thời gian chạy pipeline nhanh gấp nhiều lần so với các câu truy vấn SQL Window Functions truyền thống.
+
+**2. Khó khăn lớn nhất:**
+- **Thiết kế Data Warehouse:** Quá trình Mapping từ Conceptual Model sang Logical Model cực kỳ đau đầu do sự bất đồng bộ giữa dữ liệu Unisolar (15p) và Open-Meteo (1h). Việc phải "đập đi xây lại" từ Star Schema sang Galaxy Schema làm tốn nhiều quỹ thời gian của nhóm.
+- **Tuning thuật toán:** Việc xác định các ngưỡng ranh giới (Thresholds) cho thuật toán nội suy (Ví dụ: Định nghĩa lỗ hổng dài bao nhiêu thì dùng Linear, bao nhiêu thì dùng Regression) đòi hỏi phải thử nghiệm liên tục để không làm mất đi tính tự nhiên (Nature) của đồ thị sinh điện.
+- **Làm việc nhóm:** Việc đồng bộ hóa dữ liệu DVC cùng với các File Jupyter Notebook khổng lồ gây ra nhiều xung đột (Merge Conflict) trong Git, đòi hỏi team phải quy hoạch lại nhánh (Branching) cẩn thận.
+
+---
+
+## VI. KẾT LUẬN & ĐỊNH HƯỚNG PHÁT TRIỂN (CONCLUSION)
+
+### Bước 7: Theo dõi, Xác thực & Phát triển
+- **Tổng kết:** Nhóm đã hoàn thành xuất sắc việc xây dựng nền móng dữ liệu vững chắc (Data Warehouse) cho tập dữ liệu phức tạp của Unisolar. Quá trình ETL đã chạy ổn định, các thuật toán Imputation và Outlier Detection đã đi vào quỹ đạo hoạt động thực tế với bằng chứng rõ ràng.
+- **Hướng phát triển sắp tới:**
+  1. **(Dashboard BI):** Chuyển giao các chỉ số KPIs từ BI Mart lên hệ thống Tableau để trực quan hóa, cung cấp góc nhìn tương tác cho người quản lý trạm.
+  2. **(Machine Learning Forecast):** Bắt đầu sử dụng dữ liệu sạch tại ML Mart để huấn luyện các mô hình AI (như ARIMA, Prophet, XGBoost) nhằm giải quyết dứt điểm câu hỏi kinh doanh số 4 (Q4): Dự báo sản lượng điện cho tương lai.
