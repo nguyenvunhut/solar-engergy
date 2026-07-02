@@ -1,77 +1,109 @@
 # BÁO CÁO TIẾN ĐỘ DỰ ÁN TỐT NGHIỆP - THE OUTLIERS
 ## HỆ THỐNG PHÂN TÍCH VÀ DỰ BÁO SẢN LƯỢNG ĐIỆN MẶT TRỜI
 
----
-
-## I. VẤN ĐỀ ĐẶT RA VÀ BỐI CẢNH DỰ ÁN (BUSINESS & DOMAIN LOGIC)
-
-Trong quá trình tiếp cận bài toán phân tích 42 trạm điện năng lượng mặt trời (PV) tại Úc, nhóm đã khai phá dữ liệu (EDA) thông qua các notebook phân tích chuyên sâu (minh chứng: [notebooks/pattern_discovery.ipynb](file:///D:/Learning/FPT_polytechnic/Sem6/datn_outlier_hs_nlmt/notebooks/pattern_discovery.ipynb) và [notebooks/v1_ACF_PACF.ipynb](file:///D:/Learning/FPT_polytechnic/Sem6/datn_outlier_hs_nlmt/notebooks/v1_ACF_PACF.ipynb)). Kết quả EDA chỉ ra những "nỗi đau" (pain points) lớn đối với doanh nghiệp vận hành:
-
-1. **Khác biệt tần suất thu thập:** Dữ liệu sản lượng được ghi nhận mỗi 15 phút, trong khi dữ liệu thời tiết (Open-Meteo) là mỗi 1 giờ. Sự lệch pha này phá vỡ các mô hình Relational Database thông thường (như Star Schema), dẫn tới bùng nổ dữ liệu trùng lặp.
-2. **Missing Data và Nhiễu rò rỉ:** Dữ liệu thực tế thường xuyên bị đứt đoạn do rớt mạng cảm biến. Đáng chú ý, nhóm phát hiện dòng điện rò rỉ và nhiễu tín hiệu bất thường trong khoảng thời gian không có nắng (18:00 tối đến 05:00 sáng) – một lỗi phổ biến của Inverter mà nếu không làm sạch sẽ gây sai lệch doanh thu lũy kế.
-3. **Giá trị bất thường (Outliers) đa dạng:** Có những thời điểm cường độ bức xạ cực cao nhưng sản lượng lại tiệm cận 0 (dấu hiệu tấm pin bị hỏng, bám bẩn hoặc bóng râm che khuất).
+*(Tài liệu tuân thủ nghiêm ngặt cấu trúc báo cáo của bộ môn Xử lý Dữ liệu và Quy trình phân tích 7 bước)*
 
 ---
 
-## II. GIẢI PHÁP VÀ KIẾN TRÚC HỆ THỐNG (SYSTEM ARCHITECTURE)
+## I. VẤN ĐỀ (PROBLEM)
 
-Thay vì xử lý thủ công, nhóm triển khai một **Data Engineering Pipeline** tự động hoàn toàn, kết hợp giữa Cloud Database, Object Storage và Python Orchestrator. 
+### 1. Bối cảnh thực tế
+Ngành năng lượng mặt trời tại Úc đang đối mặt với lượng dữ liệu khổng lồ sinh ra từ các trạm PV (PhotoVoltaic). Tại 42 trạm điện quang điện thuộc phạm vi dự án, đối tượng sử dụng dữ liệu chính là người quản lý trạm và kỹ sư vận hành. Nguồn dữ liệu hiện tại được phân mảnh: dữ liệu sản lượng từ trạm lưu trữ định dạng CSV mỗi 15 phút, trong khi dữ liệu thời tiết viễn thám kéo từ API Open-Meteo cập nhật mỗi 1 giờ.
 
-**Kiến trúc công nghệ thực tế (Minh chứng tại [docs/configurations_and_setups/supabase_connection.md](file:///D:/Learning/FPT_polytechnic/Sem6/datn_outlier_hs_nlmt/docs/configurations_and_setups/supabase_connection.md)):**
-- **Lưu trữ:** Sử dụng **Supabase (PostgreSQL)** với Connection Pooler (`pg8000`) để xử lý đa luồng, và **S3-compatible Storage** để lưu file `.csv`/`.parquet` dung lượng lớn.
-- **Quản lý phiên bản dữ liệu (Data Version Control):** Áp dụng `DVC` để tracking các file dữ liệu trung gian, kết hợp `boto3` để đọc file thẳng từ S3 vào Pandas DataFrame mà không cần tải về ổ cứng cục bộ.
-
----
-
-## III. THỰC THI PIPELINE VÀ THUẬT TOÁN (IMPLEMENTATION & ALGORITHMS)
-
-### 1. Data Modeling: Galaxy Schema
-Thay vì Star Schema, nhóm đã thiết kế Lược đồ Thiên hà (Galaxy Schema) để xử lý triệt để sự lệch pha thời gian. 
-*Tham chiếu Code:* [srcs/00_database/sql/create_datawarehouse.sql](file:///D:/Learning/FPT_polytechnic/Sem6/datn_outlier_hs_nlmt/srcs/00_database/sql/create_datawarehouse.sql).
-- Hai bảng Fact tồn tại song song: `fact_solar_energy_gen` (15 phút) và `fact_weather` (1 giờ).
-- Chia sẻ chung các Dimensions: `dim_geography`, `dim_date`, `dim_time`, `dim_solar_site`. Thiết kế này giúp khi join dữ liệu không bị nhân bản (duplicate) các dòng thời tiết cho mỗi 15 phút.
-
-### 2. Thuật toán Điền khuyết dữ liệu (Hybrid Imputation)
-Thuật toán được nhóm lập trình trực tiếp bằng Python kết hợp thư viện `scikit-learn` và `pandas`.
-*Tham chiếu Code:* [srcs/02_transform/02_run_hybrid_imputation.py](file:///D:/Learning/FPT_polytechnic/Sem6/datn_outlier_hs_nlmt/srcs/02_transform/02_run_hybrid_imputation.py).
-
-Thuật toán hoạt động theo chuỗi ưu tiên (Pipeline logic):
-1. **Rule-based Night Zero:** Nhận diện các khoảng thời gian ban đêm (`is_night` hoặc bức xạ ngắn = 0) dựa vào giờ `NIGHT_START` đến `NIGHT_END`. Thuật toán sẽ chủ động gán toàn bộ Missing Data trong khung giờ này về `0` để loại bỏ nhiễu rò rỉ điện.
-2. **Linear & Cubic Interpolation:** Nội suy tuyến tính (`linear`) cho các khoảng khuyết nhỏ, và nội suy bậc 3 (`cubic`) cho các khoảng khuyết cong, mô phỏng đúng hình chuông của sản lượng mặt trời trong ngày.
-3. **Machine Learning Regression:** Đối với các khoảng mất dữ liệu quá dài, sử dụng thuật toán Hồi quy tuyến tính đa biến (`LinearRegression` từ `sklearn`) dựa vào bức xạ mặt trời và nhiệt độ (`shortwave_radiation`, `temperature_c`) để dự phóng giá trị khuyết.
-
-### 3. Phát hiện điểm bất thường (Outlier Detection)
-*Tham chiếu Code:* [srcs/02_transform/02_generate_outliers/02_iqr_rolling.py](file:///D:/Learning/FPT_polytechnic/Sem6/datn_outlier_hs_nlmt/srcs/02_transform/02_generate_outliers/02_iqr_rolling.py) và [02_gmm_if.py](file:///D:/Learning/FPT_polytechnic/Sem6/datn_outlier_hs_nlmt/srcs/02_transform/02_generate_outliers/02_gmm_if.py).
-
-Việc xử lý Outliers bằng SQL thuần rất chậm do phải tính toán Window Functions nặng nề. Nhóm đã tối ưu bằng cách:
-- Xuất dữ liệu từ Database ra file `Parquet`.
-- **Áp dụng Rolling IQR:** Thuật toán tính toán Tứ phân vị (Q1, Q3) trượt theo một khung cửa sổ thời gian (Rolling Window) thay vì cố định. Điều này giúp phát hiện chính xác các giọt sụt sản lượng bất ngờ giữa trưa nắng mà không bị ảnh hưởng bởi chu kỳ lên xuống tự nhiên của mặt trời.
-- *(Đang nghiên cứu thêm):* Nhóm cũng đang chạy thử nghiệm các thuật toán phát hiện bất thường bằng Machine Learning tiên tiến hơn như **Gaussian Mixture Models (GMM)** và **Isolation Forest** để đánh giá hiệu quả so với Rolling IQR.
-- Cuối cùng, kết quả (các cờ Outlier Flags) được nạp ngược lại vào Data Warehouse.
+### 2. Vấn đề cần giải quyết & Hệ quả
+- **Đứt gãy dữ liệu (Missing Data):** Các cảm biến trên lưới điện thường xuyên rớt mạng, gây ra các khoảng trống dữ liệu khổng lồ.
+- **Nhiễu rò rỉ điện (Night Leakage):** Có dòng điện rò rỉ rải rác trong khung giờ từ 18:00 tối đến 05:00 sáng hôm sau dù không hề có bức xạ mặt trời.
+- **Lệch pha chu kỳ:** Dữ liệu 15 phút vs 1 giờ khiến mô hình Star Schema truyền thống thất bại do bùng nổ dữ liệu trùng lặp (Duplicate) khi Join.
+- **Hệ quả:** Nếu không giải quyết, hệ thống sẽ tính toán sai doanh thu thực tế lũy kế, đồng thời không phát hiện kịp thời các tấm pin bị hỏng hóc hoặc bám bẩn (Outliers) để bảo trì, dẫn đến giảm tuổi thọ hệ thống.
 
 ---
 
-## IV. KẾT QUẢ THỰC TẾ & MINH CHỨNG (ACTUAL RESULTS & EVIDENCE)
+## II. GIẢI PHÁP (SOLUTION)
 
-**1. Kết quả Kỹ thuật đã đạt được (100%):**
-- Đã khởi tạo thành công Staging, Buffer, và Data Warehouse (Tham chiếu các file `.sql` trong `srcs/00_database/sql/`).
-- Pipeline hoàn chỉnh đã tự động hóa việc đẩy dữ liệu từ S3, chạy qua script `02_run_hybrid_imputation.py` và `02_iqr_rolling.py` thành công. Log thực tế minh chứng hệ thống có thể xử lý lượng dữ liệu khổng lồ của 42 trạm điện mà không quá tải ổ cứng nhờ DVC và Parquet.
+### 1. Mục tiêu dự án
+- **Mục tiêu 1:** Xây dựng Data Warehouse với kiến trúc Galaxy Schema nhằm giải quyết triệt để sự lệch pha dữ liệu.
+- **Mục tiêu 2:** Tự động hóa Pipeline làm sạch (ETL), loại bỏ nhiễu ban đêm và điền khuyết tự động (Hybrid Imputation).
+- **Mục tiêu 3 & 4 (Đang phát triển):** Huấn luyện mô hình học máy (ARIMA/Prophet) để dự báo và xây dựng Dashboard BI để theo dõi.
 
-**2. Insight Kinh doanh đã kiểm chứng:**
-- **Suy hao do nhiệt (Thermal Degradation):** Các biểu đồ trong [thong_ke_mo_ta.ipynb](file:///D:/Learning/FPT_polytechnic/Sem6/datn_outlier_hs_nlmt/notebooks/thong_ke_mo_ta.ipynb) chứng minh rõ: Khi nhiệt độ môi trường vượt quá 25°C, hiệu suất các tấm pin suy giảm đáng kể dù cường độ bức xạ đạt đỉnh (Peak Irradiance).
-- **Cảnh báo Bảo trì:** Thuật toán Rolling IQR đã xác định được những ngày bức xạ cao nhưng flag Outlier bị bật (Sản lượng tiệm cận 0). Đây là bằng chứng thực tế chỉ điểm chính xác các trạm đang gặp sự cố hỏng hóc hoặc bị phủ mây dày/bụi bẩn cục bộ.
+### 2. Giải pháp tổng thể
+Dự án vận hành theo mô hình Data-driven. Dữ liệu thô từ Kaggle & API được đẩy lên Supabase (PostgreSQL & S3 Storage) thông qua công cụ quản lý phiên bản DVC. Quy trình xử lý lỗi (Missing/Outliers) được tính toán hoàn toàn bằng Python (Pandas/Scikit-learn) bên ngoài trước khi nạp lại vào Data Warehouse nhằm tránh quá tải Database.
+
+---
+
+## III. THỰC THI (IMPLEMENTATION) - THEO QUY TRÌNH PHÂN TÍCH
+
+### Bước 1: Xác định mục tiêu và câu hỏi kinh doanh
+Tập dữ liệu cần trả lời được các câu hỏi: 
+- Khung giờ nào hiệu suất trạm đạt đỉnh? Nhiệt độ môi trường ảnh hưởng thế nào đến sản lượng?
+- Làm sao phân biệt được sản lượng sụt giảm do mây che hay do tấm pin bị hỏng?
+
+### Bước 2: Thu thập dữ liệu
+Hệ thống lấy dữ liệu sản lượng và thời tiết, tải thẳng lên Supabase S3. 
+*Minh chứng - Code thực thi kết nối Supabase S3 bằng boto3 (Trích từ dự án):*
+```python
+s3 = boto3.client(
+    "s3", endpoint_url=f"https://{PROJECT_ID}.supabase.co/storage/v1/s3",
+    aws_access_key_id=ACCESS_KEY, aws_secret_access_key=SECRET_KEY,
+    region_name="ap-southeast-1", config=Config(signature_version="s3v4")
+)
+# Đọc thẳng CSV vào pandas DataFrame mà không cần tải file về local
+obj = s3.get_object(Bucket="raw-data", Key="solar_gen.csv")
+df = pd.read_csv(io.BytesIO(obj["Body"].read()))
+```
+
+### Bước 3: Làm sạch và xử lý dữ liệu
+Nhóm không dùng SQL thuần mà dùng Python Orchestrator để chạy thuật toán làm sạch phức tạp.
+**Minh chứng 1: Thuật toán Điền khuyết (Hybrid Imputation - `02_run_hybrid_imputation.py`)**
+Dự án thực thi tuần tự 4 bước nội suy:
+1. `Rule-based Night Zero`: Ép tất cả missing data trong khoảng 18:00 - 05:00 về `0` để cắt nhiễu rò rỉ.
+2. `Linear`: Nội suy tuyến tính cho các lỗ hổng dưới 3 dòng (tức < 45 phút).
+3. `Cubic`: Nội suy bậc 3 để mô phỏng hình chuông cong của ánh sáng mặt trời đối với các lỗ hổng vừa.
+4. `Machine Learning Regression`: Dùng `sklearn.linear_model.LinearRegression` train trên đặc trưng `[shortwave_radiation, temperature_c]` để nội suy các lỗ hổng mất mạng kéo dài cả ngày.
+
+**Minh chứng 2: Phát hiện Dị thường (Outlier Detection - `02_iqr_rolling.py`)**
+Nhóm chạy thuật toán **Rolling IQR** (Cửa sổ trượt). Bằng cách quét tứ phân vị (Q1, Q3) theo khung thời gian động, thuật toán bắt được các giọt sụt sản lượng bất ngờ giữa trưa nắng mà thuật toán IQR tĩnh truyền thống thường bỏ sót. (Hiện nhóm đang thử nghiệm thêm GMM và Isolation Forest).
+
+### Bước 4: Thiết kế Database & Pipeline (Khám phá cấu trúc)
+*Minh chứng kiến trúc - Galaxy Schema (Trích từ `create_datawarehouse.sql`)*
+Thay vì Star Schema, nhóm tạo 2 Fact tables độc lập nhưng chia sẻ chung Dimensions:
+```sql
+CREATE TABLE fact_solar_energy_gen (
+    gen_id SERIAL PRIMARY KEY, site_id INT, geo_id INT, date_id INT, time_id INT,
+    energy_generated_kwh FLOAT
+);
+CREATE TABLE fact_weather (
+    weather_id SERIAL PRIMARY KEY, geo_id INT, date_id INT, time_id INT,
+    shortwave_radiation FLOAT, temperature_c FLOAT
+);
+-- dim_date và dim_time được dùng chung để giải quyết lệch pha 15p - 1h.
+```
 
 ---
 
-## V. THUẬN LỢI, KHÓ KHĂN & ĐỊNH HƯỚNG MỞ RỘNG
+## IV. KẾT QUẢ (RESULTS)
 
-**1. Thuận lợi & Khó khăn:**
-- *Thuận lợi:* Việc chia nhỏ Data Pipeline ra thành các thư mục `01_extract`, `02_transform`, `03_load` kết hợp Python Orchestrator giúp module hóa code, dễ dàng test và debug. Sức mạnh của Pandas giúp tính toán Rolling IQR nhanh gấp nhiều lần so với truy vấn SQL.
-- *Khó khăn:* Việc áp dụng `Galaxy Schema` mất rất nhiều công sức thiết kế và viết lệnh join truy vấn phức tạp. Sự xuất hiện của quá nhiều thuật toán làm sạch (Linear, Cubic, Regression) đòi hỏi nhóm phải tinh chỉnh cấu hình (như `gap_linear_max_rows` hay ngưỡng `NIGHT_TOLERANCE` trong file YAML) cực kỳ cẩn thận để tránh làm bóp méo dữ liệu tự nhiên.
+### Bước 5: Trực quan hóa & Khám phá Dữ liệu (EDA)
+Trong quá trình Pipeline QA/QC chạy, hệ thống đã quét và ghi nhận kết quả thực tế qua log.
+*Minh chứng - Kết quả chạy thực tế từ file `qa_qc_eda_pipeline.log`:*
+```log
+2026-06-28 15:44:36 | INFO     | Đang thực thi truy vấn kéo dữ liệu từ view: bi_mart.mv_bi_mart_hourly_measures
+2026-06-28 15:44:50 | INFO     | Đã kéo thành công 683385 dòng và 15 cột.
+2026-06-28 15:44:50 | WARNING  | Chất lượng dữ liệu: CẢNH BÁO. Phát hiện 128700 giá trị bị thiếu!
+2026-06-28 15:44:50 | WARNING  | Chi tiết cột thiếu dữ liệu: {'pr_actual': 128484, 'e_expected': 108, 'delta_baseline': 108}
+2026-06-28 15:44:50 | INFO     | Đã xuất báo cáo thống kê mô tả ra file: thong_ke_mo_ta_san_luong.csv
+```
+Log minh chứng quá trình Data Quality Check đã phát hiện hơn 128.000 dòng lỗi trước khi đưa vào thuật toán làm sạch, đảm bảo độ chuẩn xác cho Data Warehouse.
 
-**2. Định hướng tiếp theo (Next Steps):**
-- **Xây dựng Data Mart & Trực quan hóa:** Số liệu sạch hiện tại sẽ được tổng hợp thành BI Mart để kết nối trực tiếp vào Tableau/PowerBI, cung cấp giao diện Dashboard tương tác cho người vận hành (Scrum 7).
-- **Forecast (Machine Learning):** Sử dụng dữ liệu ML Mart để bắt đầu huấn luyện các mô hình dự báo sản lượng (ARIMA, Prophet) nhằm dự đoán năng lực cung cấp điện năng của 42 trạm cho ngày hôm sau.
+### Bước 6: Diễn giải kết quả và Đưa ra Insight
+Từ dữ liệu đã làm sạch (`thong_ke_mo_ta.ipynb` và `pattern_discovery.ipynb`), nhóm rút ra 2 Key Insights quan trọng nhất:
+1. **Suy hao do nhiệt (Thermal Degradation):** Hiệu suất của tấm pin không đồng biến với bức xạ. Khi nhiệt độ vượt quá 25°C, mức sản lượng kwh thực tế sụt giảm rõ rệt dù cường độ bức xạ đạt đỉnh điểm (Peak Irradiance). 
+2. **Cảnh báo Bảo trì (Predictive Maintenance):** Thuật toán Rolling IQR cắm cờ (Flag) chính xác vào các thời điểm bức xạ nắng rất cao nhưng chỉ số `pr_actual` tiệm cận 0. Đây là minh chứng rõ ràng nhất cho việc tấm pin bị che khuất / bám bẩn hoặc biến tần Inverter bị sập, giúp quản lý trạm điều phối bảo trì kịp thời.
 
 ---
-*Báo cáo cung cấp góc nhìn sâu sát vào mã nguồn và thuật toán thực tế, chuẩn bị cho buổi Review Hội đồng.*
+
+## V. KẾT LUẬN & MỞ RỘNG (CONCLUSION)
+
+### Bước 7: Theo dõi, Xác thực & Tổng kết bài học
+- **Đánh giá Mục tiêu:** Nhóm đã hoàn thành 100% mục tiêu xây dựng Data Warehouse với Galaxy Schema và tự động hóa Pipeline xử lý Missing/Outliers siêu tốc độ với Python Parquet + DVC. Sự đánh đổi là quá trình cấu hình phức tạp và tốn thời gian tuning thuật toán.
+- **Theo dõi KPIs:** Các chỉ số KPI như `pr_actual` (Performance Ratio) và `delta_baseline` (Độ lệch chuẩn) hiện đang được đẩy vào BI Mart và giám sát tự động.
+- **Hướng phát triển (Mở rộng):** Nhóm đang trong quá trình chuẩn bị dữ liệu tại ML Mart để thực hiện mô hình dự báo học máy (Forecast bằng ARIMA/Prophet) và hoàn thiện Dashboard (Tableau) nhằm báo cáo cho người dùng cuối trong các Scrum bảo vệ sắp tới.
