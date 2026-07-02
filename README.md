@@ -74,6 +74,26 @@ Dự án được quản lý tập trung qua một điểm điều khiển duy n
 python srcs/06_run_pipeline/main.py --stage all
 ```
 
+Ghi log khi chạy pipeline:
+
+```bash
+# Linux/macOS/Git Bash
+mkdir -p logs
+python -u srcs/06_run_pipeline/main.py --stage all 2>&1 | tee logs/pipeline_stage_all_$(date +%Y%m%d_%H%M%S).log
+```
+
+```powershell
+# Windows PowerShell
+mkdir logs -Force
+python -u srcs/06_run_pipeline/main.py --stage all 2>&1 | Tee-Object -FilePath ("logs/pipeline_stage_all_{0}.log" -f (Get-Date -Format "yyyyMMdd_HHmmss"))
+```
+
+```cmd
+:: Windows CMD
+mkdir logs
+python -u srcs/06_run_pipeline/main.py --stage all > logs\pipeline_stage_all_%date:~-4%%date:~4,2%%date:~7,2%_%time:~0,2%%time:~3,2%%time:~6,2%.log 2>&1
+```
+
 ---
 
 ## KIẾN TRÚC HỆ THỐNG
