@@ -24,6 +24,7 @@ def get_db_params() -> dict:
         "dbname": os.getenv("DB_NAME", "postgres"),
         "user": os.getenv("DB_USER", "postgres"),
         "password": os.getenv("DB_PASSWORD", "postgres"),
+        "sslmode": os.getenv("DB_SSLMODE", "require"),
     }
 
 
@@ -33,6 +34,7 @@ def get_sqlalchemy_engine() -> Engine:
     url = (
         f"postgresql+psycopg2://{params['user']}:{params['password']}"
         f"@{params['host']}:{params['port']}/{params['dbname']}"
+        f"?sslmode={params['sslmode']}"
     )
     # pool_pre_ping để tự động kiểm tra và khôi phục kết nối bị rớt
     return create_engine(url, pool_pre_ping=True)
@@ -47,4 +49,5 @@ def get_psycopg2_connection():
         dbname=params["dbname"],
         user=params["user"],
         password=params["password"],
+        sslmode=params["sslmode"],
     )

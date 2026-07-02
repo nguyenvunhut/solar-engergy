@@ -182,3 +182,8 @@ def build_bi_views(engine) -> None:
     except Exception as e:
         log.error(f"Lỗi khi thực thi SQL tạo BI Mart View: {e}")
         raise
+
+
+def build_bi_view(engine) -> None:
+    """Backward-compatible alias for older pipeline calls."""
+    build_bi_views(engine)

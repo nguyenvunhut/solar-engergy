@@ -169,13 +169,13 @@ def run_transform(*, dry_run: bool) -> None:
 
 
 def run_generate_outliers(*, dry_run: bool) -> None:
-    """Generate outlier flags CSV files using rolling IQR (replaces 3 notebooks)."""
+    """Generate verified outlier flags CSV files."""
     if dry_run:
         return
     import subprocess
     scripts = [
         ["srcs/02_transform/02_generate_outliers/01_export_parquet.py", "--overwrite"],
-        ["srcs/02_transform/02_generate_outliers/02_iqr_rolling.py"],
+        ["srcs/02_transform/02_generate_outliers/02_gmm_if.py"],
         ["srcs/02_transform/02_generate_outliers/03_export_csv.py"],
     ]
     for script_args in scripts:
@@ -263,7 +263,7 @@ def run_marts() -> None:
         bi_mart_builder.build_bi_mart(engine)
         log.info("BI Mart thành công")
         log.info("Bắt đầu build BI hourly measures view")
-        bi_view_builder.build_bi_view(engine)
+        bi_view_builder.build_bi_views(engine)
         log.info("BI hourly measures view thành công")
         log.info("Bắt đầu ML Mart")
         ml_mart_builder.build_ml_mart(engine)
@@ -278,7 +278,7 @@ def run_bi_view() -> None:
     log.info("Mở SQLAlchemy engine cho BI View")
     engine = database.get_sqlalchemy_engine()
     try:
-        bi_view_builder.build_bi_view(engine)
+        bi_view_builder.build_bi_views(engine)
     finally:
         engine.dispose()
         log.info("Đã đóng SQLAlchemy engine của BI View")
@@ -333,10 +333,10 @@ def run_pipeline(stage: str, *, dry_run: bool) -> None:
         if dry_run:
             print("\n[SKIP] Generate Outliers is disabled in dry-run mode.")
         else:
-            print("\n[4/7] Generate Outliers CSV (Rolling IQR)")
+            print("\n[4/7] Generate Outliers CSV (GMM-IF + Physical Guardrail)")
             run_stage(
                 4,
-                "Generate Outliers CSV (Rolling IQR)",
+                "Generate Outliers CSV (GMM-IF + Physical Guardrail)",
                 lambda: run_generate_outliers(dry_run=dry_run),
             )
             if stage == "all":

@@ -24,7 +24,7 @@ import yaml
 
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
-ENV_FILE = REPO_ROOT / ".env.local"
+ENV_FILE = REPO_ROOT / ".env"
 DEFAULT_CONFIG = REPO_ROOT / "config" / "02_transform" / "01_generate_outliers.yaml"
 
 with DEFAULT_CONFIG.open(encoding="utf-8") as _file:
@@ -127,6 +127,7 @@ def connect() -> psycopg2.extensions.connection:
         database=os.environ["DB_NAME"],
         user=os.environ["DB_USER"],
         password=os.environ["DB_PASSWORD"],
+        sslmode=os.environ.get("DB_SSLMODE", "require"),
     )
     cur = conn.cursor()
     cur.execute("SET default_transaction_read_only = on")

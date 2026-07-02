@@ -4,14 +4,16 @@ step:
 database:
   schema: staging
   source_fact_table: fact_solar_energy_gen
-  outlier_table: fact_solar_energy_gen_rolling_outlier_flags
+  temp_outlier_table: temp_gmm_if_outlier_flags
+  outlier_flag_column: gmm_if_outlier_flag
 
 paths:
   # Thư mục chứa file Parquet tạm (đầu ra của 01_export_parquet.py)
   parquet_dir: data/processed/temp_staging_buffers
 
-  # Đầu vào của 03_export_csv.py: file kết quả rolling IQR từ 02_iqr_rolling.py
-  rolling_iqr_csv: reports/final_rolling_compare/05_full_rolling_iqr_candidates.csv
+  # Candidate chính: 02_gmm_if.py ghi file này bằng final_outlier = GMM_IF OR
+  # physical_guardrail; 03_export_csv.py xuất cột gmm_if_outlier_flag.
+  primary_outlier_candidates_csv: reports/final_rolling_compare/05_gmm_if_candidates.csv
 
   # Thư mục đầu ra của 02_iqr_rolling.py
   iqr_out_dir: reports/final_rolling_compare
@@ -20,26 +22,22 @@ paths:
   iqr_pic_dir: pictures/final_rolling_compare
 
   # Thư mục đầu ra cuối cùng của 03_export_csv.py (CSV dùng để apply vào buffer)
-  outlier_out_dir: reports/outlier_flag_pipeline_rolling_only
+  outlier_out_dir: reports/outlier_flag_pipeline_gmm_if
 
   # File CSV đầu ra đầy đủ (full flags) - dùng bởi main.py -> apply_outlier_flags
-  full_outlier_csv: reports/outlier_flag_pipeline_rolling_only/01_full_generation_rolling_flags.csv
+  full_outlier_csv: reports/outlier_flag_pipeline_gmm_if/01_full_generation_gmm_if_flags.csv
 
   # File CSV sparse (chỉ outlier rows) - dùng bởi main.py -> apply_outlier_flags
-  sparse_outlier_csv: reports/outlier_flag_pipeline_rolling_only/02_rolling_iqr_candidates.csv
+  sparse_outlier_csv: reports/outlier_flag_pipeline_gmm_if/02_gmm_if_candidates.csv
 
 algorithm:
-  # Hệ số IQR để xác định ngưỡng outlier: upper = Q3 + iqr_multiplier * IQR
-  iqr_multiplier: 1.5
-
-  # Cửa sổ rolling time-series để tính mean (pandas offset string)
-  rolling_window: "1h"
-
-  # Span cho Exponential Weighted Mean (EWM)
-  ewm_span: 4
-
-  # Số lượng quan sát tối thiểu trong cửa sổ rolling để tính giá trị
-  rolling_min_periods: 1
+  gmm_if_tree_max_depth: 5
+  gmm_if_tree_min_leaf: 500
+  gmm_if_components: 2
+  gmm_if_prob_threshold: 0.02
+  gmm_if_if_contamination: 0.03
+  gmm_if_if_estimators: 100
+  gmm_if_night_threshold_kwh: 0.05
 
 runtime:
   parquet_chunk_size: 200000

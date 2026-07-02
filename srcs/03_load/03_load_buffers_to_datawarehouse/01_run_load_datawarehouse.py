@@ -23,6 +23,47 @@ with CONFIG_FILE.open(encoding="utf-8") as _file:
 
 SOURCE_SCHEMA = _config["database"]["source_schema"]
 TARGET_SCHEMA = _config["database"]["target_schema"]
+OUTLIER_FLAG_COLUMN = "gmm_if_outlier_flag"
+
+
+def table_has_column(cur, schema, table, column):
+    cur.execute(
+        """
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_schema = %s
+          AND table_name = %s
+          AND column_name = %s
+        """,
+        (schema, table, column),
+    )
+    return cur.fetchone() is not None
+
+
+def ensure_outlier_flag_column(cur, schema, table):
+    has_new = table_has_column(cur, schema, table, OUTLIER_FLAG_COLUMN)
+
+    if not has_new:
+        cur.execute(
+            f"""
+            ALTER TABLE {schema}.{table}
+            ADD COLUMN {OUTLIER_FLAG_COLUMN} BOOLEAN
+            """
+        )
+        has_new = True
+
+    cur.execute(
+        f"""
+        ALTER TABLE {schema}.{table}
+        ALTER COLUMN {OUTLIER_FLAG_COLUMN} TYPE boolean
+        USING CASE
+            WHEN {OUTLIER_FLAG_COLUMN} IS NULL THEN NULL
+            WHEN lower({OUTLIER_FLAG_COLUMN}::text) IN ('true', 't', '1', 'yes', 'y') THEN true
+            WHEN lower({OUTLIER_FLAG_COLUMN}::text) IN ('false', 'f', '0', 'no', 'n') THEN false
+            ELSE NULL
+        END
+        """
+    )
 
 
 
@@ -130,6 +171,17 @@ def load_fact_solar_energy_gen(cur):
     """BƯỚC 2.1: Nạp bảng datawarehouse.fact_solar_energy_gen từ staging."""
     print("  -> Loading fact_solar_energy_gen in monthly batches...")
 
+    ensure_outlier_flag_column(cur, SOURCE_SCHEMA, "fact_solar_energy_gen")
+    cur.execute(f"""
+        ALTER TABLE {SOURCE_SCHEMA}.fact_solar_energy_gen
+        ADD COLUMN IF NOT EXISTS fill_null_algorithm VARCHAR(255);
+    """)
+    ensure_outlier_flag_column(cur, TARGET_SCHEMA, "fact_solar_energy_gen")
+    cur.execute(f"""
+        ALTER TABLE {TARGET_SCHEMA}.fact_solar_energy_gen
+        ADD COLUMN IF NOT EXISTS fill_null_algorithm VARCHAR(255);
+    """)
+
     cur.execute(f"""
         SELECT DISTINCT 
             date_trunc('month', timestamp)::timestamp AS month_start,
@@ -143,7 +195,8 @@ def load_fact_solar_energy_gen(cur):
         print(f"    - Batch {idx}/{len(months)}: {m_start.strftime('%Y-%m')}")
         sql_batch = f"""
         INSERT INTO {TARGET_SCHEMA}.fact_solar_energy_gen (
-            gen_id, site_id, geo_id, date_id, time_id, energy_generated_kwh, rolling_outlier_flag
+            gen_id, site_id, geo_id, date_id, time_id, energy_generated_kwh,
+            gmm_if_outlier_flag, fill_null_algorithm
         )
         SELECT
             (SELECT COALESCE(SUM(c), 0) FROM (
@@ -155,7 +208,8 @@ def load_fact_solar_energy_gen(cur):
             dd.date_id,
             dt.time_id,
             s.energy_generated_kwh,
-            COALESCE(s.rolling_outlier_flag, false) AS rolling_outlier_flag
+            COALESCE(s.{OUTLIER_FLAG_COLUMN}, false) AS gmm_if_outlier_flag,
+            s.fill_null_algorithm
         FROM {SOURCE_SCHEMA}.fact_solar_energy_gen s
         JOIN {TARGET_SCHEMA}.dim_date dd ON dd.full_date = s.timestamp::date
         JOIN {TARGET_SCHEMA}.dim_time dt ON dt.time_string = to_char(s.timestamp, 'HH24:MI')
