@@ -11,22 +11,8 @@ from __future__ import annotations
 import argparse
 from dataclasses import dataclass
 import os
-import importlib.util
 from pathlib import Path
 import yaml
-
-# Load outlier logic from sibling file
-def load_outlier_module():
-    import sys
-    current_dir = Path(__file__).resolve().parent
-    path = current_dir / "02_run_apply_outlier_flags.py"
-    spec = importlib.util.spec_from_file_location("pipeline_outlier", path)
-    mod = importlib.util.module_from_spec(spec)
-    sys.modules["pipeline_outlier"] = mod
-    spec.loader.exec_module(mod)
-    return mod
-
-pipeline_outlier = load_outlier_module()
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 CONFIG_FILE = (
@@ -38,13 +24,6 @@ CONFIG_FILE = (
 
 with CONFIG_FILE.open(encoding="utf-8") as _file:
     _config = yaml.safe_load(_file)
-
-OUTLIER_CSV = (
-    PROJECT_ROOT
-    / "reports"
-    / "outlier_flag_pipeline_rolling_only"
-    / "02_rolling_iqr_candidates.csv"
-)
 
 SCHEMA = _config["database"]["schema"]
 TIMESTAMP_ISO_REGEX = _config["timestamp_parsing"]["iso_regex"]

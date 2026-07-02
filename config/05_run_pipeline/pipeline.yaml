@@ -4,4 +4,4 @@ step:
 pipeline:
   # Thời gian nghỉ (giây) giữa các bước khi chạy --stage all
   # Mục đích: cho Cloud DB nhả RAM và Connection Pool, tránh sập
-  sleep_between_stages_seconds: 10
+  sleep_between_stages_seconds: 25

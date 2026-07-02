@@ -1,19 +1,20 @@
 import logging
 import os
+from pathlib import Path
 
-from dotenv import find_dotenv, load_dotenv
+from dotenv import load_dotenv
 from sqlalchemy import create_engine, text
 from sqlalchemy.engine import Engine
 from sqlalchemy.exc import SQLAlchemyError
 
 # 1. CẤU HÌNH LOGGING
 logging.basicConfig(
-    level=logging.INFO, 
+    level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s"
 )
 log = logging.getLogger(__name__)
 
-load_dotenv(find_dotenv())
+load_dotenv(Path(__file__).resolve().parents[2] / ".env", override=True)
 
 # 2. HÀM TẠO KẾT NỐI
 def create_db_engine() -> Engine:
