@@ -311,3 +311,4 @@ validate_cloud_vs_local.py
 docs/scrum_7_visualization_forecasting/*.tex
 docs/scrum_8_project_delivery_defense/*.tex
 src/
+commit_helper.py
