@@ -1,0 +1,72 @@
+<mxfile host="Electron" agent="Mozilla/5.0">
+  <diagram id="physical_pv" name="Physical PV System">
+    <mxGraphModel dx="1030" dy="660" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="sun" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;align=center;" value="Mặt trời&#xa;(Bức xạ quang năng)" vertex="1">
+          <mxGeometry height="80" width="120" x="50" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="weather" parent="1" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#e1d5e7;strokeColor=#9673a6;align=center;" value="Cảm biến thời tiết&#xa;(Nhiệt độ, Bức xạ, Gió)" vertex="1">
+          <mxGeometry height="77" width="202" x="265" y="41.5" as="geometry" />
+        </mxCell>
+        <mxCell id="pv" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=2;align=center;" value="Tấm Pin Năng Lượng&#xa;(PV Array)" vertex="1">
+          <mxGeometry height="80" width="140" x="40" y="200" as="geometry" />
+        </mxCell>
+        <mxCell id="inverter" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=2;align=center;" value="Inverter (Biến tần)&#xa;DC -&amp;gt; AC" vertex="1">
+          <mxGeometry height="80" width="140" x="280" y="200" as="geometry" />
+        </mxCell>
+        <mxCell id="meter" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;strokeWidth=2;align=center;" value="Đồng hồ đo điện&#xa;(Smart Meter)" vertex="1">
+          <mxGeometry height="80" width="140" x="520" y="200" as="geometry" />
+        </mxCell>
+        <mxCell id="grid" parent="1" style="shape=step;perimeter=stepPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#f8cecc;strokeColor=#b85450;align=center;" value="Lưới điện (Grid) /&#xa;Thiết bị tiêu thụ (Load)" vertex="1">
+          <mxGeometry height="80" width="160" x="740" y="200" as="geometry" />
+        </mxCell>
+        <mxCell id="gateway" parent="1" style="shape=hexagon;perimeter=hexagonPerimeter2;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#e1f5fe;strokeColor=#01579b;strokeWidth=2;align=center;" value="IoT Gateway / Data Logger&#xa;(Thu thập dữ liệu đo lường)" vertex="1">
+          <mxGeometry height="80" width="210" x="245" y="399" as="geometry" />
+        </mxCell>
+        <mxCell id="cloud" parent="1" style="ellipse;shape=cloud;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=2;align=center;" value="Hệ thống lưu trữ Đám mây&#xa;(Kaggle / Supabase DB)" vertex="1">
+          <mxGeometry height="120" width="210" x="245" y="517" as="geometry" />
+        </mxCell>
+        <mxCell id="e_sun_pv" edge="1" parent="1" source="sun" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;endArrow=classic;strokeWidth=2;strokeColor=#FF9900;dashed=1;" target="pv">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_pv_inv" edge="1" parent="1" source="pv" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;endArrow=classic;strokeWidth=4;strokeColor=#FF3333;" target="inverter">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_inv_meter" edge="1" parent="1" source="inverter" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;endArrow=classic;strokeWidth=4;strokeColor=#3333FF;" target="meter">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_meter_grid" edge="1" parent="1" source="meter" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;endArrow=classic;strokeWidth=4;strokeColor=#3333FF;" target="grid">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_env_weather" edge="1" parent="1" source="sun" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;endArrow=none;strokeWidth=1;dashed=1;" target="weather">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_w_gw" edge="1" parent="1" source="weather" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;endArrow=classic;strokeWidth=2;strokeColor=#009900;dashed=1;" target="gateway">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="360" y="150" />
+              <mxPoint x="251" y="150" />
+              <mxPoint x="251" y="360" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_i_gw" edge="1" parent="1" source="inverter" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;endArrow=classic;strokeWidth=2;strokeColor=#009900;dashed=1;" target="gateway">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_m_gw" edge="1" parent="1" source="meter" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.8;entryY=0;entryDx=0;entryDy=0;endArrow=classic;strokeWidth=2;strokeColor=#009900;dashed=1;" target="gateway">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="590" y="320" />
+              <mxPoint x="413" y="320" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_gw_cloud" edge="1" parent="1" source="gateway" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;endArrow=classic;strokeWidth=2;strokeColor=#000000;dashed=1;" target="cloud">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -53,8 +53,8 @@ def build_ml_mart(engine):
 
                     -- Endogenous target source.
                     f.energy_generated_kwh,
-                    COALESCE(f.rolling_outlier_flag, false)
-                        AS rolling_outlier_flag,
+                    COALESCE(f.gmm_if_outlier_flag, false)
+                        AS gmm_if_outlier_flag,
 
                     -- Static site and geography context.
                     s.campus_name,

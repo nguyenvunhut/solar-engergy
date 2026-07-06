@@ -1,0 +1,40 @@
+{
+  "theme_name": "Solar_Outliers_Modern",
+  "style": "Minimalist & Bright",
+  "typography": {
+    "primary_font": "Tableau Book",
+    "header_font": "Tableau Semibold",
+    "title_size": "18pt",
+    "subtitle_size": "14pt",
+    "body_size": "10pt",
+    "text_color_main": "#2D3748",
+    "text_color_muted": "#718096"
+  },
+  "layout": {
+    "dashboard_size": "1920x1080",
+    "background_color": "#F8FAFC",
+    "panel_background": "#FFFFFF",
+    "border_radius": "8px",
+    "grid_spacing": "20px"
+  },
+  "color_palettes": {
+    "categorical_main": [
+      "#FDB813", 
+      "#00A4E4", 
+      "#FF8C00", 
+      "#20B2AA", 
+      "#1B6CA8", 
+      "#87CEEB"  
+    ],
+    "status_alerts": {
+      "healthy_green": "#28A745",
+      "warning_yellow": "#FFC107",
+      "critical_red": "#DC3545"
+    },
+    "baseline_ml": {
+      "actual_energy": "#00A4E4",
+      "predicted_baseline": "#CBD5E1",
+      "confidence_interval": "#F1F5F9"
+    }
+  }
+}

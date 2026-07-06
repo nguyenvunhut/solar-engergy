@@ -1,19 +1,14 @@
 #!/usr/bin/env python3
 """
-Inspect Supabase staging tables and apply rolling outlier flags when explicitly requested.
+Inspect staging tables and apply GMM-IF outlier flags.
 
 Default behavior is safe:
 - `inspect` only reads information_schema and row counts.
-- `upload` is dry-run unless `--execute` is passed.
 - `apply-to-fact` writes the final boolean flag into staging.fact_solar_energy_gen
   by exact (sitekey, timestamp) matching after strict prechecks.
 
-The intermediate sparse review table is:
-    staging.fact_solar_energy_gen_rolling_outlier_flags
-
-It stores only rows where rolling_outlier_flag = true and is used as the verified
-key source for `apply-to-fact`. It can be dropped manually after the team accepts
-the fact-table flag.
+The CSV audit remains on disk. Database upload uses a transaction-local temp
+table, so no permanent audit fact table is created.
 """
 
 from __future__ import annotations
@@ -44,16 +39,21 @@ DEFAULT_UPLOAD_CSV = (
 )
 
 SCHEMA = _config["database"]["schema"]
-TARGET_TABLE = _config["database"]["outlier_table"]
+TEMP_TABLE = _config["database"].get("temp_outlier_table", "temp_gmm_if_outlier_flags")
 SOURCE_FACT_TABLE = _config["database"]["source_fact_table"]
 UPLOAD_BATCH_SIZE = int(_config["runtime"]["upload_batch_size"])
+DB_FLAG_COLUMN = _config["database"].get(
+    "outlier_flag_column",
+    "gmm_if_outlier_flag",
+)
+CSV_FLAG_COLUMN = DB_FLAG_COLUMN
 
 REQUIRED_COLUMNS = [
     "sitekey",
     "timestamp",
     "energy_generated_kwh",
     "hour",
-    "rolling_outlier_flag",
+    CSV_FLAG_COLUMN,
 ]
 
 
@@ -71,6 +71,62 @@ def quote_ident(name: str) -> str:
 
 def qname(schema: str, table: str) -> str:
     return f"{quote_ident(schema)}.{quote_ident(table)}"
+
+
+def table_has_column(cur: any, table: str, column: str) -> bool:
+    cur.execute(
+        """
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_schema = %s
+          AND table_name = %s
+          AND column_name = %s
+        """,
+        (SCHEMA, table, column),
+    )
+    return cur.fetchone() is not None
+
+
+def ensure_db_flag_column(cur: any, table: str, *, not_null: bool = False) -> None:
+    """Ensure the configured DB flag exists and is boolean."""
+    has_new = table_has_column(cur, table, DB_FLAG_COLUMN)
+
+    if not has_new:
+        cur.execute(
+            f"""
+            ALTER TABLE {qname(SCHEMA, table)}
+            ADD COLUMN {quote_ident(DB_FLAG_COLUMN)} boolean
+            """
+        )
+        has_new = True
+
+    cur.execute(
+        f"""
+        ALTER TABLE {qname(SCHEMA, table)}
+        ALTER COLUMN {quote_ident(DB_FLAG_COLUMN)} TYPE boolean
+        USING CASE
+            WHEN {quote_ident(DB_FLAG_COLUMN)} IS NULL THEN NULL
+            WHEN lower({quote_ident(DB_FLAG_COLUMN)}::text) IN ('true', 't', '1', 'yes', 'y') THEN true
+            WHEN lower({quote_ident(DB_FLAG_COLUMN)}::text) IN ('false', 'f', '0', 'no', 'n') THEN false
+            ELSE NULL
+        END
+        """
+    )
+
+    if not_null:
+        cur.execute(
+            f"""
+            UPDATE {qname(SCHEMA, table)}
+            SET {quote_ident(DB_FLAG_COLUMN)} = false
+            WHERE {quote_ident(DB_FLAG_COLUMN)} IS NULL
+            """
+        )
+        cur.execute(
+            f"""
+            ALTER TABLE {qname(SCHEMA, table)}
+            ALTER COLUMN {quote_ident(DB_FLAG_COLUMN)} SET NOT NULL
+            """
+        )
 
 
 def fetch_one(cur: any, sql: str, params: tuple = ()) -> object:
@@ -174,7 +230,7 @@ def fingerprint_csv_md5_compatible(path: Path) -> dict[str, object]:
             timestamp = row["timestamp"]
             energy_text = row["energy_generated_kwh"].strip()
             energy_rounded = normalize_energy_text(energy_text)
-            flag = parse_bool(row["rolling_outlier_flag"])
+            flag = parse_bool(row[CSV_FLAG_COLUMN])
             key = f"{sitekey}|{timestamp}"
 
             sitekeys.add(sitekey)
@@ -344,7 +400,7 @@ def inspect_staging(conn: any) -> None:
             print(f"  - {table_name:<48s} {table_type:<12s} rows={row_count}")
 
         print()
-        for table_name in [SOURCE_FACT_TABLE, TARGET_TABLE]:
+        for table_name in [SOURCE_FACT_TABLE]:
             cur.execute(
                 """
                 SELECT column_name, data_type, is_nullable
@@ -371,27 +427,24 @@ def create_target_table(conn: any) -> None:
     try:
         cur.execute(
             f"""
-            CREATE TABLE IF NOT EXISTS {qname(SCHEMA, TARGET_TABLE)} (
+            CREATE TEMP TABLE {quote_ident(TEMP_TABLE)} (
                 sitekey varchar(255) NOT NULL,
                 timestamp timestamp NOT NULL,
                 energy_generated_kwh double precision,
                 hour integer,
-                rolling_outlier_flag boolean NOT NULL,
-                loaded_at timestamptz NOT NULL DEFAULT now(),
+                {quote_ident(DB_FLAG_COLUMN)} boolean NOT NULL,
                 PRIMARY KEY (sitekey, timestamp)
-            )
+            ) ON COMMIT DROP
             """
         )
         cur.execute(
             f"""
-            CREATE INDEX IF NOT EXISTS idx_{TARGET_TABLE}_flag
-            ON {qname(SCHEMA, TARGET_TABLE)} (rolling_outlier_flag)
+            CREATE INDEX ON {quote_ident(TEMP_TABLE)} ({quote_ident(DB_FLAG_COLUMN)})
             """
         )
         cur.execute(
             f"""
-            CREATE INDEX IF NOT EXISTS idx_{TARGET_TABLE}_timestamp
-            ON {qname(SCHEMA, TARGET_TABLE)} (timestamp)
+            CREATE INDEX ON {quote_ident(TEMP_TABLE)} (timestamp)
             """
         )
     finally:
@@ -422,7 +475,7 @@ def audit_csv(path: Path) -> CsvAudit:
 
         for row in reader:
             rows += 1
-            if parse_bool(row["rolling_outlier_flag"]):
+            if parse_bool(row[CSV_FLAG_COLUMN]):
                 flagged_rows += 1
 
     flag_pct = flagged_rows / rows * 100 if rows else 0.0
@@ -442,7 +495,7 @@ def read_csv_batches(path: Path, batch_size: int) -> Iterable[list[tuple]]:
                     row["timestamp"],
                     float(energy) if energy else None,
                     int(hour) if hour else None,
-                    parse_bool(row["rolling_outlier_flag"]),
+                    parse_bool(row[CSV_FLAG_COLUMN]),
                 )
             )
             if len(batch) >= batch_size:
@@ -455,7 +508,7 @@ def read_csv_batches(path: Path, batch_size: int) -> Iterable[list[tuple]]:
 def truncate_target(conn: any) -> None:
     cur = conn.cursor()
     try:
-        cur.execute(f"TRUNCATE TABLE {qname(SCHEMA, TARGET_TABLE)}")
+        cur.execute(f"TRUNCATE TABLE {quote_ident(TEMP_TABLE)}")
     finally:
         cur.close()
 
@@ -466,21 +519,29 @@ def insert_batch(conn: any, batch: list[tuple]) -> None:
         execute_values(
             cur,
             f"""
-            INSERT INTO {qname(SCHEMA, TARGET_TABLE)} (
+            INSERT INTO {quote_ident(TEMP_TABLE)} (
                 sitekey,
                 timestamp,
                 energy_generated_kwh,
                 hour,
-                rolling_outlier_flag
+                {quote_ident(DB_FLAG_COLUMN)}
             )
             VALUES %s
             ON CONFLICT (sitekey, timestamp) DO UPDATE SET
                 energy_generated_kwh = EXCLUDED.energy_generated_kwh,
                 hour = EXCLUDED.hour,
-                rolling_outlier_flag = EXCLUDED.rolling_outlier_flag,
-                loaded_at = now()
+                {quote_ident(DB_FLAG_COLUMN)} = EXCLUDED.{quote_ident(DB_FLAG_COLUMN)}
             """,
-            batch,
+            [
+                (
+                    sitekey,
+                    timestamp,
+                    energy_generated_kwh,
+                    hour,
+                    flag,
+                )
+                for sitekey, timestamp, energy_generated_kwh, hour, flag in batch
+            ],
             page_size=len(batch),
         )
     finally:
@@ -494,8 +555,8 @@ def verify_target(conn: any, expected: CsvAudit) -> None:
             f"""
             SELECT
                 COUNT(*)::bigint AS rows,
-                COUNT(*) FILTER (WHERE rolling_outlier_flag)::bigint AS flagged_rows
-            FROM {qname(SCHEMA, TARGET_TABLE)}
+                COUNT(*) FILTER (WHERE {quote_ident(DB_FLAG_COLUMN)})::bigint AS flagged_rows
+            FROM {quote_ident(TEMP_TABLE)}
             """
         )
         rows, flagged_rows = cur.fetchone()
@@ -519,8 +580,8 @@ def run_upload(csv_path: Path, batch_size: int, replace: bool, execute: bool, co
     print(f"  rows         = {audit.rows:,}")
     print(f"  flagged_rows = {audit.flagged_rows:,}")
     print(f"  flag_pct     = {audit.flag_pct:.12f}%")
-    print(f"  target       = {SCHEMA}.{TARGET_TABLE}")
-    print("  load_style   = sparse: only rolling_outlier_flag=True rows are stored")
+    print(f"  target       = temp.{TEMP_TABLE}")
+    print(f"  load_style   = transaction temp table; no permanent audit table is created")
     print(f"  mode         = {'EXECUTE' if execute else 'DRY-RUN'}")
 
     if not execute:
@@ -531,8 +592,8 @@ def run_upload(csv_path: Path, batch_size: int, replace: bool, execute: bool, co
     if audit.flagged_rows != audit.rows:
         raise RuntimeError(
             "Sparse upload expects a candidate-only CSV where every row has "
-            "rolling_outlier_flag=True. Use the default "
-            "02_rolling_iqr_candidates.csv or regenerate the rolling flag output."
+            f"{CSV_FLAG_COLUMN}=True. Use the default "
+            "02_gmm_if_candidates.csv or regenerate the GMM-IF flag output."
         )
 
     try:
@@ -559,7 +620,7 @@ def run_apply_to_fact(conn: any, expected_flags: int) -> int:
     try:
         cur.execute("SET statement_timeout = '10min'")
         print(
-            "BEGIN apply rolling_outlier_flag to staging.fact_solar_energy_gen",
+            f"BEGIN apply {DB_FLAG_COLUMN} to staging.fact_solar_energy_gen",
             flush=True,
         )
 
@@ -569,8 +630,8 @@ def run_apply_to_fact(conn: any, expected_flags: int) -> int:
               COUNT(*)::bigint AS rows,
               COUNT(DISTINCT (sitekey, timestamp))::bigint AS distinct_keys,
               COUNT(*)::bigint - COUNT(DISTINCT (sitekey, timestamp))::bigint AS duplicate_rows,
-              COUNT(*) FILTER (WHERE rolling_outlier_flag)::bigint AS flagged_rows
-            FROM {qname(SCHEMA, TARGET_TABLE)}
+              COUNT(*) FILTER (WHERE {quote_ident(DB_FLAG_COLUMN)})::bigint AS flagged_rows
+            FROM {quote_ident(TEMP_TABLE)}
             """
         )
         flag_rows, flag_distinct, flag_dupes, flag_true = map(int, cur.fetchone())
@@ -595,7 +656,7 @@ def run_apply_to_fact(conn: any, expected_flags: int) -> int:
         cur.execute(
             f"""
             SELECT COUNT(*)::bigint
-            FROM {qname(SCHEMA, TARGET_TABLE)} o
+            FROM {quote_ident(TEMP_TABLE)} o
             LEFT JOIN {qname(SCHEMA, SOURCE_FACT_TABLE)} f
               ON f.sitekey = o.sitekey
              AND f.timestamp = o.timestamp
@@ -636,17 +697,15 @@ def run_apply_to_fact(conn: any, expected_flags: int) -> int:
                 f"flags={flag_rows:,}, facts={fact_rows:,}"
             )
 
-        print("ALTER TABLE add rolling_outlier_flag if needed", flush=True)
-        cur.execute(
-            f"""
-            ALTER TABLE {qname(SCHEMA, SOURCE_FACT_TABLE)}
-            ADD COLUMN IF NOT EXISTS rolling_outlier_flag boolean
-            """
-        )
+        print(f"Ensure {DB_FLAG_COLUMN} column exists", flush=True)
+        ensure_db_flag_column(cur, SOURCE_FACT_TABLE)
 
         print("Reset all fact flags to false", flush=True)
         cur.execute(
-            f"UPDATE {qname(SCHEMA, SOURCE_FACT_TABLE)} SET rolling_outlier_flag = false"
+            f"""
+            UPDATE {qname(SCHEMA, SOURCE_FACT_TABLE)}
+            SET {quote_ident(DB_FLAG_COLUMN)} = false
+            """
         )
         print(f"rows reset false={cur.rowcount:,}", flush=True)
         if cur.rowcount != fact_rows:
@@ -656,8 +715,8 @@ def run_apply_to_fact(conn: any, expected_flags: int) -> int:
         cur.execute(
             f"""
             UPDATE {qname(SCHEMA, SOURCE_FACT_TABLE)} f
-            SET rolling_outlier_flag = true
-            FROM {qname(SCHEMA, TARGET_TABLE)} o
+            SET {quote_ident(DB_FLAG_COLUMN)} = true
+            FROM {quote_ident(TEMP_TABLE)} o
             WHERE f.sitekey = o.sitekey
               AND f.timestamp = o.timestamp
             """
@@ -670,9 +729,9 @@ def run_apply_to_fact(conn: any, expected_flags: int) -> int:
             f"""
             SELECT
               COUNT(*)::bigint AS rows,
-              COUNT(*) FILTER (WHERE rolling_outlier_flag = true)::bigint AS true_flags,
-              COUNT(*) FILTER (WHERE rolling_outlier_flag = false)::bigint AS false_flags,
-              COUNT(*) FILTER (WHERE rolling_outlier_flag IS NULL)::bigint AS null_flags
+              COUNT(*) FILTER (WHERE {quote_ident(DB_FLAG_COLUMN)} = true)::bigint AS true_flags,
+              COUNT(*) FILTER (WHERE {quote_ident(DB_FLAG_COLUMN)} = false)::bigint AS false_flags,
+              COUNT(*) FILTER (WHERE {quote_ident(DB_FLAG_COLUMN)} IS NULL)::bigint AS null_flags
             FROM {qname(SCHEMA, SOURCE_FACT_TABLE)}
             """
         )
@@ -701,10 +760,10 @@ def run_apply_to_fact(conn: any, expected_flags: int) -> int:
             f"""
             SELECT COUNT(*)::bigint
             FROM {qname(SCHEMA, SOURCE_FACT_TABLE)} f
-            LEFT JOIN {qname(SCHEMA, TARGET_TABLE)} o
+            LEFT JOIN {quote_ident(TEMP_TABLE)} o
               ON o.sitekey = f.sitekey
              AND o.timestamp = f.timestamp
-            WHERE f.rolling_outlier_flag = true
+            WHERE f.{quote_ident(DB_FLAG_COLUMN)} = true
               AND o.sitekey IS NULL
             """
         )
@@ -713,11 +772,11 @@ def run_apply_to_fact(conn: any, expected_flags: int) -> int:
         cur.execute(
             f"""
             SELECT COUNT(*)::bigint
-            FROM {qname(SCHEMA, TARGET_TABLE)} o
+            FROM {quote_ident(TEMP_TABLE)} o
             JOIN {qname(SCHEMA, SOURCE_FACT_TABLE)} f
               ON f.sitekey = o.sitekey
              AND f.timestamp = o.timestamp
-            WHERE f.rolling_outlier_flag IS DISTINCT FROM true
+            WHERE f.{quote_ident(DB_FLAG_COLUMN)} IS DISTINCT FROM true
             """
         )
         flag_not_true = int(cur.fetchone()[0])
@@ -730,7 +789,7 @@ def run_apply_to_fact(conn: any, expected_flags: int) -> int:
             raise RuntimeError("ABORT: mapping verification failed")
 
         print(
-            "UPDATE OK: rolling_outlier_flag mapped (commit deferred to parent)",
+            f"UPDATE OK: {DB_FLAG_COLUMN} mapped (commit deferred to parent)",
             flush=True,
         )
         return 0

@@ -71,7 +71,8 @@ CREATE TABLE IF NOT EXISTS datawarehouse.fact_solar_energy_gen (
     date_id INT,
     time_id INT,
     energy_generated_kwh FLOAT,
-    rolling_outlier_flag BOOLEAN,
+    gmm_if_outlier_flag BOOLEAN,
+    fill_null_algorithm VARCHAR(255),
     
     -- Thiết lập các khóa ngoại
     CONSTRAINT FK_Gen_Site FOREIGN KEY (site_id) REFERENCES datawarehouse.dim_solar_site(site_id),

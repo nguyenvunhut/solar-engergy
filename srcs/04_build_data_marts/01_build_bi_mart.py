@@ -47,14 +47,15 @@ def build_bi_mart(engine):
     WITH Clean_Hourly_Gen AS (
         SELECT 
             f.site_id, f.geo_id, f.date_id, t.hour AS hourly_bucket,
-            SUM(f.energy_generated_kwh) AS total_energy
+            SUM(f.energy_generated_kwh) AS total_energy,
+            BOOL_OR(COALESCE(f.gmm_if_outlier_flag, false)) AS gmm_if_outlier_flag
         FROM {_SOURCE_SCHEMA}.fact_solar_energy_gen f
         JOIN {_SOURCE_SCHEMA}.dim_time t ON f.time_id = t.time_id
-        -- WHERE COALESCE(f.rolling_outlier_flag, false) = false
         GROUP BY f.site_id, f.geo_id, f.date_id, t.hour
     )
     SELECT 
         gen.site_id, gen.geo_id, gen.date_id, gen.hourly_bucket, gen.total_energy,
+        gen.gmm_if_outlier_flag,
         w.weather_type_id,
         w.shortwave_radiation, w.temperature_c, w.cloud_cover_total, w.precipitation_mm
     FROM Clean_Hourly_Gen gen

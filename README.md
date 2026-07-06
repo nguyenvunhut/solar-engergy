@@ -74,6 +74,26 @@ Dự án được quản lý tập trung qua một điểm điều khiển duy n
 python srcs/06_run_pipeline/main.py --stage all
 ```
 
+Ghi log khi chạy pipeline:
+
+```bash
+# Linux/macOS/Git Bash
+mkdir -p logs
+python -u srcs/06_run_pipeline/main.py --stage all 2>&1 | tee logs/pipeline_stage_all_$(date +%Y%m%d_%H%M%S).log
+```
+
+```powershell
+# Windows PowerShell
+mkdir logs -Force
+python -u srcs/06_run_pipeline/main.py --stage all 2>&1 | Tee-Object -FilePath ("logs/pipeline_stage_all_{0}.log" -f (Get-Date -Format "yyyyMMdd_HHmmss"))
+```
+
+```cmd
+:: Windows CMD
+mkdir logs
+python -u srcs/06_run_pipeline/main.py --stage all > logs\pipeline_stage_all_%date:~-4%%date:~4,2%%date:~7,2%_%time:~0,2%%time:~3,2%%time:~6,2%.log 2>&1
+```
+
 ---
 
 ## KIẾN TRÚC HỆ THỐNG
@@ -156,56 +176,7 @@ erDiagram
 
 Quy trình ETL của dự án không chỉ diễn ra hoàn toàn trong CSDL mà là sự kết hợp chặt chẽ giữa **Python Orchestrator**, **Quản lý phiên bản DVC**, **S3 Object Storage** và **PostgreSQL (Supabase)**.
 
-```mermaid
-flowchart TD
-    classDef prepare fill:#e1f5fe,stroke:#0288d1,stroke-width:2px,color:#01579b;
-    classDef staging fill:#fff3e0,stroke:#f57c00,stroke-width:2px,color:#e65100;
-    classDef transform fill:#fbe9e7,stroke:#d84315,stroke-width:2px,color:#bf360c;
-    classDef load fill:#e8f5e9,stroke:#388e3c,stroke-width:2px,color:#1b5e20;
-    classDef dvc fill:#ede7f6,stroke:#673ab7,stroke-width:2px,color:#311b92;
-
-    subgraph PREP ["1. EXTRACT & DVC (Chuẩn Bị)"]
-        direction TB
-        A1["Crawl Data (Kaggle & API)"]:::prepare
-        A2[("Local Storage (data/)")]:::dvc
-        A3[("S3 Object Storage (Supabase)")]:::dvc
-        
-        A1 --> A2
-        A2 -- "DVC Push / S3 Upload" --> A3
-    end
-
-    subgraph STAGING ["2. STAGING & BUFFER"]
-        direction TB
-        B1["Load thẳng từ S3 vào Staging"]:::staging
-        B2["Chuyển sang Buffer Tables"]:::staging
-        B3["Hybrid Imputation (Điền khuyết)"]:::staging
-        
-        A3 --> B1
-        B1 --> B2 --> B3
-    end
-
-    subgraph OUTLIER ["3. XỬ LÝ OUTLIERS"]
-        direction TB
-        C1["Export dữ liệu từ DB ra Parquet"]:::transform
-        C2["Chạy thuật toán Python Rolling IQR"]:::transform
-        C3[("Lưu kết quả ra CSV")]:::dvc
-        C4["Nạp cờ (Flags) ngược lại DB"]:::transform
-        
-        B3 --> C1
-        C1 --> C2 --> C3 --> C4
-    end
-
-    subgraph DWH ["4. LOAD DATA WAREHOUSE"]
-        direction TB
-        D1[("Supabase Data Warehouse")]:::load
-        D2["BI Mart (Phục vụ Tableau)"]:::load
-        D3["ML Mart (Huấn luyện Mô hình)"]:::load
-        
-        C4 --> D1
-        D1 --> D2
-        D1 --> D3
-    end
-```
+![Data Pipeline](reports/diagrams/data_pipeline.drawio.png)
 
 **Các đặc điểm kỹ thuật nổi bật:**
 - **DVC & S3 Storage:** Dữ liệu thô và dữ liệu sinh ra giữa các bước được quản lý bằng DVC và lưu trên S3 (Supabase Storage) nhằm tránh phình to dung lượng Git. CSDL lấy thẳng dữ liệu từ S3 để tiết kiệm băng thông.

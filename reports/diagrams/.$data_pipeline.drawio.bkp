@@ -1,0 +1,117 @@
+<mxfile host="Electron" modified="2023-01-01T00:00:00.000Z" agent="Mozilla/5.0" etag="etag" version="22.1.2" type="device">
+  <diagram id="data_pipeline" name="Data Pipeline">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- 1. PREP GROUP -->
+        <mxCell id="g1" value="1. EXTRACT &amp;amp; DVC (Chuẩn Bị)" style="swimlane;whiteSpace=wrap;html=1;startSize=23;fillColor=#e1f5fe;strokeColor=#01579b;" vertex="1" parent="1">
+          <mxGeometry x="40" y="40" width="200" height="300" as="geometry" />
+        </mxCell>
+        <mxCell id="n1_1" value="Crawl Data&amp;#10;(Kaggle &amp;amp; API)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="g1">
+          <mxGeometry x="25" y="40" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n1_2" value="Local Storage&amp;#10;(data/)" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="g1">
+          <mxGeometry x="40" y="130" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n1_3" value="S3 Object Storage&amp;#10;(Supabase)" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="g1">
+          <mxGeometry x="40" y="220" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="e1_1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="g1" source="n1_1" target="n1_2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e1_2" value="DVC Push" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="g1" source="n1_2" target="n1_3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- 2. STAGING GROUP -->
+        <mxCell id="g2" value="2. STAGING &amp;amp; BUFFER" style="swimlane;whiteSpace=wrap;html=1;startSize=23;fillColor=#fff3e0;strokeColor=#e65100;" vertex="1" parent="1">
+          <mxGeometry x="280" y="40" width="200" height="300" as="geometry" />
+        </mxCell>
+        <mxCell id="n2_1" value="Load vào DB Staging" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="g2">
+          <mxGeometry x="25" y="40" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n2_2" value="Chuyển sang&amp;#10;Buffer Tables" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="g2">
+          <mxGeometry x="25" y="130" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n2_3" value="Hybrid Imputation&amp;#10;(Điền khuyết)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="g2">
+          <mxGeometry x="25" y="220" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="e2_1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="g2" source="n2_1" target="n2_2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2_2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="g2" source="n2_2" target="n2_3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Cross group edge 1->2 -->
+        <mxCell id="e1to2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="1" source="n1_3" target="n2_1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- 3. OUTLIER GROUP -->
+        <mxCell id="g3" value="3. XỬ LÝ OUTLIERS" style="swimlane;whiteSpace=wrap;html=1;startSize=23;fillColor=#fbe9e7;strokeColor=#bf360c;" vertex="1" parent="1">
+          <mxGeometry x="520" y="40" width="220" height="380" as="geometry" />
+        </mxCell>
+        <mxCell id="n3_1" value="Export DB ra Parquet" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="g3">
+          <mxGeometry x="35" y="40" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n3_2" value="Chạy Python&amp;#10;Rolling IQR" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="g3">
+          <mxGeometry x="35" y="130" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n3_3" value="Lưu CSV (DVC)" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="g3">
+          <mxGeometry x="50" y="220" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n3_4" value="Nạp cờ (Flags)&amp;#10;ngược lại DB" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="g3">
+          <mxGeometry x="35" y="310" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="e3_1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="g3" source="n3_1" target="n3_2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3_2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="g3" source="n3_2" target="n3_3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3_3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="g3" source="n3_3" target="n3_4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Cross group edge 2->3 -->
+        <mxCell id="e2to3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="n2_3" target="n3_1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- 4. DWH GROUP -->
+        <mxCell id="g4" value="4. LOAD DATA WAREHOUSE" style="swimlane;whiteSpace=wrap;html=1;startSize=23;fillColor=#e8f5e9;strokeColor=#1b5e20;" vertex="1" parent="1">
+          <mxGeometry x="780" y="40" width="240" height="300" as="geometry" />
+        </mxCell>
+        <mxCell id="n4_1" value="Supabase&amp;#10;Data Warehouse" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="g4">
+          <mxGeometry x="50" y="40" width="140" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n4_2" value="BI Mart (Tableau)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="g4">
+          <mxGeometry x="20" y="200" width="90" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="n4_3" value="ML Mart (Models)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="g4">
+          <mxGeometry x="130" y="200" width="90" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="e4_1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="g4" source="n4_1" target="n4_2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4_2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="g4" source="n4_1" target="n4_3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Cross group edge 3->4 -->
+        <mxCell id="e3to4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="n3_4" target="n4_1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="760" y="380" />
+              <mxPoint x="760" y="120" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

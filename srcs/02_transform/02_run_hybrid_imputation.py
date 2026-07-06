@@ -49,6 +49,12 @@ OUTPUT_DIR = PROJECT_ROOT / _config["output"]["directory"]
 EXPORT_INTERMEDIATE = bool(_config["output"]["export_intermediate_csv"])
 FINAL_CSV = OUTPUT_DIR / _config["output"]["final_csv"]
 COPY_CHUNK_SIZE = int(_config["runtime"]["database_copy_chunk_size"])
+FILL_NULL_ALGORITHM_COLUMN = "fill_null_algorithm"
+ALGORITHM_ORIGINAL = "original"
+ALGORITHM_RULE_BASED_NIGHT = "rule_based_night"
+ALGORITHM_LINEAR = "linear"
+ALGORITHM_CUBIC = "cubic"
+ALGORITHM_REGRESSION = "regression"
 
 
 def export_csv(df: pd.DataFrame, filename: str) -> None:
@@ -80,7 +86,7 @@ def rule_based_night_zero(
     solar_df: pd.DataFrame,
     weather_df: pd.DataFrame,
     site_key: int,
-) -> tuple[pd.Series, int]:
+) -> tuple[pd.Series, int, pd.Series]:
     """Set missing generation to zero at night or when radiation is zero."""
     generation = solar_df["energy_generated_kwh"].copy()
     timestamp = solar_df["timestamp"]
@@ -109,7 +115,7 @@ def rule_based_night_zero(
     fill_mask = zero_mask & generation.isna()
     filled = int(fill_mask.sum())
     generation[fill_mask] = 0.0
-    return generation, filled
+    return generation, filled, fill_mask
 
 
 def regression_imputation_large_gaps_strict(
@@ -117,7 +123,7 @@ def regression_imputation_large_gaps_strict(
     weather_df: pd.DataFrame,
     site_key: int,
     large_gap_indices: set[int],
-) -> tuple[np.ndarray, int]:
+) -> tuple[np.ndarray, int, list[int]]:
     """Apply the original per-site regression only to original large gaps."""
     weather = weather_df[weather_df["sitekey"] == site_key][
         ["timestamp", *REGRESSION_FEATURES]
@@ -142,7 +148,7 @@ def regression_imputation_large_gaps_strict(
     )
 
     if train_mask.sum() < REGRESSION_MIN_TRAINING_ROWS:
-        return solar_sub["energy_generated_kwh"].values, 0
+        return solar_sub["energy_generated_kwh"].values, 0, []
 
     scaler = StandardScaler()
     x_train = scaler.fit_transform(
@@ -153,6 +159,7 @@ def regression_imputation_large_gaps_strict(
 
     result = solar_sub["energy_generated_kwh"].copy()
     filled = 0
+    filled_positions: list[int] = []
     if prediction_mask.any():
         predictions = model.predict(
             scaler.transform(
@@ -174,7 +181,8 @@ def regression_imputation_large_gaps_strict(
             ):
                 result.iloc[local_position] = max(0.0, prediction)
                 filled += 1
-    return result.values, filled
+                filled_positions.append(local_position)
+    return result.values, filled, filled_positions
 
 
 def build_imputed_solar(
@@ -194,6 +202,11 @@ def build_imputed_solar(
         solar_df.dropna(subset=["timestamp"])
         .sort_values("timestamp")
         .reset_index(drop=True)
+    )
+    solar_df[FILL_NULL_ALGORITHM_COLUMN] = np.where(
+        solar_df["energy_generated_kwh"].notna(),
+        ALGORITHM_ORIGINAL,
+        pd.NA,
     )
     weather_df = (
         weather_df.dropna(subset=["timestamp"])
@@ -231,10 +244,13 @@ def build_imputed_solar(
             results.append(subset)
             continue
 
-        generation, night_filled = rule_based_night_zero(
+        generation, night_filled, night_fill_mask = rule_based_night_zero(
             subset, weather_df, site
         )
         subset["energy_generated_kwh"] = generation
+        subset.loc[night_fill_mask, FILL_NULL_ALGORITHM_COLUMN] = (
+            ALGORITHM_RULE_BASED_NIGHT
+        )
         counters["night"] += night_filled
         if EXPORT_INTERMEDIATE:
             stage_results["rule"].append(subset.copy())
@@ -258,9 +274,20 @@ def build_imputed_solar(
 
         before_linear = int(time_series.isna().sum())
         if linear_indices:
+            linear_missing_before = time_series.isna()
             interpolated = time_series.interpolate(method="time")
             for index in linear_indices:
                 time_series.iloc[index] = interpolated.iloc[index]
+            linear_filled_mask = linear_missing_before & time_series.notna()
+            linear_filled_positions = [
+                index
+                for index in linear_indices
+                if bool(linear_filled_mask.iloc[index])
+            ]
+            subset.loc[
+                linear_filled_positions,
+                FILL_NULL_ALGORITHM_COLUMN,
+            ] = ALGORITHM_LINEAR
         counters["linear"] += before_linear - int(time_series.isna().sum())
         if EXPORT_INTERMEDIATE:
             linear_result = subset.copy()
@@ -269,10 +296,21 @@ def build_imputed_solar(
 
         before_cubic = int(time_series.isna().sum())
         if cubic_indices:
+            cubic_missing_before = time_series.isna()
             temporary = time_series.interpolate(method="linear")
             interpolated = temporary.interpolate(method="cubic")
             for index in cubic_indices:
                 time_series.iloc[index] = interpolated.iloc[index]
+            cubic_filled_mask = cubic_missing_before & time_series.notna()
+            cubic_filled_positions = [
+                index
+                for index in cubic_indices
+                if bool(cubic_filled_mask.iloc[index])
+            ]
+            subset.loc[
+                cubic_filled_positions,
+                FILL_NULL_ALGORITHM_COLUMN,
+            ] = ALGORITHM_CUBIC
         counters["cubic"] += before_cubic - int(time_series.isna().sum())
         if EXPORT_INTERMEDIATE:
             cubic_result = subset.copy()
@@ -280,13 +318,19 @@ def build_imputed_solar(
             stage_results["cubic"].append(cubic_result)
 
         subset["energy_generated_kwh"] = time_series.values
-        values, regression_filled = regression_imputation_large_gaps_strict(
-            subset,
-            weather_df,
-            site,
-            large_gap_indices,
+        values, regression_filled, regression_filled_positions = (
+            regression_imputation_large_gaps_strict(
+                subset,
+                weather_df,
+                site,
+                large_gap_indices,
+            )
         )
         subset["energy_generated_kwh"] = values
+        subset.loc[
+            regression_filled_positions,
+            FILL_NULL_ALGORITHM_COLUMN,
+        ] = ALGORITHM_REGRESSION
         counters["regression"] += regression_filled
         if EXPORT_INTERMEDIATE:
             stage_results["regression"].append(subset.copy())
@@ -326,17 +370,29 @@ def _copy_updates_to_temp_table(connection, cleaned: pd.DataFrame) -> None:
     cursor = raw_connection.cursor()
     try:
         cursor.execute(
+            f"""
+            ALTER TABLE {SCHEMA}.{SOLAR_TABLE}
+            ADD COLUMN IF NOT EXISTS {FILL_NULL_ALGORITHM_COLUMN} VARCHAR(255)
+            """
+        )
+        cursor.execute(
             """
             CREATE TEMP TABLE temp_solar_energy_imputed (
                 sitekey text NOT NULL,
                 timestamp timestamp without time zone NOT NULL,
-                energy_generated_kwh double precision
+                energy_generated_kwh double precision,
+                fill_null_algorithm varchar(255)
             ) ON COMMIT DROP
             """
         )
         for start in range(0, len(cleaned), COPY_CHUNK_SIZE):
             chunk = cleaned.iloc[start : start + COPY_CHUNK_SIZE][
-                ["sitekey", "timestamp", "energy_generated_kwh"]
+                [
+                    "sitekey",
+                    "timestamp",
+                    "energy_generated_kwh",
+                    FILL_NULL_ALGORITHM_COLUMN,
+                ]
             ]
             buffer = StringIO()
             chunk.to_csv(
@@ -350,7 +406,12 @@ def _copy_updates_to_temp_table(connection, cleaned: pd.DataFrame) -> None:
             cursor.copy_expert(
                 """
                 COPY temp_solar_energy_imputed
-                    (sitekey, timestamp, energy_generated_kwh)
+                    (
+                        sitekey,
+                        timestamp,
+                        energy_generated_kwh,
+                        fill_null_algorithm
+                    )
                 FROM STDIN WITH (FORMAT CSV, NULL '\\N')
                 """,
                 buffer,
@@ -364,7 +425,9 @@ def _copy_updates_to_temp_table(connection, cleaned: pd.DataFrame) -> None:
         cursor.execute(
             f"""
             UPDATE {SCHEMA}.{SOLAR_TABLE} target
-            SET energy_generated_kwh = source.energy_generated_kwh
+            SET
+                energy_generated_kwh = source.energy_generated_kwh,
+                fill_null_algorithm = source.fill_null_algorithm
             FROM temp_solar_energy_imputed source
             WHERE target.sitekey = source.sitekey
               AND target.timestamp = source.timestamp

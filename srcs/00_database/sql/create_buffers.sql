@@ -52,7 +52,8 @@ CREATE TABLE IF NOT EXISTS staging.fact_solar_energy_gen (
     SiteKey VARCHAR(255),
     Timestamp TIMESTAMP,
     Energy_Generated_kWh DOUBLE PRECISION,
-    rolling_outlier_flag BOOLEAN DEFAULT false,
+    gmm_if_outlier_flag BOOLEAN DEFAULT false,
+    fill_null_algorithm VARCHAR(255),
     PRIMARY KEY (SiteKey, Timestamp)
 );
 

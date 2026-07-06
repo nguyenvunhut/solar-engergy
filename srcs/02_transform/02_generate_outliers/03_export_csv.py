@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """
-Export local rolling-IQR outlier flag CSVs for review before any Supabase upload.
+Export final outlier flag CSVs for review before any Supabase upload.
 
-Input is generated audit output already produced by the rolling notebook:
-- rolling 1h IQR candidates
+Input is the promoted candidate CSV from the configured outlier detector.
+The output column is `gmm_if_outlier_flag`, the only outlier flag persisted by
+the refactored pipeline.
 
 This script does not write to Supabase.
 """
@@ -24,7 +25,7 @@ with DEFAULT_CONFIG.open(encoding="utf-8") as _f:
     _cfg = yaml.safe_load(_f)
 
 SOLAR_PATH = ROOT / _cfg["paths"]["parquet_dir"] / "temp_fact_solar_energy_gen.parquet"
-ROLLING_PATH = ROOT / _cfg["paths"]["rolling_iqr_csv"]
+PRIMARY_CANDIDATES_PATH = ROOT / _cfg["paths"]["primary_outlier_candidates_csv"]
 OUT_DIR = ROOT / _cfg["paths"]["outlier_out_dir"]
 
 KEY_COLS = ["sitekey", "timestamp"]
@@ -66,26 +67,26 @@ def main() -> None:
     solar["hour"] = pd.to_datetime(solar["timestamp"]).dt.hour
 
     candidate_frames = [
-        read_candidate_keys(ROLLING_PATH, "rolling_outlier_flag"),
+        read_candidate_keys(PRIMARY_CANDIDATES_PATH, "gmm_if_outlier_flag"),
     ]
 
     flags = solar
     for frame in candidate_frames:
         flags = flags.merge(frame, on=KEY_COLS, how="left")
 
-    flag_cols = ["rolling_outlier_flag"]
+    flag_cols = ["gmm_if_outlier_flag"]
     for col in flag_cols:
         flags[col] = flags[col].fillna(False).astype(bool)
 
-    full_path = OUT_DIR / "01_full_generation_rolling_flags.csv"
-    candidates_path = OUT_DIR / "02_rolling_iqr_candidates.csv"
-    summary_path = OUT_DIR / "03_rolling_flag_summary.csv"
-    overlap_path = OUT_DIR / "04_rolling_flag_overlap_matrix.csv"
-    manifest_path = OUT_DIR / "05_rolling_rule_manifest.csv"
+    full_path = ROOT / _cfg["paths"]["full_outlier_csv"]
+    candidates_path = ROOT / _cfg["paths"]["sparse_outlier_csv"]
+    summary_path = OUT_DIR / "03_gmm_if_flag_summary.csv"
+    overlap_path = OUT_DIR / "04_gmm_if_flag_overlap_matrix.csv"
+    manifest_path = OUT_DIR / "05_gmm_if_rule_manifest.csv"
     checksums_path = OUT_DIR / "99_sha256_checksums.csv"
 
     write_csv(flags, full_path)
-    write_csv(flags[flags["rolling_outlier_flag"]].copy(), candidates_path)
+    write_csv(flags[flags["gmm_if_outlier_flag"]].copy(), candidates_path)
 
     total_rows = len(flags)
     summary_rows = []
@@ -98,7 +99,7 @@ def main() -> None:
                 "pct_of_total": n / total_rows * 100,
             }
         )
-    keep_rows = int((~flags["rolling_outlier_flag"]).sum())
+    keep_rows = int((~flags["gmm_if_outlier_flag"]).sum())
     summary_rows.append(
         {
             "flag": "keep_raw",
@@ -124,10 +125,10 @@ def main() -> None:
     manifest = pd.DataFrame(
         [
             {
-                "flag": "rolling_outlier_flag",
-                "source_file": str(ROLLING_PATH.relative_to(ROOT)),
-                "rule": "rolling_1h_abs_deviation > Q3 + 1.5*IQR within sitekey + hour",
-                "role": "main rolling-only 15-minute generation time-series audit",
+                "flag": "gmm_if_outlier_flag",
+                "source_file": str(PRIMARY_CANDIDATES_PATH.relative_to(ROOT)),
+                "rule": "GMM-IF with radiation/weather residual features OR strict physical guardrail",
+                "role": "main verified 15-minute generation outlier flag",
             },
         ]
     )
