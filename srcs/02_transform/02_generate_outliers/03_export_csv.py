@@ -38,12 +38,20 @@ def normalize_keys(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def read_candidate_keys(path: Path, flag_name: str) -> pd.DataFrame:
+def read_candidate_keys(path: Path, flag_name: str, reason_col_name: str | None = None) -> pd.DataFrame:
     if not path.exists():
-        return pd.DataFrame(columns=KEY_COLS + [flag_name])
-    df = pd.read_csv(path, usecols=lambda c: c in set(KEY_COLS))
+        cols = KEY_COLS + [flag_name]
+        if reason_col_name:
+            cols.append(reason_col_name)
+        return pd.DataFrame(columns=cols)
+    usecols = set(KEY_COLS + (["outlier_reason"] if reason_col_name else []))
+    df = pd.read_csv(path, usecols=lambda c: c in usecols)
     df = normalize_keys(df).drop_duplicates(KEY_COLS)
     df[flag_name] = True
+    if reason_col_name and "outlier_reason" in df.columns:
+        df = df.rename(columns={"outlier_reason": reason_col_name})
+    elif reason_col_name:
+        df[reason_col_name] = "UNKNOWN"
     return df
 
 
@@ -67,7 +75,7 @@ def main() -> None:
     solar["hour"] = pd.to_datetime(solar["timestamp"]).dt.hour
 
     candidate_frames = [
-        read_candidate_keys(PRIMARY_CANDIDATES_PATH, "gmm_if_outlier_flag"),
+        read_candidate_keys(PRIMARY_CANDIDATES_PATH, "gmm_if_outlier_flag", "gmm_if_outlier_reason"),
     ]
 
     flags = solar
@@ -77,6 +85,9 @@ def main() -> None:
     flag_cols = ["gmm_if_outlier_flag"]
     for col in flag_cols:
         flags[col] = flags[col].fillna(False).astype(bool)
+        
+    if "gmm_if_outlier_reason" in flags.columns:
+        flags["gmm_if_outlier_reason"] = flags["gmm_if_outlier_reason"].fillna("")
 
     full_path = ROOT / _cfg["paths"]["full_outlier_csv"]
     candidates_path = ROOT / _cfg["paths"]["sparse_outlier_csv"]

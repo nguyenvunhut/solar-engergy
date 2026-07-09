@@ -89,7 +89,8 @@ def setup_materialized_views():
                 t.hour                                                      AS hourly_bucket,
                 SUM(f.energy_generated_kwh)                                 AS total_energy,
                 -- bool_or(f.rolling_outlier_flag)                             AS rolling_outlier_flag,
-                bool_or(f.gmm_if_outlier_flag)                              AS gmm_if_outlier_flag
+                bool_or(f.gmm_if_outlier_flag)                              AS gmm_if_outlier_flag,
+                MAX(f.gmm_if_outlier_reason)                                AS gmm_if_outlier_reason
                 -- MODE() WITHIN GROUP (ORDER BY f.fill_null_algorithm)        AS fill_null_algorithm
             FROM {_SOURCE_SCHEMA}.fact_solar_energy_gen f
             JOIN {_SOURCE_SCHEMA}.dim_time t ON f.time_id = t.time_id
@@ -167,6 +168,7 @@ def setup_materialized_views():
         -- === OUTLIER FLAGS ===
         -- rolling_outlier_flag,
         gmm_if_outlier_flag,
+        gmm_if_outlier_reason,
         -- fill_null_algorithm,
 
         -- === MEASURES ĐÃ TÍNH ===
@@ -215,6 +217,7 @@ def setup_materialized_views():
             -- Outlier: có bất kỳ giờ nào bị outlier trong ngày không
             -- bool_or(rolling_outlier_flag) AS has_rolling_outlier,
             bool_or(gmm_if_outlier_flag)  AS has_gmm_outlier,
+            MAX(gmm_if_outlier_reason)    AS gmm_outlier_reasons,
 
             -- Sản lượng & doanh thu
             SUM(e_hourly)                 AS e_daily,

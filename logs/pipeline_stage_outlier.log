@@ -1,0 +1,70 @@
+2026-07-09 23:24:25 | INFO     | pipeline | Pipeline start | stage=outlier | dry_run=False | project=/home/tandat/Desktop/Du_An_Tot_Nghiep
+
+[5/8] Apply Outlier Flags to Buffer
+2026-07-09 23:24:25 | INFO     | pipeline | [5/7] START | Apply Outlier Flags to Buffer
+2026-07-09 23:24:25 | INFO     | pipeline | Apply outlier flags; mode=EXECUTE; full_csv=/home/tandat/Desktop/Du_An_Tot_Nghiep/reports/outlier_flag_pipeline_gmm_if/01_full_generation_gmm_if_flags.csv; sparse_csv=/home/tandat/Desktop/Du_An_Tot_Nghiep/reports/outlier_flag_pipeline_gmm_if/02_gmm_if_candidates.csv
+
+========================================================================================
+Applying Rolling Outlier Flags
+========================================================================================
+
+[1/3] Verifying Source Checksums...
+Source verification: Supabase fact table vs local flag CSV
+  Supabase table = staging.fact_solar_energy_gen
+  Local CSV      = /home/tandat/Desktop/Du_An_Tot_Nghiep/reports/outlier_flag_pipeline_gmm_if/01_full_generation_gmm_if_flags.csv
+
+  PASS rows                   supabase=2731946 local=2731946
+  PASS distinct_sitekeys      supabase=42 local=42
+  PASS min_timestamp          supabase=2020-01-01 00:15:00 local=2020-01-01 00:15:00
+  PASS max_timestamp          supabase=2022-04-23 23:45:00 local=2022-04-23 23:45:00
+  PASS site_sum               supabase=1605615153237338339828440 local=1605615153237338339828440
+  PASS timestamp_sum          supabase=1570475429312296315442275 local=1570475429312296315442275
+  PASS key_checksum           supabase=1575130950343236782172294 local=1575130950343236782172294
+  PASS energy_sum_abs_diff    supabase=0 tolerance <= 0.01 local=0E-18
+  WARN key_value_checksum     supabase=1575539528348041910151861 local=1575528870184285749120267
+
+  local flagged_rows = 6,891
+  local flag_pct     = 0.252237782152%
+  note: key_value_checksum is warning-only because double precision values can serialize differently between PostgreSQL and CSV. Upload joins by (sitekey, timestamp); key_checksum and energy_sum_abs_diff are the hard checks.
+Source verification passed.
+
+[2/3] Uploading outlier flags to sparse table...
+CSV audit:
+  path         = /home/tandat/Desktop/Du_An_Tot_Nghiep/reports/outlier_flag_pipeline_gmm_if/02_gmm_if_candidates.csv
+  rows         = 6,891
+  flagged_rows = 6,891
+  flag_pct     = 100.000000000000%
+  target       = temp.temp_gmm_if_outlier_flags
+  load_style   = transaction temp table; no permanent audit table is created
+  mode         = EXECUTE
+  uploaded 5,000/6,891
+  uploaded 6,891/6,891
+
+Upload verification:
+  expected rows         = 6,891
+  uploaded rows         = 6,891
+  expected flagged rows = 6,891
+  uploaded flagged rows = 6,891
+      Upload complete. (Batch logic finished, committing deferred to parent)
+
+[3/3] Applying flags to fact_solar_energy_gen...
+BEGIN apply gmm_if_outlier_flag to staging.fact_solar_energy_gen
+flag table rows=6,891 distinct_keys=6,891 duplicate_rows=0 true_flags=6,891
+unmatched flag rows to fact=0
+fact rows=2,731,946 distinct_keys=2,731,946 duplicate_keys=0
+Ensure gmm_if_outlier_flag column exists
+Reset all fact flags to false
+rows reset false=2,731,946
+Update true flags by exact sitekey + timestamp match
+rows updated true=6,891
+verify fact rows=2,731,946 true=6,891 false=2,725,055 null=0
+verify true_without_flag=0 flag_not_true=0
+UPDATE OK: gmm_if_outlier_flag mapped (commit deferred to parent)
+
+Outlier application finished successfully.
+2026-07-09 23:25:57 | INFO     | pipeline | Outlier flags đã được commit
+2026-07-09 23:25:57 | INFO     | pipeline | Đã đóng kết nối outlier
+2026-07-09 23:25:57 | INFO     | pipeline | [5/8] SUCCESS | Apply Outlier Flags to Buffer | 92.06s
+2026-07-09 23:25:57 | INFO     | pipeline | Pipeline success | stage=outlier | elapsed=92.07s
+
+[DONE] Pipeline completed successfully.
