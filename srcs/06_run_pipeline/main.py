@@ -254,23 +254,33 @@ def run_warehouse() -> None:
         log.info("Đã đóng kết nối Data Warehouse")
 
 
-def run_marts() -> None:
-    """Build Data Marts (BI and ML)."""
-    log.info("Mở SQLAlchemy engine cho Data Marts")
+def run_bimarts() -> None:
+    """Build BI data marts."""
+    log.info("Bắt đầu build BI Marts")
     engine = database.get_sqlalchemy_engine()
     try:
-        log.info("Bắt đầu BI Mart")
         bi_mart_builder.build_bi_mart(engine)
-        log.info("BI Mart thành công")
-        log.info("Bắt đầu build BI hourly measures view")
         bi_view_builder.build_bi_views(engine)
-        log.info("BI hourly measures view thành công")
-        log.info("Bắt đầu ML Mart")
-        ml_mart_builder.build_ml_mart(engine)
-        log.info("ML Mart thành công")
+        log.info("Build BI Marts hoàn tất")
+    except Exception:
+        log.exception("Build BI Marts thất bại")
+        raise
     finally:
         engine.dispose()
-        log.info("Đã đóng SQLAlchemy engine của Data Marts")
+
+
+def run_mlmarts() -> None:
+    """Build ML data marts."""
+    log.info("Bắt đầu build ML Marts")
+    engine = database.get_sqlalchemy_engine()
+    try:
+        ml_mart_builder.build_ml_mart(engine)
+        log.info("Build ML Marts hoàn tất")
+    except Exception:
+        log.exception("Build ML Marts thất bại")
+        raise
+    finally:
+        engine.dispose()
 
 
 def run_bi_view() -> None:
@@ -291,27 +301,27 @@ def run_stage(stage_number: int, title: str, runner) -> None:
         runner()
     except Exception:
         elapsed = time.perf_counter() - started
-        log.exception("[%s/7] FAILED | %s | %.2fs", stage_number, title, elapsed)
+        log.exception("[%s/8] FAILED | %s | %.2fs", stage_number, title, elapsed)
         raise
     elapsed = time.perf_counter() - started
-    log.info("[%s/7] SUCCESS | %s | %.2fs", stage_number, title, elapsed)
+    log.info("[%s/8] SUCCESS | %s | %.2fs", stage_number, title, elapsed)
 
 
 def run_pipeline(stage: str, *, dry_run: bool) -> None:
     sleep_sec = _load_sleep_seconds()
 
     if stage in {"staging", "all"}:
-        print("\n[1/7] Object Storage → Raw Staging")
-        run_stage(1, "Object Storage → Raw Staging", run_staging)
+        print("\n[1/8] Object Storage -> Raw Staging")
+        run_stage(1, "Object Storage -> Raw Staging", run_staging)
         if stage == "all":
             print(f"... Đang nghỉ {sleep_sec}s để nhả RAM và Database Connection ...")
             time.sleep(sleep_sec)
 
     if stage in {"transform", "all"}:
-        print("\n[2/7] Raw Staging → Buffer")
+        print("\n[2/8] Raw Staging -> Buffer")
         run_stage(
             2,
-            "Raw Staging → Buffer",
+            "Raw Staging -> Buffer",
             lambda: run_transform(dry_run=dry_run),
         )
         if stage == "all":
@@ -319,7 +329,7 @@ def run_pipeline(stage: str, *, dry_run: bool) -> None:
             time.sleep(sleep_sec)
 
     if stage in {"imputation", "all"}:
-        print("\n[3/7] Fill Missing Solar Energy (Hybrid Imputation)")
+        print("\n[3/8] Fill Missing Solar Energy (Hybrid Imputation)")
         run_stage(
             3,
             "Fill Missing Solar Energy (Hybrid Imputation)",
@@ -333,7 +343,7 @@ def run_pipeline(stage: str, *, dry_run: bool) -> None:
         if dry_run:
             print("\n[SKIP] Generate Outliers is disabled in dry-run mode.")
         else:
-            print("\n[4/7] Generate Outliers CSV (GMM-IF + Physical Guardrail)")
+            print("\n[4/8] Generate Outliers CSV (GMM-IF + Physical Guardrail)")
             run_stage(
                 4,
                 "Generate Outliers CSV (GMM-IF + Physical Guardrail)",
@@ -344,7 +354,7 @@ def run_pipeline(stage: str, *, dry_run: bool) -> None:
                 time.sleep(sleep_sec)
 
     if stage in {"outlier", "all"}:
-        print("\n[5/7] Apply Outlier Flags to Buffer")
+        print("\n[5/8] Apply Outlier Flags to Buffer")
         run_stage(
             5,
             "Apply Outlier Flags to Buffer",
@@ -358,39 +368,40 @@ def run_pipeline(stage: str, *, dry_run: bool) -> None:
         if dry_run:
             print("\n[SKIP] Data warehouse load is disabled in dry-run mode.")
         else:
-            print("\n[6/7] Buffer → Data Warehouse")
-            run_stage(6, "Buffer → Data Warehouse", run_warehouse)
+            print("\n[6/8] Buffer -> Data Warehouse")
+            run_stage(6, "Buffer -> Data Warehouse", run_warehouse)
             if stage == "all":
                 print(f"... Đang nghỉ {sleep_sec}s để nhả RAM và Database Connection ...")
                 time.sleep(sleep_sec)
 
-    if stage in {"marts", "all"}:
+    if stage in {"bimarts", "all"}:
         if dry_run:
-            print("\n[SKIP] Data marts build is disabled in dry-run mode.")
+            print("\n[SKIP] BI Marts build is disabled in dry-run mode.")
         else:
-            print("\n[7/7] Data Warehouse → Data Marts")
-            run_stage(7, "Data Warehouse → Data Marts", run_marts)
+            print("\n[7/8] Data Warehouse -> BI Marts")
+            run_stage(7, "Data Warehouse -> BI Marts", run_bimarts)
+            if stage == "all":
+                print(f"... Đang nghỉ {sleep_sec}s để nhả RAM và Database Connection ...")
+                time.sleep(sleep_sec)
+
+    if stage in {"mlmarts", "all"}:
+        if dry_run:
+            print("\n[SKIP] ML Marts build is disabled in dry-run mode.")
+        else:
+            print("\n[8/8] Data Warehouse -> ML Marts")
+            run_stage(8, "Data Warehouse -> ML Marts", run_mlmarts)
 
     if stage == "bi_view":
         print("\n[Standalone] Build BI Mart Hourly View")
-        run_stage(8, "Build BI Mart Hourly View", run_bi_view)
+        run_stage(9, "Build BI Mart Hourly View", run_bi_view)
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--stage",
-        choices=(
-            "staging",
-            "transform",
-            "imputation",
-            "generate_outliers",
-            "outlier",
-            "load",
-            "marts",
-            "bi_view",
-            "all",
-        ),
+        type=str,
+        choices=["all", "staging", "transform", "imputation", "generate_outliers", "outlier", "load", "bimarts", "mlmarts", "bi_view"],
         default="all",
         help="Pipeline stage to execute.",
     )

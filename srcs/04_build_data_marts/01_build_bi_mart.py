@@ -48,7 +48,8 @@ def build_bi_mart(engine):
         SELECT 
             f.site_id, f.geo_id, f.date_id, t.hour AS hourly_bucket,
             SUM(f.energy_generated_kwh) AS total_energy,
-            BOOL_OR(COALESCE(f.gmm_if_outlier_flag, false)) AS gmm_if_outlier_flag
+            BOOL_OR(COALESCE(f.gmm_if_outlier_flag, false)) AS gmm_if_outlier_flag,
+            MAX(f.gmm_if_outlier_reason) AS gmm_if_outlier_reason
         FROM {_SOURCE_SCHEMA}.fact_solar_energy_gen f
         JOIN {_SOURCE_SCHEMA}.dim_time t ON f.time_id = t.time_id
         GROUP BY f.site_id, f.geo_id, f.date_id, t.hour

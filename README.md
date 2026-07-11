@@ -85,13 +85,13 @@ python -u srcs/06_run_pipeline/main.py --stage all 2>&1 | tee logs/pipeline_stag
 ```powershell
 # Windows PowerShell
 mkdir logs -Force
-python -u srcs/06_run_pipeline/main.py --stage all 2>&1 | Tee-Object -FilePath ("logs/pipeline_stage_all_{0}.log" -f (Get-Date -Format "yyyyMMdd_HHmmss"))
+python -u srcs\06_run_pipeline\main.py --stage all 2>&1 | Tee-Object -FilePath ("logs/pipeline_stage_all_{0}.log" -f (Get-Date -Format "yyyyMMdd_HHmmss"))
 ```
 
 ```cmd
 :: Windows CMD
 mkdir logs
-python -u srcs/06_run_pipeline/main.py --stage all > logs\pipeline_stage_all_%date:~-4%%date:~4,2%%date:~7,2%_%time:~0,2%%time:~3,2%%time:~6,2%.log 2>&1
+python -u srcs\06_run_pipeline\main.py --stage all > logs\pipeline_stage_all_%date:~-4%%date:~4,2%%date:~7,2%_%time:~0,2%%time:~3,2%%time:~6,2%.log 2>&1
 ```
 
 ---

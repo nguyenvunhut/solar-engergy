@@ -54,6 +54,7 @@ REQUIRED_COLUMNS = [
     "energy_generated_kwh",
     "hour",
     CSV_FLAG_COLUMN,
+    "gmm_if_outlier_reason",
 ]
 
 
@@ -99,19 +100,17 @@ def ensure_db_flag_column(cur: any, table: str, *, not_null: bool = False) -> No
             """
         )
         has_new = True
+        
+    has_reason = table_has_column(cur, table, "gmm_if_outlier_reason")
+    if not has_reason:
+        cur.execute(
+            f"""
+            ALTER TABLE {qname(SCHEMA, table)}
+            ADD COLUMN gmm_if_outlier_reason varchar(255)
+            """
+        )
 
-    cur.execute(
-        f"""
-        ALTER TABLE {qname(SCHEMA, table)}
-        ALTER COLUMN {quote_ident(DB_FLAG_COLUMN)} TYPE boolean
-        USING CASE
-            WHEN {quote_ident(DB_FLAG_COLUMN)} IS NULL THEN NULL
-            WHEN lower({quote_ident(DB_FLAG_COLUMN)}::text) IN ('true', 't', '1', 'yes', 'y') THEN true
-            WHEN lower({quote_ident(DB_FLAG_COLUMN)}::text) IN ('false', 'f', '0', 'no', 'n') THEN false
-            ELSE NULL
-        END
-        """
-    )
+
 
     if not_null:
         cur.execute(
@@ -433,6 +432,7 @@ def create_target_table(conn: any) -> None:
                 energy_generated_kwh double precision,
                 hour integer,
                 {quote_ident(DB_FLAG_COLUMN)} boolean NOT NULL,
+                gmm_if_outlier_reason varchar(255),
                 PRIMARY KEY (sitekey, timestamp)
             ) ON COMMIT DROP
             """
@@ -496,6 +496,7 @@ def read_csv_batches(path: Path, batch_size: int) -> Iterable[list[tuple]]:
                     float(energy) if energy else None,
                     int(hour) if hour else None,
                     parse_bool(row[CSV_FLAG_COLUMN]),
+                    row.get("gmm_if_outlier_reason", "")
                 )
             )
             if len(batch) >= batch_size:
@@ -524,13 +525,15 @@ def insert_batch(conn: any, batch: list[tuple]) -> None:
                 timestamp,
                 energy_generated_kwh,
                 hour,
-                {quote_ident(DB_FLAG_COLUMN)}
+                {quote_ident(DB_FLAG_COLUMN)},
+                gmm_if_outlier_reason
             )
             VALUES %s
             ON CONFLICT (sitekey, timestamp) DO UPDATE SET
                 energy_generated_kwh = EXCLUDED.energy_generated_kwh,
                 hour = EXCLUDED.hour,
-                {quote_ident(DB_FLAG_COLUMN)} = EXCLUDED.{quote_ident(DB_FLAG_COLUMN)}
+                {quote_ident(DB_FLAG_COLUMN)} = EXCLUDED.{quote_ident(DB_FLAG_COLUMN)},
+                gmm_if_outlier_reason = EXCLUDED.gmm_if_outlier_reason
             """,
             [
                 (
@@ -539,8 +542,9 @@ def insert_batch(conn: any, batch: list[tuple]) -> None:
                     energy_generated_kwh,
                     hour,
                     flag,
+                    reason,
                 )
-                for sitekey, timestamp, energy_generated_kwh, hour, flag in batch
+                for sitekey, timestamp, energy_generated_kwh, hour, flag, reason in batch
             ],
             page_size=len(batch),
         )
@@ -704,7 +708,8 @@ def run_apply_to_fact(conn: any, expected_flags: int) -> int:
         cur.execute(
             f"""
             UPDATE {qname(SCHEMA, SOURCE_FACT_TABLE)}
-            SET {quote_ident(DB_FLAG_COLUMN)} = false
+            SET {quote_ident(DB_FLAG_COLUMN)} = false,
+                gmm_if_outlier_reason = NULL
             """
         )
         print(f"rows reset false={cur.rowcount:,}", flush=True)
@@ -715,7 +720,8 @@ def run_apply_to_fact(conn: any, expected_flags: int) -> int:
         cur.execute(
             f"""
             UPDATE {qname(SCHEMA, SOURCE_FACT_TABLE)} f
-            SET {quote_ident(DB_FLAG_COLUMN)} = true
+            SET {quote_ident(DB_FLAG_COLUMN)} = true,
+                gmm_if_outlier_reason = o.gmm_if_outlier_reason
             FROM {quote_ident(TEMP_TABLE)} o
             WHERE f.sitekey = o.sitekey
               AND f.timestamp = o.timestamp

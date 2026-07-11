@@ -1,0 +1,20 @@
+Query rows expected: 2,731,946
+Output parquet     : /home/tandat/Desktop/Du_An_Tot_Nghiep/data/mlmart_base/v1_preprocessing.parquet
+Chunk size         : 200,000
+Mode               : DB read-only SELECT -> local parquet
+  chunk=  1 rows=  200,000 total=     200,000
+  chunk=  2 rows=  200,000 total=     400,000
+  chunk=  3 rows=  200,000 total=     600,000
+  chunk=  4 rows=  200,000 total=     800,000
+  chunk=  5 rows=  200,000 total=   1,000,000
+  chunk=  6 rows=  200,000 total=   1,200,000
+  chunk=  7 rows=  200,000 total=   1,400,000
+  chunk=  8 rows=  200,000 total=   1,600,000
+  chunk=  9 rows=  200,000 total=   1,800,000
+  chunk= 10 rows=  200,000 total=   2,000,000
+  chunk= 11 rows=  200,000 total=   2,200,000
+  chunk= 12 rows=  200,000 total=   2,400,000
+  chunk= 13 rows=  200,000 total=   2,600,000
+  chunk= 14 rows=  131,946 total=   2,731,946
+
+Done: rows_written=2,731,946 expected=2,731,946 size=71.55MB status=PASS elapsed=310.2s
