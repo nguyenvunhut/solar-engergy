@@ -57,6 +57,7 @@ def build_bi_mart(engine):
     SELECT 
         gen.site_id, gen.geo_id, gen.date_id, gen.hourly_bucket, gen.total_energy,
         gen.gmm_if_outlier_flag,
+        gen.gmm_if_outlier_reason,
         w.weather_type_id,
         w.shortwave_radiation, w.temperature_c, w.cloud_cover_total, w.precipitation_mm
     FROM Clean_Hourly_Gen gen
