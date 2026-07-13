@@ -809,7 +809,9 @@ def main() -> None:
 
     candidates_for_downstream = candidates[
         ["sitekey", "timestamp", "hour", "energy_generated_kwh"]
-    ].sort_values(["sitekey", "timestamp"])
+    ].copy()
+    candidates_for_downstream["outlier_reason"] = candidates.apply(explain_outlier_row, axis=1)
+    candidates_for_downstream = candidates_for_downstream.sort_values(["sitekey", "timestamp"])
     PRIMARY_CANDIDATES_PATH.parent.mkdir(parents=True, exist_ok=True)
     candidates_for_downstream.to_csv(PRIMARY_CANDIDATES_PATH, index=False)
 

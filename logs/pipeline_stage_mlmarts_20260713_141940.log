@@ -1,0 +1,21 @@
+2026-07-13 14:19:42 | INFO     | pipeline | Pipeline start | stage=mlmarts | dry_run=False | project=/home/tandat/Desktop/Du_An_Tot_Nghiep
+
+[8/8] Data Warehouse -> ML Marts
+2026-07-13 14:19:42 | INFO     | pipeline | [8/7] START | Data Warehouse -> ML Marts
+2026-07-13 14:19:42 | INFO     | pipeline | Bắt đầu build ML Marts
+2026-07-13 14:19:42 | INFO     | pipeline.ml_mart | >> Bắt đầu build ML Mart...
+2026-07-13 14:19:42 | INFO     | pipeline.ml_mart | Tạo schema ml_mart nếu chưa tồn tại
+2026-07-13 14:19:42 | INFO     | pipeline.ml_mart | Tạo bảng tạm ml_mart.base_build
+2026-07-13 14:21:13 | INFO     | pipeline.ml_mart | Kiểm tra dữ liệu | source_rows=2,731,946 | mart_rows=2,731,946 | duplicate_gen_id=0 | duplicate_site_timestamp=0
+2026-07-13 14:21:13 | INFO     | pipeline.ml_mart | Các kiểm tra tính toàn vẹn ML Mart đã pass
+2026-07-13 14:21:13 | INFO     | pipeline.ml_mart | Đổi base_build thành bảng chính ml_mart.base
+2026-07-13 14:22:06 | INFO     | pipeline.ml_mart | Đã tạo primary key và các index cho ml_mart.base
+2026-07-13 14:22:06 | INFO     | pipeline.ml_mart | Tạo view ml_mart.v_model_input_1h
+2026-07-13 14:22:15 | INFO     | pipeline.ml_mart | >> ML Mart audit: rows=2,731,946, duplicate_gen_id=0, duplicate_site_timestamp=0, missing_weather=188
+2026-07-13 14:22:15 | INFO     | pipeline.ml_mart | >> ML Mart hoàn tất!
+
+2026-07-13 14:22:15 | INFO     | pipeline | Build ML Marts hoàn tất
+2026-07-13 14:22:15 | INFO     | pipeline | [8/8] SUCCESS | Data Warehouse -> ML Marts | 153.10s
+2026-07-13 14:22:15 | INFO     | pipeline | Pipeline success | stage=mlmarts | elapsed=153.10s
+
+[DONE] Pipeline completed successfully.

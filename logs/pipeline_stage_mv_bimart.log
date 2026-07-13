@@ -1,0 +1,5 @@
+[Hệ thống] Đang khởi tạo 2 Materialized Views trên Supabase...
+[Lỗi] Khởi tạo thất bại: column "mv_bi_mart_hourly_measures.is_holiday" must appear in the GROUP BY clause or be used in an aggregate function
+LINE 119:             is_holiday,
+                      ^
+

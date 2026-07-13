@@ -43,6 +43,8 @@ def build_bi_views(engine) -> None:
                 f.date_id,
                 f.hourly_bucket,
                 f.site_id,
+                f.gmm_if_outlier_flag,
+                f.gmm_if_outlier_reason,
                 f.total_energy AS e_hourly,
                 f.shortwave_radiation AS g_hourly,
                 f.temperature_c AS t_ambient,
@@ -87,6 +89,10 @@ def build_bi_views(engine) -> None:
             site_id,
             p_stc,
             
+            -- Outlier Flags
+            gmm_if_outlier_flag,
+            gmm_if_outlier_reason,
+            
             -- Operational Measures
             e_hourly,
             pr_actual,
@@ -123,6 +129,8 @@ def build_bi_views(engine) -> None:
                 to_date(date_id::text, 'YYYYMMDD') AS report_date,
                 site_id,
                 MAX(p_stc) AS p_stc,
+                BOOL_OR(gmm_if_outlier_flag) AS has_gmm_outlier,
+                MAX(gmm_if_outlier_reason) AS gmm_outlier_reasons,
                 SUM(e_hourly) AS e_daily,
                 SUM(e_expected) AS e_target_daily,
                 SUM(estimated_revenue) AS daily_revenue,

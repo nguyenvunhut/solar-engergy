@@ -52,18 +52,7 @@ def ensure_outlier_flag_column(cur, schema, table):
         )
         has_new = True
 
-    cur.execute(
-        f"""
-        ALTER TABLE {schema}.{table}
-        ALTER COLUMN {OUTLIER_FLAG_COLUMN} TYPE boolean
-        USING CASE
-            WHEN {OUTLIER_FLAG_COLUMN} IS NULL THEN NULL
-            WHEN lower({OUTLIER_FLAG_COLUMN}::text) IN ('true', 't', '1', 'yes', 'y') THEN true
-            WHEN lower({OUTLIER_FLAG_COLUMN}::text) IN ('false', 'f', '0', 'no', 'n') THEN false
-            ELSE NULL
-        END
-        """
-    )
+
 
 
 
@@ -175,11 +164,15 @@ def load_fact_solar_energy_gen(cur):
     cur.execute(f"""
         ALTER TABLE {SOURCE_SCHEMA}.fact_solar_energy_gen
         ADD COLUMN IF NOT EXISTS fill_null_algorithm VARCHAR(255);
+        ALTER TABLE {SOURCE_SCHEMA}.fact_solar_energy_gen
+        ADD COLUMN IF NOT EXISTS gmm_if_outlier_reason VARCHAR(255);
     """)
     ensure_outlier_flag_column(cur, TARGET_SCHEMA, "fact_solar_energy_gen")
     cur.execute(f"""
         ALTER TABLE {TARGET_SCHEMA}.fact_solar_energy_gen
         ADD COLUMN IF NOT EXISTS fill_null_algorithm VARCHAR(255);
+        ALTER TABLE {TARGET_SCHEMA}.fact_solar_energy_gen
+        ADD COLUMN IF NOT EXISTS gmm_if_outlier_reason VARCHAR(255);
     """)
 
     cur.execute(f"""
@@ -196,7 +189,7 @@ def load_fact_solar_energy_gen(cur):
         sql_batch = f"""
         INSERT INTO {TARGET_SCHEMA}.fact_solar_energy_gen (
             gen_id, site_id, geo_id, date_id, time_id, energy_generated_kwh,
-            gmm_if_outlier_flag, fill_null_algorithm
+            gmm_if_outlier_flag, gmm_if_outlier_reason, fill_null_algorithm
         )
         SELECT
             (SELECT COALESCE(SUM(c), 0) FROM (
@@ -207,8 +200,16 @@ def load_fact_solar_energy_gen(cur):
             s.sitekey::int AS geo_id,
             dd.date_id,
             dt.time_id,
-            s.energy_generated_kwh,
+            CASE
+                WHEN (
+                    s.timestamp::time >= TIME '18:30'
+                    OR s.timestamp::time < TIME '05:30'
+                )
+                THEN 0
+                ELSE s.energy_generated_kwh
+            END AS energy_generated_kwh,
             COALESCE(s.{OUTLIER_FLAG_COLUMN}, false) AS gmm_if_outlier_flag,
+            s.gmm_if_outlier_reason,
             s.fill_null_algorithm
         FROM {SOURCE_SCHEMA}.fact_solar_energy_gen s
         JOIN {TARGET_SCHEMA}.dim_date dd ON dd.full_date = s.timestamp::date

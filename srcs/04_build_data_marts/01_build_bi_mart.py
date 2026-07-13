@@ -46,23 +46,45 @@ def build_bi_mart(engine):
     CREATE TABLE {_TARGET_SCHEMA}.fact_solar_performance_hourly AS
     WITH Clean_Hourly_Gen AS (
         SELECT 
-            f.site_id, f.geo_id, f.date_id, t.hour AS hourly_bucket,
+            f.site_id, f.geo_id, f.date_id, CASE
+                WHEN t.minute = 0 THEN t.hour - 1
+                ELSE t.hour
+            END AS hourly_bucket,
             SUM(f.energy_generated_kwh) AS total_energy,
-            BOOL_OR(COALESCE(f.gmm_if_outlier_flag, false)) AS gmm_if_outlier_flag
+            BOOL_OR(COALESCE(f.gmm_if_outlier_flag, false)) AS gmm_if_outlier_flag,
+            MAX(f.gmm_if_outlier_reason) AS gmm_if_outlier_reason
         FROM {_SOURCE_SCHEMA}.fact_solar_energy_gen f
         JOIN {_SOURCE_SCHEMA}.dim_time t ON f.time_id = t.time_id
-        GROUP BY f.site_id, f.geo_id, f.date_id, t.hour
+        GROUP BY
+            f.site_id,
+            f.geo_id,
+            f.date_id,
+            CASE
+                WHEN t.minute = 0 THEN t.hour - 1
+                ELSE t.hour
+            END
     )
     SELECT 
         gen.site_id, gen.geo_id, gen.date_id, gen.hourly_bucket, gen.total_energy,
         gen.gmm_if_outlier_flag,
+        gen.gmm_if_outlier_reason,
         w.weather_type_id,
         w.shortwave_radiation, w.temperature_c, w.cloud_cover_total, w.precipitation_mm
     FROM Clean_Hourly_Gen gen
     LEFT JOIN (
         SELECT * FROM (
-            SELECT fw.*, dw.hour as weather_hour,
-            ROW_NUMBER() OVER(PARTITION BY fw.geo_id, fw.date_id, dw.hour ORDER BY fw.weather_id) as rn
+            SELECT fw.*, CASE
+                WHEN dw.minute = 0 THEN dw.hour - 1
+                ELSE dw.hour
+            END as weather_hour,
+            ROW_NUMBER() OVER(PARTITION BY
+                    fw.geo_id,
+                    fw.date_id,
+                    CASE
+                        WHEN dw.minute = 0 THEN dw.hour - 1
+                        ELSE dw.hour
+                    END
+                ORDER BY fw.weather_id) as rn
             FROM {_SOURCE_SCHEMA}.fact_weather fw
             JOIN {_SOURCE_SCHEMA}.dim_time dw ON fw.time_id = dw.time_id
         ) sub WHERE rn = 1
