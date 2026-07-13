@@ -200,7 +200,14 @@ def load_fact_solar_energy_gen(cur):
             s.sitekey::int AS geo_id,
             dd.date_id,
             dt.time_id,
-            s.energy_generated_kwh,
+            CASE
+                WHEN (
+                    s.timestamp::time >= TIME '18:30'
+                    OR s.timestamp::time < TIME '05:30'
+                )
+                THEN 0
+                ELSE s.energy_generated_kwh
+            END AS energy_generated_kwh,
             COALESCE(s.{OUTLIER_FLAG_COLUMN}, false) AS gmm_if_outlier_flag,
             s.gmm_if_outlier_reason,
             s.fill_null_algorithm
