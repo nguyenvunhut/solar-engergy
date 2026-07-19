@@ -310,6 +310,43 @@ def run_stage(stage_number: int, title: str, runner) -> None:
 def run_pipeline(stage: str, *, dry_run: bool) -> None:
     sleep_sec = _load_sleep_seconds()
 
+    if stage == "outlier_to_mlmarts":
+        print("\n[4/8] Generate Outliers CSV (GMM-IF + Physical Guardrail)")
+        run_stage(
+            4,
+            "Generate Outliers CSV (GMM-IF + Physical Guardrail)",
+            lambda: run_generate_outliers(dry_run=dry_run),
+        )
+        print(f"... Đang nghỉ {sleep_sec}s để nhả RAM và Database Connection ...")
+        time.sleep(sleep_sec)
+
+        print("\n[5/8] Apply Outlier Flags to Buffer")
+        run_stage(
+            5,
+            "Apply Outlier Flags to Buffer",
+            lambda: run_outlier(dry_run=dry_run),
+        )
+        print(f"... Đang nghỉ {sleep_sec}s để nhả RAM và Database Connection ...")
+        time.sleep(sleep_sec)
+
+        if dry_run:
+            print("\n[SKIP] Data warehouse, BI marts and ML marts are disabled in dry-run mode.")
+            return
+
+        print("\n[6/8] Buffer -> Data Warehouse")
+        run_stage(6, "Buffer -> Data Warehouse", run_warehouse)
+        print(f"... Đang nghỉ {sleep_sec}s để nhả RAM và Database Connection ...")
+        time.sleep(sleep_sec)
+
+        print("\n[7/8] Data Warehouse -> BI Marts")
+        run_stage(7, "Data Warehouse -> BI Marts", run_bimarts)
+        print(f"... Đang nghỉ {sleep_sec}s để nhả RAM và Database Connection ...")
+        time.sleep(sleep_sec)
+
+        print("\n[8/8] Data Warehouse -> ML Marts")
+        run_stage(8, "Data Warehouse -> ML Marts", run_mlmarts)
+        return
+
     if stage in {"staging", "all"}:
         print("\n[1/8] Object Storage -> Raw Staging")
         run_stage(1, "Object Storage -> Raw Staging", run_staging)
@@ -401,7 +438,19 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--stage",
         type=str,
-        choices=["all", "staging", "transform", "imputation", "generate_outliers", "outlier", "load", "bimarts", "mlmarts", "bi_view"],
+        choices=[
+            "all",
+            "staging",
+            "transform",
+            "imputation",
+            "generate_outliers",
+            "outlier",
+            "outlier_to_mlmarts",
+            "load",
+            "bimarts",
+            "mlmarts",
+            "bi_view",
+        ],
         default="all",
         help="Pipeline stage to execute.",
     )
@@ -428,10 +477,11 @@ def main() -> int:
         "transform",
         "imputation",
         "outlier",
+        "outlier_to_mlmarts",
     }:
         print(
             "[ERROR] --dry-run is only valid with --stage "
-            "transform, imputation or outlier.",
+            "transform, imputation, outlier or outlier_to_mlmarts.",
             file=sys.stderr,
         )
         return 2
