@@ -117,9 +117,20 @@ def setup_materialized_views():
             SELECT * FROM (
                 SELECT
                     fw.*,
-                    dw.hour AS weather_hour,
+                    CASE 
+                        WHEN dw.minute = 0 AND dw.hour = 0 THEN 23
+                        WHEN dw.minute = 0 THEN dw.hour - 1 
+                        ELSE dw.hour
+                    END AS weather_hour,
                     ROW_NUMBER() OVER(
-                        PARTITION BY fw.geo_id, fw.date_id, dw.hour
+                        PARTITION BY
+                            fw.geo_id,
+                            fw.date_id,
+                            CASE 
+                                WHEN dw.minute = 0 AND dw.hour = 0 THEN 23
+                                WHEN dw.minute = 0 THEN dw.hour - 1 
+                                ELSE dw.hour
+                            END
                         ORDER BY fw.weather_id
                     ) AS rn
                 FROM {_SOURCE_SCHEMA}.fact_weather fw
