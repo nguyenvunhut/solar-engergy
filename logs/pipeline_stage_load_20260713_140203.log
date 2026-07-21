@@ -1,0 +1,47 @@
+2026-07-13 14:02:04 | INFO     | pipeline | Pipeline start | stage=load | dry_run=False | project=/home/tandat/Desktop/Du_An_Tot_Nghiep
+
+[6/8] Buffer -> Data Warehouse
+2026-07-13 14:02:04 | INFO     | pipeline | [6/7] START | Buffer -> Data Warehouse
+2026-07-13 14:02:04 | INFO     | pipeline | Mở transaction load Data Warehouse
+  -> Truncating old Data Warehouse tables...
+  -> Loading dim_solar_site...
+  -> Loading dim_weather_type...
+  -> Loading dim_geography...
+  -> Loading dim_date...
+  -> Loading dim_time...
+  -> Loading fact_solar_energy_gen in monthly batches...
+    - Batch 1/28: 2020-01
+    - Batch 2/28: 2020-02
+    - Batch 3/28: 2020-03
+    - Batch 4/28: 2020-04
+    - Batch 5/28: 2020-05
+    - Batch 6/28: 2020-06
+    - Batch 7/28: 2020-07
+    - Batch 8/28: 2020-08
+    - Batch 9/28: 2020-09
+    - Batch 10/28: 2020-10
+    - Batch 11/28: 2020-11
+    - Batch 12/28: 2020-12
+    - Batch 13/28: 2021-01
+    - Batch 14/28: 2021-02
+    - Batch 15/28: 2021-03
+    - Batch 16/28: 2021-04
+    - Batch 17/28: 2021-05
+    - Batch 18/28: 2021-06
+    - Batch 19/28: 2021-07
+    - Batch 20/28: 2021-08
+    - Batch 21/28: 2021-09
+    - Batch 22/28: 2021-10
+    - Batch 23/28: 2021-11
+    - Batch 24/28: 2021-12
+    - Batch 25/28: 2022-01
+    - Batch 26/28: 2022-02
+    - Batch 27/28: 2022-03
+    - Batch 28/28: 2022-04
+  -> Loading fact_weather...
+2026-07-13 14:07:08 | INFO     | pipeline | Data Warehouse đã load xong và commit
+2026-07-13 14:07:08 | INFO     | pipeline | Đã đóng kết nối Data Warehouse
+2026-07-13 14:07:08 | INFO     | pipeline | [6/8] SUCCESS | Buffer -> Data Warehouse | 303.32s
+2026-07-13 14:07:08 | INFO     | pipeline | Pipeline success | stage=load | elapsed=303.32s
+
+[DONE] Pipeline completed successfully.

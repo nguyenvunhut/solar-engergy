@@ -60,6 +60,9 @@ GMM_COMPONENTS = int(_cfg.get("algorithm", {}).get("gmm_if_components", 2))
 GMM_PROB_THRESHOLD = float(_cfg.get("algorithm", {}).get("gmm_if_prob_threshold", 0.02))
 IF_CONTAMINATION = float(_cfg.get("algorithm", {}).get("gmm_if_if_contamination", 0.03))
 IF_N_ESTIMATORS = int(_cfg.get("algorithm", {}).get("gmm_if_if_estimators", 100))
+OVER_CAPACITY_TOLERANCE = float(
+    _cfg.get("algorithm", {}).get("gmm_if_over_capacity_tolerance", 1.0)
+)
 RANDOM_STATE = 42
 
 OUT_DIR.mkdir(parents=True, exist_ok=True)
@@ -273,6 +276,16 @@ def _add_weather_and_physical_features(solar: pd.DataFrame) -> pd.DataFrame:
     safe_iqr = np.maximum(solar["radiation_iqr"].fillna(0), np.maximum(0.03 * site_p95, 0.1))
     expected_high = solar["expected_energy_by_radiation"] >= 0.20 * site_p95
 
+    # Strict capacity guardrail: one 15-minute energy record should not exceed
+    # rated site capacity by a large margin. Use metadata capacity_kw only;
+    # do not fallback to site_p95 for this physical check.
+    max_energy_15min = solar["capacity_kw"] * 0.25
+    solar["physical_over_capacity"] = (
+        solar["capacity_kw"].notna()
+        & (solar["capacity_kw"] > 0)
+        & (energy > max_energy_15min * OVER_CAPACITY_TOLERANCE)
+    )
+
     solar["physical_high_energy_no_sun"] = (
         valid_weather
         &
@@ -307,6 +320,7 @@ def _add_weather_and_physical_features(solar: pd.DataFrame) -> pd.DataFrame:
         & (solar["neighbor_delta"].abs() >= np.maximum(0.15 * site_p95, 1.0))
     )
     physical_cols = [
+        "physical_over_capacity",
         "physical_high_energy_no_sun",
         "physical_high_energy_low_rad",
         "physical_low_energy_strong_sun",
@@ -581,6 +595,8 @@ def explain_outlier_row(row: pd.Series) -> str:
     reasons: list[str] = []
     if bool(row.get("gmm_if_consensus_flag", False)):
         reasons.append("GMM_IF_CONSENSUS")
+    if bool(row.get("physical_over_capacity", False)):
+        reasons.append("PHYSICAL_OVER_CAPACITY")
     if bool(row.get("physical_high_energy_no_sun", False)):
         reasons.append("PHYSICAL_HIGH_ENERGY_NO_SUN")
     if bool(row.get("physical_high_energy_low_rad", False)):
@@ -794,6 +810,7 @@ def main() -> None:
         "if_flag",
         "if_anomaly_score",
         "gmm_if_consensus_flag",
+        "physical_over_capacity",
         "physical_high_energy_no_sun",
         "physical_high_energy_low_rad",
         "physical_low_energy_strong_sun",

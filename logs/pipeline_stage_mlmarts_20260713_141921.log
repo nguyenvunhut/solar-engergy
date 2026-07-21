@@ -1,0 +1,4 @@
+usage: main.py [-h]
+               [--stage {all,staging,transform,imputation,generate_outliers,outlier,load,bimarts,mlmarts,bi_view}]
+               [--dry-run]
+main.py: error: argument --stage: invalid choice: 'ml_mart' (choose from all, staging, transform, imputation, generate_outliers, outlier, load, bimarts, mlmarts, bi_view)

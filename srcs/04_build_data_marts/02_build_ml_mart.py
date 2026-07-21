@@ -48,7 +48,10 @@ def build_ml_mart(engine):
                     d.month,
                     d.day,
                     EXTRACT(DOW FROM d.full_date)::smallint AS day_of_week,
-                    t.hour,
+                    CASE
+                        WHEN t.minute = 0 THEN t.hour - 1
+                        ELSE t.hour
+                    END AS hour,
                     t.minute,
 
                     -- Endogenous target source.
@@ -69,25 +72,36 @@ def build_ml_mart(engine):
                     geo.longitude,
 
                     -- Weather audit keys and observation time.
-                    w.weather_id,
-                    w.weather_type_id,
-                    d.full_date
-                        + make_time(w.weather_hour, w.weather_minute, 0)
-                        AS weather_timestamp,
+                    COALESCE(w.weather_id, wf.weather_id) AS weather_id,
+                    COALESCE(w.weather_type_id, wf.weather_type_id) AS weather_type_id,
+                    CASE
+                        WHEN COALESCE(w.weather_raw_hour, wf.weather_raw_hour) IS NULL THEN NULL
+                        ELSE d.full_date
+                            + make_time(
+                                COALESCE(w.weather_raw_hour, wf.weather_raw_hour),
+                                COALESCE(w.weather_minute, wf.weather_minute),
+                                0
+                            )
+                    END AS weather_timestamp,
+                    CASE
+                        WHEN w.weather_id IS NOT NULL THEN 'bucket_shift_join'
+                        WHEN wf.weather_id IS NOT NULL THEN 'raw_hour_fallback'
+                        ELSE 'missing_weather'
+                    END AS weather_join_method,
 
                     -- Raw exogenous weather variables.
-                    w.is_day AS weather_is_day,
-                    w.shortwave_radiation,
-                    w.direct_normal_irradiance,
-                    w.diffuse_solar_radiation,
-                    w.temperature_c,
-                    w.cloud_cover_total,
-                    w.cloud_cover_low,
-                    w.cloud_cover_mid,
-                    w.cloud_cover_high,
-                    w.wind_speed,
-                    w.precipitation_mm,
-                    w.sunshine_duration,
+                    COALESCE(w.is_day, wf.is_day) AS weather_is_day,
+                    COALESCE(w.shortwave_radiation, wf.shortwave_radiation) AS shortwave_radiation,
+                    COALESCE(w.direct_normal_irradiance, wf.direct_normal_irradiance) AS direct_normal_irradiance,
+                    COALESCE(w.diffuse_solar_radiation, wf.diffuse_solar_radiation) AS diffuse_solar_radiation,
+                    COALESCE(w.temperature_c, wf.temperature_c) AS temperature_c,
+                    COALESCE(w.cloud_cover_total, wf.cloud_cover_total) AS cloud_cover_total,
+                    COALESCE(w.cloud_cover_low, wf.cloud_cover_low) AS cloud_cover_low,
+                    COALESCE(w.cloud_cover_mid, wf.cloud_cover_mid) AS cloud_cover_mid,
+                    COALESCE(w.cloud_cover_high, wf.cloud_cover_high) AS cloud_cover_high,
+                    COALESCE(w.wind_speed, wf.wind_speed) AS wind_speed,
+                    COALESCE(w.precipitation_mm, wf.precipitation_mm) AS precipitation_mm,
+                    COALESCE(w.sunshine_duration, wf.sunshine_duration) AS sunshine_duration,
 
                     -- Human-readable weather context.
                     wt.weather_code,
@@ -110,8 +124,21 @@ def build_ml_mart(engine):
                   ON geo.geo_id = f.geo_id
                 LEFT JOIN (
                     SELECT * FROM (
-                        SELECT fw.*, weather_time.hour AS weather_hour, weather_time.minute AS weather_minute,
-                        ROW_NUMBER() OVER(PARTITION BY fw.geo_id, fw.date_id, weather_time.hour ORDER BY fw.weather_id) as rn
+                        SELECT fw.*,
+                        weather_time.hour AS weather_raw_hour,
+                        CASE
+                            WHEN weather_time.minute = 0 THEN weather_time.hour - 1
+                            ELSE weather_time.hour
+                        END AS weather_hour,
+                        weather_time.minute AS weather_minute,
+                        ROW_NUMBER() OVER(PARTITION BY
+                            fw.geo_id,
+                            fw.date_id,
+                            CASE
+                                WHEN weather_time.minute = 0 THEN weather_time.hour - 1
+                                ELSE weather_time.hour
+                            END
+                        ORDER BY fw.weather_id) as rn
                         FROM {SOURCE_SCHEMA}.fact_weather fw
                         JOIN {SOURCE_SCHEMA}.dim_time weather_time
                           ON weather_time.time_id = fw.time_id
@@ -119,9 +146,30 @@ def build_ml_mart(engine):
                 ) w
                   ON w.geo_id = f.geo_id
                  AND w.date_id = f.date_id
-                 AND w.weather_hour = t.hour
+                 AND w.weather_hour = CASE
+                     WHEN t.minute = 0 THEN t.hour - 1
+                     ELSE t.hour
+                 END
+                LEFT JOIN (
+                    SELECT * FROM (
+                        SELECT fw.*,
+                        weather_time.hour AS weather_raw_hour,
+                        weather_time.minute AS weather_minute,
+                        ROW_NUMBER() OVER(PARTITION BY
+                            fw.geo_id,
+                            fw.date_id,
+                            weather_time.hour
+                        ORDER BY fw.weather_id) as rn
+                        FROM {SOURCE_SCHEMA}.fact_weather fw
+                        JOIN {SOURCE_SCHEMA}.dim_time weather_time
+                          ON weather_time.time_id = fw.time_id
+                    ) sub WHERE rn = 1
+                ) wf
+                  ON wf.geo_id = f.geo_id
+                 AND wf.date_id = f.date_id
+                 AND wf.weather_raw_hour = t.hour
                 LEFT JOIN {SOURCE_SCHEMA}.dim_weather_type wt
-                  ON wt.weather_type_id = w.weather_type_id
+                  ON wt.weather_type_id = COALESCE(w.weather_type_id, wf.weather_type_id)
                 """
             )
         )

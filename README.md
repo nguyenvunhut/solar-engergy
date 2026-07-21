@@ -21,84 +21,36 @@
   </a>
 </p>
 
-[Tổng quan](#tổng-quan-dự-án) • [Cài đặt Nhanh](#bắt-đầu-nhanh-quick-start) • [Kiến trúc](#kiến-trúc-hệ-thống) • [ETL Pipeline](#quy-trình-vận-hành-dữ-liệu-data-engineering-pipeline) • [Tài liệu Chi tiết](#tổng-hợp-tài-liệu-dự-án-documentation-hub)
-
 </div>
 
 ---
 
-## TỔNG QUAN DỰ ÁN
-
-Dự án xây dựng một **Hệ thống phân tích, phát hiện bất thường và dự báo sản lượng điện** cho 42 trạm điện quang điện (PV) tại Úc. Bằng cách kết hợp dữ liệu vận hành thực tế và dữ liệu khí tượng viễn thám từ Open-Meteo, dự án mang đến quy trình ETL tự động hóa mạnh mẽ, cung cấp Insight kinh doanh giá trị và hỗ trợ **bảo trì dự đoán (Predictive Maintenance)**.
-
-**Mục tiêu cốt lõi:**
-1. Xây dựng Data Warehouse tích hợp dữ liệu thời tiết và sản lượng.
-2. Tự động hóa Pipeline ETL: lọc nhiễu ban đêm, xử lý missing data và các bất thường (Outliers).
-3. Đào tạo mô hình học máy (ARIMA, Prophet) phục vụ dự báo.
-4. Xây dựng Dashboard để tối ưu hóa quyết định vận hành.
+## MỤC LỤC
+- [1. Tổng Quan Dự Án](#1-tổng-quan-dự-án)
+- [2. Kiến Trúc Hệ Thống & Data Modeling](#2-kiến-trúc-hệ-thống--data-modeling)
+- [3. Quy Trình Vận Hành Dữ Liệu (ETL Pipeline)](#3-quy-trình-vận-hành-dữ-liệu-etl-pipeline)
+- [4. Các Insight & Khám Phá Nổi Bật (EDA)](#4-các-insight--khám-phá-nổi-bật-eda)
+- [5. Bắt Đầu Nhanh & Hướng Dẫn Cài Đặt](#5-bắt-đầu-nhanh--hướng-dẫn-cài-đặt)
+- [6. Tổng Hợp Tài Liệu Dự Án (Documentation Hub)](#6-tổng-hợp-tài-liệu-dự-án-documentation-hub)
 
 ---
 
-## BẮT ĐẦU NHANH (QUICK START)
+## 1. TỔNG QUAN DỰ ÁN
 
-Dành cho những người dùng muốn chạy thử và trải nghiệm hệ thống phân tích ngay lập tức.
+Dự án xây dựng một **Hệ thống phân tích, phát hiện bất thường và dự báo sản lượng điện** cho 42 trạm điện quang điện (PV) tại Úc. Bằng cách kết hợp dữ liệu vận hành thực tế (sản lượng sinh ra) và dữ liệu khí tượng viễn thám từ Open-Meteo (nhiệt độ, bức xạ, sức gió, v.v.), dự án mang đến quy trình ETL tự động hóa mạnh mẽ, cung cấp Insight kinh doanh giá trị và hỗ trợ **bảo trì dự đoán (Predictive Maintenance)**.
 
-### 1. Chuẩn bị Môi trường (Yêu cầu Python 3.10+)
-
-```bash
-git clone https://github.com/tandat8896/datn_outlier_hs_nlmt.git
-cd datn_outlier_hs_nlmt
-
-# Tạo và kích hoạt Virtual Environment
-python -m venv .venv
-source .venv/bin/activate  # (Dành cho Windows: .venv\Scripts\activate)
-
-# Cài đặt thư viện
-pip install -r requirements.txt
-```
-
-### 2. Cấu hình Cơ sở dữ liệu
-Hệ thống sử dụng cơ sở dữ liệu PostgreSQL (Supabase). Copy file mẫu cấu hình:
-```bash
-cp .env.example .env
-```
-Mở file `.env` vừa tạo và điền các thông tin kết nối Supabase của bạn. Kiểm tra kết nối:
-```bash
-python tests/test_db_connection.py
-```
-
-### 3. Vận hành Toàn bộ Hệ thống (Pipeline)
-Dự án được quản lý tập trung qua một điểm điều khiển duy nhất (Orchestrator).
-```bash
-# Lệnh chạy tự động toàn bộ quy trình: từ trích xuất, làm sạch, lọc outlier đến nạp kho dữ liệu
-python srcs/06_run_pipeline/main.py --stage all
-```
-
-Ghi log khi chạy pipeline:
-
-```bash
-# Linux/macOS/Git Bash
-mkdir -p logs
-python -u srcs/06_run_pipeline/main.py --stage all 2>&1 | tee logs/pipeline_stage_all_$(date +%Y%m%d_%H%M%S).log
-```
-
-```powershell
-# Windows PowerShell
-mkdir logs -Force
-python -u srcs\06_run_pipeline\main.py --stage all 2>&1 | Tee-Object -FilePath ("logs/pipeline_stage_all_{0}.log" -f (Get-Date -Format "yyyyMMdd_HHmmss"))
-```
-
-```cmd
-:: Windows CMD
-mkdir logs
-python -u srcs\06_run_pipeline\main.py --stage all > logs\pipeline_stage_all_%date:~-4%%date:~4,2%%date:~7,2%_%time:~0,2%%time:~3,2%%time:~6,2%.log 2>&1
-```
+### Mục tiêu và Đóng góp cốt lõi:
+- **Kho Dữ Liệu (Data Warehouse):** Xây dựng kho dữ liệu quy chuẩn tích hợp dữ liệu thời tiết và sản lượng trên Supabase, giải quyết bài toán lệch pha thời gian (15 phút vs 1 giờ).
+- **Tự động hóa ETL Pipeline:** Trích xuất, làm sạch, và nội suy (*imputation*) các khoảng dữ liệu bị thiếu; đồng thời áp dụng thuật toán nhận diện và loại bỏ nhiễu ban đêm (*night-time leakage*).
+- **Phát hiện Bất thường (Outlier Detection):** Xây dựng thuật toán thống kê (Rolling IQR) kết hợp Machine Learning để tự động gắn cờ các bất thường về sản lượng sinh ra so với bức xạ lý thuyết.
+- **Dự báo (Forecasting):** Ứng dụng các mô hình học máy và Time-Series (như ARIMA, Prophet, XGBoost) nhằm dự báo sản lượng ngắn hạn và dài hạn.
+- **Trực quan hóa (BI Dashboard):** Xây dựng Dashboard (Tableau) để giúp ban giám đốc và kỹ sư vận hành tối ưu hóa quyết định bảo trì và theo dõi suy hao (*degradation*).
 
 ---
 
-## KIẾN TRÚC HỆ THỐNG
+## 2. KIẾN TRÚC HỆ THỐNG & DATA MODELING
 
-Hệ thống lưu trữ trên **Supabase (PostgreSQL)** với kiến trúc **Lược đồ Thiên hà (Galaxy Schema)** để xử lý đồng thời hai tập dữ kiện có độ trễ/tần suất khác nhau: Sản lượng (15 phút) và Thời tiết (1 giờ).
+Hệ thống được lưu trữ hoàn toàn trên **Supabase (PostgreSQL)** với kiến trúc **Lược đồ Thiên hà (Galaxy Schema)**. Kiến trúc này được thiết kế đặc biệt để giải quyết việc có nhiều mức độ chi tiết (*granularity*) khác nhau giữa bảng Fact Thời tiết (chu kỳ 1 giờ) và bảng Fact Sản lượng (chu kỳ 15 phút).
 
 ```mermaid
 erDiagram
@@ -151,88 +103,158 @@ erDiagram
         string condition
     }
 
-    %% Quan hệ giữa các Dimension chung và 2 bảng Fact (Tạo thành Galaxy Schema)
+    %% Quan hệ Galaxy Schema
     dim_geography ||--o{ fact_solar_energy_gen : "định vị"
     dim_geography ||--o{ fact_weather : "định vị"
-    
     dim_date ||--o{ fact_solar_energy_gen : "xảy ra vào"
     dim_date ||--o{ fact_weather : "xảy ra vào"
-    
     dim_time ||--o{ fact_solar_energy_gen : "ghi nhận lúc"
     dim_time ||--o{ fact_weather : "ghi nhận lúc"
-    
-    %% Quan hệ với Dimension riêng lẻ
     dim_solar_site ||--o{ fact_solar_energy_gen : "sản xuất"
     dim_weather_type ||--o{ fact_weather : "mô tả"
 ```
 
-> **Đọc thêm tài liệu chuyên sâu:**
-> - [Thiết kế Data Warehouse (Galaxy Schema)](docs/configurations_and_setups/supabase_connection.md)
-> - [Từ điển Dữ liệu Toàn diện (Data Dictionary)](docs/scrum_6_business_logic_eda/2026_05_24_Data_Dictionary_VanSy.docx)
+> **Tài liệu Tham chiếu Kiến trúc:**
+> - Thiết kế CSDL Logic & Vật lý: [Physical Model](docs/scrum_6_business_logic_eda/2026_05_22_Physical_Model_VanSy.docx), [Data Dictionary](docs/scrum_6_business_logic_eda/2026_05_24_Data_Dictionary_VanSy.docx), [Multidimension Model Design](docs/scrum_6_business_logic_eda/2026_05_25_Multidimension_Model_Design_VanSy.docx)
+> - Báo cáo Data Mart: [Tổng quan Hệ thống Data Mart](docs/scrum_5_pipeline_foundation/2026_06_19_BÁO_CÁO_TỔNG_QUAN_HỆ_THỐNG_DATA_MART_By_Toàn.docx)
 
 ---
 
-## QUY TRÌNH VẬN HÀNH DỮ LIỆU (DATA ENGINEERING PIPELINE)
+## 3. QUY TRÌNH VẬN HÀNH DỮ LIỆU (ETL PIPELINE)
 
-Quy trình ETL của dự án không chỉ diễn ra hoàn toàn trong CSDL mà là sự kết hợp chặt chẽ giữa **Python Orchestrator**, **Quản lý phiên bản DVC**, **S3 Object Storage** và **PostgreSQL (Supabase)**.
+Quy trình ETL của dự án không chỉ đơn thuần là đẩy dữ liệu vào CSDL, mà là sự kết hợp chặt chẽ giữa **Python Orchestrator**, **Quản lý phiên bản DVC**, **S3 Object Storage** và **PostgreSQL**.
 
-![Data Pipeline](reports/diagrams/data_pipeline.drawio.png)
+<p align="center">
+  <img src="reports/diagrams/data_pipeline.drawio.png" alt="Data Pipeline">
+</p>
 
-**Các đặc điểm kỹ thuật nổi bật:**
-- **DVC & S3 Storage:** Dữ liệu thô và dữ liệu sinh ra giữa các bước được quản lý bằng DVC và lưu trên S3 (Supabase Storage) nhằm tránh phình to dung lượng Git. CSDL lấy thẳng dữ liệu từ S3 để tiết kiệm băng thông.
-- **Tách lớp Staging & Buffer:** Dữ liệu chưa qua xử lý nằm ở Staging, sau đó đổ sang Buffer để tiến hành làm sạch, nội suy tuyến tính (Hybrid Imputation).
-- **Outlier Detection Hybrid:** Thay vì dùng hàm SQL chậm chạp, hệ thống xuất dữ liệu ra Parquet, dùng Python/Pandas chạy thuật toán Rolling IQR phát hiện nhiễu đột biến, rồi nạp lại "cờ" (Outlier Flags) vào CSDL.
+### Các tính năng kỹ thuật nổi bật:
+- **Quản trị Storage & DVC:** Dữ liệu thô và các tệp trung gian (Parquet/CSV) được quản lý bằng DVC và đồng bộ với S3 (Supabase Storage). Tránh việc phình to dung lượng kho lưu trữ Git và cho phép load trực tiếp từ Cloud Storage vào PostgreSQL.
+- **Tách lớp Data:** Dữ liệu thô ở `Staging` -> được làm sạch, Imputation sang `Buffer` -> chạy tính toán Outlier bằng Pandas -> Đổ vào Kho dữ liệu cuối cùng.
+- **Thuật toán Outlier Hybrid:** Thay vì xử lý Outlier bằng SQL, hệ thống kết hợp Pandas (Python) xuất dữ liệu, tính toán theo thuật toán Rolling IQR để nhận diện lỗi thiết bị, và nạp lại "Cờ Outlier" vào Warehouse.
 
-> **Đọc thêm tài liệu chuyên sâu:**
-> - [Báo cáo Lọc Outlier & Missing Data (Toán học & Code)](docs/scrum_6_business_logic_eda/2026_06_14_bao_cao_outliner_TanDat.pdf)
+> **Tài liệu Tham chiếu ETL & Pipeline:**
+> - [Báo cáo Kỹ thuật Load Data DW](docs/scrum_5_pipeline_foundation/2026_06_14_Bao_Cao_Ky_Thuat_Load_DW_TanDat.docx)
 > - [Hướng dẫn & Báo cáo Tích hợp DVC Storage](docs/configurations_and_setups/2026_06_21_BaoCaoDVC_NgoTanDat.pdf)
+> - [Đối soát & Tính Toàn vẹn Dữ liệu (Data Integrity)](docs/scrum_5_pipeline_foundation/2026_06_13_Data_Integrity_and_Reconciliation_Check_CongToan.docx)
 
 ---
 
-## CÁC INSIGHT NỔI BẬT
+## 4. CÁC INSIGHT & KHÁM PHÁ NỔI BẬT (EDA)
 
-Sau khi phân tích trên Kho dữ liệu sạch, nhóm đã rút ra được các kết luận giá trị:
-- **Suy hao do nhiệt độ (Thermal Degradation):** Hiệu suất tấm pin giảm mạnh khi nhiệt độ vượt quá 25°C. Buổi trưa bức xạ cao nhất không đồng nghĩa với sản lượng đạt đỉnh tuyệt đối.
-- **Tín hiệu cảnh báo bảo trì:** Khi sản lượng thực tế sụt giảm so với Baseline (dự báo) trong khi bức xạ vẫn cao, hệ thống sẽ chẩn đoán tấm pin đang bị bám bẩn hoặc Inverter lỗi.
-- **Nhiễu rò rỉ:** Khám phá dòng điện rò ban đêm (18h-5h). Nếu bỏ qua trong khâu ETL, sẽ dẫn đến sai số doanh thu lũy kế hàng năm.
+Dựa trên dữ liệu sạch từ Data Warehouse, các quá trình thống kê mô tả (EDA) và xây dựng BI Mart đã làm sáng tỏ nhiều Insight đắt giá:
+
+- **Suy hao do nhiệt độ (Thermal Degradation):** Bức xạ mặt trời vào ban trưa cao nhất, nhưng khi nhiệt độ bề mặt vượt quá 25°C, hiệu suất tấm pin lại sụt giảm mạnh.
+- **Tín hiệu cảnh báo bảo trì (Predictive Maintenance):** Hiện tượng sản lượng thực tế giảm đột ngột trong khi bức xạ khu vực vẫn cao, kết hợp cờ Outlier từ thuật toán, cho phép chẩn đoán ngay hiện tượng bám bẩn (Soiling) hoặc lỗi Inverter.
+- **Nhiễu rò rỉ ban đêm:** Hệ thống ghi nhận các hiện tượng dòng điện rò trong khoảng từ 18h đến 5h sáng (ban đêm không có bức xạ). Nếu không loại bỏ qua khâu ETL, điều này gây sai số hàng ngàn kWh trong báo cáo tài chính hằng năm.
+- **Phân tích Tương quan & Biến động:** Ứng dụng ACF, PACF và Correlation Heatmap để định lượng chính xác sự tương quan giữa sức gió, nhiệt độ và sản lượng.
+
+> **Tài liệu Tham chiếu EDA & Business Logic:**
+> - [Báo cáo Phát hiện Outlier Generation](docs/scrum_7_visualization_forecasting/2026_06_18_bao_cao_phat_hien_outlier_generation_TanDat.pdf)
+> - [Hệ thống KPIs và BI Measures](docs/scrum_6_business_logic_eda/2026_06_17_BI_Mart_Measures.md)
+> - [Báo cáo Phân tích Tương quan (Correlation Heatmap)](docs/scrum_6_business_logic_eda/2026_06_27_BaoCao_CorrelationHeatmap.docx)
+> - [Thống Kê Mô Tả và Biểu Đồ](docs/scrum_6_business_logic_eda/20260628_SCRUM_48_bao_cao_thong_ke_mo_ta.docx)
 
 ---
 
-## TỔNG HỢP TÀI LIỆU DỰ ÁN (DOCUMENTATION HUB)
+## 5. BẮT ĐẦU NHANH & HƯỚNG DẪN CÀI ĐẶT
 
-Để tiện cho người dùng có nhu cầu tìm hiểu chuyên sâu, cũng như các Admin/Kỹ sư cần tiếp nhận và bảo trì hệ thống, toàn bộ tài liệu dự án được tổng hợp và phân loại logic dưới đây:
+Dành cho các kỹ sư muốn clone dự án và chạy thử môi trường ngay lập tức.
 
-### 1. DÀNH CHO QUẢN TRỊ VIÊN & KỸ SƯ DỮ LIỆU (ADMIN / DATA ENGINEER)
+### Bước 1: Chuẩn bị Môi trường (Yêu cầu Python 3.10+)
+
+```bash
+git clone https://github.com/tandat8896/datn_outlier_hs_nlmt.git
+cd datn_outlier_hs_nlmt
+
+# Tạo và kích hoạt Virtual Environment
+python -m venv .venv
+
+# Dành cho Linux/macOS
+source .venv/bin/activate  
+# Dành cho Windows
+.venv\Scripts\activate
+
+# Cài đặt toàn bộ thư viện cần thiết
+pip install -r requirements.txt
+```
+
+### Bước 2: Cấu hình Cơ sở dữ liệu
+Hệ thống sử dụng cơ sở dữ liệu PostgreSQL (qua dịch vụ Supabase). Bạn cần sao chép file cấu hình:
+```bash
+cp .env.example .env
+```
+Mở file `.env` vừa tạo và điền các thông tin kết nối Supabase của bạn. Kiểm tra kết nối đến Database:
+```bash
+python tests/test_db_connection.py
+```
+
+### Bước 3: Vận hành Toàn bộ Hệ thống (Pipeline)
+Dự án được quản lý tập trung qua một điểm điều khiển duy nhất (Orchestrator), tự động chạy từ khâu trích xuất, làm sạch, tính toán Outlier đến nạp kho dữ liệu.
+```bash
+python srcs/06_run_pipeline/main.py --stage all
+```
+
+<details>
+<summary><b>Xem lệnh Ghi log (Tùy chọn)</b></summary>
+
+```bash
+# Linux/macOS/Git Bash
+mkdir -p logs
+python -u srcs/06_run_pipeline/main.py --stage all 2>&1 | tee logs/pipeline_stage_all_$(date +%Y%m%d_%H%M%S).log
+```
+
+```powershell
+# Windows PowerShell
+mkdir logs -Force
+python -u srcs/06_run_pipeline/main.py --stage all 2>&1 | Tee-Object -FilePath ("logs/pipeline_stage_all_{0}.log" -f (Get-Date -Format "yyyyMMdd_HHmmss"))
+```
+
+</details>
+
+---
+
+## 6. TỔNG HỢP TÀI LIỆU DỰ ÁN (DOCUMENTATION HUB)
+
+Để tiện cho quá trình bàn giao, tiếp nhận và bảo trì hệ thống, toàn bộ tài liệu dự án được tổng hợp và phân loại logic dưới đây. Bạn có thể bấm vào từng link để đọc tài liệu gốc (Định dạng Word, PDF, Markdown).
+
+### 6.1. DÀNH CHO QUẢN TRỊ VIÊN & KỸ SƯ DỮ LIỆU (ADMIN / DATA ENGINEER)
 *Các tài liệu thiết lập hạ tầng, cài đặt tự động hóa và kiến trúc nền tảng:*
-- **Hướng dẫn Cài đặt Môi trường & Cloud:**
+- **Hướng dẫn Cấu hình & Môi trường:**
   - [Hướng dẫn cấu hình Database Supabase và Galaxy Schema](docs/configurations_and_setups/supabase_connection.md)
   - [Cẩm nang đưa dự án lên Cloud (Supabase/Docker)](docs/configurations_and_setups/HUONG_DAN_CHAY_CLOUD.md)
   - [Hướng dẫn thiết lập môi trường Windows](docs/configurations_and_setups/WINDOWS_SETUP.md)
-- **Kiểm soát & Quản lý Mã Nguồn / Dữ Liệu:**
+- **Quản lý Nguồn & Dữ liệu:**
   - [Hướng dẫn Quản lý Dữ liệu lớn bằng DVC](docs/configurations_and_setups/2026_06_21_BaoCaoDVC_NgoTanDat.pdf)
   - [Quy chuẩn Đặt tên và Commit Git](docs/scrum_5_pipeline_foundation/2026_05_20_Commit_Message_Convention_TanDat.docx)
   - [Quy tắc Viết Mã Nguồn Sạch (Coding Rules)](docs/configurations_and_setups/2026_06_05_coding_rule_TanDat.pdf)
   - [Báo cáo Tái cấu trúc dự án (Refactor Codebase)](docs/configurations_and_setups/2026_06_21_bao_cao_refactor_NgoTanDat.pdf)
-- **Tài liệu Chi tiết Mã Nguồn:** 
-  - [Hướng dẫn Đọc/Chạy Thư mục `srcs/`](srcs/README.md)
+- **Pipeline & Nạp Dữ Liệu:**
+  - [Báo cáo Cấu trúc Load Data Staging](docs/scrum_5_pipeline_foundation/2026_06_07_Upload_Staging_Data_Document_CongToan.docx)
+  - [Kỹ thuật Fill Null (Xử lý Missing Data)](docs/scrum_5_pipeline_foundation/2026_06_11_Bao_Cao_Source_Code_Fill_Null_Energy_Generated_CongToan.docx)
 
-### 2. DÀNH CHO KỸ SƯ PHÂN TÍCH & KHOA HỌC DỮ LIỆU (DATA ANALYST / SCIENTIST)
+### 6.2. DÀNH CHO KỸ SƯ PHÂN TÍCH & KHOA HỌC DỮ LIỆU (DATA ANALYST / SCIENTIST)
 *Các báo cáo về logic dữ liệu, phát hiện bất thường và trực quan hóa:*
-- **Kiến trúc Cơ sở dữ liệu (Data Modeling):**
+- **Mô Hình Dữ Liệu (Data Modeling):**
   - [Từ điển Dữ liệu Toàn diện (Data Dictionary)](docs/scrum_6_business_logic_eda/2026_05_24_Data_Dictionary_VanSy.docx)
-  - [Thiết kế Mô hình Logic & Vật lý (Logical/Physical Model)](docs/scrum_6_business_logic_eda/2026_05_22_Physical_Model_VanSy.docx)
-  - [Báo cáo Tổng quan thiết kế Data Mart](docs/scrum_5_pipeline_foundation/2026_06_19_BÁO_CÁO_TỔNG_QUAN_HỆ_THỐNG_DATA_MART_By_Toàn.docx)
+  - [Thiết kế Mô hình Logic & Vật lý](docs/scrum_6_business_logic_eda/2026_05_22_Physical_Model_VanSy.docx)
+  - [Thiết kế Lược đồ Đa chiều (Multidimension Model)](docs/scrum_6_business_logic_eda/2026_05_25_Multidimension_Model_Design_VanSy.docx)
+  - [Tổng quan Thiết kế Data Mart](docs/scrum_5_pipeline_foundation/2026_06_19_BÁO_CÁO_TỔNG_QUAN_HỆ_THỐNG_DATA_MART_By_Toàn.docx)
 - **Logic Nghiệp vụ & Khám phá Dữ liệu (EDA):**
   - [Giải thích thuật toán Lọc Nhiễu & Xử lý Outlier](docs/scrum_6_business_logic_eda/2026_06_14_bao_cao_outliner_TanDat.pdf)
   - [Định nghĩa Hệ thống KPIs và Measures kinh doanh (BI Mart)](docs/scrum_6_business_logic_eda/2026_06_17_BI_Mart_Measures.md)
-  - [Báo cáo Phát hiện Outlier Generation](docs/scrum_7_visualization_forecasting/2026_06_18_bao_cao_phat_hien_outlier_generation_TanDat.pdf)
+  - [Báo cáo EDA và Phân Phối Đơn Biến](docs/scrum_7_visualization_forecasting/2026_06_26_Bao_cao_bieu_do_phan_phoi_don_bien_VSY.docx)
+  - [Báo cáo ACF, PACF & Machine Learning Mart](docs/scrum_6_business_logic_eda/2026_06_28_BaoCao_ACF_PACF_ml_mart_base_V1.docx)
+- **Dashboard & Trực Quan Hóa (Tableau):**
+  - [Báo cáo Hướng Dẫn EDA (Visualization)](docs/scrum_7_visualization_forecasting/2026_06_21_Bao_Cao_Huong_DanEDA_NgoTanDT.pdf)
+  - [Guidelines Trực Quan Hóa Tableau](docs/scrum_7_visualization_forecasting/tableau_visualization_guidelines.md)
 - **Kiểm soát Chất lượng (QA/QC):**
-  - [Kế hoạch và Thực thi QA/QC Dữ liệu](docs/scrum_6_business_logic_eda/2026_06_21%20bao_cao_QA_QC.docx)
   - [Đối soát Tính toàn vẹn Dữ liệu (Data Integrity)](docs/scrum_5_pipeline_foundation/2026_06_13_Data_Integrity_and_Reconciliation_Check_CongToan.docx)
+  - [Kế hoạch và Thực thi QA/QC Dữ liệu](docs/scrum_6_business_logic_eda/2026_06_23_bao_cao_QA_QC.docx)
 
-### 3. DÀNH CHO NGƯỜI DÙNG PHỔ THÔNG & ĐÁNH GIÁ (GENERAL USER)
+### 6.3. DÀNH CHO NGƯỜI DÙNG PHỔ THÔNG & ĐÁNH GIÁ (GENERAL USER)
 - Mời bạn đón đọc **[Báo cáo Luận văn Tốt nghiệp Chính thức (PDF)](reports/)** tại thư mục Reports để xem toàn cảnh đồ án từ A đến Z, kèm theo các file thuyết trình, biểu đồ minh họa.
-- Nếu muốn xem tài liệu lịch sử làm việc theo từng chu kỳ ngắn hạn, vui lòng tham khảo **[Mục lục Sổ tay Scrum (docs/)](docs/README.md)**.
+- Tham khảo **[Mục lục Sổ tay Scrum (docs/)](docs/README.md)** để theo dõi lịch sử làm việc của nhóm qua từng giai đoạn Sprint.
 
 <div align="center">
   <br>

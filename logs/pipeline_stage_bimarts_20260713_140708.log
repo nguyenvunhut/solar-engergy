@@ -1,0 +1,40 @@
+2026-07-13 14:07:10 | INFO     | pipeline | Pipeline start | stage=bimarts | dry_run=False | project=/home/tandat/Desktop/Du_An_Tot_Nghiep
+
+[7/8] Data Warehouse -> BI Marts
+2026-07-13 14:07:10 | INFO     | pipeline | [7/7] START | Data Warehouse -> BI Marts
+2026-07-13 14:07:10 | INFO     | pipeline | Bắt đầu build BI Marts
+2026-07-13 14:07:10 | INFO     | pipeline.bi_mart | >> Bắt đầu build BI Mart...
+2026-07-13 14:07:10 | INFO     | pipeline.bi_mart | Đang đắp dữ liệu vào host: aws-1-ap-southeast-1.pooler.supabase.com, database: postgres
+2026-07-13 14:07:15 | INFO     | pipeline.bi_mart | BI Mart có 21 SQL statements cần thực thi
+2026-07-13 14:07:15 | INFO     | pipeline.bi_mart | [1/21] SQL | CREATE SCHEMA IF NOT EXISTS
+2026-07-13 14:07:15 | INFO     | pipeline.bi_mart | [2/21] SQL | DROP VIEW IF EXISTS bi_mart.dim_solar_site
+2026-07-13 14:07:15 | INFO     | pipeline.bi_mart | [3/21] SQL | DROP VIEW IF EXISTS bi_mart.dim_geography
+2026-07-13 14:07:15 | INFO     | pipeline.bi_mart | [4/21] SQL | DROP VIEW IF EXISTS bi_mart.dim_date
+2026-07-13 14:07:16 | INFO     | pipeline.bi_mart | [5/21] SQL | DROP VIEW IF EXISTS bi_mart.dim_weather_type
+2026-07-13 14:07:16 | INFO     | pipeline.bi_mart | [6/21] SQL | DROP VIEW IF EXISTS bi_mart.dim_solar_site
+2026-07-13 14:07:16 | INFO     | pipeline.bi_mart | [7/21] SQL | DROP VIEW IF EXISTS bi_mart.dim_geography
+2026-07-13 14:07:16 | INFO     | pipeline.bi_mart | [8/21] SQL | DROP VIEW IF EXISTS bi_mart.dim_date
+2026-07-13 14:07:16 | INFO     | pipeline.bi_mart | [9/21] SQL | DROP VIEW IF EXISTS bi_mart.dim_weather_type
+2026-07-13 14:07:16 | INFO     | pipeline.bi_mart | [10/21] SQL | DROP TABLE IF EXISTS bi_mart.fact_solar_performance_hourly
+2026-07-13 14:07:16 | INFO     | pipeline.bi_mart | [11/21] SQL | CREATE OR REPLACE VIEW bi_mart.dim_solar_site
+2026-07-13 14:07:16 | INFO     | pipeline.bi_mart | [12/21] SQL | CREATE OR REPLACE VIEW bi_mart.dim_geography
+2026-07-13 14:07:16 | INFO     | pipeline.bi_mart | [13/21] SQL | CREATE OR REPLACE VIEW bi_mart.dim_date
+2026-07-13 14:07:16 | INFO     | pipeline.bi_mart | [14/21] SQL | CREATE OR REPLACE VIEW bi_mart.dim_weather_type
+2026-07-13 14:07:16 | INFO     | pipeline.bi_mart | [15/21] SQL | CREATE TABLE bi_mart.fact_solar_performance_hourly AS WITH
+2026-07-13 14:07:26 | INFO     | pipeline.bi_mart | [16/21] SQL | ALTER TABLE bi_mart.fact_solar_performance_hourly ADD CONSTRAINT
+2026-07-13 14:07:27 | INFO     | pipeline.bi_mart | [17/21] SQL | ALTER TABLE bi_mart.fact_solar_performance_hourly ADD CONSTRAINT
+2026-07-13 14:07:27 | INFO     | pipeline.bi_mart | [18/21] SQL | ALTER TABLE bi_mart.fact_solar_performance_hourly ADD CONSTRAINT
+2026-07-13 14:07:27 | INFO     | pipeline.bi_mart | [19/21] SQL | ALTER TABLE bi_mart.fact_solar_performance_hourly ADD CONSTRAINT
+2026-07-13 14:07:27 | INFO     | pipeline.bi_mart | [20/21] SQL | CREATE INDEX idx_fact_fk_site_date ON bi_mart.fact_solar_performance_hourly
+2026-07-13 14:07:28 | INFO     | pipeline.bi_mart | [21/21] SQL | CREATE INDEX idx_fact_fk_geo_date ON bi_mart.fact_solar_performance_hourly
+2026-07-13 14:07:28 | INFO     | pipeline.bi_mart | BI Mart audit | fact_solar_performance_hourly rows=711,386
+2026-07-13 14:07:28 | INFO     | pipeline.bi_mart | >> BI Mart hoàn tất!
+
+2026-07-13 14:07:28 | INFO     | pipeline.bi_view | Đang đắp View vào host: aws-1-ap-southeast-1.pooler.supabase.com, database: postgres
+2026-07-13 14:07:28 | INFO     | pipeline.bi_view | Đã cập nhật thành công: vw_bi_mart_hourly_measures_replace
+2026-07-13 14:07:28 | INFO     | pipeline.bi_view | Đã cập nhật thành công: vw_bi_mart_daily_kpis_replace
+2026-07-13 14:07:28 | INFO     | pipeline | Build BI Marts hoàn tất
+2026-07-13 14:07:28 | INFO     | pipeline | [7/8] SUCCESS | Data Warehouse -> BI Marts | 18.81s
+2026-07-13 14:07:28 | INFO     | pipeline | Pipeline success | stage=bimarts | elapsed=18.81s
+
+[DONE] Pipeline completed successfully.
