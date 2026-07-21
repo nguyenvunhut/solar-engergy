@@ -38,6 +38,10 @@ algorithm:
   gmm_if_if_contamination: 0.03
   gmm_if_if_estimators: 100
   gmm_if_night_threshold_kwh: 0.05
+  # Strict physical guardrail:
+  # energy_generated_kwh for one 15-minute row must not exceed
+  # capacity_kw * 0.25. A value of 1.0 means strict rated-capacity checking.
+  gmm_if_over_capacity_tolerance: 1.0
 
 runtime:
   parquet_chunk_size: 200000
