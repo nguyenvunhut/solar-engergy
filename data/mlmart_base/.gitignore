@@ -1,8 +1,5 @@
 /ml_mart_base_data.parquet
 /v2_preprocessing.parquet
-<<<<<<< Updated upstream
 /v3_final_cleaned.parquet
-||||||| Stash base
-=======
 /v3_preprocessing.parquet
->>>>>>> Stashed changes
+/*_fe.parquet
