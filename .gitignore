@@ -316,3 +316,6 @@ commit_helper.py
 notebooks/trash/
 /references/
 generate_ipynb.py
+
+# AI Context Directory
+/context/
