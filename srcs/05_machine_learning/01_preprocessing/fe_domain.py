@@ -32,13 +32,7 @@ def build_domain_aggregate_features(df: pd.DataFrame) -> pd.DataFrame:
         # Giới hạn ngưỡng vật lý (VD: nhiệt độ cực đoan), bỏ qua NaN
         df_out['thermal_loss_factor'] = loss_factor.clip(lower=0.5, upper=1.2)
         
-    # 4. Inverter Loading Ratio Proxy (Tỷ lệ khai thác công suất trạm)
-    if 'energy_generated_kwh' in df_out.columns and 'capacity_kw' in df_out.columns:
-        safe_capacity = df_out['capacity_kw'].replace(0, np.nan)
-        # Tỷ lệ so với công suất thiết kế: (energy * 4) / capacity
-        ilr = (df_out['energy_generated_kwh'] * 4) / safe_capacity
-        df_out['inverter_loading_ratio_proxy'] = ilr.clip(lower=0, upper=2.0)
-        
+
     # 5. Diffuse Fraction (Tỷ lệ bức xạ khuếch tán)
     if 'diffuse_solar_radiation' in df_out.columns and 'shortwave_radiation' in df_out.columns:
         safe_shortwave = df_out['shortwave_radiation'].replace(0, np.nan)
