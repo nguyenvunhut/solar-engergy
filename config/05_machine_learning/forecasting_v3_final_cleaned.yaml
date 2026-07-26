@@ -1,0 +1,162 @@
+run:
+  version: v3_final_cleaned
+  run_id: null
+  overwrite_artifacts: false
+
+input:
+  mlmart_path: data/mlmart_base/v3_final_cleaned.parquet
+  raw_solar_path: data/raw/Solar_Energy_Generation.csv
+
+columns:
+  site: site_id
+  timestamp: timestamp
+  target: energy_generated_kwh
+  raw_site: SiteKey
+  raw_timestamp: Timestamp
+  raw_target: SolarGeneration
+
+output:
+  base_dir: data/model/v3_final_cleaned
+  model_dir: models/v3_final_cleaned
+  report_dir: reports/ml_training_v3_final_cleaned
+  picture_dir: pictures/ml_training_v3_final_cleaned
+  log_dir: logs
+
+time:
+  frequency_minutes: 15
+  # Khớp với target_timezone trong config/01_extract/02_download_open_meteo_raw.yaml.
+  # Australia/Sydney và Australia/Melbourne cùng AEST/AEDT, cùng ngày đổi giờ,
+  # nên giá trị solar elevation giống hệt nhau; dùng chung một tên cho nhất quán.
+  timezone: Australia/Sydney
+  horizon_steps: [1, 4]
+  lag_steps: [1, 4, 92, 95, 96, 668, 671, 672]
+  rolling_windows: [4, 12, 96]
+  max_lag_steps: 672
+
+split:
+  test_ratio: 0.15
+  validation_ratio: 0.15
+  n_splits: 5
+  strategy: expanding
+
+daylight:
+  energy_epsilon: 0.05
+  solar_elevation_threshold_deg: -0.833
+  max_clock_fallback_pct: 0.1
+  # Peak-hour shift is diagnostic-only; the hard alignment gate uses
+  # measured-only energy/shortwave cross-correlation by lag.
+  lag_check_max_steps: 4
+  lag_check_fail_negative_site_pct: 50.0
+  peak_shift_fail_site_count: 8
+  peak_shift_fail_site_season_pct: 20.0
+
+gap:
+  short_gap_hours: 2
+  major_gap_hours: 24
+
+capacity_audit:
+  imputed_capacity_pct_warn: 100.0
+  direct_ceiling_violation_pct_warn: 5.0
+
+training:
+  headline_scope: measured_excluding_after_gap_daylight
+  active_experiment: measured_only_headline
+  mode: production_lightgbm
+  allow_full_train: true
+  mock:
+    enabled: false
+    max_train_rows_per_horizon: 20000
+    max_eval_rows_per_horizon: 20000
+    n_estimators: 25
+    num_leaves: 31
+    timeout_note: "Mock chỉ fit LightGBM thật trên sample nhỏ để test luồng, không dùng để báo cáo metric cuối."
+  experiments:
+    - measured_only_headline
+    - measured_plus_etl_imputed
+    - zero_weight_gmm_consensus
+    - zero_weight_all_flagged
+  lightgbm:
+    objective: regression
+    reg_alpha: 0.0
+    reg_lambda: 0.0
+    device: gpu
+    gpu_platform_id: 0
+    gpu_device_id: 0
+    force_cpu_if_gpu_unavailable: true
+    n_trials: 30
+    timeout_minutes: 90
+    random_seed: 42
+    n_jobs: 1
+    max_estimators: 2000
+    early_stopping_rounds: 100
+    log_evaluation_period: 200
+  optuna:
+    sampler: tpe
+    pruner: median
+
+features:
+  selection:
+    enabled: true
+    method: sklearn_mutual_info_regression
+    max_features_per_horizon: 35
+    sample_rows: 100000
+    min_score: 0.0
+  deny_list:
+    - gmm_if_outlier_flag
+    - gmm_if_outlier_reason
+    - outlier_group
+    - sunshine_duration
+    - is_daylight
+    - is_daylight_scope
+    - is_daylight_physical
+    - daylight_source
+    - weather_daylight_disagreement
+    - solar_elevation_deg
+    - exclude_from_training
+    - exclude_reason
+    - training_quality_reason
+    - after_source_gap_steps_remaining
+    - timestamp_was_inserted
+    - source_gap_id
+    - weather_is_observed
+    - gen_id
+    - date_id
+    - time_id
+    - weather_id
+    - weather_type_id
+  categorical:
+    - site_id
+    - campus_name
+    - location_name
+    - site_metric
+    - panel
+    - inverter
+    - optimizers
+    - weather_condition
+    - weather_description
+  numeric_passthrough:
+    - shortwave_radiation
+    - direct_normal_irradiance
+    - diffuse_solar_radiation
+    - temperature_c
+    - cloud_cover_total
+    - cloud_cover_low
+    - cloud_cover_mid
+    - cloud_cover_high
+    - wind_speed
+    - precipitation_mm
+    - capacity_kw
+    - number_of_panels
+    - latitude
+    - longitude
+
+explainability:
+  shap:
+    sample_rows: 2000
+    max_display: 20
+
+prophet:
+  enabled: true
+  granularity: hourly
+  max_sites: 42
+  timeout_minutes: 45

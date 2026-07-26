@@ -313,3 +313,13 @@ docs/scrum_7_visualization_forecasting/*.tex
 docs/scrum_8_project_delivery_defense/*.tex
 src/
 commit_helper.py
+notebooks/trash/
+/references/
+generate_ipynb.py
+
+# AI Context Directory
+/context/
+
+# ML Mart data
+data/mlmart_base/*.parquet
+
