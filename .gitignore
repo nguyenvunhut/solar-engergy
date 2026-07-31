@@ -40,6 +40,8 @@ reports/**/*.toc
 reports/**/*.synctex.gz
 reports/**/*.fls
 reports/**/*.fdb_latexmk
+reports/Section*.pdf
+reports/report config.pdf
 reports/Section*.tex
 reports/appendix.tex
 reports/report config.tex
