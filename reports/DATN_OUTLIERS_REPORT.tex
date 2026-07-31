@@ -1,3 +1,4 @@
+﻿% !TeX program = xelatex
 % =============================================================================
 %  DỰ ÁN TỐT NGHIỆP — BÁO CÁO CHÍNH (BẢN OUTLINE SỰ KIỆN)
 %  Đề tài: Phân tích Hiệu suất và Dự báo Sản lượng Hệ thống Điện Mặt Trời
@@ -8,9 +9,15 @@
 \documentclass[12pt, a4paper]{report}
 
 % ======================== PACKAGES ==========================================
-\usepackage[utf8]{inputenc}
-\usepackage[T1]{fontenc}
+\usepackage{fontspec}
 \usepackage[vietnamese]{babel}
+
+% Ngan ch?n t? d?ng g?ch n?i t? (hyphenation) cu?i d�ng
+\hyphenpenalty=10000
+\exhyphenpenalty=10000
+\tolerance=10000
+\emergencystretch=3em
+
 \usepackage{geometry}
 \geometry{top=2.5cm, bottom=2.5cm, left=3cm, right=2cm}
 % ======================== CẤU HÌNH CODE PYTHON (MUTED STYLE) ==============================
@@ -45,27 +52,11 @@
     frame             = single,
     rulecolor         = \color{bordergray}, % Viền mảnh màu xám nhạt tinh tế
     extendedchars     = true,
-    % Bảng ánh xạ ký tự tiếng Việt (literate) đã làm sạch để fix lỗi UTF-8
-    literate=
-    {á}{{\'a}}1 {à}{{\`a}}1 {ã}{{\~a}}1 {ạ}{{\d{a}}}1 {ả}{{\h{a}}}1
-    {ă}{{\u{a}}}1 {ắ}{{\'\u{a}}}1 {ằ}{{\`\u{a}}}1 {ẵ}{{\~\u{a}}}1 {ặ}{{\d{\u{a}}}}1 {ẳ}{{\h{\u{a}}}}1
-    {â}{{\^a}}1 {ấ}{{\'\^a}}1 {ầ}{{\`\^a}}1 {ẫ}{{\~\^a}}1 {ậ}{{\d{\^a}}}1 {ẩ}{{\h{\^a}}}1
-    {đ}{{\dj}}1 {Đ}{{\DJ}}1
-    {é}{{\'e}}1 {è}{{\`e}}1 {ẽ}{{\~e}}1 {ẹ}{{\d{e}}}1 {ẻ}{{\h{e}}}1
-    {ê}{{\^e}}1 {ế}{{\'\^e}}1 {ề}{{\`\^e}}1 {ễ}{{\~\^e}}1 {ệ}{{\d{\^e}}}1 {ể}{{\h{\^e}}}1
-    {í}{{\'i}}1 {ì}{{\`i}}1 {ĩ}{{\~i}}1 {ị}{{\d{i}}}1 {ỉ}{{\h{i}}}1
-    {ó}{{\'o}}1 {ò}{{\`o}}1 {õ}{{\~o}}1 {ọ}{{\d{o}}}1 {ỏ}{{\h{o}}}1
-    {ô}{{\^o}}1 {ố}{{\'\^o}}1 {ồ}{{\`\^o}}1 {ỗ}{{\~\^o}}1 {ộ}{{\d{\^o}}}1 {ổ}{{\h{\^o}}}1
-    {ơ}{{\v{o}}}1 {ớ}{{\'\v{o}}}1 {ờ}{{\`\v{o}}}1 {ỡ}{{\~\v{o}}}1 {ợ}{{\d{\v{o}}}}1 {ở}{{\h{\v{o}}}}1
-    {ú}{{\'u}}1 {ù}{{\`u}}1 {ũ}{{\~u}}1 {ụ}{{\d{u}}}1 {ủ}{{\h{u}}}1
-    {ư}{{\v{u}}}1 {ứ}{{\'\v{u}}}1 {ừ}{{\`\v{u}}}1 {ữ}{{\~\v{u}}}1 {ự}{{\d{\v{u}}}}1 {ử}{{\h{\v{u}}}}1
-    {ý}{{\'y}}1 {ỳ}{{\`y}}1 {ỹ}{{\~y}}1 {ỵ}{{\d{y}}}1 {ỷ}{{\h{y}}}1
-}
+    }
 \lstset{style=pythonstyle}
 
-% Font - Helvetica (Sans-Serif, Modern, supports Vietnamese)
-\usepackage[scaled]{helvet}
-\renewcommand{\familydefault}{\sfdefault}
+% Font - Arial (Sans-Serif, fully supports Vietnamese on Windows/XeLaTeX)`r`n\setmainfont{Cambria}
+\setmonofont{Consolas}
 
 % Header / Footer
 \usepackage{fancyhdr}
@@ -155,6 +146,10 @@
 
 % --- CẤU HÌNH KHOẢNG TRỐNG TIÊU ĐỀ CHƯƠNG ---
 \usepackage{titlesec}
+% C? ch? 13pt cho c�c section headers
+\titleformat*{\section}{\fontsize{13pt}{15.6pt}\bfseries}
+\titleformat*{\subsection}{\fontsize{13pt}{15.6pt}\bfseries}
+\titleformat*{\subsubsection}{\fontsize{13pt}{15.6pt}\bfseries}
 % Cấu hình cho \chapter và \chapter*
 \titleformat{\chapter}[display]
   {\normalfont\huge\bfseries}{}{0pt}{\huge}
@@ -164,7 +159,7 @@
 % Trang nội dung chính (Logo ở header trái, THE OUTLIERS ở header phải)
 \fancypagestyle{main}{
     \fancyhf{}
-    \fancyhead[L]{\includegraphics[height=1cm]{images/logo_fpoly.png}}
+    \fancyhead[L]{\includegraphics[height=1cm]{figures/logo_fpoly.png}}
     \fancyhead[R]{\small THE OUTLIERS}
     \fancyfoot[L]{\small Dự án Tốt nghiệp}
     \fancyfoot[R]{\small Page \thepage\ of \pageref{LastPage}}
@@ -217,7 +212,7 @@
 
     \vspace{0.5cm} % Thu nhỏ khoảng cách dưới tên trường
     % --- Logo trường Cao đẳng FPT Polytechnic ---
-    \includegraphics[width=0.38\textwidth]{images/logo_fpoly.png}
+    \includegraphics[width=0.38\textwidth]{figures/logo_fpoly.png}
 
     \vspace{0.4cm}
     {\Large \textbf{DỰ ÁN TỐT NGHIỆP}} \\[4pt]
@@ -827,7 +822,7 @@ Quá trình thiết kế kho dữ liệu (Data Warehouse - DWH) được thực 
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.85\textwidth]{images/conceptual_model.png}
+    \includegraphics[width=0.85\textwidth]{figures/conceptual_model.png}
     \caption{Sơ đồ Mô hình Dữ liệu Khái niệm (Conceptual Data Model)}
     \label{fig:conceptual_model}
 \end{figure}
@@ -855,7 +850,7 @@ Mô hình logic cụ thể hóa các thực thể thành các bảng và xác đ
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{images/logical_model.png}
+    \includegraphics[width=\textwidth]{figures/logical_model.png}
     \caption{Sơ đồ Mô hình Dữ liệu Logic (Logical Data Model)}
     \label{fig:logical_model}
 \end{figure}
@@ -865,7 +860,7 @@ Mô hình vật lý định nghĩa cách thức dữ liệu được lưu trữ 
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{images/physical_model.png}
+    \includegraphics[width=\textwidth]{figures/physical_model.png}
     \caption{Sơ đồ Mô hình Dữ liệu Vật lý (Physical Data Model)}
     \label{fig:physical_model}
 \end{figure}
