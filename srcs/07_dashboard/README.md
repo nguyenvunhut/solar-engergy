@@ -8,7 +8,7 @@ pip install streamlit fastapi uvicorn requests plotly shap pandas numpy
 ## 2. Khởi chạy FastAPI Backend Server (Cổng 8000)
 Từ thư mục gốc của repository (`Du_An_Tot_Nghiep_v3`):
 ```bash
-uvicorn srcs.07_dashboard.api:app --reload --port 8000
+
 ```
 API Swagger UI sẽ sẵn sàng tại: `http://127.0.0.1:8000/docs`
 

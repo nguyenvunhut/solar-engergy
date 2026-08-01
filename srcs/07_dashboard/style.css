@@ -1,0 +1,60 @@
+/* CSS dung chung cho toan bo dashboard (app.py + pages/*.py).
+   Tach ra tu 4 khoi <style> trung lap truoc day (app.py, 1_TimeSeries.py,
+   2_SHAP.py, 3_Phase_Lag.py) - moi trang chi con giu lai phan RIENG (rat it),
+   con lai load file nay qua ham load_shared_css() trong dashboard_common.py. */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
+
+/* Streamlit render toan trang con nhieu wrapper phia sau/duoi content van mac dinh
+   trang - phu nen xam nhat cho toan bo khung ngoai, khong chi .stApp, de khong bi
+   loang mau trang o duoi trang khi cuon het noi dung (giong nen BI tools that). */
+html, body, .main, [data-testid="stAppViewContainer"], [data-testid="stMain"] {
+    background: #F4F5FA !important;
+}
+.stApp { background: #F4F5FA; color: #1F2937; }
+section[data-testid="stSidebar"] { background: #FFFFFF !important; border-right: 1px solid #E4E4F0; }
+.block-container { padding-top: 1.35rem; padding-bottom: 2rem; max-width: 100% !important; padding-left: 2.2rem; padding-right: 2.2rem; }
+
+/* Do bong + vien cho MOI container(border=True) tren toan bo dashboard - dong bo
+   tat ca trang (Home/TimeSeries/PhaseLag/SHAP), giong the BI tools that (Tableau/
+   PowerBI luon co shadow nhe tren card, khong phai vien phang khong chieu sau). */
+div[data-testid="stVerticalBlockBorderWrapper"]:has(> div > div[data-testid="stVerticalBlock"]) {
+    border-radius: 10px !important;
+    box-shadow: 0 1px 3px rgba(16, 24, 40, 0.06), 0 1px 2px rgba(16, 24, 40, 0.08) !important;
+    transition: box-shadow 0.15s ease;
+}
+div[data-testid="stVerticalBlockBorderWrapper"]:hover {
+    box-shadow: 0 2px 6px rgba(16, 24, 40, 0.10), 0 1px 3px rgba(16, 24, 40, 0.10) !important;
+}
+
+/* Trang Home (app.py) */
+.home-header { font-size: 1.9rem; font-weight: 750; color: #1F2937; letter-spacing: -0.01em; margin-bottom: 4px; }
+.home-subtitle { color: #667085; font-size: 0.95rem; margin-bottom: 24px; }
+.home-card {
+    background: #FFFFFF; border: 1px solid #E4E4F0; border-radius: 8px;
+    padding: 18px 20px; height: 100%;
+}
+.home-card h4 { color: #1F2937; font-size: 1.05rem; font-weight: 700; margin: 0 0 6px 0; }
+.home-card p { color: #667085; font-size: 0.86rem; margin: 0; line-height: 1.5; }
+.sidebar-brand { color: #1F2937; font-weight: 700; margin-bottom: 0; font-size: 1.05rem; }
+
+/* Tieu de dashboard con (TimeSeries/SHAP/PhaseLag) */
+.dash-title { font-size: 1.55rem; font-weight: 750; color: #1F2937; margin-bottom: 0.1rem; text-align: center; }
+.dash-subtitle { font-size: 0.86rem; color: #667085; margin-bottom: 1rem; text-align: center; }
+
+/* KPI card kieu Power BI executive - gia tri mac dinh (1_TimeSeries).
+   2_SHAP va 3_Phase_Lag ghi de vai dong nho (kich thuoc/mau) o inline <style>
+   rieng cua trang, vi kich thuoc/mau nhan manh khac nhau co chu dich. */
+.kpi-card {
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  border-radius: 6px;
+  padding: 10px 12px;
+  min-height: 68px;
+}
+.kpi-label { color: #667085; font-size: 0.66rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.02em; }
+.kpi-value { color: #1F2937; font-size: 1.25rem; font-weight: 760; margin-top: 2px; }
+.kpi-note { color: #667085; font-size: 0.72rem; margin-top: 2px; }
+.kpi-note.up { color: #16A34A; font-weight: 600; }
+.kpi-note.down { color: #DC2626; font-weight: 600; }
