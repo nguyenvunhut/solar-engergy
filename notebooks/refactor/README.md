@@ -5,6 +5,48 @@
 
 ---
 
+## 0. Hướng dẫn chạy toàn bộ pipeline (thứ tự notebook)
+
+Chạy tuần tự theo đúng thứ tự dưới đây, không bỏ bước, không đảo thứ tự:
+
+```
+notebooks/preprocess/00_realign_mlmart_weather_hotfix.ipynb
+    ↳ đọc + ghi đè data/mlmart_base/v3_preprocessing.parquet
+    ↳ sửa causal weather join (weather_timestamp = floor(timestamp, 1h))
+    ↳ idempotent - chạy lại nhiều lần không đổi kết quả nếu data đã đúng
+
+notebooks/refactor/00_hotfix_join_causal_audit.ipynb     [TÙY CHỌN - chỉ kiểm chứng]
+    ↳ đọc v3_preprocessing.parquet, ghi audit ra data/model/v3/00_hotfix_audit/
+    ↳ không sửa file gốc
+
+notebooks/preprocess/00_fill_null_imputation.ipynb
+    ↳ đọc v3_preprocessing.parquet (đã hotfix) → ghi data/mlmart_base/v3_final_cleaned.parquet
+
+notebooks/preprocess/01_recheck_fill_null.ipynb           [TÙY CHỌN - chỉ kiểm chứng]
+    ↳ đọc lại cả v3_preprocessing.parquet và v3_final_cleaned.parquet để đối chiếu
+
+notebooks/refactor/01_reindex_mask_outlier.ipynb  →  02  →  03_1  →  03_2  →  03_3
+    →  04_vif_diagnostics  →  05_select_features
+    →  06_1_train_mae / 06_2_train_huber / 06_3_train_mse / 06_0b_baseline_prophet
+    →  07_final_test  →  08_explainable_ai  →  09_kiem_chung_tre_pha
+```
+
+**Lưu ý quan trọng:**
+- `00_realign_mlmart_weather_hotfix.ipynb` nằm ở `notebooks/preprocess/` — vì nó **xử lý thật** (ghi
+  đè `v3_preprocessing.parquet`, kết quả được `00_fill_null_imputation.ipynb` dùng tiếp).
+- `00_hotfix_join_causal_audit.ipynb` vẫn ở `notebooks/refactor/` — vì nó **chỉ kiểm chứng** (đọc
+  `v3_preprocessing.parquet`, ghi ra file audit riêng ở `data/model/v3/00_hotfix_audit/`, không sửa
+  gì, không có notebook nào khác đọc lại file audit đó). Quy tắc: chỉ di chuyển notebook nào thật sự
+  xử lý/ghi đè dữ liệu được dùng tiếp; notebook thuần kiểm chứng thì để nguyên chỗ cũ.
+- `06_1/06_2/06_3` là 3 hàm mất mát (MAE/Huber/MSE) train độc lập, so nhau trên tập Validation trong
+  `07_final_test.ipynb` để chọn model vô địch cho từng horizon (h1/h4).
+- Toàn bộ chuỗi notebook trên đã được convert 1-1 (copy chính xác, không viết lại) sang
+  `srcs/05_machine_learning/refactor_pipeline/*.py`, chạy được qua
+  `python srcs/05_machine_learning/refactor_pipeline/run_pipeline.py --stage all` — xem file đó nếu
+  cần chạy bằng script thay vì mở từng notebook.
+
+---
+
 ## 1. Mục tiêu
 
 Thư mục `notebooks/` cũ đang rối: có notebook chỉ **2 cell** trong đó 1 cell code dài **19.037 ký tự**
