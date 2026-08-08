@@ -63,7 +63,7 @@ def tune(loss_name: str, horizon: int, n_trials: int) -> dict:
     s08a_prepare.chuan_bi(ctx)
     s08b_train_folds.nap_cac_fold(ctx)
     gpu, _ = kiem_tra_gpu(cfg)
-    co_ban = cfg.sieu_tham_so(loss_name)
+    co_ban, _ = cfg.sieu_tham_so(loss_name, horizon)
     t0 = time.time()
 
     def objective(trial):
@@ -93,7 +93,9 @@ def tune(loss_name: str, horizon: int, n_trials: int) -> dict:
     study.optimize(objective, n_trials=n_trials, show_progress_bar=False, callbacks=[log_trial])
 
     print(f"\nPooled WAPE tot nhat tren {len(ctx.cac_fold)} fold = {study.best_value:.4f}%")
-    return {**study.best_params, "pooled_wape_cv": float(study.best_value)}
+    # tien to '_' = so lieu kem theo, sieu_tham_so() se bo qua khi ghep tham so cho
+    # LightGBM (neu khong LightGBM se nhan mot tham so la ten 'pooled_wape_cv')
+    return {**study.best_params, "_pooled_wape_cv": float(study.best_value)}
 
 
 def main() -> int:
@@ -110,10 +112,12 @@ def main() -> int:
 
     best = tune(args.loss, args.horizon, args.trials)
 
-    # Gop vao file cu thay vi ghi de - de tune tung loss rieng ma khong mat ket qua truoc
+    # Gop vao file cu thay vi ghi de - de tune tung (loss, horizon) rieng ma khong mat
+    # ket qua truoc. Long theo horizon: h1 va h4 la hai phien tune doc lap, bo tham so
+    # khac han nhau (huber h1 alpha = 1,0407 con h4 alpha = 13,5687).
     duong_dan = Paths(cfg).action("best_params")
     hien_co = read_json(duong_dan) if duong_dan.exists() else {}
-    hien_co[args.loss] = best
+    hien_co.setdefault(args.loss, {})[f"h{args.horizon}"] = best
     write_json(hien_co, duong_dan)
     print(f"\nDa ghi sieu tham so vao: {duong_dan}")
     print("Pipeline chuan se tu doc file nay o lan train sau (khong chay lai Optuna).")

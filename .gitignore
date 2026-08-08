@@ -324,3 +324,6 @@ generate_ipynb.py
 # ML Mart data
 data/mlmart_base/*.parquet
 
+
+*.pkl
+*.joblib

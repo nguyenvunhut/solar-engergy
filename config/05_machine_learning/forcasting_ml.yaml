@@ -1,0 +1,17 @@
+# Config rieng cho srcs/05_machine_learning/refactor_pipeline/ (ban copy tu
+# notebooks/refactor/), KHONG dung chung voi
+# config/05_machine_learning/forecasting_v3_final_cleaned.yaml cua pipeline
+# Forcasting_v3 chinh thuc - de sua o day khong anh huong ket qua hien tai.
+#
+# Gia tri mac dinh duoi day GIONG HET gia tri dang hardcode trong notebook goc
+# 06_1/06_2/06_3_train_*.ipynb, doi o day khong lam thay doi ket qua da co.
+
+train:
+  seed: 42
+  n_trials: 11             # so trial Optuna, giong notebook goc (dat 0 de bo qua tune)
+  n_jobs: 6                # i5-12450HX: bam P-core, chua thread OS/Jupyter
+  max_bin: 127
+  force_col_wise: true
+  early_stopping_rounds: 100
+  horizon_steps: 1         # 1 = h1 (T+15p), 4 = h4 (T+60p)
+  exclude_sites: [19, 24]

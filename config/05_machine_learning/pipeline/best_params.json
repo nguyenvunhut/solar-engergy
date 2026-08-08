@@ -1,0 +1,72 @@
+{
+  "_nguon": "Ket qua Optuna cua notebook 06_1/06_2/06_3 chay ngay 2026-08-08 tren cau hinh TAI LAP DUOC (CPU + lightgbm.deterministic = true, USE_GPU = false). Trich tu model_params trong data/model/v3/06_train/<loss>/<h>/model_config.json.",
+  "_ngay_trich": "2026-08-08",
+  "mae": {
+    "h1": {
+      "n_estimators": 1157,
+      "learning_rate": 0.020216068993643928,
+      "num_leaves": 134,
+      "min_child_samples": 21,
+      "subsample": 0.8333055051647258,
+      "colsample_bytree": 0.8725624200445817,
+      "reg_alpha": 9.597707459454199,
+      "reg_lambda": 6.765723797427797
+    },
+    "h4": {
+      "n_estimators": 497,
+      "learning_rate": 0.04856825805999369,
+      "num_leaves": 69,
+      "min_child_samples": 111,
+      "subsample": 0.777633994480005,
+      "colsample_bytree": 0.8987566853061946,
+      "reg_alpha": 3.1171107608941098,
+      "reg_lambda": 5.200680211778108
+    }
+  },
+  "huber": {
+    "h1": {
+      "n_estimators": 685,
+      "learning_rate": 0.033085639673402445,
+      "num_leaves": 167,
+      "min_child_samples": 34,
+      "subsample": 0.9406590942262119,
+      "colsample_bytree": 0.7223651931039312,
+      "reg_alpha": 9.868869366005173,
+      "reg_lambda": 7.722447692966574,
+      "alpha": 1.0406973468428382
+    },
+    "h4": {
+      "n_estimators": 811,
+      "learning_rate": 0.057812018524968964,
+      "num_leaves": 71,
+      "min_child_samples": 81,
+      "subsample": 0.7511572371061874,
+      "colsample_bytree": 0.7195154778955838,
+      "reg_alpha": 9.488855372533333,
+      "reg_lambda": 9.656320330745594,
+      "alpha": 9.864408593146953
+    }
+  },
+  "mse": {
+    "h1": {
+      "n_estimators": 1157,
+      "learning_rate": 0.020216068993643928,
+      "num_leaves": 134,
+      "min_child_samples": 21,
+      "subsample": 0.8333055051647258,
+      "colsample_bytree": 0.8725624200445817,
+      "reg_alpha": 9.597707459454199,
+      "reg_lambda": 6.765723797427797
+    },
+    "h4": {
+      "n_estimators": 1157,
+      "learning_rate": 0.020216068993643928,
+      "num_leaves": 134,
+      "min_child_samples": 21,
+      "subsample": 0.7063347914856225,
+      "colsample_bytree": 0.8576399520567726,
+      "reg_alpha": 9.597707459454199,
+      "reg_lambda": 6.899748066581109
+    }
+  }
+}

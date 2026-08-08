@@ -6,14 +6,17 @@ tren may/trinh duyet khong ho tro WebGL - ep render_mode='svg' de an toan.
 
 import ctypes
 import glob
+import json
 import pickle
 from pathlib import Path
 
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 import plotly.express as px
+import plotly.graph_objects as go
 import shap
 import streamlit as st
 
@@ -74,7 +77,10 @@ def load_native_importance() -> pd.DataFrame:
     return pd.DataFrame({"feature": feats, "gain": gain, "split": split}).sort_values("gain", ascending=False)
 
 
-X_TEST_PATH = DATA_DIR / "06_train" / "mae" / "h1" / "X_test_h1.parquet"
+X_TEST_PATH = DATA_DIR / "06_train" / "huber" / "h1" / "X_test_h1.parquet"
+WHAT_IF_MODEL_PATH = DATA_DIR / "06_train" / "huber" / "h1" / "model.pkl"
+WHAT_IF_CONFIG_PATH = DATA_DIR / "06_train" / "huber" / "h1" / "model_config.json"
+SITE_METADATA_PATH = DATA_DIR / "02_split" / "test" / "v3_test.parquet"
 
 
 @st.cache_data
@@ -91,6 +97,55 @@ def load_real_feature_values(feat_val_keys: pd.DataFrame) -> pd.DataFrame:
     keys["timestamp"] = pd.to_datetime(keys["timestamp"])
     x_real["timestamp"] = pd.to_datetime(x_real["timestamp"])
     return keys.merge(x_real, on=["site_id", "timestamp"], how="left")
+
+
+@st.cache_resource
+def load_what_if_model():
+    with open(WHAT_IF_MODEL_PATH, "rb") as fh:
+        model = pickle.load(fh)
+    config = json.loads(WHAT_IF_CONFIG_PATH.read_text(encoding="utf-8"))
+    return model, config
+
+
+@st.cache_data
+def load_what_if_data() -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Doc feature dung luc inference va metadata goc cua tung site."""
+    features = pd.read_parquet(X_TEST_PATH)
+    features["timestamp"] = pd.to_datetime(features["timestamp"])
+    metadata = pd.read_parquet(
+        SITE_METADATA_PATH, columns=["site_id", "number_of_panels", "capacity_kw"]
+    )
+    metadata = metadata.groupby("site_id", as_index=False).first()
+    return features, metadata
+
+
+def predict_what_if(row: pd.Series, model, config: dict, panel_ratio: float) -> tuple[float, float]:
+    """Predict baseline va kich ban quy mo; khong dich timestamp hay sua weather."""
+    feature_names = list(config["features"])
+    medians = pd.Series(config.get("feature_medians", {}), dtype="float64")
+
+    baseline = row.reindex(feature_names).fillna(medians).astype(np.float32)
+    scenario = baseline.copy()
+    scale_features = [
+        name for name in feature_names
+        if name.startswith(("lag_", "rolling_")) or name in {"ky_vong", "ky_vong_mt", "tran_cong_suat"}
+    ]
+    scenario.loc[scale_features] = scenario.loc[scale_features] * panel_ratio
+
+    raw_base = float(model.predict(baseline.to_frame().T)[0])
+    raw_scenario = float(model.predict(scenario.to_frame().T)[0])
+    eps = float(config.get("eps_elev", 0.05))
+    sin_elevation = max(float(row[config["cot_sin_elev"]]), eps)
+    site_scale = float(row["site_scale"])
+    cap_base = float(row[config["cot_tran"]])
+
+    base_kwh = np.clip(raw_base, 0.0, 1.5) * site_scale * sin_elevation
+    scenario_kwh = np.clip(raw_scenario, 0.0, 1.5) * site_scale * panel_ratio * sin_elevation
+    base_kwh = min(base_kwh, cap_base * 1.02)
+    scenario_kwh = min(scenario_kwh, cap_base * panel_ratio * 1.02)
+    if float(row[config["cot_sin_elev"]]) <= eps:
+        return 0.0, 0.0
+    return float(base_kwh), float(scenario_kwh)
 
 
 @st.cache_data
@@ -290,4 +345,90 @@ if True:
             "Đỏ = kéo dự báo LÊN so với mức trung bình (base value), xanh navy = kéo XUỐNG. "
             "Cộng dồn từ base value ra tới f(x) — giống shap.force_plot()/shap.plots.waterfall(). "
             "Chỉ hiện 6 đặc trưng ảnh hưởng mạnh nhất, phần còn lại đã gộp vào base value."
+        )
+
+
+# ── WHAT-IF: dat trong trang XAI de lien ket "model hoc gi" voi tac dong kinh doanh. ──
+st.markdown("<br>", unsafe_allow_html=True)
+with st.container(border=True):
+    st.markdown("##### What-if Analysis — thay đổi quy mô hệ thống")
+    st.caption(
+        "Giữ nguyên thời tiết và thời điểm, thay đổi số lượng tấm pin để mô phỏng sản lượng H1. "
+        "Kịch bản chạy lại model MAE được notebook 07 chọn, không nhân trực tiếp kết quả sau dự báo."
+    )
+
+    if not (WHAT_IF_MODEL_PATH.exists() and WHAT_IF_CONFIG_PATH.exists() and X_TEST_PATH.exists()):
+        st.warning("Thiếu model MAE H1 hoặc X_test_h1.parquet để chạy What-if Analysis.")
+    else:
+        _what_if_features, _site_metadata = load_what_if_data()
+        _what_if_model, _what_if_config = load_what_if_model()
+        _site_ids = sorted(_what_if_features["site_id"].dropna().unique().tolist())
+
+        _ctl_site, _ctl_date, _ctl_time, _ctl_panels = st.columns([0.8, 1.2, 1.0, 1.2])
+        with _ctl_site:
+            _wi_site = st.selectbox("Site", _site_ids, key="wi_site")
+
+        _site_rows = _what_if_features[_what_if_features["site_id"].eq(_wi_site)].copy()
+        _site_rows["date"] = _site_rows["timestamp"].dt.date
+        _dates = sorted(_site_rows["date"].unique().tolist())
+        with _ctl_date:
+            _wi_date = st.selectbox("Ngày", _dates, index=len(_dates) // 2, key="wi_date")
+
+        _day_rows = _site_rows[_site_rows["date"].eq(_wi_date)].sort_values("timestamp")
+        _daylight_rows = _day_rows[_day_rows["is_daylight"].fillna(False)]
+        if not _daylight_rows.empty:
+            _day_rows = _daylight_rows
+        _time_labels = _day_rows["timestamp"].dt.strftime("%H:%M").tolist()
+        with _ctl_time:
+            _wi_time = st.selectbox(
+                "Thời điểm nguồn", _time_labels, index=len(_time_labels) // 2, key="wi_time"
+            )
+
+        _meta_row = _site_metadata[_site_metadata["site_id"].eq(_wi_site)].iloc[0]
+        _base_panels = int(_meta_row["number_of_panels"])
+        with _ctl_panels:
+            _new_panels = st.number_input(
+                "Số lượng tấm pin", min_value=1, max_value=5000,
+                value=_base_panels, step=max(1, _base_panels // 20), key="wi_panels",
+            )
+
+        _selected_ts = pd.Timestamp(f"{_wi_date} {_wi_time}")
+        _row = _day_rows[_day_rows["timestamp"].eq(_selected_ts)].iloc[0]
+        _ratio = float(_new_panels) / _base_panels
+        _baseline_kwh, _scenario_kwh = predict_what_if(
+            _row, _what_if_model, _what_if_config, _ratio
+        )
+        _delta_kwh = _scenario_kwh - _baseline_kwh
+        _delta_pct = (_delta_kwh / _baseline_kwh * 100) if _baseline_kwh else 0.0
+        _new_capacity = float(_meta_row["capacity_kw"]) * _ratio
+
+        _m1, _m2, _m3, _m4 = st.columns(4)
+        with _m1:
+            kpi("Dự báo gốc", f"{_baseline_kwh:.2f} kWh", f"{_base_panels:,} tấm pin")
+        with _m2:
+            kpi("Dự báo kịch bản", f"{_scenario_kwh:.2f} kWh", f"{int(_new_panels):,} tấm pin")
+        with _m3:
+            kpi("Thay đổi sản lượng", f"{_delta_kwh:+.2f} kWh", f"{_delta_pct:+.1f}%")
+        with _m4:
+            kpi("Công suất kịch bản", f"{_new_capacity:.2f} kWp", f"gốc {float(_meta_row['capacity_kw']):.2f} kWp")
+
+        _comparison = pd.DataFrame(
+            {"Kịch bản": ["Hiện tại", "What-if"], "Sản lượng H1 (kWh)": [_baseline_kwh, _scenario_kwh]}
+        )
+        _fig_what_if = go.Figure(
+            go.Bar(
+                x=_comparison["Kịch bản"], y=_comparison["Sản lượng H1 (kWh)"],
+                marker_color=["#6366F1", "#D9822B"],
+                text=[f"{v:.2f} kWh" for v in _comparison["Sản lượng H1 (kWh)"]],
+                textposition="outside",
+            )
+        )
+        _fig_what_if.update_layout(
+            template="plotly_white", height=280, margin=dict(l=20, r=20, t=30, b=20),
+            yaxis_title="Sản lượng dự báo H1 (kWh)", xaxis_title=None, showlegend=False,
+        )
+        st.plotly_chart(_fig_what_if, width="stretch")
+        st.caption(
+            f"Nguồn tại {_selected_ts:%d/%m/%Y %H:%M}, dự báo cho {(_selected_ts + pd.Timedelta(minutes=15)):%H:%M}. "
+            "Weather và hình học mặt trời được giữ nguyên; lag/rolling, kỳ vọng và trần công suất được scale theo số tấm pin."
         )

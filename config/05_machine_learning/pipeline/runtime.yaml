@@ -17,9 +17,26 @@ threads:
     - VECLIB_MAXIMUM_THREADS
 
 gpu:
-  use_gpu: true
+  # TAT GPU CO CHU DICH - doi lay tinh tai lap, xem bang do o lightgbm.deterministic ben duoi.
+  # Bat lai thanh true thi train nhanh hon ~7 giay/model nhung MAT tinh tai lap vinh vien,
+  # vi lightgbm.deterministic khong co tac dung tren GPU.
+  use_gpu: false
   platform_id: 0
   device_id: 0
+  # Cong don histogram bang 64-bit thay vi 32-bit. DAY LA NUT BAM DE GPU TAI LAP DUOC.
+  # Tai lieu LightGBM (FAQ - Reproducibility with GPU): "To improve reproducibility when
+  # using LightGBM GPU, set gpu_use_dp = true". Va muc device_type: "for the faster speed,
+  # GPU uses 32-bit float point to sum up by default... You can set gpu_use_dp=true to
+  # enable 64-bit float point, but it will slow down the training".
+  #
+  # DO THUC TE 2026-08-08 (checks/do_tinh_tai_lap_s08.py, huber h1, 887.980 dong):
+  #   GPU 32-bit (gpu_use_dp = false): 2 lan chay lech toi 7,485e-02, KHAC O CA 887.980 dong
+  #   CPU 64-bit                     : 2 lan chay lech 2,220e-16, khac 5.855 dong
+  # Chenh 14 bac - dung la do phep cong 32-bit cua GPU chu khong phai do code.
+  #
+  # LUU Y: lightgbm.deterministic KHONG cuu duoc GPU. Tai lieu ghi ro "Used only with
+  # cpu device type" - bat cung khong co tac dung khi device = gpu.
+  gpu_use_dp: true
   # Duong dan ICD OpenCL tren NixOS/Linux - thu lan luot, dung cai dau tien co file .icd
   opencl_icd_candidates:
     - /run/opengl-driver/etc/OpenCL/vendors
@@ -30,9 +47,34 @@ lightgbm:
   max_bin: 127
   force_col_wise: true
   early_stopping_rounds: 100
-  # CANH BAO: deterministic KHONG duoc bat trong code goc. Voi n_jobs > 1 + GPU,
-  # LightGBM khong dam bao tai lap bit-exact. Xem WP0 truoc khi hua "khop tuyet doi".
-  deterministic: false
+  # BAT BUOC PHAI TRUE. Day la co che DUY NHAT cua LightGBM de train ra ket qua tai lap
+  # duoc: "Setting this to true should ensure the stable results when using the same data
+  # and the same parameters (and different num_threads)" (tai lieu Parameters.rst).
+  # No doi hoi force_col_wise HOAC force_row_wise - ta da co force_col_wise: true o tren.
+  #
+  # DO THUC TE 2026-08-08, checks/do_tinh_tai_lap_s08.py, huber h1, 887.980 dong x 54 dac
+  # trung, moi cau hinh train nhieu lan lien tiep cung may/cung seed:
+  #
+  #  thiet bi | gpu_use_dp | n_jobs | determ. | md5 giua cac lan | lech du bao | thoi gian
+  #  ---------|------------|--------|---------|------------------|-------------|----------
+  #  GPU      | false      | 6      | -       | 3/3 KHAC         | 7,485e-02   | 24 giay
+  #  GPU      | true       | 6      | -       | 3/3 KHAC         | 1,110e-16   | 24 giay
+  #  GPU      | true       | 1      | -       | 3/3 KHAC         | 6,939e-18   | 50 giay
+  #  GPU      | true       | 1      | true    | 4/6 giong        | 6,939e-18   | 50 giay
+  #  CPU      | -          | 6      | false   | 2/2 KHAC         | 2,220e-16   | 30 giay
+  #  CPU      | -          | 6      | TRUE    | 3/3 GIONG HET    | 0           | 31 giay
+  #
+  # DA THU HET moi nut LightGBM co cho GPU (gpu_use_dp, n_jobs = 1, va ca deterministic du
+  # tai lieu noi no chi chay tren CPU) - van hong 2/6 lan. GPU KHONG tai lap duoc, cham het.
+  #
+  # KHONG CO DANH DOI NAO O DAY: cau hinh GPU tien gan tai lap nhat phai ep n_jobs = 1 nen
+  # mat 50 giay, CHAM HON CPU + deterministic (31 giay) toi 60%. GPU chi nhanh khi chay
+  # 32-bit + 6 thread - dung la cau hinh te nhat, lech ca 887.980 dong. Nen CPU thang ca
+  # ve toc do lan tinh tai lap, va con la CAM KET GHI TRONG TAI LIEU chu khong phai may rui.
+  #
+  # LUU Y: tai lieu ghi "Used only with cpu device type" - dat true ma van de gpu.use_gpu
+  # = true thi khoa nay VO HIEU, khong bao loi gi ca, va ket qua lai het tai lap duoc.
+  deterministic: true
 
 # Kieu du lieu ma tran dac trung. HAI GIA TRI KHAC NHAU la CO CHU DICH - moi cai khop
 # voi mot notebook:

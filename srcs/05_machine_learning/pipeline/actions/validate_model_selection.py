@@ -136,17 +136,41 @@ def main() -> int:
     print(f"\nXEP HANG mo hinh vo dich: "
           f"{'KHONG DOI - ket luan chon mo hinh van dung' if xep_hang_khop else 'DA DOI - PHAI xem lai!'}")
 
+    # File ghi ra dung DINH DANG cua notebook 06_4 (ket_qua_tung_model + model_thang) de
+    # doi chieu tung byte duoc. Cac chan doan rieng cua pipeline (wape tinh lai theo pham
+    # vi da train, xep hang co doi khong) da duoc IN o tren - do la cho nguoi doc, con
+    # file JSON nay la ban ghi de may doi chieu.
+    # So lieu lay tu metrics_val.json (do s08 ghi theo dung cach 06_4 tinh - xem
+    # stages/s08e_metrics_val.py) nen trung khop, khong phai tinh lai lan nua.
+    ket_qua, thang = [], {}
+    for loss in ("mae", "huber", "mse"):
+        for h in cfg.train["horizon_steps"]:
+            h_label = f"h{h}"
+            f = paths.model_dir(loss, h) / "metrics_val.json"
+            if not f.exists():
+                continue
+            m = read_json(f)
+            md, tat_ca = m["measured_daylight"], m["all"]
+            ket_qua.append({
+                "loss": loss, "horizon": h_label,
+                "n_rows_val_total": int(tat_ca["n"]),
+                "n_measured_daylight": int(md["n"]),
+                "wape_val_%": round(md["wape"], 4),
+                "rmse_val": round(md["rmse"], 4),
+                "mae_val": round(md["mae"], 4),
+                "r2_val": round(md["r2"], 4),
+            })
+    for h in cfg.train["horizon_steps"]:
+        nhom = [r for r in ket_qua if r["horizon"] == f"h{h}"]
+        if nhom:
+            thang[f"h{h}"] = min(nhom, key=lambda r: r["wape_val_%"])["loss"]
+
     d = paths.stage("s09_final_test")
     d.mkdir(parents=True, exist_ok=True)
-    write_json({
-        "chi_tiet": dong,
-        "vo_dich_tinh_lai": vo_dich,
-        "vo_dich_theo_file_tren_dia": vo_dich_dia,
-        "xep_hang_khop": xep_hang_khop,
-        "ghi_chu": "WAPE co the lech nhe do quy uoc loc dong khac nhau; dieu can kiem la "
-                   "XEP HANG (ai thang) co doi khong.",
-    }, d / "val_model_selection_check.json")
+    write_json({"ket_qua_tung_model": ket_qua, "model_thang": thang},
+               d / "val_model_selection_check.json")
     print(f"\nDa ghi ket qua kiem chung: {d / 'val_model_selection_check.json'}")
+    print(f"Mo hinh thang theo file nay: {thang}")
     return 0
 
 
