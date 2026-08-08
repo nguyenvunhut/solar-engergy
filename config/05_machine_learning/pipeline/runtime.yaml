@@ -1,0 +1,45 @@
+# Cau hinh may chay - KHONG anh huong ket qua mo hinh (tru n_jobs/GPU co the
+# lam lech bit-exact, xem docs/2026_08_07_Ke_Hoach_Refactor_Srcs_Pipeline.md muc 6).
+#
+# Gia tri duoi day GIONG HET gia tri dang hardcode trong notebook goc
+# 06_1/06_2/06_3_train_*.ipynb - doi o day khong lam thay doi ket qua da co.
+
+threads:
+  # i5-12450HX: 8 core / 12 thread (4 P-core + 4 E-core). Dung het 12 thread lam
+  # cac thread tranh nhau va CHAM HON. Dat 6 de bam P-core, con lai cho OS.
+  # Phai set TRUOC khi numpy nap moi co tac dung.
+  n_jobs: 6
+  env_vars:
+    - OMP_NUM_THREADS
+    - OPENBLAS_NUM_THREADS
+    - MKL_NUM_THREADS
+    - NUMEXPR_NUM_THREADS
+    - VECLIB_MAXIMUM_THREADS
+
+gpu:
+  use_gpu: true
+  platform_id: 0
+  device_id: 0
+  # Duong dan ICD OpenCL tren NixOS/Linux - thu lan luot, dung cai dau tien co file .icd
+  opencl_icd_candidates:
+    - /run/opengl-driver/etc/OpenCL/vendors
+    - /etc/OpenCL/vendors
+
+lightgbm:
+  seed: 42
+  max_bin: 127
+  force_col_wise: true
+  early_stopping_rounds: 100
+  # CANH BAO: deterministic KHONG duoc bat trong code goc. Voi n_jobs > 1 + GPU,
+  # LightGBM khong dam bao tai lap bit-exact. Xem WP0 truoc khi hua "khop tuyet doi".
+  deterministic: false
+
+# Kieu du lieu ma tran dac trung. HAI GIA TRI KHAC NHAU la CO CHU DICH - moi cai khop
+# voi mot notebook:
+#   dtype        = float32 : notebook 06_x (train) dung .astype(np.float32) -> model hoc
+#                            tren float32. Cung tiet kiem nua bo nho.
+#   dtype_cham_diem = float64 : notebook 07 (final test) dung .astype(float) = float64.
+# Dat cung mot gia tri se lam lech ket qua so voi notebook: da do 2026-08-07, WAPE h4
+# lech 6,03e-09 giua hai kieu (21,3138856176 vs 21,3138856115).
+dtype: float32
+dtype_cham_diem: float64

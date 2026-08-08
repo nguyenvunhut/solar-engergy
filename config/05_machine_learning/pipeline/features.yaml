@@ -1,0 +1,88 @@
+# Cau hinh dac trung. Gia tri copy NGUYEN SI tu notebook 06_x_train_*.ipynb
+# va 03_1/03_2/03_3 - doi o day se LAM THAY DOI ket qua, can nhac ky.
+
+# ── Nguong vat ly / khu tre pha ──
+eps_elev: 0.05      # nguong sin(goc cao) coi la ban ngay
+# Tran chi so troi quang (clear-sky index). Nang tu 1.2 len 1.5 vi co hom troi quang
+# buc xa do vuot ghi_cs ly thuyet (hieu ung khuyen xa may - cloud edge enhancement).
+clip_csi: 1.5
+
+# ── Phan vi tinh quy mo tram (CHI tren tap train) ──
+quantile_scale: 0.99      # site_scale - dung chuan hoa muc tieu
+quantile_tran: 0.999      # tran_cong_suat - de model hoc doan inverter cat dinh
+quantile_cs_factor: 0.98  # he so hieu chinh troi quang tung tram
+tz_he: 11.0         # gio mua he Uc (thang 10..3)
+tz_dong: 10.0       # gio mua dong Uc (thang 4..9)
+
+# ── Lag / rolling ──
+# lag_1 gay tre pha he thong (audit doc lap 2026-07-31: 39/40 site vuot nguong 5 phut,
+# 126/127 ngay du bao di SAU thuc te) -> loai han.
+# lag_4 (T-60 phut) thi NGUOC LAI: audit PASS sach (0/40 site vuot nguong, WAPE 18,7%
+# tot hon baseline 21,1%) -> GIU LAI. Rolling cua so 4 (1 gio) cung giu vi muot, khong
+# mang gia tri T-30 phut.
+lags: [4, 96]
+rolling_windows: [4, 96]
+
+# Quy tac loai dac trung ngan (copy nguyen si tu 04_x_train_*.py):
+#   bo neu  (bat dau bang bo_prefix_ngan HOAC 'rolling_')  VA  khong chua '96'
+#           VA  khong nam trong giu_lai_ngoai_le
+bo_prefix_ngan: ["lag_1", "lag_4"]
+giu_lai_ngoai_le: ["lag_4", "rolling_mean_4", "rolling_std_4", "rolling_min_4", "rolling_max_4"]
+
+# ── Dich dac trung tat dinh sang thoi diem muc tieu T+h ──
+# KHONG phai leakage: vi tri mat troi va nhan thoi gian tai T+h la tinh toan thien van/lich
+# thuan tuy, dung o T da biet chinh xac. Khac han thoi tiet (phai do moi biet -> giu o T).
+# Them ban tai T+h thanh cot MOI (hau to _mt), GIU NGUYEN ban tai T - da thu THAY THE va
+# BAC BO bang so lieu that (sang 06-09h te hon 37%, chieu 16-18h tot hon 16%).
+them_dac_trung_muc_tieu: true
+cot_tat_dinh:
+  # hinh hoc mat troi va dai luong suy ra tu no
+  - solar_elevation
+  - solar_azimuth
+  - azimuth_sin
+  - azimuth_cos
+  - sin_elevation
+  - ghi_cs
+  - clearsky_proxy
+  - ky_vong
+  - ty_le_bao_hoa
+  # nhan thoi gian theo lich
+  - minute_of_day
+  - hour_of_day
+  - hour_bucket_model
+  - hour
+  - hour_sin
+  - hour_cos
+  - minute
+  - day
+  - day_of_week
+  - month
+  - day_of_year
+  - doy_sin
+  - doy_cos
+# KHONG dich (phai giu tai T de dam bao causal): shortwave_radiation,
+# diffuse_solar_radiation, direct_normal_irradiance, temperature_c, diffuse_ratio,
+# temp_x_shortwave, cloud_x_shortwave, rad_x_sinelev, lag_96, rolling_*_96
+
+# ── Nhom dac trung de kiem tra co du truoc khi train ──
+nhom_mat_troi:
+  [solar_elevation, solar_azimuth, azimuth_sin, azimuth_cos, sin_elevation,
+   ghi_cs, cs_factor, clearsky_proxy, rad_x_sinelev]
+nhom_quy_mo: [site_scale, tran_cong_suat, ky_vong, ty_le_bao_hoa]
+# Thieu 3 cot nay thi KHONG the chuan hoa muc tieu va chan tran -> dung han, bao loi
+cot_bat_buoc: [site_scale, sin_elevation, tran_cong_suat]
+
+# ── Cot phu (metadata di kem, khong phai dac trung dau vao model) ──
+cot_phu:
+  [energy_generated_kwh, site_id, timestamp, energy_source, exclude_from_training,
+   outlier_group, has_complete_history_features, is_daylight]
+
+# ── Deny list: cam dua vao model (chong ro ri / da cong tuyen) ──
+deny_list:
+  # to hop tuyen tinh chinh xac cua tran_cong_suat va ky_vong
+  - con_cach_tran
+  # nhan outlier - biet truoc dong nao bat thuong la ro ri
+  - gmm_if_outlier_flag
+  - outlier_group
+  - exclude_from_training
+  - after_source_gap_steps_remaining
