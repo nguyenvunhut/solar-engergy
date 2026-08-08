@@ -1,0 +1,5 @@
+outs:
+- md5: 5c135ac5aa780ab771c0fa4fcb76eae1
+  size: 3977
+  hash: md5
+  path: model_config.json

@@ -1,0 +1,5 @@
+outs:
+- md5: c570194134c4d9d3a08b55c6b86d94c9
+  size: 2432
+  hash: md5
+  path: ket_qua.json

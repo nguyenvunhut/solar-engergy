@@ -1,0 +1,5 @@
+outs:
+- md5: 0f963c9396a6336df86f5acdb37e142d
+  size: 22555
+  hash: md5
+  path: v3_category_maps.json

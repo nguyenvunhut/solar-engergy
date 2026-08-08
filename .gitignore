@@ -327,3 +327,7 @@ data/mlmart_base/*.parquet
 
 *.pkl
 *.joblib
+
+data/model/**
+!data/model/**/
+!data/model/**/*.dvc
