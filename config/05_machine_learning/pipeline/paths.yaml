@@ -43,7 +43,14 @@ stages:
 # ── Ten file trong tung thu muc ──
 files:
   test_selected:   "{version}_test_selected.parquet"
+  # dev_selected = train + val gop lai. CHI dung cho buoc huan luyen lai mo hinh trien
+  # khai SAU KHI da chot cau hinh; TUYET DOI khong dung de cham diem validation, vi khi
+  # do val nam trong chinh tap da hoc (do da: 100% dong fold val nam trong development).
   dev_selected:    "{version}_development_selected.parquet"
+  # Hai khoa duoi dung cho quy trinh chon mo hinh: hoc tren train, cham tren val.
+  # Dong bo voi notebook 06_1/06_2/06_3 sau ban va 2026-08-09.
+  train_selected:  "{version}_train_selected.parquet"
+  val_selected:    "{version}_val_selected.parquet"
   fold_train:      "time_series_folds/fold_{n}_train_selected.parquet"
   fold_val:        "time_series_folds/fold_{n}_val_selected.parquet"
   model:           "model.pkl"
