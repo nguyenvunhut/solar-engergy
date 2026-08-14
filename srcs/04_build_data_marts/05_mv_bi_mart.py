@@ -44,8 +44,8 @@ def setup_materialized_views():
     cur = conn.cursor()
 
     sql_setup = f"""
-   -- =========================================================================
-    -- 1. MV CẤP GIỜ
+    -- =========================================================================
+    -- 1. MV CẤP GIỜ (HOURLY MEASURES)
     -- =========================================================================
     DROP MATERIALIZED VIEW IF EXISTS {_TARGET_SCHEMA}.mv_bi_mart_hourly_measures CASCADE;
 
@@ -57,11 +57,8 @@ def setup_materialized_views():
             gen.date_id,
             gen.hourly_bucket,
             gen.total_energy            AS e_hourly,
-            -- Outlier flags (đã aggregate sẵn bên trong subquery gen)
-            -- gen.rolling_outlier_flag,
             gen.gmm_if_outlier_flag,
             gen.gmm_if_outlier_reason,
-            -- gen.fill_null_algorithm,
             -- Thời tiết
             w.weather_type_id,
             w.shortwave_radiation,
@@ -87,20 +84,15 @@ def setup_materialized_views():
                 f.site_id,
                 f.geo_id,
                 f.date_id,
-                
-                -- Thực hiện lùi đúng 1 giá trị theo yêu cầu
                 CASE 
                     WHEN t.minute = 0 AND t.hour = 0 THEN 23
                     WHEN t.minute = 0 THEN t.hour - 1 
                     ELSE t.hour
                 END                                                         AS hourly_bucket,
-                
                 SUM(f.energy_generated_kwh)                                 AS total_energy,
-                -- bool_or(f.rolling_outlier_flag)                             AS rolling_outlier_flag,
                 bool_or(f.gmm_if_outlier_flag)                              AS gmm_if_outlier_flag,
                 STRING_AGG(DISTINCT f.gmm_if_outlier_reason, '; ') 
                     FILTER (WHERE f.gmm_if_outlier_flag)                   AS gmm_if_outlier_reason
-                -- MODE() WITHIN GROUP (ORDER BY f.fill_null_algorithm)        AS fill_null_algorithm
             FROM {_SOURCE_SCHEMA}.fact_solar_energy_gen f
             LEFT JOIN {_SOURCE_SCHEMA}.dim_time t ON f.time_id = t.time_id
             GROUP BY 
@@ -142,78 +134,89 @@ def setup_materialized_views():
     ),
 
     Calculated_Measures AS (
-        SELECT *, {_FIT_RATE} AS fit_rate FROM Raw_Joined
+        SELECT *, 
+            {_FIT_RATE} AS fit_rate,
+            -- Sản lượng danh định kỳ vọng ở điều kiện chuẩn STC (kWh)
+            CASE
+                WHEN shortwave_radiation >= {_MIN_RADIATION} 
+                THEN (p_stc * (shortwave_radiation / 1000.0))
+                ELSE 0
+            END AS e_stc_hourly
+        FROM Raw_Joined
     ),
 
-    -- ① Tính nhiệt độ tế bào & PR thực tế
+    -- ① Nhiệt độ Cell & PR thực tế (Chỉ tính khi có nắng >= ngưỡng)
     Efficiency_Calc AS (
         SELECT *,
             (temperature_c + (shortwave_radiation * {_NOCT_FACTOR})) AS t_cell,
             CASE
-                WHEN shortwave_radiation < {_MIN_RADIATION} THEN 0
-                ELSE e_hourly / NULLIF(p_stc * (shortwave_radiation / 1000.0), 0)
+                WHEN shortwave_radiation < {_MIN_RADIATION} THEN NULL
+                ELSE e_hourly / NULLIF(e_stc_hourly, 0)
             END AS pr_actual
         FROM Calculated_Measures
     ),
 
-    -- ② Tính suy hao nhiệt
+    -- ② Tổn thất nhiệt (Chỉ tính vào ban ngày, ban đêm trả về NULL)
     Loss_Calc AS (
         SELECT *,
             CASE
+                WHEN shortwave_radiation < {_MIN_RADIATION} THEN NULL
                 WHEN t_cell > 25 THEN (t_cell - 25) * {_TEMP_COEFF}
                 ELSE 0
             END AS loss_temp
         FROM Efficiency_Calc
     ),
 
-    -- ③ Tính PR điều chỉnh
+    -- ③ PR điều chỉnh (Ban đêm trả về NULL)
     PR_Adj_Calc AS (
         SELECT *,
             CASE
-                WHEN shortwave_radiation < {_MIN_RADIATION} THEN 0
-                ELSE ({_NOMINAL_PR} * (1 - loss_temp))
+                WHEN shortwave_radiation < {_MIN_RADIATION} THEN NULL
+                ELSE ({_NOMINAL_PR} * (1 - COALESCE(loss_temp, 0)))
             END AS pr_adjusted
         FROM Loss_Calc
     )
 
-    -- ④ Output cuối
+    -- ④ Output MV Cấp Giờ
     SELECT
-        -- === ĐỊNH DANH ===
         date_id, hourly_bucket, site_id, geo_id,
-
-        -- === LỊCH ===
         is_holiday, is_semester, is_exam, is_day,
-
-        -- === THỜI TIẾT (thô) ===
         weather_type_id,
         shortwave_radiation, temperature_c,
         cloud_cover_total, cloud_cover_low, cloud_cover_mid, cloud_cover_high,
         diffuse_solar_radiation, direct_normal_irradiance,
         wind_speed, precipitation_mm, sunshine_duration,
-
-        -- === THÔNG SỐ HỆ THỐNG ===
         p_stc, fit_rate,
-
-        -- === OUTLIER FLAGS ===
-        -- rolling_outlier_flag,
         gmm_if_outlier_flag,
         gmm_if_outlier_reason,
-        -- fill_null_algorithm,
-
-        -- === MEASURES ĐÃ TÍNH ===
         t_cell,
         loss_temp,
         pr_actual,
         pr_adjusted,
         e_hourly,
-        (p_stc * (shortwave_radiation / 1000.0) * pr_adjusted)                         AS e_expected,
-        (e_hourly - (p_stc * (shortwave_radiation / 1000.0) * pr_adjusted))             AS delta_baseline,
+        e_stc_hourly,
+
+        -- Kỳ vọng sau khi hiệu chỉnh nhiệt
+        CASE 
+            WHEN shortwave_radiation >= {_MIN_RADIATION} AND pr_adjusted IS NOT NULL 
+            THEN e_stc_hourly * pr_adjusted
+            ELSE 0 
+        END                                                                            AS e_expected,
+
+        (e_hourly - (CASE 
+            WHEN shortwave_radiation >= {_MIN_RADIATION} AND pr_adjusted IS NOT NULL 
+            THEN e_stc_hourly * pr_adjusted 
+            ELSE 0 
+        END))                                                                          AS delta_baseline,
+
         (e_hourly * fit_rate)                                                          AS estimated_revenue,
+
         CASE
-            WHEN (p_stc * (shortwave_radiation / 1000.0) * pr_adjusted) > e_hourly
-            THEN ((p_stc * (shortwave_radiation / 1000.0) * pr_adjusted) - e_hourly) * fit_rate
+            WHEN (shortwave_radiation >= {_MIN_RADIATION} AND (e_stc_hourly * pr_adjusted) > e_hourly)
+            THEN ((e_stc_hourly * pr_adjusted) - e_hourly) * fit_rate
             ELSE 0
         END                                                                            AS cost_of_underperformance,
+
         (e_hourly * {_CO2_FACTOR})                                                       AS co2_avoided_kg,
         ((e_hourly * {_CO2_FACTOR}) / {_TREES_FACTOR})                                    AS equivalent_trees_planted
 
@@ -224,7 +227,7 @@ def setup_materialized_views():
 
 
     -- =========================================================================
-    -- 2. MV CẤP NGÀY
+    -- 2. MV CẤP NGÀY (DAILY KPIS)
     -- =========================================================================
     DROP MATERIALIZED VIEW IF EXISTS {_TARGET_SCHEMA}.mv_bi_mart_daily_kpis CASCADE;
 
@@ -235,44 +238,40 @@ def setup_materialized_views():
             site_id,
             geo_id,
 
-            -- Trường phân loại
+            -- Phân loại & Hệ thống
             MAX(is_holiday::int)::boolean  AS is_holiday,
             MAX(is_semester::int)::boolean AS is_semester,
             MAX(is_exam::int)::boolean     AS is_exam,
+            MAX(p_stc)                     AS p_stc,
 
-            -- Thông số hệ thống
-            MAX(p_stc) AS p_stc,
-
-            -- Outlier: có bất kỳ giờ nào bị outlier trong ngày không
-            -- bool_or(rolling_outlier_flag) AS has_rolling_outlier,
-            bool_or(gmm_if_outlier_flag)  AS has_gmm_outlier,
+            -- Outlier
+            bool_or(gmm_if_outlier_flag)   AS has_gmm_outlier,
             STRING_AGG(DISTINCT gmm_if_outlier_reason, '; ')
                 FILTER (WHERE gmm_if_outlier_reason IS NOT NULL AND gmm_if_outlier_reason != '') AS daily_gmm_outlier_reasons,
 
-            -- Sản lượng & doanh thu
-            SUM(e_hourly)                 AS e_daily,
-            SUM(e_expected)               AS e_target_daily,
-            SUM(delta_baseline)           AS daily_delta_baseline,
-            SUM(estimated_revenue)        AS daily_revenue,
-            SUM(cost_of_underperformance) AS daily_cost_underperformance,
+            -- Tổng sản lượng
+            SUM(e_hourly)                  AS e_daily,
+            SUM(e_stc_hourly)              AS e_stc_daily,
+            SUM(e_expected)                AS e_target_daily,
+            SUM(delta_baseline)            AS daily_delta_baseline,
+            SUM(estimated_revenue)         AS daily_revenue,
+            SUM(cost_of_underperformance)  AS daily_cost_underperformance,
 
             -- Môi trường
-            SUM(co2_avoided_kg)           AS daily_co2_avoided,
-            SUM(equivalent_trees_planted) AS daily_trees_planted,
+            SUM(co2_avoided_kg)            AS daily_co2_avoided,
+            SUM(equivalent_trees_planted)  AS daily_trees_planted,
 
-            -- Thời tiết trung bình/tổng
-            AVG(temperature_c)            AS avg_temp_c,
-            AVG(cloud_cover_total)        AS avg_cloud_cover,
-            AVG(wind_speed)               AS avg_wind_speed,
-            SUM(precipitation_mm)         AS daily_precipitation,
-            SUM(shortwave_radiation)      AS daily_total_radiation,
-            SUM(sunshine_duration)        AS daily_sunshine_duration,
+            -- Thời tiết (AVG tự động bỏ qua NULL)
+            AVG(temperature_c)             AS avg_temp_c,
+            AVG(cloud_cover_total)         AS avg_cloud_cover,
+            AVG(wind_speed)                AS avg_wind_speed,
+            SUM(precipitation_mm)          AS daily_precipitation,
+            SUM(shortwave_radiation)       AS daily_total_radiation,
+            SUM(sunshine_duration)         AS daily_sunshine_duration,
 
-            -- Hiệu suất trung bình
-            AVG(pr_actual)                AS avg_pr_actual,
-            AVG(pr_adjusted)              AS avg_pr_adjusted,
-            AVG(loss_temp)                AS avg_loss_temp,
-            AVG(t_cell)                   AS avg_t_cell
+            -- Hiệu suất trung bình (Chỉ tính trên các giờ có nắng)
+            AVG(loss_temp)                 AS avg_loss_temp,
+            AVG(t_cell) FILTER (WHERE shortwave_radiation >= {_MIN_RADIATION}) AS avg_daytime_t_cell
 
         FROM {_TARGET_SCHEMA}.mv_bi_mart_hourly_measures
         GROUP BY date_id, site_id, geo_id
@@ -281,16 +280,23 @@ def setup_materialized_views():
     kpi_calc AS (
         SELECT
             *,
-            -- KPI 1: Capacity Factor
+            -- PR chuẩn gia quyền theo năng lượng ngày
+            CASE 
+                WHEN e_stc_daily > 0 THEN (e_daily / e_stc_daily) 
+                ELSE NULL 
+            END AS daily_pr_actual,
+
+            CASE 
+                WHEN e_stc_daily > 0 THEN (e_target_daily / e_stc_daily) 
+                ELSE NULL 
+            END AS daily_pr_adjusted,
+
+            -- Capacity Factor & Fulfillment
             CASE WHEN p_stc > 0 THEN e_daily / (p_stc * 24) ELSE 0 END AS capacity_factor,
-
-            -- KPI 2: Yield Fulfillment Ratio
             CASE WHEN e_target_daily > 0 THEN (e_daily / e_target_daily) ELSE 0 END AS yield_fulfillment_ratio,
-
-            -- KPI 3: Specific Yield (kWh/kWp/ngày)
             CASE WHEN p_stc > 0 THEN e_daily / p_stc ELSE 0 END AS specific_yield,
 
-            -- KPI 4: Time-Intelligence sản lượng
+            -- Time-Intelligence Sản lượng
             SUM(e_daily) OVER (
                 PARTITION BY site_id, DATE_TRUNC('week',  to_date(date_id::text, 'YYYYMMDD'))
                 ORDER BY date_id
@@ -304,7 +310,7 @@ def setup_materialized_views():
                 ORDER BY date_id
             ) AS ytd_energy,
 
-            -- KPI 5: Time-Intelligence doanh thu
+            -- Time-Intelligence Doanh thu
             SUM(daily_revenue) OVER (
                 PARTITION BY site_id, DATE_TRUNC('month', to_date(date_id::text, 'YYYYMMDD'))
                 ORDER BY date_id
@@ -325,7 +331,7 @@ def setup_materialized_views():
 
     try:
         cur.execute(sql_setup)
-        print("[Thành công] Đã đúc xong 2 Materialized Views (Cấp Giờ & Cấp Ngày)!")
+        print("[Thành công] Đã tái tạo 2 Materialized Views với logic PR chuẩn xác!")
     except Exception as e:
         print(f"[Lỗi] Khởi tạo thất bại: {e}")
     finally:
@@ -335,4 +341,3 @@ def setup_materialized_views():
 
 if __name__ == "__main__":
     setup_materialized_views()
-
