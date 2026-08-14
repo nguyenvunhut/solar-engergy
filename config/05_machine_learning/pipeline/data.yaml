@@ -1,0 +1,46 @@
+# Cau hinh tien xu ly du lieu (reindex luoi + mask outlier + tach tap).
+# Gia tri copy nguyen si tu notebook 01_reindex_mask_outlier.ipynb va 02_split_time_series.ipynb.
+
+# ── Luoi thoi gian ──
+freq_minutes: 15         # luoi san luong 15 phut
+major_gap_hours: 24      # khoang trong >= 24h coi la gap lon, khong bac cau qua
+max_lag_steps: 672       # 672 * 15p = 7 ngay - do dai lich su toi da can giu
+
+# ── Tach tap ──
+test_ratio: 0.15         # 15% cuoi (theo THOI GIAN, khong random) lam tap test niem phong
+n_splits: 5              # so fold TimeSeriesSplit tren tap development
+# expanding: tap train lon dan qua tung fold, giu het lich su (chon cai nay vi du lieu
+#            chi ~2 nam, cat bot lich su la mat mua vu).
+# sliding  : tap train co do dai co dinh, truot theo thoi gian.
+split_strategy: expanding
+sliding_train_blocks: 3  # chi dung khi split_strategy = sliding
+
+# ── Loai site ──
+# Loai han 2 site co capacity_kw KHONG dang tin (khong phai imputed - ghi that tu nguon Kaggle,
+# nhung lech qua nang so voi hanh vi thuc te, xac nhan bang doi chieu 42 site):
+#   site 19: dinh thuc te vuot tran ly thuyet (capacity_kw*0.25) toi 5,03 lan, 63,9% dong ban ngay vuot
+#   site 24: vuot 1,77 lan, 26,3% dong ban ngay vuot
+# Giu capacity_kw lam chuan cho 40 site con lai (da validate qua doi chieu fleet-wide, xem
+# docs/2026_07_30_Khu_Tre_Pha_Du_Bao_15_Phut.md). Loai han thay vi "cuu" bang transform rieng,
+# de khong lam sai lech ham muc tieu cua 40 site con lai va khong "hoc theo outlier".
+exclude_sites: [19, 24]
+
+# ── Dien gia tri thieu cho target (cascade, theo thu tu uu tien) ──
+# energy_source la cot provenance DUY NHAT cho target. Metric headline CHI duoc tinh tren
+# energy_source == 'measured' - tuyet doi khong noi long de "co them du lieu".
+energy_source_values:
+  - measured                    # do that, khong dung de tinh
+  - etl_imputed                 # ETL da dien tu truoc
+  - night_zero                  # ban dem -> 0
+  - causal_day_persistence      # lay ngay truoc cung gio
+  - causal_week_persistence     # lay tuan truoc cung gio
+  - causal_profile_median       # trung vi profile cua site theo gio
+  - fallback_zero               # het cach -> 0
+  - machine_failure_zero        # hong may -> 0
+
+# ── Thoi tiet ──
+# Weather join CHI duoc ffill (causal). TUYET DOI khong bfill - bfill keo du lieu tuong lai
+# ve qua khu = ro ri thong tin.
+weather_fill: ffill
+# Metadata tinh (capacity, panel, location) thieu thi GIU NaN, khong bia gia tri.
+metadata_fill: none

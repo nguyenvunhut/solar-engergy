@@ -1,0 +1,66 @@
+# Cau hinh huan luyen. 3 bien the loss dung CHUNG 1 bo code (stages/s08*.py) -
+# truoc day la 3 file .py 1.400 dong gan giong het nhau, chi khac dung 3 dong nay.
+
+horizon_steps: [1, 4]     # 1 = h1 (T+15p), 4 = h4 (T+60p)
+
+# ── 3 bien the loss ──
+# Ket qua thuc te tren tap test (notebook 06_x, 2026-07-31):
+#   huber a=1 : khop dinh 15p 19,9% | bien do dinh 0,916 | WAPE 21,58%
+#   mae  (l1) : khop dinh 15p 20,1% | bien do dinh 0,952 | WAPE 21,69%
+# Model vo dich chinh thuc chon tren tap VALIDATION (khong phai test): huber
+# (h1 WAPE_val 14,73% | h4 15,09%) - xem 06_4_validate_model_selection.ipynb
+losses:
+  mae:
+    objective: l1
+  huber:
+    objective: huber
+    alpha: 1.0            # delta cua Huber: cang lon cang gan MSE, cang nhay voi sai so lon
+  mse:
+    objective: mse
+
+# ── Sieu tham so mac dinh (khi KHONG co best_params.json tu Optuna) ──
+# Copy nguyen si tu tham_so_co_ban(trial=None) trong 04_x_train_*.py
+default_params:
+  n_estimators: 800
+  learning_rate: 0.05
+  num_leaves: 160
+  min_child_samples: 30
+  subsample: 0.9
+  colsample_bytree: 0.9
+
+# ── Nguon sieu tham so ──
+# Pipeline chuan KHONG chay Optuna. Neu file nay ton tai thi doc, khong thi dung
+# default_params o tren. Sinh file bang: python srcs/pipeline/actions/tune_optuna.py
+use_best_params_if_exists: true
+
+# ── Chinh sach trong so mau (sample weight) ──
+# Lay dung tu srcs/05_machine_learning/Forcasting_v3: KHONG xoa dong outlier ma dat
+# weight = 0, va xet nhom cua DONG NHAN y(T+h) chu khong phai dong dac trung.
+experiment: measured_only_headline
+# cac gia tri hop le:
+#   measured_only_headline    : measured + normal/gmm/other/multiple = 1, etl_imputed = 0
+#   measured_plus_etl_imputed : nhu tren, them etl_imputed + normal = 1
+#   zero_weight_gmm_consensus : bo gmm_if_consensus ra khoi train
+#   zero_weight_all_flagged   : bo moi nhom bi gan co ra khoi train
+#   tran_theo_du_lieu         : chi loai dong that su vuot tran_cong_suat tinh TU DU LIEU
+#
+# THU NGHIEM 1 (DA HUY 2026-07-31): tung doi sang 'tran_theo_du_lieu' vi capacity_kw metadata
+# sai o 11/42 tram. Nhung tran_cong_suat cung lech khi du lieu vao da nhiem gia tri impute sai
+# gan tran (site 19 co dong etl_imputed 43,08 kWh lap lai). QUAY VE measured_only_headline:
+# zero-weight TOAN BO physical_over_capacity vo dieu kien, de chung minh model khong hoc outlier.
+
+# THU NGHIEM 2: tang trong so vung dinh - nhan (1 + he_so * k) de ep model hoc ky vung san
+# luong cao (chua sai biet bien do ~6-12% tren ca 42 site). Dat 0.0 de tat.
+he_so_trong_so_dinh: 1.0   # thu 0.0/1.0/2.0: 1.0 can bang WAPE va bien do dinh tot nhat
+
+# ── Chuan hoa muc tieu ──
+# Model KHONG du bao thang kWh - no du bao ty le k = energy / (site_scale * sin_elevation).
+# Phai nhan nguoc dung cong thuc nay luc inference, neu khong y_pred ra toan so 0-1,5
+# trong khi y_true la kWh thuc (hang chuc).
+chuan_hoa: true
+k_target_min: 0.0
+k_target_max: 1.5
+tran_cong_suat_he_so: 1.02   # cho phep vuot tran 2% (khuyen xa may - cloud edge enhancement)
+
+# ── Cross-validation ──
+n_folds: 5

@@ -328,6 +328,13 @@ generate_ipynb.py
 # ML Mart data
 data/mlmart_base/*.parquet
 
+
+*.pkl
+*.joblib
+
+data/model/**
+!data/model/**/
+!data/model/**/*.dvc
 # Tableau dashboards
 reports/dashboards/*.twb
 reports/dashboards/*.twbx

@@ -1,0 +1,67 @@
+# Toan bo duong dan in/out cua pipeline. Truoc day hardcode rai rac trong 9 file .py
+# (moi file tu viet '../../../data/model/v3/...'), gio gom ve 1 cho.
+#
+# Moi duong dan TUONG DOI so voi goc repo (Du_An_Tot_Nghiep_v3/), core/paths.py tu
+# resolve thanh duong dan tuyet doi - khong phu thuoc thu muc dang dung.
+
+root: data/model/v3
+version: v3
+
+# ── Dau vao goc ──
+mlmart_base: data/mlmart_base/v3_final_cleaned.parquet
+# CSV raw goc (Kaggle) - dung de xac dinh dong nao DO THAT (measured) va dong nao
+# do ETL dien (etl_imputed). Khong co file nay thi khong biet provenance cua target,
+# ma toan bo metric headline deu chi tinh tren energy_source == 'measured'.
+raw_solar: data/raw/Solar_Energy_Generation.csv
+raw_cot:
+  site: SiteKey
+  timestamp: Timestamp
+  target: SolarGeneration
+
+# ── Cac stage (in ra o dau) ──
+# LUU Y: day la duong dan cua pipeline MOI. Ket qua chinh thuc cua notebook nam o
+# thu muc KHONG co hau to (06_train, 07_final_test...) - de nguyen, khong ghi de.
+# Muon so ket quat moi vs notebook thi dat output_suffix roi chay checks/compare_with_notebook.py
+# DANG DAT "_new": pipeline moi ghi ra thu muc RIENG (06_train_new, 07_final_test_new...),
+# TUYET DOI khong dung toi ket qua chinh thuc cua notebook. Chi doi ve "" khi da verify
+# xong ca 3 tang va co quyet dinh ro rang cua chu nhiem du an.
+output_suffix: "_new"
+
+stages:
+  s01_reindex:      01_reindex/v3_continuous_grid.parquet
+  s02_split:        02_split
+  s03_features:     03_1_features_time
+  s04_spatial:      03_2_features_spatial
+  s05_aggregate:    03_3_features_aggregate
+  s06_diagnostics:  04_diagnostics
+  s07_selected:     05_selected
+  s08_train:        06_train
+  s09_final_test:   07_final_test
+  s10_explain:      08_explain
+  s11_phase_lag:    09_kiem_chung_tre_pha
+
+# ── Ten file trong tung thu muc ──
+files:
+  test_selected:   "{version}_test_selected.parquet"
+  # dev_selected = train + val gop lai. CHI dung cho buoc huan luyen lai mo hinh trien
+  # khai SAU KHI da chot cau hinh; TUYET DOI khong dung de cham diem validation, vi khi
+  # do val nam trong chinh tap da hoc (do da: 100% dong fold val nam trong development).
+  dev_selected:    "{version}_development_selected.parquet"
+  # Hai khoa duoi dung cho quy trinh chon mo hinh: hoc tren train, cham tren val.
+  # Dong bo voi notebook 06_1/06_2/06_3 sau ban va 2026-08-09.
+  train_selected:  "{version}_train_selected.parquet"
+  val_selected:    "{version}_val_selected.parquet"
+  fold_train:      "time_series_folds/fold_{n}_train_selected.parquet"
+  fold_val:        "time_series_folds/fold_{n}_val_selected.parquet"
+  model:           "model.pkl"
+  model_config:    "model_config.json"
+  metrics_val:     "metrics_val.json"
+  metrics_test:    "metrics_test.json"
+  x_test:          "X_test_h{h}.parquet"
+  prediction_audit: "prediction_audit.parquet"
+
+# ── Dau ra cua action (khong nam trong pipeline chuan) ──
+actions:
+  best_params:     config/05_machine_learning/pipeline/best_params.json
+  baseline:        06_0_baseline
+  val_selection:   07_final_test/val_model_selection_check.json

@@ -115,6 +115,10 @@ ml_mart_builder = load_module(
     "pipeline_ml_mart",
     "srcs/04_build_data_marts/02_build_ml_mart.py",
 )
+mv_bi_mart_builder = load_module(
+    "pipeline_mv_bi_mart",
+    "srcs/04_build_data_marts/05_mv_bi_mart.py",
+)
 
 
 def read_yaml(path: Path) -> dict:
@@ -261,6 +265,10 @@ def run_bimarts() -> None:
     try:
         bi_mart_builder.build_bi_mart(engine)
         bi_view_builder.build_bi_views(engine)
+        # 05_mv_bi_mart truoc day khong duoc goi trong --stage all, phai chay tay.
+        # Superset/Tableau doc tu Materialized View nay, nen thieu no thi BI hien
+        # so cu du bang nen da cap nhat.
+        mv_bi_mart_builder.build_mv_bi_mart(engine)
         log.info("Build BI Marts hoàn tất")
     except Exception:
         log.exception("Build BI Marts thất bại")
@@ -309,6 +317,28 @@ def run_stage(stage_number: int, title: str, runner) -> None:
 
 def run_pipeline(stage: str, *, dry_run: bool) -> None:
     sleep_sec = _load_sleep_seconds()
+
+    if stage == "load_to_mlmarts":
+        # Chay lai tu tang load tro di. Dung khi staging/transform/imputation VAN DUNG
+        # nhung tang load hoac cac mart bi sai (vi du: bo CASE WHEN ep san luong ve 0,
+        # hoac mart duoc dung bang phien ban code cu). Tranh chay lai ca chuoi vo ich.
+        if dry_run:
+            print("\n[SKIP] load_to_mlmarts khong ho tro dry-run.")
+            return
+
+        print("\n[6/8] Buffer -> Data Warehouse")
+        run_stage(6, "Buffer -> Data Warehouse", run_warehouse)
+        print(f"... Đang nghỉ {sleep_sec}s để nhả RAM và Database Connection ...")
+        time.sleep(sleep_sec)
+
+        print("\n[7/8] Data Warehouse -> BI Marts")
+        run_stage(7, "Data Warehouse -> BI Marts", run_bimarts)
+        print(f"... Đang nghỉ {sleep_sec}s để nhả RAM và Database Connection ...")
+        time.sleep(sleep_sec)
+
+        print("\n[8/8] Data Warehouse -> ML Marts")
+        run_stage(8, "Data Warehouse -> ML Marts", run_mlmarts)
+        return
 
     if stage == "outlier_to_mlmarts":
         print("\n[4/8] Generate Outliers CSV (GMM-IF + Physical Guardrail)")
@@ -446,6 +476,7 @@ def parse_args() -> argparse.Namespace:
             "generate_outliers",
             "outlier",
             "outlier_to_mlmarts",
+            "load_to_mlmarts",
             "load",
             "bimarts",
             "mlmarts",
