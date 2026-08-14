@@ -1,3 +1,4 @@
+﻿% !TeX program = xelatex
 % =============================================================================
 %  DỰ ÁN TỐT NGHIỆP — BÁO CÁO CHÍNH (BẢN OUTLINE SỰ KIỆN)
 %  Đề tài: Phân tích Hiệu suất và Dự báo Sản lượng Hệ thống Điện Mặt Trời
@@ -8,8 +9,7 @@
 \documentclass[12pt, a4paper]{report}
 
 % ======================== PACKAGES ==========================================
-\usepackage[utf8]{inputenc}
-\usepackage[T1]{fontenc}
+\usepackage{fontspec}
 \usepackage[vietnamese]{babel}
 \usepackage{geometry}
 \geometry{top=2.5cm, bottom=2.5cm, left=3cm, right=2cm}
@@ -63,9 +63,7 @@
 }
 \lstset{style=pythonstyle}
 
-% Font - Helvetica (Sans-Serif, Modern, supports Vietnamese)
-\usepackage[scaled]{helvet}
-\renewcommand{\familydefault}{\sfdefault}
+% Font - Arial (Sans-Serif, fully supports Vietnamese on Windows/XeLaTeX)`r`n\setmainfont{Cambria}
 
 % Header / Footer
 \usepackage{fancyhdr}
@@ -164,7 +162,7 @@
 % Trang nội dung chính (Logo ở header trái, THE OUTLIERS ở header phải)
 \fancypagestyle{main}{
     \fancyhf{}
-    \fancyhead[L]{\includegraphics[height=1cm]{images/logo_fpoly.png}}
+    \fancyhead[L]{\includegraphics[height=1cm]{figures/logo_fpoly.png}}
     \fancyhead[R]{\small THE OUTLIERS}
     \fancyfoot[L]{\small Dự án Tốt nghiệp}
     \fancyfoot[R]{\small Page \thepage\ of \pageref{LastPage}}
@@ -217,7 +215,7 @@
 
     \vspace{0.5cm} % Thu nhỏ khoảng cách dưới tên trường
     % --- Logo trường Cao đẳng FPT Polytechnic ---
-    \includegraphics[width=0.38\textwidth]{images/logo_fpoly.png}
+    \includegraphics[width=0.38\textwidth]{figures/logo_fpoly.png}
 
     \vspace{0.4cm}
     {\Large \textbf{DỰ ÁN TỐT NGHIỆP}} \\[4pt]
@@ -570,7 +568,7 @@ Quá trình thiết kế kho dữ liệu (Data Warehouse - DWH) được thực 
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.85\textwidth]{images/conceptual_model.png}
+    \includegraphics[width=0.85\textwidth]{figures/conceptual_model.png}
     \caption{Sơ đồ Mô hình Dữ liệu Khái niệm (Conceptual Data Model)}
     \label{fig:conceptual_model}
 \end{figure}
@@ -598,7 +596,7 @@ Mô hình logic cụ thể hóa các thực thể thành các bảng và xác đ
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{images/logical_model.png}
+    \includegraphics[width=\textwidth]{figures/logical_model.png}
     \caption{Sơ đồ Mô hình Dữ liệu Logic (Logical Data Model)}
     \label{fig:logical_model}
 \end{figure}
@@ -608,7 +606,7 @@ Mô hình vật lý định nghĩa cách thức dữ liệu được lưu trữ 
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{images/physical_model.png}
+    \includegraphics[width=\textwidth]{figures/physical_model.png}
     \caption{Sơ đồ Mô hình Dữ liệu Vật lý (Physical Data Model)}
     \label{fig:physical_model}
 \end{figure}
@@ -848,10 +846,14 @@ CREATE TABLE fact_solar_energy_gen (
     rolling_outlier_flag BOOLEAN DEFAULT false,
     
     -- Thiet lap cac rang buoc khoa ngoai
-    CONSTRAINT FK_Gen_Site FOREIGN KEY (site_id) REFERENCES dim_solar_site(site_id),
-    CONSTRAINT FK_Gen_Geo FOREIGN KEY (geo_id) REFERENCES dim_geography(geo_id),
-    CONSTRAINT FK_Gen_Date FOREIGN KEY (date_id) REFERENCES dim_date(date_id),
-    CONSTRAINT FK_Gen_Time FOREIGN KEY (time_id) REFERENCES dim_time(time_id)
+    CONSTRAINT FK_Gen_Site FOREIGN KEY (site_id) 
+        REFERENCES dim_solar_site(site_id),
+    CONSTRAINT FK_Gen_Geo FOREIGN KEY (geo_id) 
+        REFERENCES dim_geography(geo_id),
+    CONSTRAINT FK_Gen_Date FOREIGN KEY (date_id) 
+        REFERENCES dim_date(date_id),
+    CONSTRAINT FK_Gen_Time FOREIGN KEY (time_id) 
+        REFERENCES dim_time(time_id)
 );
 \end{lstlisting}
 

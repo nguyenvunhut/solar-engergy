@@ -40,6 +40,8 @@ reports/**/*.toc
 reports/**/*.synctex.gz
 reports/**/*.fls
 reports/**/*.fdb_latexmk
+reports/Section*.pdf
+reports/report config.pdf
 reports/Section*.tex
 reports/appendix.tex
 reports/report config.tex
@@ -113,6 +115,8 @@ docs/scrum_6_business_logic_eda/2026_06_07_bao_cao_outlier_report_TanDat.tex
 # vim
 *.swp
 *.swo
+.$*.bkp
+*.bkp
 
 ## https://github.com/github/gitignore/blob/e8554d85bf62e38d6db966a50d2064ac025fd82a/Python.gitignore
 
@@ -331,3 +335,7 @@ data/mlmart_base/*.parquet
 data/model/**
 !data/model/**/
 !data/model/**/*.dvc
+# Tableau dashboards
+reports/dashboards/*.twb
+reports/dashboards/*.twbx
+reports/dashboards/* Files/
