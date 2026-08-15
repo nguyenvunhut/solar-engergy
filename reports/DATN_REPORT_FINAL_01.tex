@@ -4164,8 +4164,8 @@ Bảng~\ref{tab:ket_qua_test} là kết quả chính của toàn bộ tài liệ
 \toprule
 \textbf{Phạm vi} & \textbf{H1 (\%)} & \textbf{H4 (\%)} \\
 \midrule
-Toàn bộ                   & $17{,}12$ & $21{,}94$ \\
-Đo thật                   & $17{,}76$ & $22{,}65$ \\
+Toàn bộ                   & $17{,}10$ & $21{,}86$ \\
+Đo thật                   & $17{,}76$ & $22{,}64$ \\
 \textbf{Đo thật ban ngày} & $\mathbf{17{,}74}$ & $\mathbf{22{,}62}$ \\
 \bottomrule
 \end{tabular}
@@ -4179,7 +4179,7 @@ Cả hai tầm dùng cấu hình MAE, đúng hai cấu hình thắng trên tập
 Phạm vi chính thức gồm $229.548$ dòng ở H1 và $229.297$ dòng ở H4.
 
 Sai số phân bố không đều giữa các trạm. Ở H1, trạm tốt nhất đạt $11{,}89\%$ còn trạm kém nhất
-$28{,}32\%$, trung vị $18{,}12\%$; ở H4 khoảng này là $15{,}12\%$ đến $35{,}88\%$, trung vị
+$28{,}32\%$, trung vị $18{,}11\%$; ở H4 khoảng này là $15{,}11\%$ đến $35{,}89\%$, trung vị
 $22{,}72\%$. Chênh lệch hơn hai lần giữa hai đầu cho thấy một mô hình dùng chung cho cả $40$
 trạm vẫn để lại phần khác biệt riêng của từng trạm mà đặc trưng hiện có chưa mô tả hết.
 
@@ -4448,7 +4448,7 @@ Lundberg và Lee~\cite{lundberg2017shap} là công trình đề xuất khung th�
 
 
 
-Phạm vi tính: mô hình thắng ở tầm H1 (cấu hình MAE), chạy trên toàn bộ $478.902$ dòng của tập
+Phạm vi tính: mô hình thắng ở tầm H1 (cấu hình MAE), chạy trên toàn bộ $475.599$ dòng của tập
 test với $54$ đặc trưng. Giá trị SHAP tính trên thang mục tiêu đã chuẩn hoá $k$, không phải
 thang kWh.
 
@@ -4473,16 +4473,16 @@ giá trị SHAP. Đọc từ \texttt{08\_explain/shap\_importance.csv}.}
 \toprule
 \textbf{Hạng} & \textbf{Đặc trưng} & \textbf{SHAP trung bình} & \textbf{Nhóm} \\
 \midrule
-$1$  & \texttt{direct\_normal\_irradiance} & $0{,}0872$ & Khí tượng đo được \\
-$2$  & \texttt{ky\_vong}                  & $0{,}0851$ & Quy mô trạm \\
-$3$  & \texttt{rolling\_min\_4}            & $0{,}0799$ & Lịch sử chuỗi \\
-$4$  & \texttt{ghi\_cs\_mt}                & $0{,}0745$ & Trời quang tại $T{+}h$ \\
-$5$  & \texttt{rolling\_max\_4}            & $0{,}0671$ & Lịch sử chuỗi \\
-$6$  & \texttt{rolling\_mean\_4}           & $0{,}0565$ & Lịch sử chuỗi \\
-$7$  & \texttt{minute\_of\_day}            & $0{,}0469$ & Thời gian \\
-$8$  & \texttt{tran\_cong\_suat}           & $0{,}0391$ & Quy mô trạm \\
-$9$  & \texttt{rolling\_std\_4}            & $0{,}0334$ & Lịch sử chuỗi \\
-$10$ & \texttt{weather\_condition\_enc}    & $0{,}0219$ & Khí tượng phân loại \\
+$1$  & \texttt{direct\_normal\_irradiance} & $0{,}0869$ & Khí tượng đo được \\
+$2$  & \texttt{ky\_vong}                  & $0{,}0860$ & Quy mô trạm \\
+$3$  & \texttt{rolling\_min\_4}            & $0{,}0805$ & Lịch sử chuỗi \\
+$4$  & \texttt{ghi\_cs\_mt}                & $0{,}0755$ & Trời quang tại $T{+}h$ \\
+$5$  & \texttt{rolling\_max\_4}            & $0{,}0678$ & Lịch sử chuỗi \\
+$6$  & \texttt{rolling\_mean\_4}           & $0{,}0566$ & Lịch sử chuỗi \\
+$7$  & \texttt{minute\_of\_day}            & $0{,}0475$ & Thời gian \\
+$8$  & \texttt{tran\_cong\_suat}           & $0{,}0382$ & Quy mô trạm \\
+$9$  & \texttt{rolling\_std\_4}            & $0{,}0338$ & Lịch sử chuỗi \\
+$10$ & \texttt{weather\_condition\_enc}    & $0{,}0218$ & Khí tượng phân loại \\
 \bottomrule
 \end{tabular}
 \caption[Mười đặc trưng có tầm quan trọng tổng thể lớn nhất, đo bằng trung bình trị tuyệt đối giá trị]{Mười đặc trưng có tầm quan trọng tổng thể lớn nhất, đo bằng trung bình trị tuyệt đối
@@ -4645,7 +4645,7 @@ chính là điều mà toàn bộ quy trình được dựng ra để ngăn.
     năm khuôn viên, nên dữ liệu khí tượng bị nhân bản giữa các trạm cùng khuôn viên; số mẫu
     thời tiết độc lập thực chất là năm.
     \item \textbf{Sai số phân bố không đều giữa các trạm}, từ $11{,}89\%$ tới $28{,}32\%$ ở
-    tầm H1, và $15{,}12\%$ tới $35{,}88\%$ ở tầm H4. Mô hình dùng chung chưa mô tả hết phần khác
+    tầm H1, và $15{,}11\%$ tới $35{,}89\%$ ở tầm H4. Mô hình dùng chung chưa mô tả hết phần khác
     biệt riêng của từng trạm.
     \item \textbf{Độ trễ pha còn tồn tại ở mức thấp}: trung vị $+15$ phút, và $32$ trên $40$
     trạm nghiêng về phía trễ.
