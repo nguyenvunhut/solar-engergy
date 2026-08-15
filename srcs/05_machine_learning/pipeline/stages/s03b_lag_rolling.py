@@ -59,8 +59,42 @@ def add_lag_rolling_features(df: pd.DataFrame, cfg: Cfg) -> pd.DataFrame:
             out[cot] = gia_tri.reset_index(level=0, drop=True)
             out.loc[~hop_le, cot] = np.nan
 
+    out = them_pv_clr_lonij(out, cfg)
+
     cot_target = [c for c in out.columns if c.startswith(("lag_", "rolling_"))]
     out["has_complete_history_features"] = ~out[cot_target].isna().any(axis=1)
+    return out
+
+
+def them_pv_clr_lonij(df: pd.DataFrame, cfg: Cfg) -> pd.DataFrame:
+    """Mau so chuan hoa clear-sky theo dung dinh nghia cua Lonij et al. (2012).
+
+    Voi moi tram, lay phan vi 80 cua san luong do duoc tai CUNG KHUNG GIO trong ngay,
+    tinh tren 15 ngay LIEN TRUOC. shift(1) truoc khi truot nen chi nhin ve qua khu,
+    khong dung du lieu cua chinh ngay dang xet.
+
+    Cot nay KHONG duoc dua vao mo hinh (nam trong deny_list): no la thang do cua chinh
+    muc tieu. Sinh ra de con doi chieu hai mau so chuan hoa, va de pipeline .py co cung
+    tap cot voi notebook 03_1 - thieu no thi bang cham diem dac trung lech thu hang.
+    """
+    phan_vi = float(cfg.features.get("phan_vi_lonij", 0.80))
+    so_ngay = int(cfg.features.get("so_ngay_lonij", 15))
+
+    out = df.sort_values([SITE_COL, TIMESTAMP_COL]).copy()
+    ngay = out[TIMESTAMP_COL].dt.normalize()
+    phan = []
+    for _, g in out.groupby(SITE_COL, sort=False):
+        idx = g.index
+        bang = pd.DataFrame(
+            {"ngay": ngay.loc[idx], "khung": g["minute_of_day"], "gt": g[TARGET_COL]}
+        ).pivot_table(index="ngay", columns="khung", values="gt", aggfunc="first")
+        truot = bang.shift(1).rolling(so_ngay, min_periods=so_ngay).quantile(phan_vi)
+        tra = truot.stack(future_stack=True)
+        khoa = pd.MultiIndex.from_arrays(
+            [ngay.loc[idx].to_numpy(), g["minute_of_day"].to_numpy()]
+        )
+        phan.append(pd.Series(tra.reindex(khoa).to_numpy(), index=idx))
+    out["pv_clr_lonij"] = pd.concat(phan).reindex(out.index)
     return out
 
 

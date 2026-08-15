@@ -14,12 +14,12 @@ from __future__ import annotations
 
 import gc
 
-import numpy as np
-import pandas as pd
-
 from core.columns import SITE_COL, TARGET_COL, TIMESTAMP_COL
 from core.config import Cfg
 from core.io import cot_co_san, write_json
+import numpy as np
+import pandas as pd
+
 from stages.s04a_solar_geometry import add_solar_geometry_features
 
 TEN_FILE_QUY_MO = "quy_mo_tram.json"
@@ -36,7 +36,9 @@ TEN_FILE_QUY_MO = "quy_mo_tram.json"
 NGUONG_SIN_ELEVATION = 0.1736
 
 
-def tinh_quy_mo_tu_train(duong_train, cfg: Cfg, thu_muc_ra) -> dict:
+def tinh_quy_mo_tu_train(
+    duong_train, cfg: Cfg, thu_muc_ra, ten_file: str | None = None
+) -> dict:
     """Tinh site_scale / tran_cong_suat / cs_factor. CHI tren tap train."""
     q_scale = float(cfg.features.get("quantile_scale", 0.99))
     q_tran = float(cfg.features.get("quantile_tran", 0.999))
@@ -82,7 +84,7 @@ def tinh_quy_mo_tu_train(duong_train, cfg: Cfg, thu_muc_ra) -> dict:
         print("      [CANH BAO] Thieu cot de tinh cs_factor, dung 1.0 cho moi tram.")
 
     thu_muc_ra.mkdir(parents=True, exist_ok=True)
-    write_json(thong_ke, thu_muc_ra / TEN_FILE_QUY_MO)
+    write_json(thong_ke, thu_muc_ra / (ten_file or TEN_FILE_QUY_MO))
     return thong_ke
 
 

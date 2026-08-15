@@ -68,7 +68,7 @@ def run_s03(cfg: Cfg | None = None):
     del tr, va
     gc.collect()
 
-    print("\n[3/3] 5 fold cross-validation")
+    print(f"\n[3/3] {int(cfg.data['n_splits'])} fold cross-validation")
     thu_muc_fold = vao / "time_series_folds"
     thu_muc_ra_fold = ra / "time_series_folds"
     thu_muc_ra_fold.mkdir(parents=True, exist_ok=True)

@@ -26,6 +26,7 @@ KHONG GHI DE KET QUA CU: ghi vao thu muc rieng 08_baseline_prophet_test/.
 from __future__ import annotations
 
 import argparse
+import json
 import sys
 import time
 from pathlib import Path
@@ -46,6 +47,35 @@ RA = GOC_REPO / "data/model/v3/08_baseline_prophet_test"
 
 BUOC_PHUT = 15  # luoi 15 phut
 
+# Tham so chuan hoa — DOC TU model_config.json cua LightGBM, khong viet lai bang tay.
+# Hai mo hinh phai dung DUNG cung mot cong thuc thi so sanh moi co nghia.
+CAU_HINH_MODEL = GOC_REPO / "data/model/v3/06_train/huber/h1/model_config.json"
+K_TARGET_MAX = 1.5        # train.yaml: k_target_max
+TRAN_HE_SO = 1.02         # train.yaml: tran_cong_suat_he_so
+
+
+def tham_so_chuan_hoa() -> dict:
+    """Lay dung bo tham so chuan hoa ma LightGBM dang dung."""
+    c = json.loads(CAU_HINH_MODEL.read_text(encoding="utf-8"))
+    return {
+        "quy_mo": c["cot_quy_mo"],          # site_scale
+        "sin_elev": c["cot_sin_elev"],      # sin_elevation
+        "tran": c["cot_tran"],              # tran_cong_suat
+        "eps": float(c.get("eps_elev", 0.05)),
+    }
+
+
+def giai_chuan_hoa(k, quy_mo, sin_elev, tran, eps) -> np.ndarray:
+    """Nhan nguoc k -> kWh, DUNG y cong thuc LightGBM dung o s09b.
+
+        y = clip(k, 0, 1.5) * site_scale * max(sin_elev, eps)
+        y = min(y, tran_cong_suat * 1.02)
+        y = 0  khi sin_elev <= eps        <- ban dem tu ve 0, khong phai chan tay
+    """
+    y = np.clip(k, 0.0, K_TARGET_MAX) * quy_mo * np.maximum(sin_elev, eps)
+    y = np.minimum(y, tran * TRAN_HE_SO)
+    return np.where(sin_elev <= eps, 0.0, y)
+
 
 def wape(y_true: np.ndarray, y_pred: np.ndarray) -> float:
     """WAPE = tong |sai so| / tong |thuc te|, don vi %."""
@@ -60,19 +90,64 @@ def nap_du_lieu(horizons: list[int]) -> tuple[pd.DataFrame, pd.DataFrame]:
     'nhan tai T+h cung phai la so do that' - vi cham mot du bao bang mot nhan do ETL
     bia ra thi con so khong con do nang luc du bao nua.
     """
+    ts = tham_so_chuan_hoa()
     dev = pd.read_parquet(
-        DEV, columns=["site_id", "timestamp", "energy_generated_kwh", "energy_source"]
+        DEV,
+        columns=["site_id", "timestamp", "energy_generated_kwh", "energy_source",
+                 "is_daylight", ts["quy_mo"], ts["sin_elev"]],
     )
-    dev = dev[dev["energy_source"] == "measured"]
-    dev = dev.rename(columns={"timestamp": "ds", "energy_generated_kwh": "y"})
+    # ── PROPHET HOC TREN MUC TIEU CHUAN HOA, DUNG NHU LIGHTGBM ──────────────────
+    #
+    # VI SAO PHAI LAM THE. LightGBM khong du bao kWh tho — no du bao ty le
+    #     k = energy / (site_scale * sin_elevation)
+    # roi moi nhan nguoc ra kWh. Nho vay phan HINH HOC MAT TROI duoc xu ly bang vat
+    # ly, mo hinh chi phai hoc phan bien dong con lai, va ban dem tu ve 0 vi
+    # sin_elevation ~ 0.
+    #
+    # Ban truoc bat Prophet du bao THANG kWh tho. No phai tu hoc ca nhip moc/lan
+    # bang chuoi Fourier tron — thu ve nguyen tac khong dung duoc canh sac. Ket qua
+    # do tren tap test: trang thai 18:30 tram tat han (thuc te 0.000, LightGBM
+    # 0.000) nhung Prophet van bao 3.980 va con "ro" toi 20:45.
+    #
+    # Do la HAI BAI TOAN KHAC DO KHO, khong phai hai mo hinh cung dieu kien. Cho mot
+    # ben cong cu vat ly roi bat ben kia lam tay khong thi so sanh khong con nghia.
+    #
+    # Cach lam nay cung la chuan cua nganh: du bao mat troi lam tren chi so chuan hoa
+    # chu khong tren cong suat tho — xem Lauret et al. (2022), "Solar Forecasts Based
+    # on the Clear Sky Index or the Clearness Index", DOI 10.3390/solar2040026, chinh
+    # la bai bao cao da trich dan.
+    #
+    # Chi giu dong BAN NGAY co so do that: dung tap ma LightGBM duoc hoc. Ban dem
+    # khong can hoc nua vi phep nhan nguoc da ep ve 0.
+    se = dev[ts["sin_elev"]].to_numpy(float)
+    giu = (
+        (dev["energy_source"] == "measured")
+        & dev["is_daylight"].fillna(False).astype(bool)
+        & (se > ts["eps"])
+        & (dev[ts["quy_mo"]] > 0)
+    )
+    dev = dev[giu].copy()
+    dev["k"] = (dev["energy_generated_kwh"]
+                / (dev[ts["quy_mo"]] * np.maximum(dev[ts["sin_elev"]], ts["eps"])))
+    dev["k"] = dev["k"].clip(0.0, K_TARGET_MAX)
+    dev = dev.rename(columns={"timestamp": "ds", "k": "y"})
 
     au = pd.read_parquet(AUDIT)
-    goc = pd.read_parquet(TEST, columns=["site_id", "timestamp", "energy_source"])
+    goc = pd.read_parquet(
+        TEST,
+        columns=["site_id", "timestamp", "energy_source",
+                 ts["quy_mo"], ts["sin_elev"], ts["tran"]],
+    )
     au = au.merge(goc.rename(columns={"energy_source": "src_goc"}),
                   on=["site_id", "timestamp"], how="left")
     au = au.sort_values(["site_id", "timestamp"]).reset_index(drop=True)
     for h in horizons:
         au[f"src_nhan_h{h}"] = au.groupby("site_id")["src_goc"].shift(-h)
+        # Dai luong de nhan nguoc phai lay tai MOC MUC TIEU T+h, khong phai tai T.
+        # sin_elevation la dai luong thien van tinh truoc duoc nen dung o T da biet
+        # chinh xac gia tri tai T+h — khong phai leakage.
+        for c in (ts["sin_elev"], ts["quy_mo"], ts["tran"]):
+            au[f"{c}_mt_h{h}"] = au.groupby("site_id")[c].shift(-h)
     return dev[["site_id", "ds", "y"]], au
 
 
@@ -122,6 +197,7 @@ def main() -> int:
 
     RA.mkdir(parents=True, exist_ok=True)
     print(f"Doc du lieu... (dev={DEV.name}, audit={AUDIT.name})")
+    ts = tham_so_chuan_hoa()
     dev, au = nap_du_lieu(args.horizons)
     sites = sorted(au["site_id"].unique())
     if args.gioi_han_site:
@@ -143,9 +219,16 @@ def main() -> int:
     for i, s in enumerate(sites, 1):
         dv = dev[dev["site_id"] == s]
         au_s = au[au["site_id"] == s]
+        # Du bao tai MOI moc muc tieu cua tram, KHONG chi cac dong duoc cham diem.
+        #
+        # Ban dau chi lay moc trong mask cham diem, khien cot prophet_h* bi rong o moi
+        # dong ngoai pham vi cham — ve len dashboard thi duong Prophet DUT QUANG tung
+        # doan, trong khong ra gi cho mot mo hinh doi chung.
+        # Cham diem va ve la hai viec khac nhau: cham thi phai loc chat, ve thi phai
+        # lien mach. Mask van duoc ap nguyen ven o buoc tinh chi so ben duoi.
         moc = pd.DatetimeIndex(sorted({
             t for h in args.horizons
-            for t in au_s.loc[can[h][au_s.index], f"ds_muc_tieu_h{h}"].dropna()
+            for t in (au_s["timestamp"] + pd.Timedelta(minutes=BUOC_PHUT * h)).dropna()
         }))
         try:
             du_bao = du_bao_1_site(dv, moc)
@@ -157,12 +240,26 @@ def main() -> int:
             continue
         ghi = {"site_id": s, "n_train": len(dv)}
         for h in args.horizons:
+            # Ghi du bao cho MOI dong cua tram -> duong ve lien mach tren dashboard.
+            moc_h = au_s["timestamp"] + pd.Timedelta(minutes=BUOC_PHUT * h)
+            # Prophet tra ve k (ty le chuan hoa). Nhan nguoc ra kWh bang DUNG cong
+            # thuc LightGBM dung, voi dai luong lay tai moc muc tieu T+h.
+            k = du_bao.reindex(moc_h).to_numpy(float)
+            gia_tri = giai_chuan_hoa(
+                k,
+                au_s[f'{ts["quy_mo"]}_mt_h{h}'].to_numpy(float),
+                au_s[f'{ts["sin_elev"]}_mt_h{h}'].to_numpy(float),
+                au_s[f'{ts["tran"]}_mt_h{h}'].to_numpy(float),
+                ts["eps"],
+            )
+            au.loc[au_s.index, f"prophet_h{h}"] = gia_tri
+
+            # Chi so thi CHI tinh tren cac dong trong pham vi cham diem.
             idx = au_s.index[can[h][au_s.index]]
             if len(idx) == 0:
                 continue
             yt = au.loc[idx, f"y_true_h{h}"].to_numpy(float)
-            yp = du_bao.reindex(au.loc[idx, f"ds_muc_tieu_h{h}"]).to_numpy(float)
-            au.loc[idx, f"prophet_h{h}"] = yp
+            yp = au.loc[idx, f"prophet_h{h}"].to_numpy(float)
             ok = ~np.isnan(yp)
             ghi[f"n_test_h{h}"] = int(ok.sum())
             ghi[f"wape_prophet_h{h}"] = round(wape(yt[ok], yp[ok]), 4)

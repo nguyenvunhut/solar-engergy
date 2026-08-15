@@ -4,11 +4,11 @@
 # Moi duong dan TUONG DOI so voi goc repo (Du_An_Tot_Nghiep_v3/), core/paths.py tu
 # resolve thanh duong dan tuyet doi - khong phu thuoc thu muc dang dung.
 
-root: data/model/v3
-version: v3
+root: data/model/v4
+version: v4
 
 # ── Dau vao goc ──
-mlmart_base: data/mlmart_base/v3_final_cleaned.parquet
+mlmart_base: data/mlmart_base/v4_final_cleaned.parquet
 # CSV raw goc (Kaggle) - dung de xac dinh dong nao DO THAT (measured) va dong nao
 # do ETL dien (etl_imputed). Khong co file nay thi khong biet provenance cua target,
 # ma toan bo metric headline deu chi tinh tren energy_source == 'measured'.
@@ -28,7 +28,7 @@ raw_cot:
 output_suffix: "_new"
 
 stages:
-  s01_reindex:      01_reindex/v3_continuous_grid.parquet
+  s01_reindex:      01_reindex/v4_continuous_grid.parquet
   s02_split:        02_split
   s03_features:     03_1_features_time
   s04_spatial:      03_2_features_spatial

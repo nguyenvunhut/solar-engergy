@@ -65,6 +65,30 @@ def khoi_tao_provenance(df: pd.DataFrame) -> pd.DataFrame:
     for cot, gia_tri in (("gmm_if_outlier_flag", False), ("gmm_if_outlier_reason", "")):
         if cot not in out.columns:
             out[cot] = gia_tri
+    return danh_dau_zero_with_high_radiation(out)
+
+
+def danh_dau_zero_with_high_radiation(df: pd.DataFrame) -> pd.DataFrame:
+    """Loai dong san luong = 0 trong khi buc xa > 100 W/m2.
+
+    Cam bien bao dang nang ma cong to bao khong phat mot chut nao: hoac inverter dung,
+    hoac phep do sai. Du la nguyen nhan nao thi dong do cung khong mo ta quan he
+    buc xa -> san luong, de nguyen la day mo hinh hoc rang trong dieu kien nang van co
+    the ra 0.
+
+    Notebook 01_reindex_mask_outlier cell 4 co luat nay tu dau; pipeline .py thi thieu
+    han. Hau qua do duoc tren bo v4: 10.867 dong le ra bi loai lai duoc dua vao huan
+    luyen, lam ma tran train lech 5 dong va WAPE kiem dinh lech toi 0,14 diem.
+    """
+    if not {"shortwave_radiation", "energy_generated_kwh"} <= set(df.columns):
+        return df
+    out = df.copy()
+    m = (out["energy_generated_kwh"] == 0) & (out["shortwave_radiation"] > 100)
+    out.loc[m, ["exclude_from_training", "exclude_reason"]] = [
+        True, "ZERO_WITH_HIGH_RADIATION"
+    ]
+    print(f"  ZERO_WITH_HIGH_RADIATION: loai {int(m.sum()):,} dong "
+          f"(san luong = 0 nhung buc xa > 100 W/m2)")
     return out
 
 

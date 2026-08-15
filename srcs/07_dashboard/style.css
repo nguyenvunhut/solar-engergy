@@ -14,7 +14,7 @@ html, body, .main, [data-testid="stAppViewContainer"], [data-testid="stMain"] {
 }
 .stApp { background: #F4F5FA; color: #1F2937; }
 section[data-testid="stSidebar"] { background: #FFFFFF !important; border-right: 1px solid #E4E4F0; }
-.block-container { padding-top: 1.35rem; padding-bottom: 2rem; max-width: 100% !important; padding-left: 2.2rem; padding-right: 2.2rem; }
+.block-container { padding-top: 3.2rem; padding-bottom: 2rem; max-width: 100% !important; padding-left: 2.2rem; padding-right: 2.2rem; }
 
 /* Do bong + vien cho MOI container(border=True) tren toan bo dashboard - dong bo
    tat ca trang (Home/TimeSeries/PhaseLag/SHAP), giong the BI tools that (Tableau/
@@ -58,3 +58,24 @@ div[data-testid="stVerticalBlockBorderWrapper"]:hover {
 .kpi-note { color: #667085; font-size: 0.72rem; margin-top: 2px; }
 .kpi-note.up { color: #16A34A; font-weight: 600; }
 .kpi-note.down { color: #DC2626; font-weight: 600; }
+
+/* ── Dai header bao cao (kieu Power BI / Tableau) ─────────────────────────────
+   Logo nam TRONG khung bao cao chu khong tren thanh sidebar: khi chup man hinh vung
+   noi dung hoac xuat PDF thi logo di theo, giong cach Power BI dat logo o dai tieu de. */
+.hdr-title {
+  font-size: 1.5rem; font-weight: 750; color: #1F2937;
+  line-height: 1.3; margin: 0; text-align: center;
+}
+.hdr-sub {
+  font-size: 0.85rem; color: #667085; margin-top: 4px; text-align: center;
+}
+.hdr-badge {
+  display: inline-block; font-size: 0.72rem; font-weight: 650; color: #0E7490;
+  background: #ECFEFF; border: 1px solid #A5F3FC;
+  padding: 5px 11px; border-radius: 999px; white-space: nowrap;
+}
+/* Duong ke cam FPT ngan cach header voi phan noi dung */
+.hdr-rule {
+  height: 3px; margin: 14px 0 22px 0; border-radius: 2px;
+  background: linear-gradient(90deg, #F58220 0%, #F58220 18%, #E5E7EB 18%, #E5E7EB 100%);
+}

@@ -29,6 +29,7 @@ from core.columns import (
 from core.context import Ctx
 from core.io import write_csv, write_json, write_parquet
 from core.metrics import PHAM_VI_CHINH_THUC
+from core.target import nguong_cat
 
 # Cai dat chay may, khong phai sieu tham so mo hinh - de ngoai model_params cho khop
 # notebook (notebook cung loc dung 3 khoa device/gpu_platform_id/gpu_device_id).
@@ -73,6 +74,10 @@ def ghi_model(ctx: Ctx) -> None:
         "cot_sin_elev": "sin_elevation",
         "cot_tran": "tran_cong_suat",
         "eps_elev": float(ctx.cfg.features["eps_elev"]),
+        # Nguong cat muc tieu, suy tu phan vi cua k tren tap train. Notebook 06 ghi khoa
+        # nay va stage s09 doc lai de cham diem bang DUNG nguong da train; thieu no thi
+        # khong ai kiem duoc hai ben co cat cung mot muc hay khong.
+        "clip_k": float(nguong_cat(ctx.cfg)),
         "model_params": {k: v for k, v in ctx.best_params.items() if k not in _KHOA_GPU},
     })
     # KHONG them khoa nao khac vao day (truoc co 'train_tren_gpu' - da bo): notebook
@@ -86,12 +91,15 @@ def ghi_metrics(ctx: Ctx) -> None:
 
     s09 doc dung file nay de chon mo hinh vo dich, roi moi mo tap test 1 lan duy nhat.
 
-    CON SO GHI RA LAY THEO CACH CUA NOTEBOOK 06_4, khong phai cach cua s08c. Ly do day du
-    o stages/s08e_metrics_val.py: trong bo notebook co hai dinh nghia tap validation, va
-    06_4 chay sau cung nen chinh no ghi de len file nay - do la ban ma notebook 07 doc de
-    chon mo hinh. Muon metrics_val.json khop notebook thi phai tai lap dung ban do.
-    Con so cua s08c (tinh dung tren pham vi da train) van duoc in ra log va dua vao
-    ket_qua_{h}.json de doi chieu.
+    CON SO GHI RA lay tu ctx.metrics_val, tuc cham tren TAP VALIDATION THAT
+    (v4_val_selected) do s08c.doc_val_that() nap.
+
+    Truoc day cho nay goi stages/s08e_metrics_val.tinh_metrics_val_06_4(), tai lap
+    load_val_folds() cua notebook 06_4: gop 3 fold validation, khong bo site 19/24,
+    khong loc weight. Ban notebook do DA BI THAY: 06_4 bay gio dung load_val_holdout().
+    Ba fold validation nam trong development ma mo hinh cuoi lai hoc ca development, nen
+    cach cu cham tren bai DA HOC va cho con so lac quan hon - do tren bo v4: 779.099 dong
+    voi WAPE h4 26,09% so voi 272.569 dong va 26,97% cua tap validation that.
     """
     ctx.bat_buoc_co("model")
     d = ctx.thu_muc_ra
@@ -103,18 +111,16 @@ def ghi_metrics(ctx: Ctx) -> None:
             "Khong duoc ghi metrics_val.json tu so lieu test (day la loi ro ri cua ban cu)."
         )
 
-    from stages.s08e_metrics_val import tinh_metrics_val_06_4
-
-    m = tinh_metrics_val_06_4(ctx)
+    m = ctx.metrics_val
     write_json({
         "horizon_steps": int(ctx.horizon_steps),
         "loss_name": ctx.loss_name,
         "feature_set_name": "",
-        PHAM_VI_CHINH_THUC: m["measured_daylight"],
+        PHAM_VI_CHINH_THUC: m[PHAM_VI_CHINH_THUC],
         "all": m["all"],
     }, d / ctx.paths.file("metrics_val"))
-    print(f"metrics_val.json (cach notebook 06_4): WAPE = "
-          f"{m['measured_daylight']['wape']:.4f}% tren {m['measured_daylight']['n']:,} dong")
+    print(f"metrics_val.json (tap validation that): WAPE = "
+          f"{m[PHAM_VI_CHINH_THUC]['wape']:.4f}% tren {m[PHAM_VI_CHINH_THUC]['n']:,} dong")
 
 
 def ghi_bao_cao(ctx: Ctx, val_h) -> None:

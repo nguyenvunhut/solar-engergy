@@ -10,8 +10,8 @@ BA NGUYEN TAC SAU LAN REFACTOR 2026-08-09
    theo ca logic nhan nguoc chuan hoa k_target -> kWh. Logic do bi lap lai o day
    va co the lech voi pipeline that ma khong ai phat hien; da bo han.
 
-2. Chi mot nguon chinh thuc: 07_final_test - mo hinh vo dich Huber, duoc chon
-   tren tap VALIDATION, cham diem tren tap test niem phong. Ban cu khai bao 30
+2. Chi mot nguon chinh thuc: 07_final_test - model duoc chon tu validation,
+   cham diem tren tap test niem phong. Ban cu khai bao 30
    hang duong dan, trong do 16 tro toi thu muc thi nghiem da xoa - da bo het.
 
 3. Prophet la mo hinh doi chung duy nhat, doc tu 08_baseline_prophet_test - noi
@@ -29,7 +29,11 @@ import pandas as pd
 import streamlit as st
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
-DATA_DIR = PROJECT_ROOT / "data" / "model" / "v3"
+
+# Doi phien ban bang bien moi truong, vi du: DASHBOARD_VERSION=v3 streamlit run ...
+# Mac dinh v3 de khong doi hanh vi cua nhung phien dang mo.
+VERSION = os.environ.get("DASHBOARD_VERSION", "v4")
+DATA_DIR = PROJECT_ROOT / "data" / "model" / VERSION
 
 # ── Nguon chinh thuc duy nhat ────────────────────────────────────────────────
 FINAL_DIR = DATA_DIR / "07_final_test"
@@ -43,7 +47,7 @@ PROPHET_BY_SITE = PROPHET_DIR / "prophet_test_by_site.csv"
 PROPHET_SUMMARY = PROPHET_DIR / "prophet_test_summary.json"
 
 # ── Dac trung tap test (dung cho outlier_group va phan What-if) ──────────────
-TEST_SELECTED = DATA_DIR / "05_selected" / "v3_test_selected.parquet"
+TEST_SELECTED = DATA_DIR / "05_selected" / f"{VERSION}_test_selected.parquet"
 SELECTED_FEATURES = DATA_DIR / "05_selected" / "selected_features.json"
 SHAP_DIR = DATA_DIR / "08_explain"
 
@@ -61,7 +65,7 @@ GRID_COLOR = "#D9DEE7"
 # ══════════════════════════════════════════════════════════════════════════════
 @st.cache_data(ttl=60)
 def load_prediction_audit() -> pd.DataFrame:
-    """Ket qua mo hinh vo dich tren tap test niem phong."""
+    """Ket qua model duoc chon tren tap test niem phong."""
     if not PREDICTION_AUDIT.exists():
         return pd.DataFrame()
     df = pd.read_parquet(PREDICTION_AUDIT)
@@ -102,8 +106,8 @@ def load_prophet_by_site() -> pd.DataFrame:
 def load_best_loss() -> dict:
     """best_loss.json - ghi ro mo hinh nao thang va thang tren TAP NAO.
 
-    Quan trong khi trinh bay: viec chon Huber duoc quyet dinh HOAN TOAN tren tap
-    validation, tap test khong tham gia vao quyet dinh nay.
+    Quan trong khi trinh bay: loss duoc chon HOAN TOAN tren tap validation, tap
+    test khong tham gia vao quyet dinh nay.
     """
     if not BEST_LOSS.exists():
         return {}

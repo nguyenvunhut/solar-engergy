@@ -59,7 +59,14 @@ he_so_trong_so_dinh: 1.0   # thu 0.0/1.0/2.0: 1.0 can bang WAPE va bien do dinh 
 # trong khi y_true la kWh thuc (hang chuc).
 chuan_hoa: true
 k_target_min: 0.0
+# Tran dung khi CHAM DIEM (nhan nguoc k_pred ve kWh). Notebook 06_4 dung dung 1.5 o
+# buoc nay nen giu nguyen de metrics_val.json hai ben khop nhau.
 k_target_max: 1.5
+# Nguong cat MUC TIEU HUAN LUYEN thi KHONG viet cung: suy tu phan vi cua k tren tap
+# train, giong notebook 06 (CLIP_K = None -> tinh_clip_tu_train). Tren bo v4 gia tri
+# thu duoc la 1,3764. Truoc day pipeline cat luon o 1.5 nen train tren mot muc tieu
+# khac han notebook.
+clip_phan_vi: 0.99
 tran_cong_suat_he_so: 1.02   # cho phep vuot tran 2% (khuyen xa may - cloud edge enhancement)
 
 # ── Cross-validation ──

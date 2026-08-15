@@ -39,6 +39,24 @@ def compute_metrics(yt, yp) -> dict:
     }
 
 
+def _cot_loc(df: pd.DataFrame, ten_goc: str) -> pd.Series | None:
+    """Tra ve cot dung de loc pham vi, UU TIEN ban tai T+h (tien to nhan_).
+
+    VI SAO: nhan la y(T+h), nen "do that ban ngay" phai xet dong T+h chu khong phai
+    dong dac trung tai T. Ban cu loc theo cot tai T nen van dem ca nhung dong ma NHAN
+    do buoc dien khuyet ETL sinh ra. Do da: sai lech +0,11 diem WAPE o h1 va +0,34 o h4
+    tren tap test (2026-08-09). them_muc_tieu() sinh san cac cot nhan_* nen o day chi
+    can uu tien chung; neu khung khong co (vi du du lieu ngoai pipeline) thi lui ve
+    cot tai T nhu cu de khong vo code goi.
+    """
+    ten_nhan = f"nhan_{ten_goc}"
+    if ten_nhan in df.columns:
+        return df[ten_nhan]
+    if ten_goc in df.columns:
+        return df[ten_goc]
+    return None
+
+
 def metrics_3_pham_vi(df: pd.DataFrame) -> dict:
     """Ba pham vi: all / measured / measured_daylight.
 
@@ -49,16 +67,18 @@ def metrics_3_pham_vi(df: pd.DataFrame) -> dict:
     yp = df[PRED_COL].values
     res = {"all": compute_metrics(yt, yp)}
 
+    cot_nguon = _cot_loc(df, SOURCE_COL)
     m = (
-        (df[SOURCE_COL] == "measured").values
-        if SOURCE_COL in df.columns
+        (cot_nguon == "measured").to_numpy()
+        if cot_nguon is not None
         else np.ones(len(df), bool)
     )
     if m.sum():
         res["measured"] = compute_metrics(yt[m], yp[m])
 
-    if DAYLIGHT_COL in df.columns:
-        md = m & df[DAYLIGHT_COL].fillna(False).astype(bool).values
+    cot_ngay = _cot_loc(df, DAYLIGHT_COL)
+    if cot_ngay is not None:
+        md = m & cot_ngay.fillna(False).astype(bool).to_numpy()
         if md.sum():
             res[PHAM_VI_CHINH_THUC] = compute_metrics(yt[md], yp[md])
     return res

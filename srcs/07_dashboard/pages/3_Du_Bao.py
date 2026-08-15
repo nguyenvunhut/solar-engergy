@@ -2,9 +2,9 @@
 
 VI SAO TACH RIENG MOT TRANG (khong nhet vao Time Series hay SHAP)
 -----------------------------------------------------------------
-Trang Time Series toan so DO DUOC tren tap test (WAPE 17,64%, R² 0,9319). Dat du
-bao 14 ngay canh do thi nguoi xem se doc 17,64% thanh "do chinh xac cua du bao 14
-ngay" — SAI, vi de quy tich luy sai so. Tron "da do duoc" voi "se xay ra" tren cung
+Trang Time Series toan so DO DUOC tren tap test. Dat du bao 14 ngay canh do thi
+nguoi xem se doc KPI mot buoc thanh "do chinh xac cua du bao 14 ngay" — SAI, vi de
+quy tich luy sai so. Tron "da do duoc" voi "se xay ra" tren cung
 mot trang la cho de hieu nham nhat.
 
 Du bao va What-if di chung vi CUNG DUNG MOT LAN KEO THOI TIET Open-Meteo. Tach ra
@@ -17,8 +17,8 @@ import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 
-from dashboard_common import load_shared_css
-from dashboard_data import ACTUAL_COLOR, GRID_COLOR, PRED_COLOR, PROPHET_COLOR
+from dashboard_common import header_bao_cao, load_shared_css
+from dashboard_data import DATA_DIR, ACTUAL_COLOR, GRID_COLOR, PRED_COLOR, PROPHET_COLOR, load_best_loss
 
 load_shared_css()
 
@@ -32,8 +32,8 @@ BIEN_THOI_TIET = {
 def style_fig(fig: go.Figure, height: int = 360) -> go.Figure:
     fig.update_layout(
         template="plotly_white", paper_bgcolor="#FFFFFF", plot_bgcolor="#FFFFFF",
-        height=height, margin=dict(l=12, r=12, t=46, b=18),
-        legend=dict(orientation="h", y=1.12, x=0),
+        height=height, margin=dict(l=12, r=12, t=88, b=18),
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, x=0),
         xaxis=dict(gridcolor=GRID_COLOR, zeroline=False),
         yaxis=dict(gridcolor=GRID_COLOR, zeroline=False),
         font=dict(color="#1F2937", size=12),
@@ -53,51 +53,73 @@ def kpi(label: str, value: str, note: str = "", status: str | None = None) -> No
 
 
 @st.cache_resource
-def _dich_vu():
+def _dich_vu(loss: str, horizon: int):
     from forecast_service import lay_dich_vu
 
-    return lay_dich_vu()
+    return lay_dich_vu(loss=loss, horizon=horizon)
 
 
 @st.cache_data(ttl=1800, show_spinner=False)
-def _thoi_tiet(site_id: int, so_ngay: int) -> pd.DataFrame:
-    dv = _dich_vu()
+def _thoi_tiet(site_id: int, so_ngay: int, loss: str, horizon: int) -> pd.DataFrame:
+    dv = _dich_vu(loss, horizon)
     md = dv.sieu_du_lieu()
     md = md[md["site_id"] == site_id].iloc[0]
     return dv.lay_thoi_tiet(float(md["latitude"]), float(md["longitude"]), so_ngay)
 
 
 @st.cache_data(ttl=1800, show_spinner=False)
-def _du_bao_de_quy(site_id: int, so_ngay: int) -> pd.DataFrame:
-    return _dich_vu().du_bao(site_id=site_id, so_ngay=so_ngay)
+def _du_bao_de_quy(site_id: int, so_ngay: int, loss: str, horizon: int) -> pd.DataFrame:
+    return _dich_vu(loss, horizon).du_bao(site_id=site_id, so_ngay=so_ngay)
 
 
 @st.cache_data(ttl=1800, show_spinner=False)
-def _du_bao_mot_buoc(site_id: int, so_ngay: int, dieu_chinh_key: tuple) -> pd.DataFrame:
+def _du_bao_mot_buoc(
+    site_id: int, so_ngay: int, loss: str, horizon: int, dieu_chinh_key: tuple
+) -> pd.DataFrame:
     """dieu_chinh_key la tuple de cache duoc (dict khong hashable)."""
-    return _dich_vu().du_bao_mot_buoc(
+    return _dich_vu(loss, horizon).du_bao_mot_buoc(
         site_id=site_id, so_ngay=so_ngay, dieu_chinh=dict(dieu_chinh_key) or None)
 
 
+best_loss = load_best_loss()
+_default_loss = best_loss.get("h1", {}).get("winning_loss", "mae")
+
 # ══════════════════════════════════════════════════════════════════════════════
-st.markdown('<div class="dash-title">Dự báo sản lượng những ngày tới</div>',
-            unsafe_allow_html=True)
-st.markdown(
-    '<div class="dash-subtitle">Thời tiết lấy trực tiếp từ Open-Meteo theo toạ độ thật '
-    'của trạm, đưa qua đúng chuỗi đặc trưng của pipeline rồi vào mô hình vô địch.</div>',
-    unsafe_allow_html=True,
+header_bao_cao(
+    "Dự báo sản lượng những ngày tới",
+    "Thời tiết lấy trực tiếp từ Open-Meteo theo toạ độ thật của trạm, đưa qua đúng "
+    f"chuỗi đặc trưng của pipeline rồi vào model {_default_loss.upper()} H1 được chọn từ validation.",
+    nhan_phai="DỰ BÁO TRỰC TUYẾN",
 )
 
-dv = _dich_vu()
 st.sidebar.markdown("### 🔍 Bộ lọc")
 with st.sidebar:
+    available_horizons = [
+        h for h in (1, 4)
+        if any((DATA_DIR / "06_train" / loss / f"h{h}" / "model.pkl").exists()
+               for loss in ("mae", "huber", "mse"))
+    ]
+    horizon = st.selectbox("Horizon", available_horizons, format_func=lambda h: f"H{h} ({h * 15} phút)")
+    available_losses = [
+        loss for loss in ("mae", "huber", "mse")
+        if (DATA_DIR / "06_train" / loss / f"h{horizon}" / "model.pkl").exists()
+    ]
+    _default_for_horizon = best_loss.get(f"h{horizon}", {}).get("winning_loss", _default_loss)
+    loss = st.selectbox(
+        "Mô hình / hàm mất mát",
+        available_losses,
+        index=available_losses.index(_default_for_horizon) if _default_for_horizon in available_losses else 0,
+        format_func=lambda value: value.upper(),
+    )
+    st.caption(f"Đang chạy model {loss.upper()} · H{horizon}; mặc định là model được chọn trên validation.")
+    dv = _dich_vu(loss, horizon)
     site_id = st.selectbox("Trạm", dv.danh_sach_tram(), index=0)
     so_ngay = st.slider("Số ngày dự báo", 1, 14, 7)
     st.caption("Dự báo đệ quy mất khoảng 1 giây mỗi ngày.")
 
 with st.spinner(f"Đang kéo thời tiết Open-Meteo và dự báo {so_ngay} ngày…"):
-    tt = _thoi_tiet(site_id, so_ngay)
-    db = _du_bao_de_quy(site_id, so_ngay)
+    tt = _thoi_tiet(site_id, so_ngay, loss, horizon)
+    db = _du_bao_de_quy(site_id, so_ngay, loss, horizon)
 
 theo_ngay = (db.assign(ngay=db["plot_timestamp"].dt.date)
              .groupby("ngay")
@@ -126,7 +148,7 @@ with k4:
     kpi("Số bước đệ quy", f"{len(db):,}", "mỗi bước 15 phút")
 
 st.warning(
-    "**Con số WAPE 17,64% ở trang Time Series KHÔNG phải độ chính xác của dự báo này.** "
+    "**KPI WAPE ở trang Time Series KHÔNG phải độ chính xác của dự báo này.** "
     "Chỉ số đó đo năng lực dự báo **một bước** (15 phút tới) trên tập test. Dự báo nhiều "
     "ngày được thực hiện bằng đệ quy — giá trị vừa dự báo trở thành đầu vào `lag_4`/"
     "`rolling_*` cho bước kế tiếp — nên sai số tích lũy dần và độ tin cậy giảm theo "
@@ -141,15 +163,29 @@ with st.container(border=True):
                              mode="lines", name="Sản lượng dự báo (kWh)",
                              line=dict(color=PRED_COLOR, width=1.8),
                              fill="tozeroy", fillcolor="rgba(217,130,43,0.12)"))
-    fig.add_trace(go.Scatter(x=tt["timestamp"], y=tt["shortwave_radiation"],
+    # Buc xa phai LUI 1 GIO khi ve. Gia tri Open-Meteo tai 10:00 la TRUNG BINH cua
+    # khoang 09:00-10:00 (xem docs/open_meteo_hourly_column_semantics_vi.md), nhung
+    # buoc ffill lai rai no cho 10:00/10:15/10:30/10:45 — tuc dat muon dung 1 gio so
+    # voi luc buc xa that su xay ra. Do thuc te: tuong quan giua san luong va buc xa
+    # dat dinh o -60 phut, khop dung quy tac interval_hour = hour - 1 ma bi_mart dung.
+    #
+    # Day chi la sua CACH VE. Mo hinh duoc huan luyen tren cung quy uoc nay nen no da
+    # hoc bu tru, chi so tren tap test khong bi anh huong.
+    tt_ve = tt.assign(ts_that=tt["timestamp"] - pd.Timedelta(hours=1))
+    fig.add_trace(go.Scatter(x=tt_ve["ts_that"], y=tt_ve["shortwave_radiation"],
                              mode="lines", name="Bức xạ sóng ngắn (W/m²)",
                              line=dict(color=ACTUAL_COLOR, width=1.2, dash="dot"),
                              yaxis="y2"))
     fig.update_layout(yaxis2=dict(overlaying="y", side="right",
                                   title="W/m²", showgrid=False))
     st.plotly_chart(style_fig(fig, 340), width="stretch")
-    st.caption("Đường cam là sản lượng dự báo, đường chấm chàm là bức xạ Open-Meteo. "
-               "Hai đường đi cùng nhịp chính là bằng chứng mô hình đang bám thời tiết.")
+    st.caption(
+        "Đường cam là sản lượng dự báo, đường chấm chàm là bức xạ Open-Meteo. "
+        "**Bức xạ đã được lùi 1 giờ khi vẽ**: giá trị API trả về tại `10:00` là trung "
+        "bình của khoảng `09:00–10:00`, nên vẽ đúng nhãn API sẽ đặt nó muộn 1 giờ so "
+        "với lúc bức xạ thật sự xảy ra. Sau khi lùi, hai đường đi cùng nhịp — đó là "
+        "bằng chứng mô hình đang bám thời tiết."
+    )
 
 with st.container(border=True):
     st.markdown("##### Tổng hợp theo ngày — đối chiếu với thời tiết dự báo")
@@ -195,7 +231,7 @@ with c1:
     quy_mo = st.slider("Quy mô hệ thống (số tấm pin)", 0.5, 2.0, 1.0, 0.05,
                        help="Nhân số tấm pin — ảnh hưởng tuyến tính lên công suất trạm.")
     st.caption(
-        "Không có thanh **tốc độ gió**: `wind_speed` không nằm trong 54 đặc trưng của mô "
+        "Không có thanh **tốc độ gió**: `wind_speed` không nằm trong bộ đặc trưng của mô "
         "hình, mọi hệ số nhân đều cho đúng 0,00% thay đổi. Bày một nút không làm gì là "
         "đánh lừa người dùng."
     )
@@ -209,8 +245,8 @@ for cot in BIEN_THOI_TIET["may"]:
     dieu_chinh[cot] = may
 
 with st.spinner("Đang tính kịch bản…"):
-    goc = _du_bao_mot_buoc(site_id, so_ngay, ())
-    kb = _du_bao_mot_buoc(site_id, so_ngay, tuple(sorted(dieu_chinh.items())))
+    goc = _du_bao_mot_buoc(site_id, so_ngay, loss, horizon, ())
+    kb = _du_bao_mot_buoc(site_id, so_ngay, loss, horizon, tuple(sorted(dieu_chinh.items())))
 
 # Quy mo he thong nhan tuyen tinh len san luong: cong suat tram ty le voi so tam pin.
 t_goc = float(goc["y_pred_kwh"].sum())
@@ -248,7 +284,7 @@ with st.container(border=True):
         for ten, cot_list in BIEN_THOI_TIET.items():
             for m in muc:
                 dc = {c: m for c in cot_list}
-                r = _du_bao_mot_buoc(site_id, so_ngay, tuple(sorted(dc.items())))
+                r = _du_bao_mot_buoc(site_id, so_ngay, loss, horizon, tuple(sorted(dc.items())))
                 t = float(r["y_pred_kwh"].sum())
                 dong.append({"Biến": ten, "Hệ số": m, "Tổng (kWh)": t,
                              "Thay đổi (%)": (t - t_goc) / t_goc * 100 if t_goc else np.nan})
