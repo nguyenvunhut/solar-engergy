@@ -9,6 +9,8 @@ from __future__ import annotations
 
 import pandas as pd
 
+from core.columns import VERSION
+
 # ── 1. Chinh bien muc tieu ──
 DENY_TARGET = ["energy_generated_kwh"]
 
@@ -63,13 +65,25 @@ DENY_RAW_TIME = ["timestamp", "time_diff", "full_date", "weather_timestamp", "ye
 # site_scale va tran_cong_suat deu la hang so theo site (phan vi 99 va 99,9 cua CUNG mot
 #   phan phoi) nen tuong quan gan tuyet doi; giu tran_cong_suat (dang dung truc tiep trong
 #   ty_le_bao_hoa/con_cach_tran), bo site_scale khoi tap dac trung train.
-DENY_STRUCTURAL_COLLINEAR = ["dni_ratio", "con_cach_tran", "site_scale"]
+# clearsky_proxy = sin_elevation ** 1.2. Tren mien [0; 0,9824] cua sin_elevation, ham
+#   x**1.2 don dieu tang nghiem ngat -> Spearman voi sin_elevation bang 1,0000000000.
+#   Cay chia theo nguong nen chia tren x**1.2 tuong duong hoan toan chia tren x: khi da
+#   co sin_elevation thi cot nay mang DUNG BANG KHONG thong tin moi.
+# pv_clr_lonij la MAU SO chuan hoa muc tieu theo Lonij et al. (2012). Giu trong du lieu
+#   de nhan nguoc khi cham diem, nhung dua vao dau vao thi mo hinh co san thang do cua
+#   chinh muc tieu - y het ly do da cam site_scale.
+DENY_STRUCTURAL_COLLINEAR = [
+    "dni_ratio", "con_cach_tran", "site_scale", "pv_clr_lonij", "clearsky_proxy",
+]
 
 # ── 8. Metadata cua buoc split (do stage s02 gan) ──
-# KHONG cam ca tien to 'v3_' vi cac dac trung that cung dung tien to nay.
+# KHONG cam ca tien to '<version>_' vi cac dac trung that cung dung tien to nay.
+# Ten cot mang tien to phien ban, nen phai dung VERSION chu khong viet cung 'v3_':
+# tren bo v4 cac cot nay ten la v4_holdout_split... va se khong bi cam.
 SPLIT_META = [
-    "v3_holdout_split", "v3_test_start_timestamp", "v3_split_strategy",
-    "v3_n_time_series_splits", "v3_split", "v3_cv_fold", "v3_cv_role",
+    f"{VERSION}_holdout_split", f"{VERSION}_test_start_timestamp",
+    f"{VERSION}_split_strategy", f"{VERSION}_n_time_series_splits",
+    f"{VERSION}_split", f"{VERSION}_cv_fold", f"{VERSION}_cv_role",
 ]
 
 

@@ -8,7 +8,9 @@ max_lag_steps: 672       # 672 * 15p = 7 ngay - do dai lich su toi da can giu
 
 # ── Tach tap ──
 test_ratio: 0.15         # 15% cuoi (theo THOI GIAN, khong random) lam tap test niem phong
-n_splits: 5              # so fold TimeSeriesSplit tren tap development
+# 3 fold, dong bo voi notebook 02_split_time_series.ipynb (N_SPLITS = 3). Truoc day dat 5
+# nen pipeline .py sinh 5 fold trong khi notebook sinh 3 - hai ben khong doi chieu duoc.
+n_splits: 3              # so fold TimeSeriesSplit tren tap development
 # expanding: tap train lon dan qua tung fold, giu het lich su (chon cai nay vi du lieu
 #            chi ~2 nam, cat bot lich su la mat mua vu).
 # sliding  : tap train co do dai co dinh, truot theo thoi gian.

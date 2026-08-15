@@ -1,6 +1,23 @@
-"""Stage 08a: nap tap DEVELOPMENT, dung bien muc tieu va ma tran huan luyen.
+"""Stage 08a: nap tap huan luyen, dung bien muc tieu va ma tran huan luyen.
 
 Tach tu preprocessing() + phan dau train_fold() cua 04_x_train_*.py.
+
+TAP HOC LA `train`, KHONG PHAI `development` (sua 2026-08-09):
+  Ban cu doc `dev_selected` (= train + val) de fit mo hinh cuoi, roi lai cham diem tren
+  cac fold validation - ma fold validation nam TRONG development. Ket qua: cham diem tren
+  chinh du lieu da hoc. Da do bang phep giao khoa (site_id, timestamp): 100,00% trong
+  2.141.447 dong fold validation nam trong tap development da dung de fit.
+
+  Hau qua thuc te: WAPE validation 14,67% khong phai uoc luong ngoai mau, va viec chon
+  Huber lam mo hinh vo dich dua tren con so do. Khi cham lai dang hoang (hoc tren train,
+  cham tren val) thi thu hang DAO: MAE 20,89% < Huber 21,42% < MSE 21,44%.
+
+  Ban moi doc `train_selected` de hoc va giu `val_selected` rieng de cham. Dong bo voi
+  notebook 06_1/06_2/06_3 sau ban va cung ngay.
+
+  Huan luyen lai tren toan bo development SAU KHI da chot cau hinh van la thong le hop le
+  (mo hinh trien khai manh hon vi co them du lieu); cai khong hop le la lay con so thu
+  duoc tu do lam bang chung khai quat hoa.
 
 KHAC BAN CU - TAP TEST BI KHOA O DAY:
   Ban cu (04_x_train_*.py) nap CA tap test ngay trong buoc train, roi cham diem va ghi
@@ -74,7 +91,15 @@ def chuan_bi(ctx: Ctx) -> Ctx:
     dtype = cfg.runtime["dtype"]
     h = ctx.horizon_steps
 
-    duong_dev = paths.selected("dev_selected")
+    # TAP HOC = train, KHONG phai development. Xem docstring dau file.
+    # Neu chua co file train_selected (bo du lieu cu chi co development) thi lui ve
+    # development va CANH BAO to, de khong am tham cham diem tren du lieu da hoc.
+    duong_train = paths.selected("train_selected")
+    duong_val = paths.selected("val_selected")
+    if not duong_train.exists():
+        duong_train = paths.selected("dev_selected")
+        print("[CANH BAO] Khong tim thay train_selected -> lui ve development (= train+val). "
+              "Moi chi so validation sinh ra se la IN-SAMPLE, khong dung de chon mo hinh.")
 
     # Danh sach dac trung lay tu selected_features.json (do stage s07 sinh ra) - KHONG
     # quet cot parquet, vi parquet con chua cot phu tro (site_scale, tran_cong_suat...)
@@ -89,11 +114,18 @@ def chuan_bi(ctx: Ctx) -> Ctx:
     print(f"selected_features.json: {len(selected)} cot -> giu {len(features)}, "
           f"bo {len(ctx.bo_di)} ({ctx.bo_di})")
 
-    dev = _doc_tap(duong_dev, features, cfg, "development")
+    dev = _doc_tap(duong_train, features, cfg, duong_train.stem)
     # Chi giu dac trung co THAT trong du lieu (phong khi s07 liet ke cot da bi bo o s05)
     features = [c for c in features if c in dev.columns]
 
     dev_h = _loc_ban_ngay(them_muc_tieu(dev, h, cfg), eps)
+
+    # Tap VALIDATION rieng - chua tung tham gia fit. s08c/s08e cham diem tren day.
+    ctx.val_h = None
+    if duong_val.exists():
+        val = _doc_tap(duong_val, features, cfg, duong_val.stem)
+        ctx.val_h = _loc_ban_ngay(them_muc_tieu(val, h, cfg), eps)
+        del val
 
     # Bo sung cac cot tat dinh tai T+h vao tap dac trung. Phai lam SAU them_muc_tieu()
     # vi cot _mt duoc sinh trong do. Stage s09 dung dung cong thuc nay tren tap test.
@@ -108,7 +140,15 @@ def chuan_bi(ctx: Ctx) -> Ctx:
 
     medians = dev_h[features].median(numeric_only=True).fillna(0.0)
 
-    from core.target import k_target
+    from core.target import dat_nguong_cat, k_target, nguong_cat, tinh_nguong_cat
+
+    # Suy nguong cat tu chinh tap train, GIONG notebook 06 (CLIP_K = None ->
+    # tinh_clip_tu_train). Notebook tinh mot lan o H1 roi dung lai cho H4, nen o day
+    # cung chi tinh khi chua co - de hai ben ra dung cung mot con so.
+    if not cfg.train.get("clip_k"):
+        dat_nguong_cat(cfg, tinh_nguong_cat(dev_h, cfg))
+        print(f"Nguong cat suy tu tap train: phan vi {cfg.train['clip_phan_vi']} "
+              f"cua k = {nguong_cat(cfg):.4f}")
 
     dev_h["k_target"] = k_target(dev_h, cfg)
     dev_h["w"] = build_sample_weight(dev_h, cfg)
@@ -119,6 +159,14 @@ def chuan_bi(ctx: Ctx) -> Ctx:
     ctx.X_dev = dev_h.loc[mask, features].fillna(medians).astype(dtype)
     ctx.y_dev = dev_h.loc[mask, "k_target"].astype(dtype)
     ctx.w_dev = dev_h.loc[mask, "w"].astype(dtype)
+
+    # Tap validation: dung DUNG bo dac trung va DUNG medians cua tap train. Medians phai
+    # lay tu train - tinh lai tren val la ro ri thong ke tu tap dang duoc cham diem.
+    if ctx.val_h is not None:
+        ctx.val_h["k_target"] = k_target(ctx.val_h, cfg)
+        ctx.val_h["w"] = build_sample_weight(ctx.val_h, cfg)
+        print(f"Tap validation rieng: {len(ctx.val_h):,} dong "
+              f"(chua tung tham gia fit, dung de chon mo hinh)")
 
     ctx.dev_h = dev_h
     ctx.features, ctx.medians = features, medians

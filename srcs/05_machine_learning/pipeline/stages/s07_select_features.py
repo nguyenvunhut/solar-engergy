@@ -28,11 +28,15 @@ from core.io import read_json, write_csv, write_json, write_parquet
 from core.paths import Paths
 from stages import s07a_deny_list, s07b_mutual_info
 
-# Cot khong phai dac trung nhung PHAI mang theo cho cac stage sau dung
+# Cot khong phai dac trung nhung PHAI mang theo cho cac stage sau dung.
+# site_scale va pv_clr_lonij deu bi cam lam dau vao model (xem s07a_deny_list) nhung van
+# phai giu trong tep: chung la MAU SO chuan hoa muc tieu, thieu thi buoc cham diem khong
+# nhan nguoc duoc tu k ve kWh. pv_clr_lonij la mau so cua Lonij et al. (2012), giu de doi
+# chieu hai cach chuan hoa.
 GIU_THEM = [
     TARGET_COL, "site_id", "timestamp",
     "energy_source", "exclude_from_training", "outlier_group",
-    "has_complete_history_features", "is_daylight", "site_scale",
+    "has_complete_history_features", "is_daylight", "site_scale", "pv_clr_lonij",
 ]
 
 

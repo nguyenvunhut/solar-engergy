@@ -19,6 +19,7 @@ from __future__ import annotations
 import ctypes
 import glob
 import json
+import os
 from pathlib import Path
 
 # Nap truoc runtime C++ cho LightGBM tren Linux/NixOS. Tren Windows/macOS glob rong
@@ -44,7 +45,8 @@ app = FastAPI(
 )
 
 GOC_REPO = Path(__file__).resolve().parents[2]
-DATA_DIR = GOC_REPO / "data" / "model" / "v3"
+VERSION = os.environ.get("DASHBOARD_VERSION", "v4")
+DATA_DIR = GOC_REPO / "data" / "model" / VERSION
 FINAL_DIR = DATA_DIR / "07_final_test"
 PROPHET_DIR = DATA_DIR / "08_baseline_prophet_test"
 
@@ -256,7 +258,7 @@ def du_bao_what_if(
     nhiet_do: float = Query(1.0, ge=0.0, le=3.0, description="Hệ số nhân nhiệt độ"),
     may: float = Query(1.0, ge=0.0, le=3.0, description="Hệ số nhân độ mây"),
 ):
-    # KHONG co tham so 'gio': wind_speed khong nam trong 54 dac trung cua mo hinh, nen
+    # KHONG co tham so 'gio': wind_speed khong nam trong bo dac trung cua mo hinh, nen
     # moi he so nhan len no deu tra ve dung 0,00% thay doi (da do). Bay mot thanh truot
     # khong lam gi la danh lua nguoi dung — bo han thay vi de do roi ghi chu.
     """So sánh kịch bản thời tiết thay đổi với kịch bản gốc.

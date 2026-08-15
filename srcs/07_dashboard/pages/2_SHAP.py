@@ -4,9 +4,8 @@ lam lech theme, (2) px.scatter tu dong bat WebGL (scattergl) khi nhieu diem, loi
 tren may/trinh duyet khong ho tro WebGL - ep render_mode='svg' de an toan.
 """
 
-import ctypes
-import glob
 import json
+import os
 import pickle
 from pathlib import Path
 
@@ -20,22 +19,16 @@ import plotly.graph_objects as go
 import shap
 import streamlit as st
 
-from dashboard_common import load_shared_css
+from dashboard_common import header_bao_cao, load_shared_css, nap_runtime_cpp
 
-for _lib in ("libstdc++.so.6", "libgomp.so.1"):
-    for _p in (
-        glob.glob(f"/nix/store/*gcc*/lib/{_lib}")
-        + glob.glob(f"/run/current-system/sw/lib/{_lib}")
-        + glob.glob(f"/usr/lib*/{_lib}")
-    ):
-        try:
-            ctypes.CDLL(_p, mode=ctypes.RTLD_GLOBAL)
-            break
-        except Exception:
-            pass
+# Trang nay import shap va doc model LightGBM nen can runtime C++ tren NixOS.
+# Goi lai o day (khong chi dua vao app.py) de trang van chay duoc khi mo truc tiep
+# bang `streamlit run pages/2_SHAP.py`. CDLL nap lai cung tep la thao tac vo hai.
+nap_runtime_cpp()
 
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
-DATA_DIR = PROJECT_ROOT / "data" / "model" / "v3"
+VERSION = os.environ.get("DASHBOARD_VERSION", "v4")
+DATA_DIR = PROJECT_ROOT / "data" / "model" / VERSION
 
 st.set_page_config(page_title="Model Explainability (XAI)", page_icon="🔬", layout="wide")
 load_shared_css()
@@ -50,49 +43,87 @@ def kpi(label: str, value: str, note: str = "") -> None:
         unsafe_allow_html=True,
     )
 
-st.markdown('<div class="dash-title">Mô hình học được gì? — phân tích SHAP</div>', unsafe_allow_html=True)
-st.markdown(
-    '<div class="dash-subtitle">Đóng góp của từng đặc trưng tới dự báo sản lượng quang điện.</div>',
-    unsafe_allow_html=True,
+header_bao_cao(
+    "Mô hình học được gì? — phân tích SHAP",
+    "Đóng góp của từng đặc trưng tới dự báo sản lượng quang điện.",
+    nhan_phai="GIẢI THÍCH MÔ HÌNH",
 )
 
 
-MODEL_PATH = DATA_DIR / "06_1_khu_tre_pha" / "model_h1.pkl"
+def _build_model_specs() -> dict[str, dict[str, Path | str]]:
+    """Discover model artifacts so every XAI view uses one selected model."""
+    specs: dict[str, dict[str, Path | str]] = {}
+    best_loss_path = DATA_DIR / "07_final_test" / "best_loss.json"
+    best_loss = json.loads(best_loss_path.read_text(encoding="utf-8")) if best_loss_path.exists() else {}
+    persisted_explain_key = f"{best_loss.get('h1', {}).get('winning_loss', '')}_h1"
+    for loss in ("mae", "huber", "mse"):
+        for horizon in ("h1", "h4"):
+            key = f"{loss}_{horizon}"
+            model_path = DATA_DIR / "06_train" / loss / horizon / "model.pkl"
+            config_path = DATA_DIR / "06_train" / loss / horizon / "model_config.json"
+            final_test_path = DATA_DIR / "07_final_test" / horizon / f"X_test_{horizon}.parquet"
+            train_test_path = DATA_DIR / "06_train" / loss / horizon / f"X_test_{horizon}.parquet"
+            if not (model_path.exists() and config_path.exists()):
+                continue
+            x_test_path = final_test_path if final_test_path.exists() else train_test_path
+            explain_dir = DATA_DIR / "08_explain"
+            shap_path = explain_dir / "shap_values.parquet" if key == persisted_explain_key else None
+            importance_path = explain_dir / "shap_importance.csv" if key == persisted_explain_key else None
+            local_cases_path = explain_dir / "local_shap_cases.parquet" if key == persisted_explain_key else None
+            specs[key] = {
+                "key": key,
+                "label": f"{loss.upper()} · {horizon.upper()}",
+                "loss": loss,
+                "horizon": horizon,
+                "model_path": model_path,
+                "config_path": config_path,
+                "x_test_path": x_test_path,
+                "shap_path": shap_path,
+                "importance_path": importance_path,
+                "local_cases_path": local_cases_path,
+            }
+    return specs
+
+
+MODEL_SPECS = _build_model_specs()
+SITE_METADATA_PATH = DATA_DIR / "02_split" / "test" / f"{VERSION}_test.parquet"
+
+
+def _unwrap_model(bundle):
+    return bundle.get("model", bundle) if isinstance(bundle, dict) else bundle
 
 
 @st.cache_data
-def load_native_importance() -> pd.DataFrame:
+def load_native_importance(model_path: str, config_path: str) -> pd.DataFrame:
     """LightGBM co san feature_importances_ - tinh theo GAIN trung binh qua TAT CA
     cay trong ensemble (khac SHAP: SHAP la dong gop tung du bao, cai nay la mo hinh
     hoc duoc gi noi chung). Doc thang tu model that, khong tu suy dien."""
-    if not MODEL_PATH.exists():
+    model_file = Path(model_path)
+    if not model_file.exists():
         return pd.DataFrame()
-    with open(MODEL_PATH, "rb") as f:
+    with open(model_file, "rb") as f:
         bundle = pickle.load(f)
-    model = bundle["model"]
-    feats = bundle["features"]
+    model = _unwrap_model(bundle)
+    feats = bundle.get("features") if isinstance(bundle, dict) else None
+    if not feats:
+        feats = json.loads(Path(config_path).read_text(encoding="utf-8"))["features"]
     model.set_params(importance_type="gain")
     gain = model.booster_.feature_importance(importance_type="gain")
     split = model.booster_.feature_importance(importance_type="split")
     return pd.DataFrame({"feature": feats, "gain": gain, "split": split}).sort_values("gain", ascending=False)
 
 
-X_TEST_PATH = DATA_DIR / "06_train" / "huber" / "h1" / "X_test_h1.parquet"
-WHAT_IF_MODEL_PATH = DATA_DIR / "06_train" / "huber" / "h1" / "model.pkl"
-WHAT_IF_CONFIG_PATH = DATA_DIR / "06_train" / "huber" / "h1" / "model_config.json"
-SITE_METADATA_PATH = DATA_DIR / "02_split" / "test" / "v3_test.parquet"
-
-
 @st.cache_data
-def load_real_feature_values(feat_val_keys: pd.DataFrame) -> pd.DataFrame:
+def load_real_feature_values(feat_val_keys: pd.DataFrame, x_test_path: str) -> pd.DataFrame:
     """shap_values.parquet CHI chua gia tri SHAP (bien do nho +-0.01..0.09), KHONG
     chua gia tri dac trung goc (vd shortwave_radiation phai la 0-1100 W/m2 that,
     khong phai +-0.06). Phai join voi X_test_h1.parquet (co gia tri that) qua
     site_id+timestamp de lay dung du lieu cho PDP/scatter, khong dung nham SHAP
     lam gia tri dac trung nhu ban dau."""
-    if not X_TEST_PATH.exists() or feat_val_keys.empty:
+    x_test_file = Path(x_test_path)
+    if not x_test_file.exists() or feat_val_keys.empty:
         return pd.DataFrame()
-    x_real = pd.read_parquet(X_TEST_PATH)
+    x_real = pd.read_parquet(x_test_file)
     keys = feat_val_keys[["site_id", "timestamp"]].copy()
     keys["timestamp"] = pd.to_datetime(keys["timestamp"])
     x_real["timestamp"] = pd.to_datetime(x_real["timestamp"])
@@ -100,17 +131,17 @@ def load_real_feature_values(feat_val_keys: pd.DataFrame) -> pd.DataFrame:
 
 
 @st.cache_resource
-def load_what_if_model():
-    with open(WHAT_IF_MODEL_PATH, "rb") as fh:
-        model = pickle.load(fh)
-    config = json.loads(WHAT_IF_CONFIG_PATH.read_text(encoding="utf-8"))
+def load_what_if_model(model_path: str, config_path: str):
+    with open(model_path, "rb") as fh:
+        model = _unwrap_model(pickle.load(fh))
+    config = json.loads(Path(config_path).read_text(encoding="utf-8"))
     return model, config
 
 
 @st.cache_data
-def load_what_if_data() -> tuple[pd.DataFrame, pd.DataFrame]:
+def load_what_if_data(x_test_path: str) -> tuple[pd.DataFrame, pd.DataFrame]:
     """Doc feature dung luc inference va metadata goc cua tung site."""
-    features = pd.read_parquet(X_TEST_PATH)
+    features = pd.read_parquet(x_test_path)
     features["timestamp"] = pd.to_datetime(features["timestamp"])
     metadata = pd.read_parquet(
         SITE_METADATA_PATH, columns=["site_id", "number_of_panels", "capacity_kw"]
@@ -148,29 +179,127 @@ def predict_what_if(row: pd.Series, model, config: dict, panel_ratio: float) -> 
     return float(base_kwh), float(scenario_kwh)
 
 
+@st.cache_data(show_spinner="Đang tính SHAP cho mô hình đã chọn...")
+def compute_local_shap(model_path: str, config_path: str, x_test_path: str) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Compute a deterministic 2,000-row SHAP sample when no persisted artifact exists."""
+    with open(model_path, "rb") as fh:
+        model = _unwrap_model(pickle.load(fh))
+    config = json.loads(Path(config_path).read_text(encoding="utf-8"))
+    test_df = pd.read_parquet(x_test_path).reset_index(drop=True)
+    features = list(config["features"])
+    feat_cols = [c for c in features if c in test_df.columns and pd.api.types.is_numeric_dtype(test_df[c])]
+    medians = pd.Series(config.get("feature_medians", {}), dtype="float64")
+    x_test = test_df[feat_cols].fillna(medians).astype(float)
+    rng = np.random.default_rng(42)
+    sample_idx = rng.choice(len(x_test), size=min(2000, len(x_test)), replace=False)
+    x_sample = x_test.iloc[sample_idx]
+    shap_values = shap.TreeExplainer(model).shap_values(x_sample)
+    if isinstance(shap_values, list):
+        shap_values = shap_values[0]
+    df_values = pd.DataFrame(shap_values, columns=feat_cols)
+    df_importance = pd.DataFrame(
+        {"feature": feat_cols, "mean_abs_shap": np.abs(shap_values).mean(axis=0)}
+    ).sort_values("mean_abs_shap", ascending=False)
+    sample_meta = test_df.iloc[sample_idx][["site_id", "timestamp"]].reset_index(drop=True)
+    return df_importance, pd.concat([sample_meta, df_values.reset_index(drop=True)], axis=1)
+
+
 @st.cache_data
-def load_local_shap(feat_set: str = "") -> tuple[pd.DataFrame, pd.DataFrame]:
-    suffix = "_no_lag1" if feat_set == "no_lag1" else ""
-    p_imp = DATA_DIR / "08_explain" / f"shap_importance{suffix}.csv"
-    p_val = DATA_DIR / "08_explain" / f"shap_values{suffix}.parquet"
-    if not p_imp.exists():
-        p_imp = DATA_DIR / "08_explain" / "shap_importance.csv"
-    if not p_val.exists():
-        p_val = DATA_DIR / "08_explain" / "shap_values.parquet"
-    df_imp = pd.read_csv(p_imp) if p_imp.exists() else pd.DataFrame()
-    df_val = pd.read_parquet(p_val) if p_val.exists() else pd.DataFrame()
-    return df_imp, df_val
+def load_local_shap(
+    model_key: str,
+    model_path: str,
+    config_path: str,
+    x_test_path: str,
+    importance_path: str | None,
+    shap_path: str | None,
+) -> tuple[pd.DataFrame, pd.DataFrame]:
+    del model_key
+    p_imp = Path(importance_path) if importance_path else None
+    p_val = Path(shap_path) if shap_path else None
+    if p_imp is not None and p_val is not None and p_imp.is_file() and p_val.is_file():
+        return pd.read_csv(p_imp), pd.read_parquet(p_val)
+    return compute_local_shap(model_path, config_path, x_test_path)
+
+
+@st.cache_data
+def load_local_cases(local_cases_path: str | None) -> pd.DataFrame:
+    """Load the three local examples selected by notebook 08 for the winning model."""
+    if not local_cases_path:
+        return pd.DataFrame()
+    path = Path(local_cases_path)
+    if not path.is_file():
+        return pd.DataFrame()
+    cases = pd.read_parquet(path)
+    if "timestamp" in cases.columns:
+        cases["timestamp"] = pd.to_datetime(cases["timestamp"])
+    return cases
+
+
+@st.cache_data
+def load_shap_base_value(model_path: str) -> float:
+    with open(model_path, "rb") as fh:
+        model = _unwrap_model(pickle.load(fh))
+    expected = np.asarray(shap.TreeExplainer(model).expected_value).reshape(-1)
+    return float(expected[0])
+
+
+def denormalize_local_prediction(
+    base_value: float, shap_total: float, row: pd.Series | None, config_path: str
+) -> float | None:
+    """Convert local model output k back to kWh using the notebook formula."""
+    if row is None:
+        return None
+    config = json.loads(Path(config_path).read_text(encoding="utf-8"))
+    scale_col = config.get("cot_quy_mo", "site_scale")
+    elev_col = config.get("cot_sin_elev", "sin_elevation")
+    tran_col = config.get("cot_tran", "tran_cong_suat")
+    if not all(col in row.index and pd.notna(row[col]) for col in (scale_col, elev_col)):
+        return None
+
+    eps = float(config.get("eps_elev", 0.05))
+    sin_elev = float(row[elev_col])
+    if sin_elev <= eps:
+        return 0.0
+    k_pred = float(np.clip(base_value + shap_total, 0.0, 1.5))
+    y_pred = k_pred * float(row[scale_col]) * max(sin_elev, eps)
+    if tran_col in row.index and pd.notna(row[tran_col]):
+        y_pred = min(y_pred, float(row[tran_col]) * 1.02)
+    return float(y_pred)
 
 
 with st.sidebar:
     st.markdown("### Bộ lọc XAI")
-    feat_choice = st.selectbox("Bộ đặc trưng mô hình", ["no_lag1 (khắc phục trễ pha 15p)", "full (đầy đủ)"])
-feat_param = "no_lag1" if "no_lag1" in feat_choice else "full"
+    if not MODEL_SPECS:
+        st.error(f"Không tìm thấy model artifact trong data/model/{VERSION}/06_train.")
+        st.stop()
+    _model_keys = list(MODEL_SPECS)
+    _default_key = "mae_h1" if "mae_h1" in MODEL_SPECS else _model_keys[0]
+    _model_key = st.selectbox(
+        "Mô hình / horizon",
+        _model_keys,
+        index=_model_keys.index(_default_key),
+        format_func=lambda key: MODEL_SPECS[key]["label"],
+    )
 
-df_imp, df_val = load_local_shap(feat_param)
+_model_spec = MODEL_SPECS[_model_key]
+df_imp, df_val = load_local_shap(
+    _model_key,
+    str(_model_spec["model_path"]),
+    str(_model_spec["config_path"]),
+    str(_model_spec["x_test_path"]),
+    str(_model_spec["importance_path"]) if _model_spec["importance_path"] else None,
+    str(_model_spec["shap_path"]) if _model_spec["shap_path"] else None,
+)
+_local_cases = load_local_cases(
+    str(_model_spec["local_cases_path"]) if _model_spec["local_cases_path"] else None
+)
 if df_imp.empty:
-    st.warning(f"Chưa có dữ liệu SHAP cho {feat_choice}. Hãy chạy notebook 08_explainable_ai.ipynb trước.")
+    st.warning(f"Chưa có dữ liệu SHAP cho {_model_spec['label']} và không thể tính từ artifact hiện có.")
     st.stop()
+st.caption(
+    f"Đang xem {_model_spec['label']}. Gain, SHAP cục bộ và What-if dùng cùng model artifact; "
+    "bộ dữ liệu đầu vào lấy từ Test niêm phong khi file tồn tại."
+)
 
 
 def get_group(name: str) -> str:
@@ -228,12 +357,12 @@ with t2_right:
 # feature_cols dung chung cho ca Local Explanation va SHAP Dependence phia duoi -
 # phai dinh nghia TRUOC khi 2 phan do dung toi, tranh loi bien chua duoc gan.
 feature_cols = [c for c in df_val.columns if c not in ("site_id", "timestamp", "y_true", "y_pred")]
-df_x_real = load_real_feature_values(df_val)
+df_x_real = load_real_feature_values(df_val, str(_model_spec["x_test_path"]))
 
 # ── HANG A: 2 bieu do GLOBAL canh nhau - LightGBM Gain (trai) | PDP phi tuyen (phai) ──
 rowA_left, rowA_right = st.columns(2, gap="small")
 
-df_native = load_native_importance()
+df_native = load_native_importance(str(_model_spec["model_path"]), str(_model_spec["config_path"]))
 with rowA_left:
     if not df_native.empty:
         with st.container(border=True):
@@ -287,6 +416,8 @@ with rowA_right:
                 )
 
 # ── HANG B: Local Explanation FULL-WIDTH rieng 1 hang ──
+
+
 # Ngoai le duy nhat voi quy tac "2 bieu do/hang": shap.plots.force can toan bo chieu
 # rong trang de hien chu khong de (nhu trong repo tham khao, chart nay luon chiem
 # het do rong o moi vi du). Nhet vao cot nua trang lam chu chong len nhau khong doc
@@ -303,24 +434,61 @@ if True:
         _force_box.markdown("##### Local Explanation — 1 dự báo cụ thể")
         _opt_df = df_val[["site_id", "timestamp"]].copy()
         _opt_df["nhan"] = _opt_df["site_id"].astype(str) + " · " + _opt_df["timestamp"].astype(str)
-        _pick = _force_box.selectbox("Chọn 1 dòng để giải thích", _opt_df["nhan"].tolist())
+        _local_choice = "Tự chọn site + timestamp"
+        if not _local_cases.empty and {"site_id", "timestamp", "case_label"}.issubset(_local_cases.columns):
+            _case_names = {
+                "upward_contribution": "Mẫu đẩy dự báo lên",
+                "downward_contribution": "Mẫu kéo dự báo xuống",
+                "near_baseline": "Mẫu gần baseline",
+            }
+            _local_cases["nhan"] = (
+                _local_cases["site_id"].astype(str)
+                + " · "
+                + _local_cases["timestamp"].astype(str)
+            )
+            _local_cases["hien_thi"] = _local_cases["case_label"].map(_case_names).fillna(
+                _local_cases["case_label"].astype(str)
+            )
+            _local_options = [
+                f"{row.hien_thi} — {row.nhan}" for row in _local_cases.itertuples()
+            ]
+            _local_choice = _force_box.selectbox(
+                "Mẫu local từ notebook 08",
+                [_local_choice, *_local_options],
+            )
+        if _local_choice == "Tự chọn site + timestamp":
+            _pick = _force_box.selectbox("Chọn 1 dòng để giải thích", _opt_df["nhan"].tolist())
+        else:
+            _selected_local = _local_cases.iloc[_local_options.index(_local_choice)]
+            _pick = _selected_local["nhan"]
+            _force_box.caption("Đang hiển thị mẫu local đã chọn trong notebook 08.")
         _row_idx = _opt_df[_opt_df["nhan"] == _pick].index[0]
         _shap_row = df_val.loc[_row_idx, feature_cols].astype(float)
         _real_row = df_x_real.loc[_row_idx] if _row_idx in df_x_real.index else None
+        _base_value = load_shap_base_value(str(_model_spec["model_path"]))
+        _shap_total = float(_shap_row.sum())
+        _predicted_kwh = denormalize_local_prediction(
+            _base_value,
+            _shap_total,
+            _real_row,
+            str(_model_spec["config_path"]),
+        )
 
-        _cL, _cR = _force_box.columns(2)
+        _cL, _cM, _cR = _force_box.columns(3)
         with _cL:
             _thuc_te = _real_row["y_true"] if _real_row is not None and "y_true" in _real_row else None
             kpi("Thực tế", f"{_thuc_te:.2f} kWh" if _thuc_te is not None else "n/a", "")
+        with _cM:
+            kpi("Dự báo quy đổi", f"{_predicted_kwh:.2f} kWh" if _predicted_kwh is not None else "n/a", "từ đầu ra k")
         with _cR:
-            kpi("Tổng đóng góp SHAP", f"{float(_shap_row.sum()):+.4f}", "so với base value")
+            kpi("Tổng đóng góp SHAP", f"{_shap_total:+.4f}", "đầu ra chuẩn hóa k")
 
         # Ve DUNG bang thu vien shap that (shap.plots.force, matplotlib=True) - giong
         # y het anh trong repo tham khao (nguyenhads/sales_forecasting_xai, notebook 05,
         # cell 31): 1 thanh lien tuc dang phieu, mui ten hong (tang) va xanh duong (giam)
         # hop lai o f(x). KHONG tu ve lai bang Plotly (go.Waterfall truoc day la thanh
         # roi rac, sai kieu dang - da bi phat hien va yeu cau sua).
-        _base_value = float(df_val[feature_cols].mean().sum()) if not df_val.empty else 0.0
+        # Dùng expected_value thật của TreeExplainer, không lấy trung bình tổng SHAP.
         # reindex thay vi .loc[row, feature_cols] truc tiep: model moi train co the co
         # feature (vd optimizers_enc, longitude) khong ton tai trong X_test_h1.parquet cu
         # (sinh tu lan train truoc) -> KeyError. reindex tao cot thieu = NaN roi fillna 0.
@@ -343,6 +511,9 @@ if True:
         plt.close(_fig_force)
         _force_box.caption(
             "Đỏ = kéo dự báo LÊN so với mức trung bình (base value), xanh navy = kéo XUỐNG. "
+            "Force Plot giữ ở thang đầu ra chuẩn hóa k để bảo toàn tính cộng SHAP; KPI Dự báo quy đổi "
+            "đã nhân ngược site_scale × sin_elevation và chặn theo trần công suất. "
+            "Base value lấy trực tiếp từ TreeExplainer của mô hình đang chọn. "
             "Cộng dồn từ base value ra tới f(x) — giống shap.force_plot()/shap.plots.waterfall(). "
             "Chỉ hiện 6 đặc trưng ảnh hưởng mạnh nhất, phần còn lại đã gộp vào base value."
         )
@@ -353,15 +524,22 @@ st.markdown("<br>", unsafe_allow_html=True)
 with st.container(border=True):
     st.markdown("##### What-if Analysis — thay đổi quy mô hệ thống")
     st.caption(
-        "Giữ nguyên thời tiết và thời điểm, thay đổi số lượng tấm pin để mô phỏng sản lượng H1. "
-        "Kịch bản chạy lại model MAE được notebook 07 chọn, không nhân trực tiếp kết quả sau dự báo."
+        f"Giữ nguyên thời tiết và thời điểm, thay đổi số lượng tấm pin để mô phỏng sản lượng "
+        f"{str(_model_spec['horizon']).upper()}. Kịch bản chạy lại {_model_spec['label']} đang chọn, "
+        "không nhân trực tiếp kết quả sau dự báo."
     )
 
-    if not (WHAT_IF_MODEL_PATH.exists() and WHAT_IF_CONFIG_PATH.exists() and X_TEST_PATH.exists()):
-        st.warning("Thiếu model MAE H1 hoặc X_test_h1.parquet để chạy What-if Analysis.")
+    if not (
+        Path(_model_spec["model_path"]).exists()
+        and Path(_model_spec["config_path"]).exists()
+        and Path(_model_spec["x_test_path"]).exists()
+    ):
+        st.warning(f"Thiếu artifact của {_model_spec['label']} để chạy What-if Analysis.")
     else:
-        _what_if_features, _site_metadata = load_what_if_data()
-        _what_if_model, _what_if_config = load_what_if_model()
+        _what_if_features, _site_metadata = load_what_if_data(str(_model_spec["x_test_path"]))
+        _what_if_model, _what_if_config = load_what_if_model(
+            str(_model_spec["model_path"]), str(_model_spec["config_path"])
+        )
         _site_ids = sorted(_what_if_features["site_id"].dropna().unique().tolist())
 
         _ctl_site, _ctl_date, _ctl_time, _ctl_panels = st.columns([0.8, 1.2, 1.0, 1.2])
@@ -413,19 +591,23 @@ with st.container(border=True):
             kpi("Công suất kịch bản", f"{_new_capacity:.2f} kWp", f"gốc {float(_meta_row['capacity_kw']):.2f} kWp")
 
         _comparison = pd.DataFrame(
-            {"Kịch bản": ["Hiện tại", "What-if"], "Sản lượng H1 (kWh)": [_baseline_kwh, _scenario_kwh]}
+            {
+                "Kịch bản": ["Hiện tại", "What-if"],
+                f"Sản lượng {str(_model_spec['horizon']).upper()} (kWh)": [_baseline_kwh, _scenario_kwh],
+            }
         )
         _fig_what_if = go.Figure(
             go.Bar(
-                x=_comparison["Kịch bản"], y=_comparison["Sản lượng H1 (kWh)"],
+                x=_comparison["Kịch bản"], y=_comparison[f"Sản lượng {str(_model_spec['horizon']).upper()} (kWh)"],
                 marker_color=["#6366F1", "#D9822B"],
-                text=[f"{v:.2f} kWh" for v in _comparison["Sản lượng H1 (kWh)"]],
+                text=[f"{v:.2f} kWh" for v in _comparison[f"Sản lượng {str(_model_spec['horizon']).upper()} (kWh)"]],
                 textposition="outside",
             )
         )
         _fig_what_if.update_layout(
             template="plotly_white", height=280, margin=dict(l=20, r=20, t=30, b=20),
-            yaxis_title="Sản lượng dự báo H1 (kWh)", xaxis_title=None, showlegend=False,
+            yaxis_title=f"Sản lượng dự báo {str(_model_spec['horizon']).upper()} (kWh)",
+            xaxis_title=None, showlegend=False,
         )
         st.plotly_chart(_fig_what_if, width="stretch")
         st.caption(

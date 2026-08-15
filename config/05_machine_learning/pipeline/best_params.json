@@ -1,19 +1,19 @@
 {
-  "_nguon": "Ket qua Optuna cua notebook 06_1/06_2/06_3 chay ngay 2026-08-08 tren cau hinh TAI LAP DUOC (CPU + lightgbm.deterministic = true, USE_GPU = false). Trich tu model_params trong data/model/v3/06_train/<loss>/<h>/model_config.json.",
-  "_ngay_trich": "2026-08-08",
+  "_nguon": "Ket qua Optuna cua notebook 06_1/06_2/06_3 tren du lieu v4. Trich tu model_params trong data/model/v4/06_train/<loss>/<h>/model_config.json. Ban truoc day trich tu v3 nen pipeline .py huan luyen bang sieu tham so cua bo du lieu cu, khong tai lap duoc ket qua notebook v4.",
+  "_ngay_trich": "2026-08-15",
   "mae": {
     "h1": {
-      "n_estimators": 1157,
-      "learning_rate": 0.020216068993643928,
-      "num_leaves": 134,
-      "min_child_samples": 21,
-      "subsample": 0.8333055051647258,
-      "colsample_bytree": 0.8725624200445817,
-      "reg_alpha": 9.597707459454199,
-      "reg_lambda": 6.765723797427797
+      "n_estimators": 800,
+      "learning_rate": 0.030186957013853523,
+      "num_leaves": 82,
+      "min_child_samples": 88,
+      "subsample": 0.7003311238246057,
+      "colsample_bytree": 0.8166307584359158,
+      "reg_alpha": 2.581493349440535,
+      "reg_lambda": 4.822412930789058
     },
     "h4": {
-      "n_estimators": 497,
+      "n_estimators": 400,
       "learning_rate": 0.04856825805999369,
       "num_leaves": 69,
       "min_child_samples": 111,
@@ -25,48 +25,46 @@
   },
   "huber": {
     "h1": {
-      "n_estimators": 685,
-      "learning_rate": 0.033085639673402445,
-      "num_leaves": 167,
-      "min_child_samples": 34,
-      "subsample": 0.9406590942262119,
-      "colsample_bytree": 0.7223651931039312,
-      "reg_alpha": 9.868869366005173,
-      "reg_lambda": 7.722447692966574,
-      "alpha": 1.0406973468428382
-    },
-    "h4": {
-      "n_estimators": 811,
+      "n_estimators": 386,
       "learning_rate": 0.057812018524968964,
       "num_leaves": 71,
       "min_child_samples": 81,
       "subsample": 0.7511572371061874,
       "colsample_bytree": 0.7195154778955838,
       "reg_alpha": 9.488855372533333,
-      "reg_lambda": 9.656320330745594,
-      "alpha": 9.864408593146953
+      "reg_lambda": 9.656320330745594
+    },
+    "h4": {
+      "n_estimators": 526,
+      "learning_rate": 0.028492250049322914,
+      "num_leaves": 99,
+      "min_child_samples": 71,
+      "subsample": 0.9497828190564412,
+      "colsample_bytree": 0.7703778535900456,
+      "reg_alpha": 9.88073452750258,
+      "reg_lambda": 4.181540822820741
     }
   },
   "mse": {
     "h1": {
-      "n_estimators": 1157,
-      "learning_rate": 0.020216068993643928,
-      "num_leaves": 134,
-      "min_child_samples": 21,
-      "subsample": 0.8333055051647258,
-      "colsample_bytree": 0.8725624200445817,
-      "reg_alpha": 9.597707459454199,
-      "reg_lambda": 6.765723797427797
+      "n_estimators": 329,
+      "learning_rate": 0.051211779757401,
+      "num_leaves": 146,
+      "min_child_samples": 49,
+      "subsample": 0.8835558684167139,
+      "colsample_bytree": 0.7418481581956126,
+      "reg_alpha": 2.9214464853521815,
+      "reg_lambda": 3.663618432936917
     },
     "h4": {
-      "n_estimators": 1157,
-      "learning_rate": 0.020216068993643928,
+      "n_estimators": 509,
+      "learning_rate": 0.035695622611427835,
       "num_leaves": 134,
-      "min_child_samples": 21,
-      "subsample": 0.7063347914856225,
-      "colsample_bytree": 0.8576399520567726,
-      "reg_alpha": 9.597707459454199,
-      "reg_lambda": 6.899748066581109
+      "min_child_samples": 46,
+      "subsample": 0.8690827034565267,
+      "colsample_bytree": 0.8101148182657786,
+      "reg_alpha": 9.806887918169911,
+      "reg_lambda": 3.986821593017047
     }
   }
 }

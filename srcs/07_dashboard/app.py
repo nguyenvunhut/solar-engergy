@@ -1,24 +1,14 @@
-import ctypes
-import glob
-import os
 from pathlib import Path
+
 import streamlit as st
 
 from dashboard_common import load_shared_css
 
-# NixOS: nap truoc runtime C++/OpenMP de LightGBM import duoc.
-# Tren Windows/macOS cac glob nay rong nen doan code khong lam gi.
-for _lib in ("libstdc++.so.6", "libgomp.so.1"):
-    for _p in (
-        glob.glob(f"/nix/store/*gcc*/lib/{_lib}")
-        + glob.glob(f"/run/current-system/sw/lib/{_lib}")
-        + glob.glob(f"/usr/lib*/{_lib}")
-    ):
-        try:
-            ctypes.CDLL(_p, mode=ctypes.RTLD_GLOBAL)
-            break
-        except Exception:
-            pass
+# KHONG goi nap_runtime_cpp() o day. Truoc day app.py nap libstdc++ tu /nix/store
+# bang RTLD_GLOBAL cho MOI trang, trong khi pyarrow da mang san ban rieng — hai ban
+# trong mot tien trinh lam Streamlit segfault ngay tai pd.read_parquet (coredump
+# 2026-08-10 xac nhan, xem docstring nap_runtime_cpp). Chi trang 2_SHAP.py can
+# LightGBM/SHAP nen chi trang do goi, va chi goi khi import that su that bai.
 
 st.set_page_config(
     page_title="Solar Forecast Analytics | The Outliers",

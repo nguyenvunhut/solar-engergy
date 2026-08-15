@@ -14,9 +14,13 @@ CACH LAM: NHAN QUA, khong noi suy.
 ghi_cs la ham thien van xac dinh nen phep nay khong dua them thong tin do vao -> causal.
 
 BA DIEM TU PHAT TRIEN (khac paper, da kiem chung bang tay tren du lieu that):
-  1. Ranh gioi khoi gio xac dinh TU DU LIEU (moi khi buc xa doi gia tri la khoi moi),
-     KHONG gia dinh co dinh o phut :00 hay :15 - reindex o s01 co the lam lech pha vai
-     khoi (da gap khoi chi 3 diem thay vi 4).
+  1. Ranh gioi khoi = MOC GIO TRON tren dong ho (`timestamp.dt.floor("h")`).
+     LICH SU: ban dau ranh gioi duoc xac dinh TU DU LIEU (moi khi buc xa doi gia tri la
+     khoi moi), vi lo reindex o s01 lam lech pha khoi. Da do lai tren toan bo 2.784.438
+     dong (2026-08-09): KHONG co khoi nao ngan hon 4 dong, tuc noi lo lech pha khong xay
+     ra. Nguoc lai, cach cu lam 29.359 khoi DINH nhau khi hai gio lien tiep trung gia tri,
+     va `transform` ben duoi quet sang ca vung tuong lai -> ro ri. Moc gio tron biet truoc
+     tu dong ho nen khong can quan sat tuong lai.
   2. Chi downscale khoi co ty le bien thien ghi_cs max/min <= 1.5 lan. Khoi khong dat
      giu nguyen bac thang goc thay vi ep downscale sai.
   3. Dung TY LE max/min (doi xung ca 2 chieu tang va giam), KHONG dung nguong tuyet doi
@@ -24,11 +28,10 @@ BA DIEM TU PHAT TRIEN (khac paper, da kiem chung bang tay tren du lieu that):
 """
 from __future__ import annotations
 
+from core.columns import SITE_COL, TIMESTAMP_COL
+from core.config import Cfg
 import numpy as np
 import pandas as pd
-
-from core.columns import SITE_COL
-from core.config import Cfg
 
 COT_BUC_XA = ("shortwave_radiation", "direct_normal_irradiance", "diffuse_solar_radiation")
 
@@ -66,9 +69,19 @@ def add_downscaled_radiation(df: pd.DataFrame, cfg: Cfg) -> pd.DataFrame:
     for cot in COT_BUC_XA:
         if cot not in out.columns:
             continue
-        # Ranh gioi khoi = cho gia tri buc xa doi (trong cung 1 tram)
-        doi = out.groupby(SITE_COL)[cot].diff().abs() > 1e-9
-        ma_khoi = doi.groupby(out[SITE_COL]).cumsum()
+        # Ranh gioi khoi = MOC GIO TRON tren dong ho.
+        #
+        # CHONG RO RI (sua 2026-08-09): ban cu xac dinh khoi bang cho gia tri buc xa DOI
+        # (`diff() > 1e-9` roi `cumsum()`). Cach do khien diem KET THUC cua khoi phu thuoc
+        # vao lan doi gia tri KE TIEP - tai thoi diem T chua the biet. Nang hon: khi hai
+        # gio lien tiep tinh co cung gia tri, hai khoi DINH lai lam mot, va `transform`
+        # ben duoi quet ca vung tuong lai. Do da tren du lieu that: 97,63% dong ban ngay
+        # nam trong khoi dung 4 dong (tron 1 gio) nen khong anh huong, nhung 2,37% con lai
+        # (32.988 dong) roi vao khoi dai hon - ca biet co khoi 116-164 dong, tuc buc xa
+        # dung yen 29-41 gio lien (du lieu thoi tiet bi dong bang do ffill lap khoang khuyet).
+        #
+        # Moc gio tron thi biet truoc tu dong ho, khong can quan sat tuong lai.
+        ma_khoi = out[TIMESTAMP_COL].dt.floor("h")
         nhom = [out[SITE_COL], ma_khoi]
 
         ghi_dau = out.groupby(nhom)["ghi_cs"].transform("first")

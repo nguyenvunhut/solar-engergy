@@ -23,6 +23,7 @@ from core.columns import VERSION
 from core.config import Cfg, load_config
 from core.io import read_parquet, write_parquet
 from core.paths import Paths
+
 from stages import s04a_solar_geometry, s04b_downscale_radiation, s04c_site_scale
 
 
@@ -75,14 +76,30 @@ def run_s04(cfg: Cfg | None = None):
                 f"{bc['ty_le_bien_doi_sau_%']}%" if bc else "")
         print(f"      {ten:<12}: {n:>9,} dong x {c} cot{them}")
 
-    print("\n[3/3] 5 fold cross-validation")
+    print(f"\n[3/3] {int(cfg.data['n_splits'])} fold cross-validation")
+    # CHONG RO RI TRONG CV: moi fold phai dung thong ke quy mo tinh RIENG tu
+    # fold_n_train cua chinh no. Ban cu ap chung `thong_ke` cua CA tap train (trai toi
+    # 2021-08) cho ca 5 fold - voi fold 1..4 thi do la thong ke cua TUONG LAI so voi
+    # chinh fold do, khien diem CV lac quan hon thuc te va Optuna chon sieu tham so tren
+    # so da bi thoi. Rieng fold 5 khong doi vi fold_5_train chinh la ca tap train.
     thu_muc_fold = vao / "time_series_folds"
     ra_fold = ra / "time_series_folds"
     ra_fold.mkdir(parents=True, exist_ok=True)
+    thong_ke_fold: dict[str, dict] = {}
+    for f in sorted(thu_muc_fold.glob("fold_*_train_time.parquet")):
+        so = f.name.split("_")[1]
+        thong_ke_fold[so] = s04c_site_scale.tinh_quy_mo_tu_train(
+            f, cfg, ra_fold, ten_file=f"quy_mo_tram_fold_{so}.json"
+        )
+        print(f"      thong ke rieng cho fold {so}: "
+              f"{len(thong_ke_fold[so]['site_scale'])} tram")
+
     for f in sorted(thu_muc_fold.glob("fold_*_time.parquet")):
         goc = f.name.replace("_time.parquet", "")
-        n, c, _ = _xu_ly_1_tap(f, ra_fold / f"{goc}_spatial.parquet", thong_ke, cfg)
-        print(f"      {goc:<16}: {n:>9,} dong x {c} cot")
+        so = goc.split("_")[1]
+        tk = thong_ke_fold.get(so, thong_ke)
+        n, c, _ = _xu_ly_1_tap(f, ra_fold / f"{goc}_spatial.parquet", tk, cfg)
+        print(f"      {goc:<16}: {n:>9,} dong x {c} cot (thong ke fold {so})")
 
     print(f"\nDa ghi vao: {ra}")
     return ra

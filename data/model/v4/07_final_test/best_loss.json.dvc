@@ -1,0 +1,5 @@
+outs:
+- md5: e396c8d3ac9ce51b8dc9c6def91e3d7e
+  size: 3399
+  hash: md5
+  path: best_loss.json

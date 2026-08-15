@@ -4,7 +4,7 @@ REFACTOR 2026-08-09:
   - Bo bo chon "Nguon mo hinh" 8 lua chon (06_1 / 06_2 / 06_3 / API / bo_goc /
     cac bien the 06_train...). Dashboard bao cao KET QUA CHINH THUC, khong phai
     cong cu duyet thi nghiem; 5 trong 8 nguon do da tro toi file khong con ton tai.
-    Nguon duy nhat bay gio: 07_final_test - mo hinh vo dich Huber.
+    Nguon chinh thuc bay gio: 07_final_test - model duoc chon tu validation.
   - Bo goi model.predict() trong trang (ham predict_on_test cu). Trang chi ve lai
     artifact pipeline da ghi, khong tu suy dien lai ket qua.
   - Them duong Prophet vao chart va o so sanh WAPE, lay tu 08_baseline_prophet_test
@@ -15,7 +15,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
 
-from dashboard_common import load_shared_css
+from dashboard_common import header_bao_cao, load_shared_css
 from dashboard_data import (
     ACTUAL_COLOR, PRED_COLOR, PROPHET_COLOR, GRID_COLOR,
     audit_metrics, he_so_tre_phut, load_best_loss, load_metrics,
@@ -33,8 +33,8 @@ def style_fig(fig: go.Figure, height: int = 380) -> go.Figure:
         paper_bgcolor="#FFFFFF",
         plot_bgcolor="#FFFFFF",
         height=height,
-        margin=dict(l=12, r=12, t=46, b=18),
-        legend=dict(orientation="h", y=1.12, x=0),
+        margin=dict(l=12, r=12, t=88, b=18),
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, x=0),
         xaxis=dict(gridcolor=GRID_COLOR, zeroline=False),
         yaxis=dict(gridcolor=GRID_COLOR, zeroline=False),
         font=dict(color="#1F2937", size=12),
@@ -67,27 +67,29 @@ def kpi(label: str, value: str, note: str = "", status: str | None = None) -> No
 # ══════════════════════════════════════════════════════════════════════════════
 pred_all = load_prediction_audit()
 if pred_all.empty:
-    st.error("Chưa có `data/model/v3/07_final_test/prediction_audit.parquet` — chạy stage s09 trước.")
+    st.error("Chưa có `07_final_test/prediction_audit.parquet` — chạy stage s09 trước.")
     st.stop()
 
 best_loss = load_best_loss()
 prophet_pred = load_prophet_predictions()
 prophet_tom_tat = load_prophet_summary()
 
-st.markdown(
-    '<div class="dash-title">Dự báo sản lượng điện mặt trời 15 phút — kết quả trên tập test niêm phong</div>',
-    unsafe_allow_html=True,
-)
-
 # Ghi RO tap nao quyet dinh dieu gi. Day la diem hoi dong hay hoi nhat: mo hinh
 # duoc CHON tren validation, va chi sau khi chot moi mo tap test de cham diem.
 _h1 = best_loss.get("h1", {})
+_h4 = best_loss.get("h4", {})
 _nhan_chon = (
-    f"Mô hình vô địch <b>{_h1.get('winning_loss', '?').upper()}</b> được chọn "
-    f"<b>trên tập VALIDATION</b> (WAPE {_h1.get('val_wape', float('nan')):.2f}%), "
-    "tập test không tham gia vào quyết định này. Các số dưới đây đo trên tập test niêm phong."
-) if _h1 else "Nguồn: 07_final_test — tập test niêm phong."
-st.markdown(f'<div class="dash-subtitle">{_nhan_chon}</div>', unsafe_allow_html=True)
+    f"Mô hình được chọn: H1 = <b>{_h1.get('winning_loss', '?').upper()}</b> "
+    f"(WAPE validation {_h1.get('val_wape', float('nan')):.2f}%), "
+    f"H4 = <b>{_h4.get('winning_loss', '?').upper()}</b> "
+    f"(WAPE validation {_h4.get('val_wape', float('nan')):.2f}%). "
+    "Quyết định chỉ dùng validation; các số dưới đây đo trên tập Test niêm phong."
+) if _h1 else "Nguồn: 07_final_test — tập Test niêm phong."
+header_bao_cao(
+    "Dự báo sản lượng điện mặt trời 15 phút — kết quả trên tập test niêm phong",
+    _nhan_chon,
+    nhan_phai="TẬP TEST NIÊM PHONG",
+)
 
 # ══════════════════════════════════════════════════════════════════════════════
 #  Bo loc
@@ -99,6 +101,8 @@ with st.sidebar:
         if f"y_pred_h{h}" in pred_all.columns and pred_all[f"y_pred_h{h}"].notna().any()
     ]
     horizon = st.selectbox("Horizon", available_horizons, format_func=lambda h: f"h{h} ({h * 15} phút)")
+    _model_for_horizon = best_loss.get(f"h{horizon}", {}).get("winning_loss", "?").upper()
+    st.caption(f"Artifact đang hiển thị: {_model_for_horizon} · H{horizon} — chọn từ validation")
     true_col, pred_col = f"y_true_h{horizon}", f"y_pred_h{horizon}"
 
     pred_h = pred_all[pred_all[pred_col].notna()].copy()
@@ -179,13 +183,16 @@ rmse = metric_value(overall, "rmse")
 mae = metric_value(overall, "mae")
 r2 = metric_value(overall, "r2")
 _pro = prophet_tom_tat.get(f"h{horizon}", {})
-_ss = skill_score(wape, _pro["wape_prophet_%"]) if wape and _pro.get("wape_prophet_%") else None
+_wape_common = _pro.get("wape_lightgbm_%")
+_ss = (skill_score(_wape_common, _pro["wape_prophet_%"])
+       if _wape_common and _pro.get("wape_prophet_%") else None)
 
 k1, k2, k3, k4, k5, k6 = st.columns(6)
 with k1:
     # Nguong WAPE: <20% tot (nganh du bao mat troi 15 phut thuong 15-35%).
     _st = "up" if wape and wape < 20 else "down" if wape and wape > 30 else None
-    _note = f"tốt hơn Prophet {_ss:.0f}%" if _ss else "càng thấp càng tốt"
+    _note = (f"Skill Score common {_ss:+.1f}%" if _ss is not None
+             else "càng thấp càng tốt")
     kpi("WAPE", f"{wape:.2f}%" if wape else "n/a", _note, status=_st)
 with k2:
     _st = "up" if _tre_pha == _tre_pha and abs(_tre_pha) <= 2 else (
@@ -193,7 +200,8 @@ with k2:
     kpi("Trễ pha", f"{_tre_pha:+.2f} phút" if _tre_pha == _tre_pha else "n/a",
         "dương = dự báo đi sau", status=_st)
 with k3:
-    kpi("Skill Score", f"{_ss:+.1f}%" if _ss else "n/a", "so với Prophet",
+    kpi("Skill Score", f"{_ss:+.1f}%" if _ss is not None else "n/a",
+        "common scope với Prophet",
         status="up" if _ss and _ss > 0 else "down" if _ss else None)
 with k4:
     kpi("MAE", f"{mae:.4f} kWh" if mae else "n/a", "sai số tuyệt đối")
@@ -204,9 +212,10 @@ with k6:
     kpi("RMSE", f"{rmse:.4f} kWh" if rmse else "n/a", f"{len(compare):,} dòng đang xem")
 
 st.caption(
-    "Các KPI tính trên **toàn bộ tập test** của mô hình vô địch — không đổi khi chỉnh Site "
-    "hay khoảng ngày bên dưới, vì đó là chất lượng tổng thể. Chart và bảng bên dưới mới lọc "
-    "theo lựa chọn ở sidebar."
+    f"KPI WAPE/RMSE/MAE/R² lấy từ phạm vi Test chính thức **measured + daylight** "
+    f"(n={overall.get('measured_daylight_test_rows', 'n/a')}) của model {_model_for_horizon} · H{horizon}; "
+    f"Skill Score lấy từ phạm vi chung với Prophet (n={_pro.get('n_dong', 'n/a')}). "
+    "Các KPI không đổi khi chỉnh Site hay khoảng ngày; chart và bảng bên dưới mới lọc theo sidebar."
 )
 st.divider()
 
@@ -222,7 +231,7 @@ with t2_left:
                                  mode="lines+markers", name="Thực tế",
                                  line=dict(color=ACTUAL_COLOR, width=2), marker=dict(size=3)))
         fig.add_trace(go.Scatter(x=compare["display_timestamp"], y=compare["y_pred"],
-                                 mode="lines+markers", name="LightGBM",
+                                 mode="lines+markers", name=f"LightGBM · {_model_for_horizon} H{horizon}",
                                  line=dict(color=PRED_COLOR, width=1.8), marker=dict(size=3)))
         if "y_prophet" in compare.columns and compare["y_prophet"].notna().any():
             fig.add_trace(go.Scatter(x=compare["display_timestamp"], y=compare["y_prophet"],
@@ -312,7 +321,7 @@ with st.container(border=True):
         )
     else:
         _bang = pd.DataFrame([
-            {"model": "LightGBM (đầy đủ đặc trưng thời tiết)", "wape": _pro["wape_lightgbm_%"]},
+            {"model": f"LightGBM · {_model_for_horizon} H{horizon}", "wape": _pro["wape_lightgbm_%"]},
             {"model": "Prophet (không có đặc trưng thời tiết)", "wape": _pro["wape_prophet_%"]},
         ]).sort_values("wape")
         _f = go.Figure(go.Bar(

@@ -22,13 +22,19 @@ from core.target import k_target, mau_chuan_hoa, them_muc_tieu
 from core.weights import build_sample_weight
 
 
-def doc_fold(ctx: Ctx, n: int, vai_tro: str) -> pd.DataFrame | None:
+def doc_fold(ctx: Ctx, n: int | None, vai_tro: str,
+             duong_dan=None) -> pd.DataFrame | None:
     """Doc 1 fold, dung muc tieu va weight GIONG HET cach lam voi tap development.
 
     Tra ve None neu file khong ton tai (de vong lap biet dung).
+
+    Tham so `duong_dan` cho phep dung chinh cach xu ly nay cho mot tep khong phai fold
+    (vi du tap validation that o s08c) - de hai duong khong the lech nhau ve cach dung
+    muc tieu, loc nguong va tinh trong so.
     """
     cfg = ctx.cfg
-    duong_dan = ctx.paths.fold(n, vai_tro)
+    if duong_dan is None:
+        duong_dan = ctx.paths.fold(n, vai_tro)
     if not duong_dan.exists():
         return None
 

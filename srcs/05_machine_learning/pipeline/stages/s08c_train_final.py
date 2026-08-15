@@ -106,6 +106,29 @@ def bang_8_pham_vi(ctx: Ctx, khung: pd.DataFrame) -> pd.DataFrame:
     return pd.DataFrame(dong)
 
 
+def doc_val_that(ctx: Ctx) -> pd.DataFrame:
+    """Doc tap VALIDATION THAT (v4_val_selected), xu ly y het doc_fold().
+
+    TACH BIET HOAN TOAN voi tap hoc: mo hinh cuoi chi hoc v4_train_selected, nen moi
+    dong o day deu la dong CHUA TUNG duoc hoc.
+
+    Truoc day ham goi no gop 3 fold validation lai - nhung fold nam trong development
+    (= train + val) ma mo hinh cuoi lai hoc ca development, nen con so thu duoc la cham
+    tren bai DA HOC. Do da tren bo v4: pooled 3 fold cho 886.148 dong va WAPE h4
+    26,09%, con tap validation that cho 288.815 dong va 26,97% - tuc ban cu lac quan
+    hon gan mot diem. Notebook 06 da sua tu 2026-08-09, ban .py nay sua theo.
+    """
+    from stages.s08b_train_folds import doc_fold  # dung chung cach xu ly
+
+    duong_dan = ctx.paths.selected("val_selected")
+    if not duong_dan.exists():
+        raise FileNotFoundError(
+            f"Khong tim thay tap validation that: {duong_dan}. "
+            "Chay stage s07 truoc de sinh tep nay."
+        )
+    return doc_fold(ctx, None, "val", duong_dan=duong_dan)
+
+
 def tinh_metrics_val(ctx: Ctx) -> Ctx:
     """Tinh metric tren tap VALIDATION that - dung de CHON mo hinh vo dich.
 
@@ -115,20 +138,7 @@ def tinh_metrics_val(ctx: Ctx) -> Ctx:
     duoc cham DUY NHAT 1 LAN o cuoi de bao cao.
     """
     ctx.bat_buoc_co("model")
-    from stages.s08b_train_folds import doc_fold
-
-    khung = []
-    n = 1
-    while (d := doc_fold(ctx, n, "val")) is not None:
-        khung.append(d)
-        n += 1
-    if not khung:
-        raise FileNotFoundError(
-            "Khong tim thay fold validation nao de tinh metrics_val.json (chong ro ri). "
-            f"Kiem tra {ctx.paths.stage('s07_selected')}/time_series_folds/"
-        )
-
-    val_h = pd.concat(khung, ignore_index=True)
+    val_h = doc_val_that(ctx)
     X_val = chuan_bi_X(val_h, ctx.features, ctx.medians, dtype=ctx.cfg.runtime["dtype"])
     val_h[PRED_COL] = du_bao_ve_kwh(ctx.model.predict(X_val), val_h, ctx.cfg)
     ctx.metrics_val = metrics_3_pham_vi(val_h)

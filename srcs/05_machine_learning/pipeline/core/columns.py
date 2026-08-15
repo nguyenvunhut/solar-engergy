@@ -5,13 +5,29 @@ lap lai 9 lan), va COT_TAT_DINH duoc copy nguyen si vao ca 3 file train.
 """
 from __future__ import annotations
 
+from pathlib import Path
+
 import pandas as pd
 import pyarrow.parquet as pq
+import yaml
 
 from .config import Cfg
 
+# ── Phien ban bo du lieu ──
+# Truoc day dong nay viet cung "v3". Khi du an chuyen sang v4 thi paths.yaml da doi
+# nhung hang so nay khong doi, nen ba stage sinh dac trung van dat ten file theo v3
+# trong khi phan con lai doc theo v4 - lech ten file ma khong bao loi.
+# Doc thang tu paths.yaml de chi con MOT cho khai bao phien ban.
+def _doc_version() -> str:
+    duong = (Path(__file__).resolve().parents[4] / "config" / "05_machine_learning"
+             / "pipeline" / "paths.yaml")
+    with open(duong, encoding="utf-8") as f:
+        return str(yaml.safe_load(f)["version"])
+
+
+VERSION = _doc_version()
+
 # ── Cot khoa - co dinh, khong dua vao YAML vi doi la vo toan bo schema ──
-VERSION = "v3"
 SITE_COL = "site_id"
 TIMESTAMP_COL = "timestamp"
 TARGET_COL = "energy_generated_kwh"
@@ -84,6 +100,34 @@ def bao_cao_nhom_dac_trung(duong_dan_parquet, cfg: Cfg) -> dict:
     return ket_qua
 
 
+def deny_list_chuan() -> set[str]:
+    """Danh sach cot cam lam dau vao model, lay tu DUNG MOT nguon.
+
+    Nguon la stages/s07a_deny_list.py - noi khai bao day du 8 nhom kem ly do, dong bo
+    tung dong voi notebook 05_select_features. Truoc day core/columns.py doc mot khoa
+    'deny_list' rieng trong features.yaml chi liet ke 5 cot, con s07 lai dung danh sach
+    day du: hai nguon lech nhau ma khong co gi bao loi.
+
+    Import trong ham chu khong o dau file: stages/s07a_deny_list.py can VERSION cua
+    chinh module nay, dat import o dau file se thanh vong tron.
+    """
+    from stages.s07a_deny_list import (
+        DENY_DAYLIGHT_AUDIT,
+        DENY_IDS,
+        DENY_PROVENANCE_OUTLIER,
+        DENY_RAW_CATEGORICAL,
+        DENY_RAW_TIME,
+        DENY_STRUCTURAL_COLLINEAR,
+        DENY_TARGET,
+        SPLIT_META,
+    )
+
+    return set(
+        DENY_TARGET + DENY_PROVENANCE_OUTLIER + DENY_DAYLIGHT_AUDIT + DENY_IDS
+        + DENY_RAW_TIME + DENY_RAW_CATEGORICAL + DENY_STRUCTURAL_COLLINEAR + SPLIT_META
+    )
+
+
 def tach_dac_trung_ngan(selected_features: list[str], cfg: Cfg) -> tuple[list[str], list[str]]:
     """Tach danh sach dac trung thanh (giu_lai, bo_di). Copy nguyen si tu 04_x_train_*.py.
 
@@ -96,7 +140,7 @@ def tach_dac_trung_ngan(selected_features: list[str], cfg: Cfg) -> tuple[list[st
     """
     prefix_cam = tuple(cfg.features["bo_prefix_ngan"])
     ngoai_le = set(cfg.features["giu_lai_ngoai_le"])
-    cam = set(cfg.features["deny_list"])
+    cam = deny_list_chuan()
 
     bo_di = [
         c for c in selected_features

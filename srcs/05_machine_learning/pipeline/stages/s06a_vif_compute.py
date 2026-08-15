@@ -18,6 +18,8 @@ import pandas as pd
 import pyarrow as pa
 import pyarrow.parquet as pq
 
+from core.columns import VERSION
+
 # Cot khong dua vao chan doan: target, khoa ID, provenance, nhan outlier, thoi gian tho
 LOAI_TRU = [
     "energy_generated_kwh",
@@ -43,7 +45,7 @@ def cot_so_can_chan_doan(duong_dan) -> tuple[list[str], list[str]]:
     so = [
         ten for ten, kieu in zip(schema.names, schema.types)
         if any(k in str(kieu) for k in ("double", "float", "int"))
-        and ten not in LOAI_TRU and not ten.startswith("v3_")
+        and ten not in LOAI_TRU and not ten.startswith(f"{VERSION}_")
     ]
     return so, [n for n in schema.names if n not in so]
 

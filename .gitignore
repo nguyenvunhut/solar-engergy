@@ -339,3 +339,10 @@ data/model/**
 reports/dashboards/*.twb
 reports/dashboards/*.twbx
 reports/dashboards/* Files/
+data/staging_buffers/
+
+# ── Bo du lieu v3 (da thay bang v4) ──
+# v3 dung tren du lieu TRUOC hotfix ghep thoi tiet nhan qua, khong con dung de bao cao.
+# Bo khoi git de repo chi con mot nguon su that la v4.
+data/model/v3/
+data/mlmart_base/v3_*

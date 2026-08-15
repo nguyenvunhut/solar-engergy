@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import pandas as pd
 
-from core.columns import SITE_COL, TIMESTAMP_COL
+from core.columns import VERSION, SITE_COL, TIMESTAMP_COL
 from core.config import Cfg
 
 
@@ -39,7 +39,7 @@ def tim_moc_cat(df: pd.DataFrame, cfg: Cfg) -> tuple[pd.Timestamp, pd.Series, pd
 
 
 def gan_nhan_holdout(
-    df: pd.DataFrame, moc_cat: pd.Timestamp, cfg: Cfg, version: str = "v3"
+    df: pd.DataFrame, moc_cat: pd.Timestamp, cfg: Cfg, version: str = VERSION
 ) -> pd.DataFrame:
     """Gan cot <version>_holdout_split = development | test + metadata ve cach chia."""
     out = df.copy()
@@ -51,7 +51,7 @@ def gan_nhan_holdout(
     return out
 
 
-def tach(df: pd.DataFrame, cfg: Cfg, version: str = "v3") -> dict:
+def tach(df: pd.DataFrame, cfg: Cfg, version: str = VERSION) -> dict:
     """Tach thanh development / test. Tra ve dict chua ca hai va thong tin moc cat."""
     moc, ts_dev, ts_test = tim_moc_cat(df, cfg)
     n_ts = len(ts_dev) + len(ts_test)

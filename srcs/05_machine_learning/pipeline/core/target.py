@@ -94,7 +94,32 @@ def k_target(df: pd.DataFrame, cfg: Cfg) -> np.ndarray:
     """
     eps = float(cfg.features["eps_elev"])
     k_raw = df[TARGET_SHIFTED].to_numpy() / mau_chuan_hoa(df, eps)
-    return np.clip(k_raw, cfg.train["k_target_min"], cfg.train["k_target_max"])
+    return np.clip(k_raw, cfg.train["k_target_min"], nguong_cat(cfg))
+
+
+def tinh_nguong_cat(df: pd.DataFrame, cfg: Cfg) -> float:
+    """Suy nguong cat tu phan bo k tren tap TRAIN, dung phan vi clip_phan_vi.
+
+    Notebook 06 dat CLIP_K = None roi goi tinh_clip_tu_train(): nguong KHONG duoc viet
+    cung ma phai suy tu du lieu. Truoc day pipeline dung thang k_target_max = 1.5 trong
+    train.yaml, tuc cat muc tieu huan luyen o mot nguong khac han notebook (1,3764) - hai
+    ben train tren hai muc tieu khac nhau nen khong the ra cung ket qua.
+    """
+    eps = float(cfg.features["eps_elev"])
+    k = pd.Series(df[TARGET_SHIFTED].to_numpy() / mau_chuan_hoa(df, eps))
+    k = k.replace([np.inf, -np.inf], np.nan).dropna()
+    return float(k.quantile(float(cfg.train["clip_phan_vi"])))
+
+
+def dat_nguong_cat(cfg: Cfg, gia_tri: float) -> None:
+    """Ghi nguong cat vao cfg de moi buoc sau dung chung DUNG mot con so."""
+    cfg.train["clip_k"] = float(gia_tri)
+
+
+def nguong_cat(cfg: Cfg) -> float:
+    """Nguong cat dang hieu luc. Chua suy tu du lieu thi lui ve k_target_max."""
+    gt = cfg.train.get("clip_k")
+    return float(gt) if gt else float(cfg.train["k_target_max"])
 
 
 def du_bao_ve_kwh(k_pred: np.ndarray, df: pd.DataFrame, cfg: Cfg) -> np.ndarray:

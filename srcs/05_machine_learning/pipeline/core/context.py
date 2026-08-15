@@ -36,7 +36,8 @@ class Ctx:
     horizon_steps: int
 
     # ── Du lieu (stage s08a dien vao) ──
-    dev_h: pd.DataFrame | None = None       # development da them muc tieu
+    dev_h: pd.DataFrame | None = None       # tap HOC (train) da them muc tieu
+    val_h: pd.DataFrame | None = None       # validation rieng - CHUA tung tham gia fit
     test_h: pd.DataFrame | None = None      # test da them muc tieu
     features: list[str] = field(default_factory=list)
     medians: pd.Series | None = None

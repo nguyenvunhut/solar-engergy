@@ -20,6 +20,12 @@ tz_dong: 10.0       # gio mua dong Uc (thang 4..9)
 # lag_4 (T-60 phut) thi NGUOC LAI: audit PASS sach (0/40 site vuot nguong, WAPE 18,7%
 # tot hon baseline 21,1%) -> GIU LAI. Rolling cua so 4 (1 gio) cung giu vi muot, khong
 # mang gia tri T-30 phut.
+# Mau so clear-sky theo Lonij et al. (2012): phan vi 80 cua san luong do duoc tai cung
+# khung gio, tinh tren 15 ngay lien truoc. Copy nguyen si tu notebook 03_1
+# (PHAN_VI_LONIJ = 0.80, SO_NGAY_LONIJ = 15).
+phan_vi_lonij: 0.80
+so_ngay_lonij: 15
+
 lags: [4, 96]
 rolling_windows: [4, 96]
 
@@ -78,11 +84,11 @@ cot_phu:
    outlier_group, has_complete_history_features, is_daylight]
 
 # ── Deny list: cam dua vao model (chong ro ri / da cong tuyen) ──
-deny_list:
-  # to hop tuyen tinh chinh xac cua tran_cong_suat va ky_vong
-  - con_cach_tran
-  # nhan outlier - biet truoc dong nao bat thuong la ro ri
-  - gmm_if_outlier_flag
-  - outlier_group
-  - exclude_from_training
-  - after_source_gap_steps_remaining
+# KHONG khai bao o day. Danh sach cam duoc nhom theo 8 loai (muc tieu, provenance, co
+# ban ngay, khoa ID, phan loai tho, thoi gian tho, da cong tuyen, metadata split) va
+# moi nhom deu kem ly do dai, nen no nam trong
+#     srcs/05_machine_learning/pipeline/stages/s07a_deny_list.py
+# de dong bo tung dong voi notebook 05_select_features.ipynb (cell 6).
+# Truoc day khoa 'deny_list' o day liet ke 5 cot nhung KHONG duoc doc, con danh sach
+# that thi thieu clearsky_proxy va pv_clr_lonij - hai nguon su that lech nhau ma khong
+# co gi bao loi. Bo han khoa nay de chi con MOT cho khai bao.
