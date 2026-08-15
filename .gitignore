@@ -30,9 +30,13 @@ data/processed/*
 !data/raw/.gitkeep
 !data/processed/.gitkeep
 
-# Local report outputs generated from notebooks/scripts.
-# Keep figures and dashboards available for approved commits.
-reports/**/*.csv
+# Reports - Automation & helper scripts (Python scripts used for report generation/editing)
+reports/**/*.py
+reports/*.py
+
+# Reports - LaTeX build artifacts & temporary files
+reports/.latex-build/
+reports/**/.latex-build/
 reports/**/*.aux
 reports/**/*.log
 reports/**/*.out
@@ -40,17 +44,53 @@ reports/**/*.toc
 reports/**/*.synctex.gz
 reports/**/*.fls
 reports/**/*.fdb_latexmk
-reports/Section*.pdf
-reports/report config.pdf
-reports/Section*.tex
-reports/appendix.tex
-reports/report config.tex
+reports/**/*.bbl
+reports/**/*.blg
+reports/**/*.bcf
+reports/**/*.run.xml
+reports/**/*.nav
+reports/**/*.snm
+reports/**/*.vrb
+reports/**/*.lof
+reports/**/*.lot
+reports/**/*.xdv
+reports/**/*.dvi
+
+# Reports - Editor, Tableau, Draw.io temporary / lock / backup files
+reports/**/~*
+reports/**/~*.twbr
+reports/**/~*.twb*
+reports/**/.$*
+reports/**/.$*.bkp
+reports/**/.$*.drawio.bkp
+reports/**/.~*
+reports/**/*.tmp
+reports/**/*.bak
+reports/**/*.bkp
+
+# Reports - Data dumps & binary extracts (non-report assets)
+reports/**/*.csv
+reports/**/*.tsv
+reports/**/*.parquet
+reports/**/*.hyper
+reports/dashboards/*.twb
+reports/dashboards/*.twbx
+reports/dashboards/* Files/
+
+# Reports - Allow report assets (figures, diagrams, images, thesis docs)
+!reports/**/.gitkeep
 !reports/figures/
 !reports/figures/**
-!reports/dashboards/
-!reports/dashboards/**
-!reports/dashboard/
-!reports/dashboard/**
+!reports/images/
+!reports/images/**
+!reports/diagrams/
+!reports/diagrams/**
+!reports/official_thesis/
+!reports/official_thesis/**
+!reports/references/
+!reports/references/**
+!reports/gmm_if_report/
+!reports/gmm_if_report/**
 
 # personal notes or test files
 tests/test_db_connection_nhutvu.py
@@ -335,10 +375,6 @@ data/mlmart_base/*.parquet
 data/model/**
 !data/model/**/
 !data/model/**/*.dvc
-# Tableau dashboards
-reports/dashboards/*.twb
-reports/dashboards/*.twbx
-reports/dashboards/* Files/
 data/staging_buffers/
 
 # ── Bo du lieu v3 (da thay bang v4) ──
@@ -346,3 +382,6 @@ data/staging_buffers/
 # Bo khoi git de repo chi con mot nguon su that la v4.
 data/model/v3/
 data/mlmart_base/v3_*
+
+# Scrum 8 defense presentation/report PDF
+docs/scrum_8_project_delivery_defense/Phân tích Dữ liệu Năng lượng Mặt trời.pdf

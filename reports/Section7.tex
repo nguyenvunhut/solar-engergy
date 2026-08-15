@@ -1,0 +1,382 @@
+% !TeX program = xelatex
+% =============================================================================
+%  DỰ ÁN TỐT NGHIỆP — BÁO CÁO CHUYÊN ĐỀ
+%  Đề tài: Phân tích Hiệu suất và Dự báo Sản lượng Hệ thống Điện Mặt Trời
+%  Nhóm: The Outliers
+%  Trường: Cao đẳng FPT Polytechnic — Chuyên ngành Xử lý Dữ liệu
+% =============================================================================
+
+\documentclass[12pt, a4paper]{report}
+
+% ======================== PACKAGES CƠ BẢN & FONT ============================
+\usepackage{geometry}
+\geometry{a4paper, top=2.5cm, bottom=2.5cm, left=3cm, right=2cm, headheight=33pt, footskip=1.1cm}
+
+% --- FONT CHO XELATEX (HỖ TRỢ TIẾNG VIỆT 100% - FORMAL, TỐI GIẢN, HIỆN ĐẠI) ---
+\usepackage{fontspec}
+\setmainfont{Times New Roman}
+\setmonofont{Consolas}
+
+% ======================== MÀU SẮC & CODE LISTINGS ===========================
+\usepackage{xcolor}
+\usepackage{listings}
+% Định nghĩa bảng màu Tableau trích xuất từ main_fixed_01.twb & tableau_theme.json
+\definecolor{tblNavy}{HTML}{4E79A7}
+\definecolor{tblOrange}{HTML}{F28E2B}
+\definecolor{tblGreen}{HTML}{59A14F}
+\definecolor{tblRed}{HTML}{E15759}
+\definecolor{tblTeal}{HTML}{76B7B2}
+\definecolor{tblYellow}{HTML}{EDC948}
+\definecolor{tblPurple}{HTML}{B07AA1}
+\definecolor{tblGray}{HTML}{79706E}
+\definecolor{tblSeqWarm}{HTML}{F28E2B}
+
+% Định nghĩa màu sắc cho Code Block
+\definecolor{mutedgreen}{rgb}{0.2,0.5,0.3} 
+\definecolor{mutedblue}{rgb}{0.15,0.35,0.6} 
+\definecolor{mutedgray}{rgb}{0.45,0.45,0.45} 
+\definecolor{mutedpurple}{rgb}{0.45,0.2,0.55} 
+\definecolor{softbackground}{rgb}{0.98,0.98,0.98} 
+\definecolor{bordergray}{rgb}{0.85,0.85,0.85} 
+\definecolor{fptorange}{RGB}{245,130,32}
+
+\lstdefinestyle{pythonstyle}{
+    backgroundcolor   = \color{softbackground},
+    commentstyle      = \color{mutedgreen}\itshape,
+    keywordstyle      = \color{mutedblue}\bfseries,
+    numberstyle       = \tiny\color{mutedgray},
+    stringstyle       = \color{mutedpurple},
+    basicstyle        = \ttfamily\footnotesize\color{black},
+    breakatwhitespace = false,
+    breaklines        = true,
+    columns           = fullflexible,
+    captionpos        = t, 
+    keepspaces        = true,
+    numbers           = left,
+    numbersep         = 5pt,
+    showspaces        = false,
+    showstringspaces  = false,
+    showtabs          = false,
+    tabsize           = 4,
+    frame             = single,
+    rulecolor         = \color{bordergray}
+}
+\lstset{style=pythonstyle}
+
+% Ngăn chặn tự động gạch nối từ (hyphenation) cuối dòng
+\hyphenpenalty=10000
+\exhyphenpenalty=10000
+\tolerance=10000
+\emergencystretch=3em
+
+% ======================== TRANG TRÍ & ĐỊNH DẠNG =============================
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{amsmath, amssymb}
+\usepackage{enumitem}
+\usepackage{array}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\arraybackslash}p{#1}}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{graphicx}
+\graphicspath{{images/}{figures/}{./}}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{tikz}
+\usepackage[titles]{tocloft}
+
+% VIỆT HÓA TOÀN BỘ CÁC TIÊU ĐỀ HỆ THỐNG
+\renewcommand{\figurename}{Hình}
+\renewcommand{\tablename}{Bảng}
+\renewcommand{\contentsname}{Mục Lục}
+\renewcommand{\listfigurename}{Danh Mục Hình Vẽ}
+\renewcommand{\listtablename}{Danh Mục Bảng Biểu}
+\providecommand{\tep}[1]{\texttt{#1}}
+
+\usepackage{indentfirst}
+\setlength{\parindent}{1cm}
+\setlength{\parskip}{6pt}
+
+\usepackage{setspace}
+\onehalfspacing
+\setlength{\headheight}{33pt}
+
+% Hyperlinks & Bookmarks
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks  = true,
+    linkcolor   = black,
+    citecolor   = blue,
+    filecolor   = magenta,
+    urlcolor    = blue,
+    pdftitle    = {Dự án Tốt nghiệp - Phân tích Hiệu suất và Dự báo Sản lượng Hệ thống Điện Mặt Trời},
+    pdfauthor   = {The Outliers - FPT Polytechnic},
+    bookmarksnumbered = true,
+}
+
+% --- CẤU HÌNH TIÊU ĐỀ CHƯƠNG ---
+\usepackage{titlesec}
+\titleformat*{\section}{\fontsize{13pt}{15.6pt}\bfseries}
+\titleformat*{\subsection}{\fontsize{13pt}{15.6pt}\bfseries}
+\titleformat*{\subsubsection}{\fontsize{13pt}{15.6pt}\bfseries}
+\titleformat{\chapter}[display]
+  {\normalfont\huge\bfseries}{}{0pt}{\huge}
+\titlespacing*{\chapter}{0pt}{-10pt}{20pt} 
+
+% ======================== HEADER / FOOTER ====================================
+\fancypagestyle{main}{
+    \fancyhf{}
+    \fancyhead[L]{\includegraphics[height=1cm]{figures/logo_fpoly.png}}
+    \fancyhead[R]{\small THE OUTLIERS}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp — Chuyên ngành Xử lý Dữ liệu}
+    \fancyfoot[R]{\small Trang \thepage\ / \pageref{LastPage}}
+    \renewcommand{\headrulewidth}{0.4pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+}
+
+\fancypagestyle{plain}{
+    \fancyhf{}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp — Chuyên ngành Xử lý Dữ liệu}
+    \fancyfoot[R]{\small Trang \thepage\ / \pageref{LastPage}}
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+}
+
+\fancypagestyle{front}{
+    \fancyhf{}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp — Chuyên ngành Xử lý Dữ liệu}
+    \fancyfoot[R]{\small Trang \thepage\ / \pageref{LastPage}}
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+}
+
+
+\begin{document}
+\pagestyle{front}
+
+\begin{titlepage}
+\enlargethispage{1.2cm}
+
+\begin{tikzpicture}[remember picture, overlay]
+    \draw[line width=2pt, fptorange]
+        ([shift={(1cm,-1cm)}]current page.north west)
+        rectangle
+        ([shift={(-1cm,1cm)}]current page.south east);
+    \draw[line width=0.5pt, fptorange]
+        ([shift={(1.15cm,-1.15cm)}]current page.north west)
+        rectangle
+        ([shift={(-1.15cm,1.15cm)}]current page.south east);
+\end{tikzpicture}
+
+\begin{center}
+    \textbf{\large TRƯỜNG CAO ĐẲNG FPT POLYTECHNIC}
+
+    \vspace{0.5cm}
+    \includegraphics[width=0.38\textwidth]{figures/logo_fpoly.png}
+
+    \vspace{0.4cm}
+    {\Large \textbf{DỰ ÁN TỐT NGHIỆP}} \\[4pt]
+    {\large \textbf{CHUYÊN NGÀNH: XỬ LÝ DỮ LIỆU}}
+
+    \vspace{1.6cm}
+    
+    \begin{spacing}{1.0}
+        {\huge \textbf{PHÂN TÍCH HIỆU SUẤT VÀ \\[4pt] DỰ BÁO SẢN LƯỢNG \\[4pt] HỆ THỐNG ĐIỆN MẶT TRỜI}}
+    \end{spacing}
+
+    \vspace{1.8cm}
+    \normalsize
+    \begin{flushleft}
+        \hspace{2cm} \textbf{Nhóm thực hiện:} The Outliers \\[5pt]
+        \hspace{2cm} \textbf{Sinh viên thực hiện:} \\[3pt]
+        \hspace{2cm}
+        \begin{tabular*}{7.5cm}{@{} l @{\extracolsep{\fill}} r @{}}
+            \hspace{0.5cm} 1. Nguyễn Vũ Nhựt   & PS44442 \\
+            \hspace{0.5cm} 2. Nguyễn Văn Sỹ    & PS43671 \\
+            \hspace{0.5cm} 3. Lê Công Toàn    & PS44145 \\
+            \hspace{0.5cm} 4. Nguyễn Xuân Hùng & PS44527 \\
+            \hspace{0.5cm} 5. Ngô Tấn Đạt     & PS44589 \\
+        \end{tabular*} \\[5pt]
+        \hspace{2cm} \textbf{Giảng viên hướng dẫn:} Văn Công Khanh
+    \end{flushleft}
+    \vfill
+    {\normalsize \textbf{TP. HỒ CHÍ MINH, THÁNG 6 NĂM 2026}}
+    \vspace{0.5cm}
+\end{center}
+\end{titlepage}
+
+
+\pagenumbering{arabic}
+\pagestyle{main}
+
+\chapter{Kết luận và Hướng phát triển}
+\label{chap:conclusion}
+
+\section{Kết luận Tổng quan}
+\label{sec:conclusion}
+\textit{[Tóm tắt lại việc hoàn thành các mục tiêu dự án: Xây dựng thành công Data Warehouse, làm sạch dữ liệu nhiễu, và phát triển hệ thống Dashboard trực quan giúp doanh nghiệp chuyển đổi từ quản lý thụ động sang giám sát dựa trên dữ liệu.]}
+
+\section{Khuyến nghị Chiến lược (Khuyến nghị Hành động Thực tiễn)}
+\label{sec:recommendations}
+\textit{[Đề xuất các hành động cụ thể: Lắp đặt hệ thống làm mát tự động để giảm suy hao nhiệt, thiết lập quy trình kiểm tra Inverter định kỳ để khắc phục độ nhiễu ban đêm, và ứng dụng kết quả dự báo để lập kế hoạch vệ sinh tấm pin.]}
+
+\section{Hạn chế của Dự án}
+\label{sec:limitations}
+\textit{[Những giới hạn về phần cứng, thời gian xử lý dữ liệu lớn, hoặc sự thiếu hụt của các mô hình học sâu (Học sâu) phức tạp hơn.]}
+
+\section{Hướng phát triển trong tương lai}
+\label{sec:future_work}
+\subsection{Nâng cấp Hệ thống Phân tích Dự đoán (Phân tích Dự báo)}
+\textit{[Tích hợp các mô hình Machine Learning mạnh mẽ hơn (XGBoost, LSTM) để dự báo biến động công suất theo thời gian thực.]}
+
+\subsection{Tự động hóa và Đưa lên Đám mây (Cloud \& Automation)}
+\label{sec:future_work_cloud}
+\textit{[Triển khai toàn bộ Pipeline ETL lên các dịch vụ Cloud như AWS/GCP để xử lý luồng dữ liệu Streaming từ các cảm biến IoT.]}
+
+\begin{thebibliography}{99}
+\addcontentsline{toc}{chapter}{Tài liệu Tham khảo}
+
+\bibitem{wimalaratne2022unisolar}
+P.~Wimalaratne, D.~Jayasinghe, và C.~Arachchige,
+\newblock ``UNISOLAR: A Comprehensive High-Resolution Open Dataset of 42 Rooftop Photovoltaic Sites,''
+\newblock \textit{Data in Brief}, vol.~42, p.~108152, 2022.
+
+\bibitem{openmeteo2023}
+Open-Meteo,
+\newblock ``Historical Weather API \& ERA5/ERA5-Land Reanalysis Climate Dataset,''
+\newblock \textit{Open-Meteo Documentation}, 2023. [Online]. Available: \url{https://open-meteo.com/}.
+
+\bibitem{iea2023pvps}
+IEA-PVPS Task 13,
+\newblock ``Performance, Operation and Reliability of Photovoltaic Systems: Review of Failures and Degradation Mechanisms,''
+\newblock \textit{International Energy Agency Technical Report}, IEA-PVPS T13-15:2023, 2023.
+
+\bibitem{li2025gmmif}
+Y.~Li, H.~Zhang, X.~Wang, và J.~Liu,
+\newblock ``A Two-Stage Hybrid Outlier Cleaning Framework for Distributed Rooftop Photovoltaic Generation Data Using GMM and Isolation Forest,''
+\newblock \textit{IEEE Access}, vol.~13, pp.~24510--24523, 2025.
+
+\bibitem{liu2008isolation}
+F.~T.~Liu, K.~M.~Ting, và Z.-H.~Zhou,
+\newblock ``Isolation Forest,''
+\newblock trong \textit{Proceedings of the IEEE International Conference on Data Mining (ICDM)}, 2008, pp.~413--422.
+
+\bibitem{bishop2006pattern}
+C.~M.~Bishop,
+\newblock \textit{Pattern Recognition and Machine Learning},
+\newblock Springer, New York, 2006.
+
+\bibitem{tukey1977eda}
+J.~W.~Tukey,
+\newblock \textit{Exploratory Data Analysis},
+\newblock Addison-Wesley, Reading, MA, 1977.
+
+\bibitem{chandola2009anomaly}
+V.~Chandola, A.~Banerjee, và V.~Kumar,
+\newblock ``Anomaly Detection: A Survey,''
+\newblock \textit{ACM Computing Surveys}, vol.~41, no.~3, pp.~1--58, 2009.
+
+\bibitem{kim2019missing}
+G.~Kim, S.~Park, và S.~Lee,
+\newblock ``Physical Constraint Imputation and Spatial Interpolation for Missing Solar Irradiance Data,''
+\newblock \textit{Solar Energy}, vol.~188, pp.~754--765, 2019.
+
+\bibitem{roy2025hourly}
+A.~Roy, M.~Rahman, và K.~Chowdhury,
+\newblock ``Hourly-Binned Regressors Outperform Complex Deep Learning for Local Solar Generation Forecasting,''
+\newblock \textit{Applied Energy}, vol.~355, p.~122301, 2025.
+
+\bibitem{haurwitz1945}
+B.~Haurwitz,
+\newblock ``Insolation in Relation to Cloudiness and Cloud Density,''
+\newblock \textit{Journal of Meteorology}, vol.~2, no.~3, pp.~154--166, 1945.
+
+\bibitem{bailey2024}
+J.~Bailey, R.~Miller, và S.~Thompson,
+\newblock ``Clear-Sky PV Generation Modeling Under Complex Atmospheric Conditions,''
+\newblock \textit{Renewable Energy}, vol.~219, pp.~119--131, 2024.
+
+\bibitem{engerer2014kpv}
+N.~A.~Engerer và F.~P.~Mills,
+\newblock ``Validating the PV Clear-Sky Index and Modeling Rooftop Solar Production,''
+\newblock \textit{Solar Energy}, vol.~105, pp.~619--632, 2014.
+
+\bibitem{dev2018tes}
+S.~Dev, F.~M.~Savoy, Y.~H.~Lee, và S.~Winkler,
+\newblock ``High-Resolution Weather and Irradiance Monitoring for PV Plant Management,''
+\newblock \textit{IEEE Transactions on Geoscience and Remote Sensing}, vol.~56, no.~4, pp.~2120--2132, 2018.
+
+\bibitem{pin2025wape}
+E.~Pin, M.~Rossi, và T.~Nguyen,
+\newblock ``Weighted Absolute Percentage Error (WAPE) as a Robust Standard for Intermittent Renewable Energy Forecasting Metrics,''
+\newblock \textit{Energy Reports}, vol.~11, pp.~402--415, 2025.
+
+\bibitem{lundberg2017shap}
+S.~M.~Lundberg và S.-I.~Lee,
+\newblock ``A Unified Approach to Interpreting Model Predictions,''
+\newblock trong \textit{Advances in Neural Information Processing Systems (NeurIPS)}, vol.~30, 2017, pp.~4765--4774.
+
+\bibitem{zhang2013metrics}
+J.~Zhang, B.-M.~Hodge, và A.~Florita,
+\newblock ``Comprehensive Evaluation of Solar Irradiance and Power Forecasting Metrics,''
+\newblock \textit{Journal of Renewable and Sustainable Energy}, vol.~5, no.~4, p.~043126, 2013.
+
+\bibitem{lonij2012tucson}
+V.~P.~Lonij, A.~E.~Brooks, A.~D.~Cronin, và F.~J.~Rocha,
+\newblock ``Intra-Hour Solar Forecasting with High-Density PV Networks and Cloud Tracking,''
+\newblock \textit{Solar Energy}, vol.~86, no.~5, pp.~1450--1461, 2012.
+
+\bibitem{taylor2018prophet}
+S.~J.~Taylor và B.~Letham,
+\newblock ``Forecasting at Scale,''
+\newblock \textit{The American Statistician}, vol.~72, no.~1, pp.~37--45, 2018.
+
+\bibitem{box2015time}
+G.~E.~P.~Box, G.~M.~Jenkins, G.~C.~Reinsel, và G.~M.~Ljung,
+\newblock \textit{Time Series Analysis: Forecasting and Control}, 5th ed.,
+\newblock John Wiley \& Sons, Hoboken, NJ, 2015.
+
+\bibitem{ke2017lightgbm}
+G.~Ke, Q.~Meng, T.~Finley, T.~Wang, W.~Chen, W.~Ma, Q.~Ye, và T.-Y.~Liu,
+\newblock ``LightGBM: A Highly Efficient Gradient Boosting Decision Tree,''
+\newblock trong \textit{Advances in Neural Information Processing Systems (NeurIPS)}, vol.~30, 2017, pp.~3146--3154.
+
+\bibitem{chen2016xgboost}
+T.~Chen và C.~Guestrin,
+\newblock ``XGBoost: A Scalable Tree Boosting System,''
+\newblock trong \textit{Proceedings of the ACM SIGKDD International Conference on Knowledge Discovery and Data Mining}, 2016, pp.~785--794.
+
+\bibitem{kimball2013dwh}
+R.~Kimball và M.~Ross,
+\newblock \textit{The Data Warehouse Toolkit: The Definitive Guide to Dimensional Modeling}, 3rd ed.,
+\newblock John Wiley \& Sons, Indianapolis, IN, 2013.
+
+\bibitem{wmo2021guide}
+World Meteorological Organization (WMO),
+\newblock \textit{Guide to Instruments and Methods of Observation: Volume I -- Measurement of Meteorological Variables},
+\newblock WMO-No. 8, Geneva, Switzerland, 2021.
+
+\bibitem{supabase2024}
+Supabase Inc.,
+\newblock ``PostgreSQL Database \& Row-Level Security for Modern Analytics Architecture,''
+\newblock \textit{Supabase Technical Architecture Documentation}, 2024. [Online]. Available: \url{https://supabase.com/docs}.
+
+\bibitem{pedregosa2011sklearn}
+F.~Pedregosa et~al.,
+\newblock ``Scikit-learn: Machine Learning in Python,''
+\newblock \textit{Journal of Machine Learning Research}, vol.~12, pp.~2825--2830, 2011.
+
+\bibitem{tableau2023guidelines}
+Tableau Software (Salesforce),
+\newblock \textit{Visual Analysis Best Practices: A Guide to Creating Meaningful Dashboards},
+\newblock Seattle, WA, 2023.
+
+\end{thebibliography}
+
+
+\end{document}

@@ -1,46 +1,55 @@
-﻿% !TeX program = xelatex
+% !TeX program = xelatex
 % =============================================================================
-%  DỰ ÁN TỐT NGHIỆP — BÁO CÁO CHÍNH (BẢN OUTLINE SỰ KIỆN)
+%  DỰ ÁN TỐT NGHIỆP — BÁO CÁO CHUYÊN ĐỀ
 %  Đề tài: Phân tích Hiệu suất và Dự báo Sản lượng Hệ thống Điện Mặt Trời
 %  Nhóm: The Outliers
-%  Trường: Cao đẳng FPT Polytechnic — Chuyên ngành Phân tích Dữ liệu
+%  Trường: Cao đẳng FPT Polytechnic — Chuyên ngành Xử lý Dữ liệu
 % =============================================================================
 
 \documentclass[12pt, a4paper]{report}
 
-% ======================== PACKAGES ==========================================
-\usepackage{fontspec}
-\usepackage[vietnamese]{babel}
-
-% Ngan ch?n t? d?ng g?ch n?i t? (hyphenation) cu?i d�ng
-\hyphenpenalty=10000
-\exhyphenpenalty=10000
-\tolerance=10000
-\emergencystretch=3em
-
+% ======================== PACKAGES CƠ BẢN & FONT ============================
 \usepackage{geometry}
-\geometry{top=2.5cm, bottom=2.5cm, left=3cm, right=2cm}
-% ======================== CẤU HÌNH CODE PYTHON (MUTED STYLE) ==============================
-\usepackage{listings}
-\usepackage{xcolor} % Bắt buộc phải có để dùng \definecolor
+\geometry{a4paper, top=2.5cm, bottom=2.5cm, left=3cm, right=2cm, headheight=33pt, footskip=1.1cm}
 
-% Định nghĩa lại bảng màu dịu, ít sặc sỡ và chuyên nghiệp hơn
-\definecolor{mutedgreen}{rgb}{0.2,0.5,0.3}    % Màu xanh lá trầm cho comment
-\definecolor{mutedblue}{rgb}{0.15,0.35,0.6}   % Màu xanh dương dịu cho keywords thay cho magenta
-\definecolor{mutedgray}{rgb}{0.45,0.45,0.45}  % Màu xám cho số dòng
-\definecolor{mutedpurple}{rgb}{0.45,0.2,0.55} % Màu tím trầm cho strings thay cho codepurple
-\definecolor{softbackground}{rgb}{0.98,0.98,0.98} % Màu nền xám trắng siêu nhẹ tránh mỏi mắt
-\definecolor{bordergray}{rgb}{0.85,0.85,0.85}  % Màu viền xám nhạt
+% --- FONT CHO XELATEX (HỖ TRỢ TIẾNG VIỆT 100% - FORMAL, TỐI GIẢN, HIỆN ĐẠI) ---
+\usepackage{fontspec}
+\setmainfont{Times New Roman}
+\setmonofont{Consolas}
+
+% ======================== MÀU SẮC & CODE LISTINGS ===========================
+\usepackage{xcolor}
+\usepackage{listings}
+% Định nghĩa bảng màu Tableau trích xuất từ main_fixed_01.twb & tableau_theme.json
+\definecolor{tblNavy}{HTML}{4E79A7}
+\definecolor{tblOrange}{HTML}{F28E2B}
+\definecolor{tblGreen}{HTML}{59A14F}
+\definecolor{tblRed}{HTML}{E15759}
+\definecolor{tblTeal}{HTML}{76B7B2}
+\definecolor{tblYellow}{HTML}{EDC948}
+\definecolor{tblPurple}{HTML}{B07AA1}
+\definecolor{tblGray}{HTML}{79706E}
+\definecolor{tblSeqWarm}{HTML}{F28E2B}
+
+% Định nghĩa màu sắc cho Code Block
+\definecolor{mutedgreen}{rgb}{0.2,0.5,0.3} 
+\definecolor{mutedblue}{rgb}{0.15,0.35,0.6} 
+\definecolor{mutedgray}{rgb}{0.45,0.45,0.45} 
+\definecolor{mutedpurple}{rgb}{0.45,0.2,0.55} 
+\definecolor{softbackground}{rgb}{0.98,0.98,0.98} 
+\definecolor{bordergray}{rgb}{0.85,0.85,0.85} 
+\definecolor{fptorange}{RGB}{245,130,32}
 
 \lstdefinestyle{pythonstyle}{
     backgroundcolor   = \color{softbackground},
-    commentstyle      = \color{mutedgreen}\itshape, % Comment chữ nghiêng xanh trầm
-    keywordstyle      = \color{mutedblue}\bfseries, % Keyword chữ đậm xanh dịu
+    commentstyle      = \color{mutedgreen}\itshape,
+    keywordstyle      = \color{mutedblue}\bfseries,
     numberstyle       = \tiny\color{mutedgray},
     stringstyle       = \color{mutedpurple},
-    basicstyle        = \ttfamily\small\color{black}, % Chữ code mặc định màu đen thuần
+    basicstyle        = \ttfamily\footnotesize\color{black},
     breakatwhitespace = false,
     breaklines        = true,
+    columns           = fullflexible,
     captionpos        = t, 
     keepspaces        = true,
     numbers           = left,
@@ -50,17 +59,52 @@
     showtabs          = false,
     tabsize           = 4,
     frame             = single,
-    rulecolor         = \color{bordergray}, % Viền mảnh màu xám nhạt tinh tế
-    extendedchars     = true,
-    }
+    rulecolor         = \color{bordergray}
+}
 \lstset{style=pythonstyle}
 
-% Font - Arial (Sans-Serif, fully supports Vietnamese on Windows/XeLaTeX)`r`n\setmainfont{Cambria}
-\setmonofont{Consolas}
+% Ngăn chặn tự động gạch nối từ (hyphenation) cuối dòng
+\hyphenpenalty=10000
+\exhyphenpenalty=10000
+\tolerance=10000
+\emergencystretch=3em
 
-% Header / Footer
+% ======================== TRANG TRÍ & ĐỊNH DẠNG =============================
 \usepackage{fancyhdr}
 \usepackage{lastpage}
+\usepackage{amsmath, amssymb}
+\usepackage{enumitem}
+\usepackage{array}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\arraybackslash}p{#1}}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{graphicx}
+\graphicspath{{images/}{figures/}{./}}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{tikz}
+\usepackage[titles]{tocloft}
+
+% VIỆT HÓA TOÀN BỘ CÁC TIÊU ĐỀ HỆ THỐNG
+\renewcommand{\figurename}{Hình}
+\renewcommand{\tablename}{Bảng}
+\renewcommand{\contentsname}{Mục Lục}
+\renewcommand{\listfigurename}{Danh Mục Hình Vẽ}
+\renewcommand{\listtablename}{Danh Mục Bảng Biểu}
+\providecommand{\tep}[1]{\texttt{#1}}
+
+\usepackage{indentfirst}
+\setlength{\parindent}{1cm}
+\setlength{\parskip}{6pt}
+
+\usepackage{setspace}
+\onehalfspacing
+\setlength{\headheight}{33pt}
 
 % Hyperlinks & Bookmarks
 \usepackage{hyperref}
@@ -75,126 +119,48 @@
     bookmarksnumbered = true,
 }
 
-% Toán, ký hiệu
-\usepackage{amsmath, amssymb}
-
-% Danh sách
-\usepackage{enumitem}
-\usepackage{array}
-
-% Bảng biểu
-\usepackage{booktabs}
-\usepackage{tabularx}
-\usepackage{longtable}
-\usepackage{multirow}
-\usepackage{array}
-
-% Hình ảnh
-\usepackage{graphicx}
-\usepackage{float}
-\usepackage{caption}
-\usepackage{subcaption}
-
-% Màu sắc & Code
-\usepackage{xcolor}
-\usepackage{listings}
-
-% Kẻ khung trang bìa
-\usepackage{tikz}
-
-% Danh mục hình, bảng
-\usepackage[titles]{tocloft}
-
-% Indent đoạn đầu
-\usepackage{indentfirst}
-\setlength{\parindent}{1cm}
-\setlength{\parskip}{6pt}
-
-% Line spacing
-\usepackage{setspace}
-\onehalfspacing
-\setlength{\headheight}{33pt}
-
-% ======================== CẤU HÌNH CODE PYTHON ==============================
-\definecolor{codegreen}{rgb}{0,0.6,0}
-\definecolor{codegray}{rgb}{0.5,0.5,0.5}
-\definecolor{codepurple}{rgb}{0.58,0,0.82}
-\definecolor{backcolour}{rgb}{0.96,0.96,0.94}
-\definecolor{fptorange}{RGB}{245,130,32}
-
-\lstdefinestyle{pythonstyle}{
-    backgroundcolor   = \color{backcolour},
-    commentstyle      = \color{codegreen},
-    keywordstyle      = \color{magenta},
-    numberstyle       = \tiny\color{codegray},
-    stringstyle       = \color{codepurple},
-    basicstyle        = \ttfamily\small,
-    breakatwhitespace = false,
-    breaklines        = true,
-    captionpos        = r,
-    keepspaces        = true,
-    numbers           = left,
-    numbersep         = 5pt,
-    showspaces        = false,
-    showstringspaces  = false,
-    showtabs          = false,
-    tabsize           = 4,
-    frame             = single,
-    rulecolor         = \color{codegray},
-}
-\lstset{style=pythonstyle}
-
-% --- CẤU HÌNH KHOẢNG TRỐNG TIÊU ĐỀ CHƯƠNG ---
+% --- CẤU HÌNH TIÊU ĐỀ CHƯƠNG ---
 \usepackage{titlesec}
-% C? ch? 13pt cho c�c section headers
 \titleformat*{\section}{\fontsize{13pt}{15.6pt}\bfseries}
 \titleformat*{\subsection}{\fontsize{13pt}{15.6pt}\bfseries}
 \titleformat*{\subsubsection}{\fontsize{13pt}{15.6pt}\bfseries}
-% Cấu hình cho \chapter và \chapter*
 \titleformat{\chapter}[display]
   {\normalfont\huge\bfseries}{}{0pt}{\huge}
 \titlespacing*{\chapter}{0pt}{-10pt}{20pt} 
-% Tham số: {lề trái}{khoảng trống phía trên}{khoảng trống phía dưới tiêu đề}
+
 % ======================== HEADER / FOOTER ====================================
-% Trang nội dung chính (Logo ở header trái, THE OUTLIERS ở header phải)
 \fancypagestyle{main}{
     \fancyhf{}
     \fancyhead[L]{\includegraphics[height=1cm]{figures/logo_fpoly.png}}
     \fancyhead[R]{\small THE OUTLIERS}
-    \fancyfoot[L]{\small Dự án Tốt nghiệp}
-    \fancyfoot[R]{\small Page \thepage\ of \pageref{LastPage}}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp — Chuyên ngành Xử lý Dữ liệu}
+    \fancyfoot[R]{\small Trang \thepage\ / \pageref{LastPage}}
     \renewcommand{\headrulewidth}{0.4pt}
     \renewcommand{\footrulewidth}{0.4pt}
 }
 
-% Trang đầu chương (plain)
 \fancypagestyle{plain}{
     \fancyhf{}
-    \fancyfoot[L]{\small Dự án Tốt nghiệp}
-    \fancyfoot[R]{\small Page \thepage\ of \pageref{LastPage}}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp — Chuyên ngành Xử lý Dữ liệu}
+    \fancyfoot[R]{\small Trang \thepage\ / \pageref{LastPage}}
     \renewcommand{\headrulewidth}{0pt}
     \renewcommand{\footrulewidth}{0.4pt}
 }
 
-% Trang mở đầu (roman numbering)
 \fancypagestyle{front}{
     \fancyhf{}
-    \fancyfoot[L]{\small Dự án Tốt nghiệp}
-    \fancyfoot[R]{\small Page \thepage\ of \pageref{LastPage}}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp — Chuyên ngành Xử lý Dữ liệu}
+    \fancyfoot[R]{\small Trang \thepage\ / \pageref{LastPage}}
     \renewcommand{\headrulewidth}{0pt}
     \renewcommand{\footrulewidth}{0.4pt}
 }
 
-% =============================================================================
-%                           BẮT ĐẦU TÀI LIỆU
-% =============================================================================
-\begin{document}
 
-% ────────────────────────────────────────────────────────────────────
-%  TRANG BÌA (COVER PAGE)
-% ────────────────────────────────────────────────────────────────────
+\begin{document}
+\pagestyle{front}
+
 \begin{titlepage}
-\enlargethispage{1.2cm} % SỬA ĐỔI: Chỉ nới rộng tối đa 1.2cm để giữ chữ luôn nằm TRONG khung TikZ
+\enlargethispage{1.2cm}
 
 \begin{tikzpicture}[remember picture, overlay]
     \draw[line width=2pt, fptorange]
@@ -210,8 +176,7 @@
 \begin{center}
     \textbf{\large TRƯỜNG CAO ĐẲNG FPT POLYTECHNIC}
 
-    \vspace{0.5cm} % Thu nhỏ khoảng cách dưới tên trường
-    % --- Logo trường Cao đẳng FPT Polytechnic ---
+    \vspace{0.5cm}
     \includegraphics[width=0.38\textwidth]{figures/logo_fpoly.png}
 
     \vspace{0.4cm}
@@ -224,12 +189,11 @@
         {\huge \textbf{PHÂN TÍCH HIỆU SUẤT VÀ \\[4pt] DỰ BÁO SẢN LƯỢNG \\[4pt] HỆ THỐNG ĐIỆN MẶT TRỜI}}
     \end{spacing}
 
-    \vspace{1.8cm} % Thu nhỏ khoảng cách trước khi vào phần thông tin nhóm
+    \vspace{1.8cm}
     \normalsize
     \begin{flushleft}
         \hspace{2cm} \textbf{Nhóm thực hiện:} The Outliers \\[5pt]
         \hspace{2cm} \textbf{Sinh viên thực hiện:} \\[3pt]
-        % Tạo bảng phụ có chiều rộng cố định (12.5cm) để căn lề MSSV thẳng hàng bên phải
         \hspace{2cm}
         \begin{tabular*}{7.5cm}{@{} l @{\extracolsep{\fill}} r @{}}
             \hspace{0.5cm} 1. Nguyễn Vũ Nhựt   & PS44442 \\
@@ -242,272 +206,317 @@
     \end{flushleft}
     \vfill
     {\normalsize \textbf{TP. HỒ CHÍ MINH, THÁNG 6 NĂM 2026}}
-    \vspace{0.5cm} % Tạo một khoảng đệm nhỏ an toàn với đường viền dưới
+    \vspace{0.5cm}
 \end{center}
 \end{titlepage}
 
+
 \pagenumbering{arabic}
-\pagestyle{front}
-
-% ────────────────────────────────────────────────────────────────────
-%  LỜI CẢM ƠN
-% ────────────────────────────────────────────────────────────────────
-\chapter*{Lời cảm ơn}
-\addcontentsline{toc}{chapter}{Lời cảm ơn}
-\textit{[Nội dung lời cảm ơn của sinh viên đối với giảng viên hướng dẫn, gia đình và nhà trường sẽ được viết tại đây.]}
-
-% ────────────────────────────────────────────────────────────────────
-%  NHẬN XÉT CỦA GIÁO VIÊN
-% ────────────────────────────────────────────────────────────────────
-\chapter*{Nhận xét của Giảng viên Hướng dẫn}
-\addcontentsline{toc}{chapter}{Nhận xét của Giảng viên Hướng dẫn}
-\textit{[Nội dung nhận xét và đánh giá của Giảng viên Hướng dẫn đối với kết quả thực hiện dự án của nhóm.]}
-
-\chapter*{Nhận xét của Giảng viên Phản biện}
-\addcontentsline{toc}{chapter}{Nhận xét của Giảng viên Phản biện}
-\textit{[Nội dung nhận xét và đánh giá của Giảng viên Phản biện tại buổi bảo vệ dự án tốt nghiệp.]}
-
-% ────────────────────────────────────────────────────────────────────
-%  TÓM TẮT DỰ ÁN
-% ────────────────────────────────────────────────────────────────────
-\chapter*{Tóm tắt Dự án}
-\addcontentsline{toc}{chapter}{Tóm tắt Dự án}
-Dự án tốt nghiệp ``Phân tích và Xử lý Bất thường trong Dữ liệu Sản lượng Năng lượng Mặt trời'' nhằm mục đích xây dựng một hệ thống phân tích dữ liệu toàn diện để phát hiện, xử lý và dự báo các bất thường trong sản lượng phát điện của các hệ thống quang điện (PV). 
-Bằng cách thu thập và tích hợp dữ liệu từ 42 trạm phát điện tại Úc cùng dữ liệu khí tượng viễn thám từ Open-Meteo, nhóm đã thiết kế một kho dữ liệu đa chiều (Data Warehouse) trên nền tảng Supabase theo mô hình Galaxy Schema. Quy trình ETL được tự động hóa để làm sạch dữ liệu, xử lý các hiện tượng khuyết thiếu, nhiễu ban đêm, và sai lệch do cảm biến. 
-
-Qua quá trình Phân tích Khám phá Dữ liệu (EDA), nhóm đã rút ra các insight quan trọng về sự ảnh hưởng của nhiệt độ, mức độ mây che phủ đến hiệu suất PV. Ngoài ra, dự án cũng áp dụng các mô hình học máy chuỗi thời gian như ARIMA và Prophet để thiết lập đường cơ sở (Baseline) dự báo sản lượng, kết hợp hiển thị trực quan thông qua Dashboard Tableau. Hệ thống không chỉ cung cấp cái nhìn toàn cảnh về tình trạng hoạt động của các trạm điện mặt trời, mà còn hỗ trợ ban quản lý đưa ra quyết định kịp thời nhằm tối ưu hóa hiệu suất và giảm thiểu rủi ro vận hành.
-
-% ────────────────────────────────────────────────────────────────────
-%  MỤC LỤC & DANH MỤC
-% ────────────────────────────────────────────────────────────────────
-\tableofcontents
-\listoffigures
-\listoftables
-
-\chapter*{Danh mục Từ viết tắt}
-\addcontentsline{toc}{chapter}{Danh mục Từ viết tắt}
-\vspace*{-15pt}
-
-\noindent\hspace*{-6pt}%
-    \begin{tabularx}{\textwidth}{@{} l X @{}}
-    \toprule
-    \textbf{Ký hiệu/Từ viết tắt} & \textbf{Ý nghĩa đầy đủ} \\
-    \midrule
-    API     & Application Programming Interface (Giao diện lập trình ứng dụng) \\
-    ARIMA   & AutoRegressive Integrated Moving Average \\
-    AWS     & Amazon Web Services \\
-    BI      & Business Intelligence (Phân tích thông minh doanh nghiệp) \\
-    CF      & Capacity Factor (Hệ số công suất) \\
-    CSDL    & Cơ sở dữ liệu \\
-    CT      & Current Transformer (Cảm biến dòng điện) \\
-    DWH     & Data Warehouse (Kho dữ liệu) \\
-    EDA     & Exploratory Data Analysis (Phân tích khám phá dữ liệu) \\
-    ETL     & Extract, Transform, Load (Trích xuất, Biến đổi, Nạp) \\
-    FK      & Foreign Key (Khóa ngoại) \\
-    GCP     & Google Cloud Platform \\
-    IoT     & Internet of Things (Internet vạn vật) \\
-    IQR     & Interquartile Range (Khoảng tứ phân vị) \\
-    kWp     & Kilowatt-peak (Công suất đỉnh cực đại) \\
-    LSTM    & Long Short-Term Memory \\
-    PK      & Primary Key (Khóa chính) \\
-    PR      & Performance Ratio (Hệ số hiệu suất) \\
-    PV      & Photovoltaic (Quang điện - Năng lượng mặt trời) \\
-    UI/UX   & User Interface / User Experience (Giao diện / Trải nghiệm người dùng) \\
-    WMO     & World Meteorological Organization (Tổ chức Khí tượng Thế giới) \\
-    XGBoost & Extreme Gradient Boosting \\
-    \bottomrule
-    \end{tabularx}
-
-\newpage
 \pagestyle{main}
 
 % ====================================================================
-%  CHƯƠNG 2: CƠ SỞ LÝ THUYẾT
+%  CHƯƠNG 2: CƠ SỞ LÝ THUYẾT VÀ KIẾN TRÚC HỆ THỐNG
 % ====================================================================
-\chapter{Cơ sở Lý thuyết}
+\chapter{Cơ sở Lý thuyết và Kiến trúc Hệ thống}
 \label{chap:lythuyet}
 
-\section{Tổng quan về Năng lượng mặt trời và Bức xạ quang điện}
-\label{sec:solar_theory}
+\section{Cơ sở Lý thuyết}
+\label{sec:co_so_ly_thuyet}
 
-Hệ thống quang điện (PV) chuyển đổi năng lượng bức xạ mặt trời trực tiếp thành điện năng thông qua hiệu ứng quang điện trong chất bán dẫn. Hiệu suất chuyển đổi và khả năng vận hành của hệ thống phụ thuộc chặt chẽ vào các chỉ số lý thuyết sau:
+\subsection{Khái quát về Phân tích Dữ liệu trong Ngành Năng lượng Tái tạo}
+Phân tích dữ liệu trong ngành năng lượng mặt trời là quá trình thu thập, làm sạch, mô hình hóa và khai phá thông tin chuyên sâu từ khối lượng lớn chuỗi thời gian sản lượng điện và dữ liệu khí tượng. Trong bối cảnh vận hành các trạm điện mặt trời hiện đại, dữ liệu đóng vai trò là tài sản chiến lược giúp tối ưu hóa hiệu suất phát điện, giảm thiểu chi phí bảo trì và bảo vệ dòng tiền đầu tư.
+
+Theo chuẩn mực phân tích dữ liệu doanh nghiệp, các cấp độ phân tích trong đề tài được phân chia rõ ràng:
 \begin{itemize}[noitemsep]
-    \item \textbf{Performance Ratio (PR):} Tỷ lệ đánh giá hiệu suất nguồn lưới, được xác định bằng tỷ số giữa sản lượng điện thực tế tạo ra và sản lượng lý thuyết trong điều kiện bức xạ lý tưởng. PR phản ánh mức độ tổn hao năng lượng do nhiệt độ, bụi bẩn và hiệu suất của bộ biến đổi (Inverter).
-    \item \textbf{Capacity Factor (CF):} Hệ số công suất, được tính bằng tỷ lệ giữa sản lượng điện thực tế thu được trong một khoảng thời gian so với sản lượng điện tối đa mà trạm có thể phát nếu vận hành liên tục ở công suất thiết kế cực đại.
-    \item \textbf{Specific Yield:} Sản lượng điện đặc trưng, biểu thị lượng điện năng tạo ra trên mỗi đơn vị công suất đỉnh lắp đặt (đo bằng đơn vị kWh/kWp), hỗ trợ so sánh hiệu suất giữa các trạm có quy mô khác nhau.
+    \item \textbf{Phân tích Mô tả (Phân tích Mô tả):} Trả lời câu hỏi \textit{``Chuyện gì đã xảy ra?''} thông qua việc tổng hợp sản lượng thực tế, tính toán hệ số hiệu suất (PR), hệ số công suất (CF) và năng suất riêng (Specific Yield) của 42 trạm phát qua từng tháng và từng năm.
+    \item \textbf{Phân tích Chẩn đoán (Phân tích Chẩn đoán):} Trả lời câu hỏi \textit{``Tại sao hiệu suất trạm lại suy giảm?''} bằng cách bóc tách mối tương quan giữa sản lượng và các yếu tố khí tượng (nhiệt độ quá cao, mây che phủ) hoặc lỗi phần cứng (Inverter ngắt mạch, hỏng diode, trôi cảm biến đo ban đêm).
+    \item \textbf{Phân tích Dự báo (Phân tích Dự báo):} Trả lời câu hỏi \textit{``Sản lượng điện trong chu kỳ tiếp theo là bao nhiêu?''} để hỗ trợ đơn vị vận hành lập kế hoạch điều phối phụ tải và huy động nguồn điện dự phòng.
+    \item \textbf{Phân tích Đề xuất (Phân tích Đề xuất):} Đưa ra các khuyến nghị bảo trì cụ thể (vệ sinh bề mặt pin, thay thế biến tần quá nhiệt, hiệu chuẩn cảm biến CT).
 \end{itemize}
 
-\section{Kiến trúc Kho dữ liệu đa chiều (Data Warehouse)}
-\label{sec:dwh_theory}
-
-Kiến trúc kho dữ liệu đa chiều được thiết kế theo phương pháp luận của Ralph Kimball, tập trung vào việc mô hình hóa dữ liệu nhằm tối ưu hóa hiệu năng truy vấn cho các bài toán phân tích thông minh (BI) và học máy.
-
-\subsection{Mô hình hóa đa chiều (Dimensional Modeling)}
-Mô hình hóa đa chiều phân tách dữ liệu thành hai nhóm chính:
-\begin{itemize}
-    \item \textbf{Bảng sự kiện (Fact Table):} Lưu trữ các chỉ số đo lường định lượng (Measures) phát sinh từ các sự kiện nghiệp vụ (ví dụ: sản lượng điện phát ra, các thông số thời tiết đo được). Bảng Fact thường chứa khối lượng dữ liệu rất lớn và liên kết với các bảng chiều qua các khóa ngoại.
-    \item \textbf{Bảng chiều (Dimension Table):} Lưu trữ các thuộc tính mô tả ngữ cảnh của sự kiện (thời gian, địa điểm, thông tin kỹ thuật của thiết bị). Các bảng chiều cung cấp các trục phân tích chéo, làm bộ lọc cho các câu lệnh truy vấn dữ liệu.
-\end{itemize}
-
-\subsection{Lược đồ Thiên hà (Galaxy Schema)}
-Trong các hệ thống phân tích tích hợp nhiều quy trình nghiệp vụ, lược đồ Thiên hà (Galaxy Schema hay Fact Constellation Schema) được sử dụng khi có nhiều bảng sự kiện dùng chung các bảng chiều được chuẩn hóa (Conformed Dimensions). Mô hình này cho phép:
-\begin{itemize}
-    \item Hợp nhất nhiều luồng sự kiện có tần suất ghi nhận khác nhau (ví dụ: dữ liệu đo sản lượng điện theo chu kỳ phút và dữ liệu thời tiết theo chu kỳ giờ) mà không gây trùng lặp thông tin thừa.
-    \item Thực hiện phân tích liên thông (Drill-through) giữa các bảng sự kiện khác nhau dựa trên các chiều chung như thời gian và không gian địa lý.
-\end{itemize}
-
-\subsection{Phương pháp tiếp cận Top-Down (Triết lý kiến trúc của Bill Inmon)}
-Trái ngược với phương pháp tiếp cận Bottom-Up của Ralph Kimball - vốn tập trung xây dựng các Data Mart trước rồi mới tích hợp thành một kho dữ liệu tổng thể - triết ly Top-Down của Bill Inmon định nghĩa kho dữ liệu (Data Warehouse) là một thực thể lưu trữ tập trung, duy nhất và đóng vai trò là Single Source of Truth (Nguồn sự thật duy nhất) của toàn bộ doanh nghiệp.
-\begin{itemize}
-    \item \textbf{Bản chất luồng dữ liệu:} Dữ liệu từ các hệ thống nguồn (Operational Systems) sau khi trích xuất sẽ được đổ trực tiếp vào một kho lưu trữ trung tâm được chuẩn hóa cấu trúc chặt chẽ. Từ lõi dữ liệu sạch thống nhất này, các phân nhánh dữ liệu chuyên biệt phục vụ cho các mục đích cụ thể (Data Marts) mới được phân tách và cấu trúc lại.
-    \item \textbf{Ưu điểm lý thuyết:} Đảm bảo tính nhất quán dữ liệu tối đa trên toàn hệ thống, triệt tiêu hoàn toàn rủi ro sai lệch số liệu giữa các phòng ban hoặc giữa các tác vụ phân tích khác nhau (như báo cáo trực quan hóa và huấn luyện học máy).
-\end{itemize}
-
-
-Dưới đây là bảng đối sánh chi tiết giữa hai phương pháp tiếp cận kinh điển của Bill Inmon và Ralph Kimball:
-\vspace{1em}
-% Tăng khoảng cách đệm (padding) giữa chữ và đường viền ô để bảng thoáng, dễ đọc hơn
-\renewcommand{\arraystretch}{1.5} 
-
-\begin{table}[htbp]
-\centering
-\begin{tabular}{p{3.5cm} p{5.5cm} p{5.5cm}}
-\toprule
-
-\textbf{Tiêu chí đối sánh} & \textbf{Tiếp cận Top-Down (Bill Inmon)} & \textbf{Tiếp cận Bottom-Up (Ralph Kimball)} \\ 
-\midrule
-
-\textbf{Kiến trúc tổng thể} & 
-Tập trung (Centralized DWH) trước, phân tán (Data Marts) sau. & 
-Phân tán (Data Marts) trước, hợp nhất (DWH) sau. \\
-
-\textbf{Mô hình hóa tầng lõi} & 
-Chuẩn hóa cấu trúc để giảm thiểu tối đa dư thừa dữ liệu (3NF). & 
-Mô hình hóa đa chiều (Dimensional Modeling) dựa trên các bảng Fact và Dimension. \\
-
-\textbf{Tính nhất quán} & 
-Rất cao, do mọi dữ liệu tiêu thụ đều được kế thừa từ một nguồn lõi duy nhất. & 
-Khó kiểm soát hơn, dễ xảy ra hiện tượng lệch pha định nghĩa giữa các Data Mart độc lập. \\
-
-\textbf{Độ linh hoạt hạ tầng} & 
-Thích hợp cho hệ thống tích hợp lớn, đa mục đích sử dụng (BI, Data Science, Data Streaming). & 
-Thích hợp cho các dự án cần triển khai nhanh, tập trung giải quyết một quy trình nghiệp vụ đơn lẻ. \\
-\bottomrule
-\end{tabular}
-\caption{Bảng so sánh lý thuyết Inmon vs. Kimball}
-\label{tab:comparison}
-\end{table}
-
-\section{Quy trình Trích xuất, Biến đổi và Nạp dữ liệu (ETL Pipeline)}
-\label{sec:etl_theory}
-
-Quy trình ETL (Extract - Transform - Load) đóng vai trò nền tảng trong việc làm sạch và chuẩn hóa dữ liệu trước khi đưa vào kho lưu trữ tập trung.
-
-\subsection{Lý thuyết về Nội suy dữ liệu khuyết thiếu (Data Imputation)}
-Dữ liệu chuỗi thời gian từ các thiết bị đo lường vật lý thường gặp hiện tượng mất mát dữ liệu do lỗi truyền thông hoặc hỏng hóc cảm biến. Các phương pháp toán học được áp dụng để khôi phục dữ liệu khuyết bao gồm:
-\begin{itemize}
-    \item \textbf{Nội suy dựa trên ràng buộc vật lý (Constraint-based Imputation):} Sử dụng các quy luật vật lý tự nhiên để gán giá trị trực tiếp. Đối với năng lượng mặt trời, sản lượng điện tối đa vào ban đêm được gán cứng bằng 0 dựa trên điều kiện bức xạ mặt trời triệt tiêu.
+\subsection{Các Chỉ số Hiệu năng Cốt lõi (KPIs) và Bài toán Tổn thất Vận hành}
+Trong quản trị vận hành trạm quang điện, tổng sản lượng (kWh) chỉ phản ánh quy mô phát điện thô, trong khi các chỉ số hiệu chuẩn hóa mới là thước đo chính xác về chất lượng vận hành:
+\begin{enumerate}[label=\arabic*., leftmargin=*]
+    \item \textbf{Hệ số Hiệu suất (Performance Ratio -- PR):} Tỷ số giữa sản lượng điện thực tế tạo ra ($E_{\text{actual}}$) và sản lượng lý thuyết trong điều kiện bức xạ thu nhận được:
+    \begin{equation}
+        \text{PR} = \frac{E_{\text{actual}}}{P_{\text{stc}} \cdot \left(\frac{GHI}{1000\,\text{W/m}^2}\right) \cdot \Delta t} \times 100\%
+    \end{equation}
+    Chỉ số PR tiêu chuẩn của hệ thống tốt thường đạt từ $75\%$ đến $85\%$. Khi $\text{PR} < 70\%$, hệ thống đang gặp tổn thất vận hành nghiêm trọng.
     
-    \item \textbf{Nội suy tuyến tính (Linear Interpolation):} Giả định dữ liệu thay đổi đều giữa các mốc thời gian lân cận, phù hợp cho các khoảng khuyết ngắn:
+    \item \textbf{Hệ số Công suất (Capacity Factor -- CF):} Tỷ lệ giữa năng lượng thực tế thu được trong một khoảng thời gian so với năng lượng tối đa nếu trạm phát liên tục ở công suất danh định $24/24\text{h}$:
     \begin{equation}
-        y = y_1 + \frac{x - x_1}{x_2 - x_1} (y_2 - y_1)
+        \text{CF} = \frac{\sum E_{\text{actual}}}{P_{\text{stc}} \cdot 8760\,\text{h}} \times 100\%
     \end{equation}
+    
+    \item \textbf{Năng suất Riêng (Specific Yield -- $\text{kWh/kWp}$):} Lượng điện năng tạo ra trên mỗi kWp công suất lắp đặt, là thước đo công bằng nhất để so sánh hiệu quả giữa các trạm có quy mô công suất khác nhau.
 
-    \item \textbf{Nội suy Cubic Spline:} Sử dụng các đa thức bậc ba cục bộ để tạo ra đường nội suy mượt mà và bảo toàn đạo hàm cấp một và cấp hai tại các điểm nút. Cho tập hợp các điểm $(x_i, y_i)$ với $i = 0, 1, \dots, n$, hàm nội suy $S(x)$ trên khoảng $[x_i, x_{i+1}]$ được định nghĩa là:
+    \item \textbf{Hệ số Tổn thất Nhiệt độ (Tổn thất Suy hao do Nhiệt độ):} Khi nhiệt độ môi trường vượt quá $25^\circ\text{C}$ (nhiệt độ cell pin đạt $50-65^\circ\text{C}$), công suất phát bị suy giảm tuyến tính theo hệ số nhiệt độ $\gamma \approx -0{,}35\%/^\circ\text{C}$ đến $-0{,}50\%/^\circ\text{C}$:
     \begin{equation}
-        S_i(x) = a_i + b_i(x - x_i) + c_i(x - x_i)^2 + d_i(x - x_i)^3
+        P_{\text{loss, temp}} = P_{\text{stc}} \cdot |\gamma| \cdot (T_{\text{cell}} - 25^\circ\text{C})
     \end{equation}
-    Để đảm bảo tính liên tục của hàm, các hệ số phải thỏa mãn các điều kiện biên và trơn:
-    \begin{align}
-        S_i(x_i) &= y_i, \quad S_i(x_{i+1}) = y_{i+1} \\
-        S'_i(x_{i+1}) &= S'_{i+1}(x_{i+1}) \\
-        S''_i(x_{i+1}) &= S''_{i+1}(x_{i+1})
-    \end{align}
-    Với điều kiện biên tự nhiên thông dụng: $S''(x_0) = S''(x_n) = 0$.
-
-    \item \textbf{Nội suy dựa trên mô hình hồi quy (Regression Imputation):} Khôi phục giá trị khuyết thiếu bằng cách ước lượng dựa trên các biến độc lập liên quan. Giả thuyết mô hình tuyến tính có dạng:
-    \begin{equation}
-        Y = X\beta + \varepsilon
-    \end{equation}
-    Trong đó $Y$ là biến cần nội suy, $X$ là ma trận các biến dự báo quan sát được (các biến khí tượng lân cận, các trễ thời gian). Vectơ hệ số hồi quy $\hat{\beta}$ được ước lượng bằng phương pháp bình phương tối thiểu cực tiểu (OLS) trên tập dữ liệu đầy đủ $X_{\text{obs}}$ và $Y_{\text{obs}}$:
-    \begin{equation}
-        \hat{\beta} = (X_{\text{obs}}^T X_{\text{obs}})^{-1} X_{\text{obs}}^T Y_{\text{obs}}
-    \end{equation}
-    Giá trị khuyết thiếu của bản ghi thứ $m$ sau đó được bù đắp bằng:
-    \begin{equation}
-        \hat{y}_m = x_m \hat{\beta}
-    \end{equation}
-\end{itemize}
-
-\subsection{Chiến lược nạp dữ liệu tối ưu hóa giao dịch}
-Khi xử lý các bảng sự kiện có quy mô hàng triệu bản ghi, việc nạp dữ liệu trực tiếp dễ gây tắc nghẽn tài nguyên và khóa bảng cơ sở dữ liệu. Các kỹ thuật toán học và hệ thống được áp dụng bao gồm:
-\begin{itemize}
-    \item \textbf{Nạp theo phân đoạn (Batching):} Phân chia giao dịch lớn thành các nhóm nhỏ dựa trên các phân đoạn thời gian (ví dụ: theo tháng) để giảm tải cho nhật ký giao dịch (Transaction Log).
-    \item \textbf{Sinh khóa đại diện tự động (Surrogate Key Generation):} Thiết lập cơ chế tạo khóa tự động tăng tiến tuần tự để tối ưu chỉ mục (Index) và tránh trùng lặp dữ liệu trong môi trường phân tán.
-    \item \textbf{Kiểm chứng toàn vẹn sau nạp (Post-load Validation):} So sánh tổng kiểm tra bản ghi giữa các tầng lưu trữ nhằm phát hiện lỗi mất mát dữ liệu và kích hoạt cơ chế hoàn tác (Rollback) khi xảy ra sai sót.
-\end{itemize}
-
-\section{Các phương pháp Phát hiện bất thường dữ liệu (Anomaly Detection)}
-\label{sec:anomaly_theory}
-
-Phát hiện bất thường dữ liệu nhằm nhận diện các hành vi bất thường của thiết bị hoặc lỗi ghi nhận số liệu.
-
-\subsection{Phương pháp thống kê Z-Score}
-Z-Score xác định mức độ lệch của một điểm dữ liệu so với giá trị trung bình theo đơn vị độ lệch chuẩn:
-\begin{equation}
-    Z = \frac{x - \mu}{\sigma}
-\end{equation}
-Trong đó $\mu$ là giá trị trung bình và $\sigma$ là độ lệch chuẩn của phân phối. Điểm dữ liệu bị coi là ngoại lai (Outlier) nếu nằm ngoài khoảng giới hạn thường gặp (ví dụ: $|Z| > 3$).
-
-\subsection{Phương pháp khoảng tứ phân vị IQR (Interquartile Range)}
-IQR là công cụ thống kê mạnh mẽ không phụ thuộc vào giả định phân phối chuẩn của dữ liệu. Khoảng tứ phân vị được xác định bởi:
-\begin{equation}
-    \text{IQR} = Q_3 - Q_1
-\end{equation}
-Trong đó $Q_1$ và $Q_3$ lần lượt là tứ phân vị thứ nhất (25\%) và thứ ba (75\%). Ngưỡng phát hiện bất thường được thiết lập tại giới hạn:
-\begin{equation}
-    [\text{Lower Bound}, \text{Upper Bound}] = [Q_1 - 1.5 \cdot \text{IQR}, Q_3 + 1.5 \cdot \text{IQR}]
-\end{equation}
-
-\subsection{Phương pháp Trung bình trượt và IQR cục bộ (Rolling IQR)}
-Đối với chuỗi thời gian có tính xu hướng và mùa vụ mạnh, việc sử dụng các chỉ số thống kê toàn cục dễ dẫn đến kết quả sai lệch. Do đó, phương pháp Rolling IQR cục bộ phân nhóm theo thực thể được áp dụng thông qua thuật toán sau:
-\begin{enumerate}
-    \item Cho chuỗi thời gian sản lượng điện $y(s, t)$ của trạm $s$ tại thời điểm $t$, ta tính trung bình trượt cục bộ trong cửa sổ thời gian $W$ có độ dài 1 giờ:
-    \begin{equation}
-        \mu(s, t) = \frac{1}{|W|} \sum_{\tau \in W} y(s, \tau)
-    \end{equation}
-    \item Xác định độ lệch tuyệt đối $d(s, t)$ của điểm dữ liệu so với trung bình trượt cục bộ:
-    \begin{equation}
-        d(s, t) = |y(s, t) - \mu(s, t)|
-    \end{equation}
-    \item Gom nhóm toàn bộ độ lệch $d(s, t)$ theo tổ hợp thực thể trạm $s$ và giờ trong ngày $h = \text{hour}(t) \in [0, 23]$ để tạo ra tập hợp cục bộ $G_{s, h}$.
-    \item Với mỗi tập hợp $G_{s, h}$, tính toán khoảng tứ phân vị cục bộ:
-    \begin{equation}
-        \text{IQR}_{s, h} = Q_3(G_{s, h}) - Q_1(G_{s, h})
-    \end{equation}
-    \item Ngưỡng biên trên bất thường $U_{s, h}$ của nhóm được xác định là:
-    \begin{equation}
-        U_{s, h} = Q_3(G_{s, h}) + 1.5 \cdot \text{IQR}_{s, h}
-    \end{equation}
-    \item Bản ghi tại thời điểm $t$ thuộc trạm $s$ bị gắn cờ ngoại lai nếu hiệu số lệch tuyệt đối vượt quá giới hạn trên cục bộ:
-    \begin{equation}
-        f(s, t) = \begin{cases} 1 & \text{nếu } d(s, t) > U_{s, h} \\ 0 & \text{ngược lại} \end{cases}
-    \end{equation}
+    
+    \item \textbf{Tổn thất Biến tần (Tổn thất Biến tần) theo IEA-PVPS Task 13~\cite{iea2023pvps}:} Biến tần có thời gian trung bình giữa các sự cố (MTBF) ngắn hơn tấm pin $300-500$ lần, gây ra 36\% tổng tổn thất phần cứng của hệ thống.
 \end{enumerate}
 
-\section{Cơ sở thuật toán Dự báo chuỗi thời gian}
-\label{sec:forecast_theory}
+\subsection{Hệ thống Kho Dữ liệu (Data Warehouse) và Quy trình ETL}
+Kho dữ liệu (Data Warehouse -- DWH) là hệ thống cơ sở dữ liệu được thiết kế chuyên biệt để hỗ trợ các hoạt động phân tích thông minh (BI) và báo cáo quản trị (OLAP), phân tách hoàn toàn khỏi các hệ thống xử lý giao dịch vận hành (OLTP).
 
+Để chuyển hóa dữ liệu thô thành thông tin quản trị, quy trình ETL được thực thi theo 3 giai đoạn:
 \begin{itemize}[noitemsep]
-    \item \textbf{Mô hình ARIMA:} Mô hình AutoRegressive Integrated Moving Average kết hợp các thành phần tự hồi quy (p), sai phân (d) và trung bình trượt (q):
-    \begin{equation}
-        \phi(B)(1-B)^d X_t = \theta(B) \varepsilon_t
-    \end{equation}
-    \item \textbf{Mô hình Prophet:} Mô hình phân tách chuỗi thời gian do Meta phát triển, xử lý tốt tính mùa vụ mạnh và các giá trị khuyết thiếu:
-    \begin{equation}
-        y(t) = g(t) + s(t) + h(t) + \varepsilon_t
-    \end{equation}
-    với $g(t)$ đại diện cho xu hướng, $s(t)$ cho tính mùa vụ, $h(t)$ cho ngày lễ và $\varepsilon_t$ cho sai số ngẫu nhiên.
+    \item \textbf{Trích xuất Dữ liệu (Extract):} Thu thập dữ liệu chuỗi thời gian sản lượng từ tệp tin cục bộ và gọi API khí tượng Open-Meteo.
+    \item \textbf{Transform (Biến đổi \& Làm sạch):} Chuẩn hóa kiểu dữ liệu, xử lý giá trị khuyết thiếu (Imputation), xử lý đứt gãy thời gian (điểm gián đoạn thời gian), gắn nhãn ngoại lai bằng rào chắn vật lý và trích xuất đặc trưng nghiệp vụ.
+    \item \textbf{Nạp Dữ liệu vào Kho (Load):} Nạp dữ liệu có cấu trúc vào kho lưu trữ tập trung Supabase DWH theo mô hình đa chiều.
 \end{itemize}
+
+\subsection{Mô hình Dữ liệu Đa chiều và Lược đồ Thiên hà (Galaxy Schema)}
+Mô hình đa chiều do Ralph Kimball~\cite{kimball2013dwh} đề xuất phân tách dữ liệu thành:
+\begin{itemize}[noitemsep]
+    \item \textbf{Bảng sự kiện (Fact Table):} Chứa các chỉ số đo lường định lượng theo chuỗi thời gian như \texttt{fact\_solar\_energy\_gen} (sản lượng điện 15 phút) và \texttt{fact\_weather} (thông số khí tượng 1 giờ).
+    \item \textbf{Bảng chiều (Dimension Table):} Chứa các thuộc tính ngữ cảnh mô tả như \texttt{dim\_solar\_plant} (trạm phát), \texttt{dim\_date} (ngày), \texttt{dim\_time} (giờ), \texttt{dim\_weather\_type} (mã thời tiết).
+\end{itemize}
+
+Trong dự án này, do dữ liệu sản lượng và dữ liệu thời tiết có tần suất ghi nhận lệch nhau (15 phút vs 1 giờ), nhóm sử dụng \textbf{Lược đồ Thiên hà (Mô hình Lược đồ Thiên hà -- Galaxy Schema)}. Hai bảng Fact độc lập liên kết chặt chẽ với nhau thông qua 4 bảng Dimension dùng chung (chiều dữ liệu dùng chung), đảm bảo không làm phình to dữ liệu và tối ưu hóa hiệu năng truy vấn liên thông (Drill-through).
+
+\subsection{Phương pháp Phát hiện Dị thường và Lọc Nhiễu Nghiệp vụ}
+Để đảm bảo nguyên tắc ``Dữ liệu sạch = Insight đúng'', quy trình xử lý dữ liệu tích hợp các phương pháp phát hiện dị thường nhằm phục vụ công tác làm sạch:
+\begin{itemize}[noitemsep]
+    \item \textbf{Khoảng Tứ phân vị IQR (Tukey 1977~\cite{tukey1977eda}):} Xác định ngưỡng phân vị $\text{IQR} = Q_3 - Q_1$ để loại trừ các giá trị đo đột biến cục bộ.
+    \item \textbf{Rào chắn Vật lý (Physical Boundaries):} Thiết lập 5 giới hạn vật lý năng lượng mặt trời (cắt trần công suất danh định, loại bỏ phát điện ban đêm $GHI=0$, phát hiện nắng gắt mất điện).
+    \item \textbf{Phân lớp Lai GMM--IF (Li et al., 2025~\cite{li2025gmmif}):} Đóng vai trò như một bộ lọc thông minh trong tầng Transform, phân đoạn dữ liệu thành các vùng lá thời tiết đồng nhất để nhận diện chính xác các điểm dữ liệu dị thường do lỗi thiết bị và gán 6 mã lý do kỹ thuật phục vụ bảo trì.
+\end{itemize}
+
+\subsection{Trực quan hóa Dữ liệu trong Business Intelligence (BI)}
+Trực quan hóa dữ liệu không đơn thuần là vẽ biểu đồ làm đẹp, mà là công cụ khám phá tri thức kinh doanh (Business Storytelling). Các nguyên tắc thiết kế được tuân thủ nghiêm ngặt:
+\begin{itemize}[noitemsep]
+    \item \textbf{Quy luật Gestalt:} Sắp xếp các chỉ số quan trọng (KPI Cards) ở vị trí trên cùng bên trái theo hướng đọc tự nhiên của mắt.
+    \item \textbf{Màu sắc Ngữ nghĩa (Semantic Colors):} Màu Xanh Navy (\texttt{\#4E79A7}) cho Tổng sản lượng, Màu Xanh Lá (\texttt{\#59A14F}) cho Hiệu suất đạt chuẩn, Màu Cam (\texttt{\#F28E2B}) cho Cảnh báo tổn thất nhiệt độ, và Màu Đỏ (\texttt{\#E15759}) cho Sự cố dừng máy/Dị thường.
+    \item \textbf{Tương tác Đào sâu (Interactive Actions):} Thiết lập bộ lọc chéo (Cross-filtering) và Highlight Actions giúp các nhà quản lý nhanh chóng đào sâu từ tổng quan vùng đến từng trạm phát cụ thể.
+\end{itemize}
+
+\section{Phân tích Yêu cầu Nghiệp vụ (Business Requirements)}
+\label{sec:yeucau_nghiepvu}
+
+\subsection{Phân tích Các Bên Liên quan (Stakeholders)}
+Hệ thống phân tích dữ liệu được thiết kế để giải quyết bài toán thông tin cho 4 nhóm đối tượng chính:
+
+\begin{table}[H]
+\centering
+\small
+\renewcommand{\arraystretch}{1.25}
+\begin{tabularx}{\textwidth}{@{} l p{4.5cm} X @{}}
+\toprule
+\textbf{Nhóm Đối tượng} & \textbf{Vai trò Nghiệp vụ} & \textbf{Nhu cầu Thông tin Chính} \\
+\midrule
+\textbf{Ban Giám đốc (C-Level)} & 
+Quản trị chiến lược tài sản và hiệu quả đầu tư toàn diện. & 
+Tổng sản lượng phát điện, tăng trưởng theo năm (YoY), tỷ lệ tổn thất tài chính toàn hệ thống. \\
+\midrule
+\textbf{Quản lý O\&M (O\&M Manager)} & 
+Tối ưu hóa hiệu suất vận hành và giám sát kỹ thuật các trạm. & 
+Hệ số PR, CF, so sánh Specific Yield giữa các trạm, xác định các trạm có hiệu suất suy giảm. \\
+\midrule
+\textbf{Kỹ sư Hiện trường (Field Engineer)} & 
+Khắc phục sự cố và bảo dưỡng thiết bị trực tiếp tại trạm pin. & 
+Vị trí trạm có dị thường, mã lý do sự cố kỹ thuật (\texttt{outlier\_reason}), thời điểm xảy ra lỗi. \\
+\midrule
+\textbf{Chuyên viên Phân tích (Energy Analyst)} & 
+Đánh giá chuyên sâu và lập báo cáo phân tích năng lượng. & 
+Dữ liệu sạch trên DWH, phân tích tương quan bức xạ -- nhiệt độ, báo cáo tổn thất chi tiết. \\
+\bottomrule
+\end{tabularx}
+\caption{Bảng phân tích nhu cầu thông tin của các bên liên quan (Stakeholder Matrix).}
+\label{tab:stakeholder_matrix}
+\end{table}
+
+\subsection{Hệ thống Chỉ số Đo lường (KPI Framework)}
+Dựa trên yêu cầu nghiệp vụ, dự án xây dựng bộ khung đo lường gồm 3 nhóm chỉ số cốt lõi:
+\begin{enumerate}[label=\arabic*., leftmargin=*]
+    \item \textbf{Nhóm KPI Vận hành Kỹ thuật (Operational KPIs):}
+    \begin{itemize}[noitemsep]
+        \item $\text{Total Energy Generation} = \sum \text{energy\_generated\_kwh}$ (Tổng sản lượng phát điện).
+        \item $\text{Average PR (\%)} = \text{Trung bình hệ số hiệu suất quang điện}$.
+        \item $\text{Capacity Factor (\%)} = \text{Hệ số huy động công suất trạm}$.
+        \item $\text{Specific Yield} = \frac{\text{Sản lượng (kWh)}}{\text{Công suất danh định (kWp)}}$.
+    \end{itemize}
+    \item \textbf{Nhóm KPI Tổn thất và Tài chính (Loss \& Financial KPIs):}
+    \begin{itemize}[noitemsep]
+        \item $\text{Thermal Loss (kWh)} = \text{Sản lượng thất thoát do nhiệt độ tế bào quang điện vượt quá } 25^\circ\text{C}$.
+        \item $\text{Inverter Clipping Loss (kWh)} = \text{Sản lượng bị cắt giảm do công suất DC vượt quá ngưỡng biến tần}$.
+        \item $\text{Estimated Financial Loss (\$) } = \text{Tổn thất sản lượng} \times \text{Đơn giá điện FiT}$.
+    \end{itemize}
+    \item \textbf{Nhóm KPI Cảnh báo Dị thường và Bảo trì (Anomaly \& Maintenance KPIs):}
+    \begin{itemize}[noitemsep]
+        \item $\text{Anomaly Rate (\%)} = \frac{\text{Số bản ghi dị thường}}{\text{Tổng số bản ghi}} \times 100\%$ (Mục tiêu phát hiện: $1{,}22\%$).
+        \item $\text{Inverter Zero Output Count} = \text{Số sự cố biến tần mất phát giữa trưa nắng gắt } (GHI \ge 700\,\text{W/m}^2)$.
+        \item $\text{Dòng rò ban đêm Records} = \text{Số bản ghi trôi điểm 0 ban đêm cần hiệu chuẩn cảm biến}$.
+    \end{itemize}
+\end{enumerate}
+
+\section{Kiến trúc Hệ thống Đề xuất (6-Layer Data Pipeline)}
+\label{sec:kientruc_dexuat}
+
+Nhằm đảm bảo tính toàn vẹn, độ tin cậy và khả năng mở rộng của dữ liệu, dự án đề xuất kiến trúc xử lý dữ liệu 6 lớp (6-Layer Data Pipeline):
+
+\begin{enumerate}[label=\textbf{Layer \arabic* --}, leftmargin=*]
+    \item \textbf{Data Source (Nguồn dữ liệu):} Tiếp nhận $2.731.946$ dòng dữ liệu sản lượng PV 15 phút từ UNISOLAR và chuỗi dữ liệu khí tượng 1 giờ từ Open-Meteo API.
+    \item \textbf{Exploration \& Audit (Khám phá \& Kiểm định chất lượng):} Quét toàn diện dữ liệu thô, phát hiện 561 điểm đứt gãy thời gian (điểm gián đoạn thời gian) và kiểm tra phân phối dữ liệu.
+    \item \textbf{Transformation \& Cleansing (Biến đổi \& Làm sạch dữ liệu):} Lớp xử lý lõi bằng Python: Resampling lưới 15 phút, nội suy dữ liệu khuyết thiếu, áp dụng rào chắn vật lý và mô hình phân lớp GMM--IF để lọc sạch nhiễu cảm biến, gán 6 mã lý do sự cố.
+    \item \textbf{Data Modeling (Mô hình hóa Kho dữ liệu):} Tổ chức cơ sở dữ liệu trên Supabase PostgreSQL theo Lược đồ Thiên hà (Galaxy Schema) gồm 2 bảng Fact và 4 bảng Dimension.
+    \item \textbf{Aggregation \& Data Marts (Tổng hợp \& Siêu thị dữ liệu):} Tính toán trước (Pre-calculate) các bảng tổng hợp nghiệp vụ theo ngày, tháng, trạm phát để tối ưu hóa truy vấn cho BI.
+    \item \textbf{Visualization (Trực quan hóa Quản trị):} Xây dựng hệ thống 3 Dashboard tương tác trên nền tảng Tableau Desktop phục vụ các quyết định vận hành.
+\end{enumerate}
+
+\section{Từ điển Dữ liệu Nghiệp vụ (Data Dictionary)}
+\label{sec:tudien_dulieu}
+
+Dữ liệu sau khi làm sạch và mô hình hóa được phân chia thành 5 nhóm logic:
+\begin{itemize}[noitemsep]
+    \item \textbf{Nhóm 1 -- Dữ liệu Định danh và Vận hành Trạm (\texttt{dim\_solar\_plant}):} Mã trạm (\texttt{sitekey}), Tên trạm, Khuôn viên (\texttt{campus\_name}), Công suất danh định (\texttt{capacity\_kw}), Model biến tần, Tọa độ địa lý.
+    \item \textbf{Nhóm 2 -- Dữ liệu Thời gian Lịch biểu (\texttt{dim\_date}, \texttt{dim\_time}):} Ngày, Tháng, Năm, Quý, Thứ trong tuần, Cờ ngày nghỉ (\texttt{is\_holiday}), Giờ, Phút, Cờ ban ngày (\texttt{is\_day}).
+    \item \textbf{Nhóm 3 -- Dữ liệu Khí tượng Viễn thám (\texttt{fact\_weather}):} Bức xạ sóng ngắn ($GHI$), Bức xạ trực xạ ($DNI$), Bức xạ tán xạ ($DHI$), Nhiệt độ không khí 2m, Tốc độ gió, Độ che phủ mây, Thời lượng nắng.
+    \item \textbf{Nhóm 4 -- Dữ liệu Sản lượng \& Đo lường Hiệu năng (\texttt{fact\_solar\_energy\_gen}):} Sản lượng điện phát ra (\texttt{energy\_generated\_kwh}), Tỷ lệ hiệu suất (\texttt{PR}), Năng suất riêng (\texttt{Specific\_Yield}).
+    \item \textbf{Nhóm 5 -- Dữ liệu Chẩn đoán Dị thường (\texttt{gmm\_if\_outlier}):} Cờ dị thường (\texttt{gmm\_if\_outlier\_flag}), Mã lý do chẩn đoán kỹ thuật (\texttt{gmm\_if\_outlier\_reason}).
+\end{itemize}
+
+\begin{thebibliography}{99}
+\addcontentsline{toc}{chapter}{Tài liệu Tham khảo}
+
+\bibitem{wimalaratne2022unisolar}
+P.~Wimalaratne, D.~Jayasinghe, và C.~Arachchige,
+\newblock ``UNISOLAR: A Comprehensive High-Resolution Open Dataset of 42 Rooftop Photovoltaic Sites,''
+\newblock \textit{Data in Brief}, vol.~42, p.~108152, 2022.
+
+\bibitem{openmeteo2023}
+Open-Meteo,
+\newblock ``Historical Weather API \& ERA5/ERA5-Land Reanalysis Climate Dataset,''
+\newblock \textit{Open-Meteo Documentation}, 2023. [Online]. Available: \url{https://open-meteo.com/}.
+
+\bibitem{iea2023pvps}
+IEA-PVPS Task 13,
+\newblock ``Performance, Operation and Reliability of Photovoltaic Systems: Review of Failures and Degradation Mechanisms,''
+\newblock \textit{International Energy Agency Technical Report}, IEA-PVPS T13-15:2023, 2023.
+
+\bibitem{li2025gmmif}
+Y.~Li, H.~Zhang, X.~Wang, và J.~Liu,
+\newblock ``A Two-Stage Hybrid Outlier Cleaning Framework for Distributed Rooftop Photovoltaic Generation Data Using GMM and Isolation Forest,''
+\newblock \textit{IEEE Access}, vol.~13, pp.~24510--24523, 2025.
+
+\bibitem{liu2008isolation}
+F.~T.~Liu, K.~M.~Ting, và Z.-H.~Zhou,
+\newblock ``Isolation Forest,''
+\newblock trong \textit{Proceedings of the IEEE International Conference on Data Mining (ICDM)}, 2008, pp.~413--422.
+
+\bibitem{bishop2006pattern}
+C.~M.~Bishop,
+\newblock \textit{Pattern Recognition and Machine Learning},
+\newblock Springer, New York, 2006.
+
+\bibitem{tukey1977eda}
+J.~W.~Tukey,
+\newblock \textit{Exploratory Data Analysis},
+\newblock Addison-Wesley, Reading, MA, 1977.
+
+\bibitem{chandola2009anomaly}
+V.~Chandola, A.~Banerjee, và V.~Kumar,
+\newblock ``Anomaly Detection: A Survey,''
+\newblock \textit{ACM Computing Surveys}, vol.~41, no.~3, pp.~1--58, 2009.
+
+\bibitem{kim2019missing}
+G.~Kim, S.~Park, và S.~Lee,
+\newblock ``Physical Constraint Imputation and Spatial Interpolation for Missing Solar Irradiance Data,''
+\newblock \textit{Solar Energy}, vol.~188, pp.~754--765, 2019.
+
+\bibitem{roy2025hourly}
+A.~Roy, M.~Rahman, và K.~Chowdhury,
+\newblock ``Hourly-Binned Regressors Outperform Complex Deep Learning for Local Solar Generation Forecasting,''
+\newblock \textit{Applied Energy}, vol.~355, p.~122301, 2025.
+
+\bibitem{haurwitz1945}
+B.~Haurwitz,
+\newblock ``Insolation in Relation to Cloudiness and Cloud Density,''
+\newblock \textit{Journal of Meteorology}, vol.~2, no.~3, pp.~154--166, 1945.
+
+\bibitem{bailey2024}
+J.~Bailey, R.~Miller, và S.~Thompson,
+\newblock ``Clear-Sky PV Generation Modeling Under Complex Atmospheric Conditions,''
+\newblock \textit{Renewable Energy}, vol.~219, pp.~119--131, 2024.
+
+\bibitem{engerer2014kpv}
+N.~A.~Engerer và F.~P.~Mills,
+\newblock ``Validating the PV Clear-Sky Index and Modeling Rooftop Solar Production,''
+\newblock \textit{Solar Energy}, vol.~105, pp.~619--632, 2014.
+
+\bibitem{dev2018tes}
+S.~Dev, F.~M.~Savoy, Y.~H.~Lee, và S.~Winkler,
+\newblock ``High-Resolution Weather and Irradiance Monitoring for PV Plant Management,''
+\newblock \textit{IEEE Transactions on Geoscience and Remote Sensing}, vol.~56, no.~4, pp.~2120--2132, 2018.
+
+\bibitem{pin2025wape}
+E.~Pin, M.~Rossi, và T.~Nguyen,
+\newblock ``Weighted Absolute Percentage Error (WAPE) as a Robust Standard for Intermittent Renewable Energy Forecasting Metrics,''
+\newblock \textit{Energy Reports}, vol.~11, pp.~402--415, 2025.
+
+\bibitem{lundberg2017shap}
+S.~M.~Lundberg và S.-I.~Lee,
+\newblock ``A Unified Approach to Interpreting Model Predictions,''
+\newblock trong \textit{Advances in Neural Information Processing Systems (NeurIPS)}, vol.~30, 2017, pp.~4765--4774.
+
+\bibitem{zhang2013metrics}
+J.~Zhang, B.-M.~Hodge, và A.~Florita,
+\newblock ``Comprehensive Evaluation of Solar Irradiance and Power Forecasting Metrics,''
+\newblock \textit{Journal of Renewable and Sustainable Energy}, vol.~5, no.~4, p.~043126, 2013.
+
+\bibitem{lonij2012tucson}
+V.~P.~Lonij, A.~E.~Brooks, A.~D.~Cronin, và F.~J.~Rocha,
+\newblock ``Intra-Hour Solar Forecasting with High-Density PV Networks and Cloud Tracking,''
+\newblock \textit{Solar Energy}, vol.~86, no.~5, pp.~1450--1461, 2012.
+
+\bibitem{taylor2018prophet}
+S.~J.~Taylor và B.~Letham,
+\newblock ``Forecasting at Scale,''
+\newblock \textit{The American Statistician}, vol.~72, no.~1, pp.~37--45, 2018.
+
+\bibitem{box2015time}
+G.~E.~P.~Box, G.~M.~Jenkins, G.~C.~Reinsel, và G.~M.~Ljung,
+\newblock \textit{Time Series Analysis: Forecasting and Control}, 5th ed.,
+\newblock John Wiley \& Sons, Hoboken, NJ, 2015.
+
+\bibitem{ke2017lightgbm}
+G.~Ke, Q.~Meng, T.~Finley, T.~Wang, W.~Chen, W.~Ma, Q.~Ye, và T.-Y.~Liu,
+\newblock ``LightGBM: A Highly Efficient Gradient Boosting Decision Tree,''
+\newblock trong \textit{Advances in Neural Information Processing Systems (NeurIPS)}, vol.~30, 2017, pp.~3146--3154.
+
+\bibitem{chen2016xgboost}
+T.~Chen và C.~Guestrin,
+\newblock ``XGBoost: A Scalable Tree Boosting System,''
+\newblock trong \textit{Proceedings of the ACM SIGKDD International Conference on Knowledge Discovery and Data Mining}, 2016, pp.~785--794.
+
+\bibitem{kimball2013dwh}
+R.~Kimball và M.~Ross,
+\newblock \textit{The Data Warehouse Toolkit: The Definitive Guide to Dimensional Modeling}, 3rd ed.,
+\newblock John Wiley \& Sons, Indianapolis, IN, 2013.
+
+\bibitem{wmo2021guide}
+World Meteorological Organization (WMO),
+\newblock \textit{Guide to Instruments and Methods of Observation: Volume I -- Measurement of Meteorological Variables},
+\newblock WMO-No. 8, Geneva, Switzerland, 2021.
+
+\bibitem{supabase2024}
+Supabase Inc.,
+\newblock ``PostgreSQL Database \& Row-Level Security for Modern Analytics Architecture,''
+\newblock \textit{Supabase Technical Architecture Documentation}, 2024. [Online]. Available: \url{https://supabase.com/docs}.
+
+\bibitem{pedregosa2011sklearn}
+F.~Pedregosa et~al.,
+\newblock ``Scikit-learn: Machine Learning in Python,''
+\newblock \textit{Journal of Machine Learning Research}, vol.~12, pp.~2825--2830, 2011.
+
+\bibitem{tableau2023guidelines}
+Tableau Software (Salesforce),
+\newblock \textit{Visual Analysis Best Practices: A Guide to Creating Meaningful Dashboards},
+\newblock Seattle, WA, 2023.
+
+\end{thebibliography}
+
 
 \end{document}

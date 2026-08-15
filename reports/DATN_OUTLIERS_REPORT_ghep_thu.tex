@@ -19,10 +19,7 @@
 \emergencystretch=3em
 
 \usepackage{geometry}
-% footskip mac dinh 30pt, ma tai lieu dung gian dong 1,5 nen moi dong cao ~21,75pt:
-% chan trang chi cach chan chu khoang 8pt, trang nao day chu la cham vao dong 'Du an
-% Tot nghiep'. Ha chan trang xuong 1,5cm de co khoang ho, le trai/phai/tren giu nguyen.
-\geometry{top=2.5cm, bottom=2.5cm, left=3cm, right=2cm, footskip=1.5cm}
+\geometry{top=2.5cm, bottom=2.5cm, left=3cm, right=2cm}
 % ======================== CẤU HÌNH CODE PYTHON (MUTED STYLE) ==============================
 \usepackage{listings}
 \usepackage{xcolor} % Bắt buộc phải có để dùng \definecolor
@@ -58,8 +55,9 @@
     }
 \lstset{style=pythonstyle}
 
-% Font - Arial (Sans-Serif, fully supports Vietnamese on Windows/XeLaTeX)`r`n\setmainfont{TeX Gyre Termes}
-\setmonofont{TeX Gyre Cursor}
+% Font tieng Viet chuan XeLaTeX
+\setmainfont{Times New Roman}
+\setmonofont{Consolas}
 
 % Header / Footer
 \usepackage{fancyhdr}
@@ -236,8 +234,8 @@
 % nay lam vo toan bo cong thuc toan (da thu, 749 loi). Vong lap duoi day khong dong toi
 % catcode nen an toan.
 %
-% Luu y: vong lap doc doi so khong bao gom dau cach, nen \tep{...} KHONG duoc chua dau cach.
-% Ba cho tung co dau cach da duoc tach thanh \tep{a}${}={}$\tep{b}.
+% Luu y: vong lap doc doi so khong bao gom dau cach, nen \texttt{...} KHONG duoc chua dau cach.
+% Ba cho tung co dau cach da duoc tach thanh \texttt{a}${}={}$\texttt{b}.
 \makeatletter
 \DeclareRobustCommand{\tep}[1]{\texttt{\expandafter\tep@duyet\detokenize{#1}\tep@het}}
 \def\tep@het{\tep@het}
