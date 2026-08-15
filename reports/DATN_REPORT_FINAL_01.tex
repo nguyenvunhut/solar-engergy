@@ -336,15 +336,38 @@ Mặc dù nhóm đã nỗ lực hết mình với tinh thần trách nhiệm cao
 
 \chapter*{Tóm tắt Dự án}
 \addcontentsline{toc}{chapter}{Tóm tắt Dự án}
-Dự án tốt nghiệp ``Phân tich Hiệu suất và Dự báo Sản lượng Hệ thống Điện Mặt Trời'' được thực hiện nhằm xây dựng một nền tảng dữ liệu toàn diện (Nền tảng Dữ liệu Toàn diện) phục vụ công tác giám sát, quản trị vận hành và tối ưu hóa tài chính cho các hệ thống năng lượng mặt trời (PV). 
 
-Xuất phát từ bài toán thực tế của các doanh nghiệp vận hành: mặc dù công suất lắp đặt ngày càng mở rộng nhưng hiệu suất thực tế thường bị thất thoát ẩn do điều kiện thời tiết biến đổi, suy giảm nhiệt độ, bám bụi và hỏng hóc thiết bị biến tần (Inverter). Dự án đã thu thập và tích hợp khối dữ liệu lớn gồm $2.731.946$ bản ghi sản lượng 15 phút từ 42 trạm phát tại 4 khuôn viên thuộc Đại học La Trobe (Úc) cùng dữ liệu khí tượng ERA5-Land từ Open-Meteo API.
+Dự án tốt nghiệp \textit{``Phân tích Hiệu suất và Dự báo Sản lượng Hệ thống Điện Mặt Trời''} có mục tiêu nhằm xây dựng một quy trình phân tích và khai phá dữ liệu toàn diện cho hệ thống điện mặt trời quang điện (PV), bao gồm ba phân hệ cốt lõi: Kỹ thuật Dữ liệu (Data Engineering \& Data Warehouse), Phân tích Trực quan Quản trị (Business Intelligence trên Tableau), và Dự báo Sản lượng bằng Học máy (Machine Learning \& Explainable AI).
 
-Nhóm đã xây dựng quy trình ETL tự động hóa bằng Python, thực hiện làm sạch dữ liệu, xử lý các điểm đứt gãy thời gian, áp dụng rào chắn vật lý và mô hình phân lớp lai GMM--IF để lọc sạch nhiễu cảm biến và gắn nhãn 6 mã lý do kỹ thuật. Dữ liệu được mô hình hóa theo kiến trúc Lược đồ Thiên hà (Galaxy Schema) trên PostgreSQL Supabase và tổng hợp thành các Siêu thị dữ liệu (Siêu thị dữ liệu chuyên đề). Hệ thống 3 Dashboard tương tác trên Tableau cung cấp cho Ban Giám đốc, Quản lý Vận hành và Kỹ sư bảo trì cái nhìn sâu sắc về tỷ lệ hiệu suất (PR), sản lượng đặc trưng (Specific Yield), và tổn thất tài chính, qua đó chuyển đổi dữ liệu thô thành các quyết định vận hành bền vững.
+\textbf{1. Bối cảnh và Nguồn Dữ liệu Nghiên cứu:}
+Dự án sử dụng bộ dữ liệu thực tế UNISOLAR thu thập từ $42$ trạm phát điện mặt trời áp mái với tổng công suất $2{,}37\,\text{MWp}$ phân bố tại $5$ khuôn viên của Đại học La Trobe (bang Victoria, Úc) trong chu kỳ 28 tháng (2020--2022), bao gồm $2.731.946$ bản ghi sản lượng chu kỳ 15 phút. Dữ liệu sản lượng được tích hợp đồng bộ với dữ liệu khí tượng tái phân tích ERA5-Land (bức xạ GHI, DNI, DHI, nhiệt độ, độ ẩm, sức gió và mây che phủ) thu thập qua Open-Meteo API.
 
-% ────────────────────────────────────────────────────────────────────
-%  MỤC LỤC & DANH MỤC
-% ────────────────────────────────────────────────────────────────────
+\textbf{2. Kỹ thuật Dữ liệu, Xử lý Dị thường và Kho Dữ liệu (ETL \& DWH):}
+Nhóm đã xây dựng pipeline ETL tự động bằng ngôn ngữ Python:
+\begin{itemize}[noitemsep]
+    \item Chuẩn hóa chuỗi thời gian về lưới 15 phút cố định, giải quyết 561 điểm đứt gãy dữ liệu thông qua cơ chế Điền khuyết nhân quả (Causal Cascade Imputation).
+    \item Áp dụng 5 rào chắn vật lý kết hợp thuật toán phân lớp lai GMM--IF (Gaussian Mixture Model -- Isolation Forest) để lọc sạch nhiễu cảm biến và phân loại chính xác $33.280$ bản ghi bất thường thành 6 mã nguyên nhân kỹ thuật (\texttt{zero\_drift}, \texttt{night\_leakage}, \texttt{underperformance}, \texttt{inverter\_zero\_output}, \texttt{thermal\_derating}, \texttt{inverter\_clipping}).
+    \item Mô hình hóa Kho Dữ liệu trên hệ quản trị PostgreSQL (nền tảng Supabase Cloud) theo cấu trúc Lược đồ Thiên hà (Galaxy Schema) gồm 2 bảng Fact (\texttt{fact\_solar\_energy\_gen}, \texttt{fact\_weather}) kết nối 4 bảng Dimension dùng chung, được tối ưu hóa bằng phân vùng bảng vật lý và chỉ mục phức hợp. Xây dựng các bảng Data Marts (BI Mart) phục vụ trực quan hóa hiệu năng cao.
+\end{itemize}
+
+\textbf{3. Hệ thống Trực quan Quản trị (Business Intelligence trên Tableau):}
+Thiết lập đường truyền kết nối trực tiếp PostgreSQL bảo mật TLS/SSL từ Tableau Desktop tới Supabase Connection Pooler. Xây dựng bộ 3 Dashboard tương tác chuyên sâu:
+\begin{itemize}[noitemsep]
+    \item \textit{Executive Overview:} Giám sát tổng sản lượng phát điện ($74{,}98\,\text{GWh}$), hệ số hiệu suất trung bình (PR $78{,}4\%$), hệ số công suất (CF) và năng suất riêng (Specific Yield $4{,}35\,\text{kWh/kWp/ngày}$).
+    \item \textit{Loss \& Financial Analysis:} Phân tích chi tiết tổn thất sản lượng do nhiệt độ tăng cao ($14{,}8\%$), tổn thất do giới hạn công suất biến tần (Inverter Clipping $2{,}3\%$) và ước tính tổn thất tài chính theo biểu giá điện FiT.
+    \item \textit{Plant Health \& O\&M Diagnostic:} Thống kê tần suất và phân bố của 6 mã dị thường kỹ thuật theo từng trạm phát và khuôn viên, hỗ trợ định hướng bảo trì thiết bị.
+\end{itemize}
+
+\textbf{4. Khai phá Dữ liệu và Dự báo Sản lượng Học máy (Machine Learning):}
+Xây dựng quy trình học máy tuân thủ nguyên lý nhân quả nghiêm ngặt (chống rò rỉ dữ liệu), trích xuất 40 đặc trưng chọn lọc từ chuỗi thời gian, bức xạ quang học và góc chiếu mặt trời tất định Haurwitz/NOAA:
+\begin{itemize}[noitemsep]
+    \item Đánh giá trên sơ đồ kiểm tra chéo chuỗi thời gian 3-Fold Expanding Window; tối ưu hóa siêu tham số mô hình LightGBM hồi quy L1/Huber bằng thuật toán Bayesian TPE qua 50 Trials Optuna.
+    \item Mô hình đạt sai số phần trăm tuyệt đối gia quyền WAPE $12{,}48\%$ trên tập kiểm thử (Test) niêm phong, cải thiện vượt trội so với mô hình cơ sở Facebook Prophet.
+    \item Ứng dụng kỹ thuật SHAP TreeExplainer để giải thích mức độ đóng góp toàn cục và cục bộ của các đặc trưng vào kết quả dự báo.
+    \item Đóng gói sản phẩm thành dịch vụ dự báo độc lập (\texttt{forecast\_service.py}) và ứng dụng giao diện trực quan tương tác bằng Streamlit (\texttt{app.py}).
+\end{itemize}
+
+\newpage
 
 \tableofcontents
 \listoffigures
@@ -669,15 +692,15 @@ Dựa trên yêu cầu nghiệp vụ, dự án xây dựng bộ khung đo lườ
     \end{itemize}
     \item \textbf{Nhóm KPI Tổn thất và Tài chính (Loss \& Financial KPIs):}
     \begin{itemize}[noitemsep]
-        \item \textbf{Thermal Loss (kWh)}: Sản lượng thất thoát do nhiệt độ tế bào quang điện vượt quá $25^\circ\text{C}$.
-        \item \textbf{Inverter Clipping Loss (kWh)}: Sản lượng bị cắt giảm do công suất DC vượt quá ngưỡng biến tần.
-        \item \textbf{Estimated Financial Loss (\$)}: $\text{Tổn thất sản lượng} \times \text{Đơn giá điện FiT}$.
+        \item $\text{Thermal Loss (kWh)} = \text{Sản lượng thất thoát do nhiệt độ tế bào quang điện vượt quá } 25^\circ\text{C}$.
+        \item $\text{Inverter Clipping Loss (kWh)} = \text{Sản lượng bị cắt giảm do công suất DC vượt quá ngưỡng biến tần}$.
+        \item $\text{Estimated Financial Loss (\$) } = \text{Tổn thất sản lượng} \times \text{Đơn giá điện FiT}$.
     \end{itemize}
     \item \textbf{Nhóm KPI Cảnh báo Dị thường và Bảo trì (Anomaly \& Maintenance KPIs):}
     \begin{itemize}[noitemsep]
         \item $\text{Anomaly Rate (\%)} = \frac{\text{Số bản ghi dị thường}}{\text{Tổng số bản ghi}} \times 100\%$ (Mục tiêu phát hiện: $1{,}22\%$).
-        \item \textbf{Inverter Zero Output Count}: Số sự cố biến tần mất phát giữa trưa nắng gắt ($GHI \ge 700\,\text{W/m}^2$).
-        \item \textbf{Dòng rò ban đêm Records}: Số bản ghi trôi điểm 0 ban đêm cần hiệu chuẩn cảm biến.
+        \item $\text{Inverter Zero Output Count} = \text{Số sự cố biến tần mất phát giữa trưa nắng gắt } (GHI \ge 700\,\text{W/m}^2)$.
+        \item $\text{Dòng rò ban đêm Records} = \text{Số bản ghi trôi điểm 0 ban đêm cần hiệu chuẩn cảm biến}$.
     \end{itemize}
 \end{enumerate}
 
