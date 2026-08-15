@@ -1,0 +1,5 @@
+outs:
+- md5: 96edc7995f8609daa7ec6e872ca30d64
+  size: 62044
+  hash: md5
+  path: pipeline_sodo_mlops.pdf
