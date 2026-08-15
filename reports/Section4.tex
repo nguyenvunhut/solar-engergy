@@ -63,11 +63,15 @@
 }
 \lstset{style=pythonstyle}
 
-% Ngăn chặn tự động gạch nối từ (hyphenation) cuối dòng
-\hyphenpenalty=10000
-\exhyphenpenalty=10000
-\tolerance=10000
-\emergencystretch=3em
+% Ngăn chặn tràn viền tài liệu (Overfull \hbox)
+\usepackage{microtype}
+\usepackage{xurl}
+\def\UrlBreaks{\do\/\do-\do\_}
+\hyphenpenalty=1000
+\exhyphenpenalty=1000
+\tolerance=2000
+\emergencystretch=2.5em
+\hfuzz=1pt
 
 % ======================== TRANG TRÍ & ĐỊNH DẠNG =============================
 \usepackage{fancyhdr}
@@ -137,6 +141,546 @@
 \titleformat*{\subsection}{\fontsize{13pt}{15.6pt}\bfseries}
 \titleformat*{\subsubsection}{\fontsize{13pt}{15.6pt}\bfseries}
 \titleformat{\chapter}[display]
+  {\normalfont\huge\bfseries}{}{0pt}{\huge}
+\titlespacing*{\chapter}{0pt}{-10pt}{20pt} 
+
+% ======================== HEADER / FOOTER ====================================
+\fancypagestyle{main}{
+    \fancyhf{}
+    \fancyhead[L]{\includegraphics[height=1cm]{figures/logo_fpoly.png}}
+    \fancyhead[R]{\small THE OUTLIERS}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp - Chuyên ngành Xử lý Dữ liệu}
+    \fancyfoot[R]{\small Trang \thepage\ / \pageref{LastPage}}
+    \renewcommand{\headrulewidth}{0.4pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+}
+
+\fancypagestyle{plain}{
+    \fancyhf{}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp - Chuyên ngành Xử lý Dữ liệu}
+    \fancyfoot[R]{\small Trang \thepage\ / \pageref{LastPage}}
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+}
+
+\fancypagestyle{front}{
+    \fancyhf{}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp - Chuyên ngành Xử lý Dữ liệu}
+    \fancyfoot[R]{\small Trang \thepage\ / \pageref{LastPage}}
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+}
+
+
+\begin{document}
+\pagestyle{front}
+
+\begin{titlepage}
+\enlargethispage{1.2cm}
+
+\begin{tikzpicture}[remember picture, overlay]
+    \draw[line width=2pt, fptorange]
+        ([shift={(1cm,-1cm)}]current page.north west)
+        rectangle
+        ([shift={(-1cm,1cm)}]current page.south east);
+    \draw[line width=0.5pt, fptorange]
+        ([shift={(1.15cm,-1.15cm)}]current page.north west)
+        rectangle
+        ([shift={(-1.15cm,1.15cm)}]current page.south east);
+\end{tikzpicture}
+
+\begin{center}
+    \textbf{\large TRƯỜNG CAO ĐẲNG FPT POLYTECHNIC}
+
+    \vspace{0.5cm}
+    \includegraphics[width=0.38\textwidth]{figures/logo_fpoly.png}
+
+    \vspace{0.4cm}
+    {\Large \textbf{DỰ ÁN TỐT NGHIỆP}} \\[4pt]
+    {\large \textbf{CHUYÊN NGÀNH: XỬ LÝ DỮ LIỆU}}
+
+    \vspace{1.6cm}
+    
+    \begin{spacing}{1.0}
+        {\huge \textbf{PHÂN TÍCH HIỆU SUẤT VÀ \\[4pt] DỰ BÁO SẢN LƯỢNG \\[4pt] HỆ THỐNG ĐIỆN MẶT TRỜI}}
+    \end{spacing}
+
+    \vspace{1.8cm}
+    \normalsize
+    \begin{flushleft}
+        \hspace{2cm} \textbf{Nhóm thực hiện:} The Outliers \\[5pt]
+        \hspace{2cm} \textbf{Sinh viên thực hiện:} \\[3pt]
+        \hspace{2cm}
+        \begin{tabular*}{7.5cm}{@{} l @{\extracolsep{\fill}} r @{}}
+            \hspace{0.5cm} 1. Nguyễn Vũ Nhựt   & PS44442 \\
+            \hspace{0.5cm} 2. Nguyễn Văn Sỹ    & PS43671 \\
+            \hspace{0.5cm} 3. Lê Công Toàn    & PS44145 \\
+            \hspace{0.5cm} 4. Nguyễn Xuân Hùng & PS44527 \\
+            \hspace{0.5cm} 5. Ngô Tấn Đạt     & PS44589 \\
+        \end{tabular*} \\[5pt]
+        \hspace{2cm} \textbf{Giảng viên hướng dẫn:} ThS. Văn Công Khanh
+    \end{flushleft}
+    \vfill
+    {\normalsize \textbf{TP. HỒ CHÍ MINH, THÁNG 6 NĂM 2026}}
+    \vspace{0.5cm}
+\end{center}
+\end{titlepage}
+
+
+\pagenumbering{arabic}
+\pagestyle{main}
+
+\chapter}[display]
+  {\normalfont\huge\bfseries}{}{0pt}{\huge}
+\titlespacing*{\chapter}{0pt}{-10pt}{20pt} 
+
+% ======================== HEADER / FOOTER ====================================
+\fancypagestyle{main}{
+    \fancyhf{}
+    \fancyhead[L]{\includegraphics[height=1cm]{figures/logo_fpoly.png}}
+    \fancyhead[R]{\small THE OUTLIERS}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp - Chuyên ngành Xử lý Dữ liệu}
+    \fancyfoot[R]{\small Trang \thepage\ / \pageref{LastPage}}
+    \renewcommand{\headrulewidth}{0.4pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+}
+
+\fancypagestyle{plain}{
+    \fancyhf{}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp - Chuyên ngành Xử lý Dữ liệu}
+    \fancyfoot[R]{\small Trang \thepage\ / \pageref{LastPage}}
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+}
+
+\fancypagestyle{front}{
+    \fancyhf{}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp - Chuyên ngành Xử lý Dữ liệu}
+    \fancyfoot[R]{\small Trang \thepage\ / \pageref{LastPage}}
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+}
+
+
+\begin{document}
+\pagestyle{front}
+
+\begin{titlepage}
+\enlargethispage{1.2cm}
+
+\begin{tikzpicture}[remember picture, overlay]
+    \draw[line width=2pt, fptorange]
+        ([shift={(1cm,-1cm)}]current page.north west)
+        rectangle
+        ([shift={(-1cm,1cm)}]current page.south east);
+    \draw[line width=0.5pt, fptorange]
+        ([shift={(1.15cm,-1.15cm)}]current page.north west)
+        rectangle
+        ([shift={(-1.15cm,1.15cm)}]current page.south east);
+\end{tikzpicture}
+
+\begin{center}
+    \textbf{\large TRƯỜNG CAO ĐẲNG FPT POLYTECHNIC}
+
+    \vspace{0.5cm}
+    \includegraphics[width=0.38\textwidth]{figures/logo_fpoly.png}
+
+    \vspace{0.4cm}
+    {\Large \textbf{DỰ ÁN TỐT NGHIỆP}} \\[4pt]
+    {\large \textbf{CHUYÊN NGÀNH: XỬ LÝ DỮ LIỆU}}
+
+    \vspace{1.6cm}
+    
+    \begin{spacing}{1.0}
+        {\huge \textbf{PHÂN TÍCH HIỆU SUẤT VÀ \\[4pt] DỰ BÁO SẢN LƯỢNG \\[4pt] HỆ THỐNG ĐIỆN MẶT TRỜI}}
+    \end{spacing}
+
+    \vspace{1.8cm}
+    \normalsize
+    \begin{flushleft}
+        \hspace{2cm} \textbf{Nhóm thực hiện:} The Outliers \\[5pt]
+        \hspace{2cm} \textbf{Sinh viên thực hiện:} \\[3pt]
+        \hspace{2cm}
+        \begin{tabular*}{7.5cm}{@{} l @{\extracolsep{\fill}} r @{}}
+            \hspace{0.5cm} 1. Nguyễn Vũ Nhựt   & PS44442 \\
+            \hspace{0.5cm} 2. Nguyễn Văn Sỹ    & PS43671 \\
+            \hspace{0.5cm} 3. Lê Công Toàn    & PS44145 \\
+            \hspace{0.5cm} 4. Nguyễn Xuân Hùng & PS44527 \\
+            \hspace{0.5cm} 5. Ngô Tấn Đạt     & PS44589 \\
+        \end{tabular*} \\[5pt]
+        \hspace{2cm} \textbf{Giảng viên hướng dẫn:} ThS. Văn Công Khanh
+    \end{flushleft}
+    \vfill
+    {\normalsize \textbf{TP. HỒ CHÍ MINH, THÁNG 6 NĂM 2026}}
+    \vspace{0.5cm}
+\end{center}
+\end{titlepage}
+
+
+\pagenumbering{arabic}
+\pagestyle{main}
+
+\chapter}[display]
+  {\normalfont\huge\bfseries}{}{0pt}{\huge}
+\titlespacing*{\chapter}{0pt}{-10pt}{20pt} 
+
+% ======================== HEADER / FOOTER ====================================
+\fancypagestyle{main}{
+    \fancyhf{}
+    \fancyhead[L]{\includegraphics[height=1cm]{figures/logo_fpoly.png}}
+    \fancyhead[R]{\small THE OUTLIERS}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp - Chuyên ngành Xử lý Dữ liệu}
+    \fancyfoot[R]{\small Trang \thepage\ / \pageref{LastPage}}
+    \renewcommand{\headrulewidth}{0.4pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+}
+
+\fancypagestyle{plain}{
+    \fancyhf{}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp - Chuyên ngành Xử lý Dữ liệu}
+    \fancyfoot[R]{\small Trang \thepage\ / \pageref{LastPage}}
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+}
+
+\fancypagestyle{front}{
+    \fancyhf{}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp - Chuyên ngành Xử lý Dữ liệu}
+    \fancyfoot[R]{\small Trang \thepage\ / \pageref{LastPage}}
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+}
+
+
+\begin{document}
+\pagestyle{front}
+
+\begin{titlepage}
+\enlargethispage{1.2cm}
+
+\begin{tikzpicture}[remember picture, overlay]
+    \draw[line width=2pt, fptorange]
+        ([shift={(1cm,-1cm)}]current page.north west)
+        rectangle
+        ([shift={(-1cm,1cm)}]current page.south east);
+    \draw[line width=0.5pt, fptorange]
+        ([shift={(1.15cm,-1.15cm)}]current page.north west)
+        rectangle
+        ([shift={(-1.15cm,1.15cm)}]current page.south east);
+\end{tikzpicture}
+
+\begin{center}
+    \textbf{\large TRƯỜNG CAO ĐẲNG FPT POLYTECHNIC}
+
+    \vspace{0.5cm}
+    \includegraphics[width=0.38\textwidth]{figures/logo_fpoly.png}
+
+    \vspace{0.4cm}
+    {\Large \textbf{DỰ ÁN TỐT NGHIỆP}} \\[4pt]
+    {\large \textbf{CHUYÊN NGÀNH: XỬ LÝ DỮ LIỆU}}
+
+    \vspace{1.6cm}
+    
+    \begin{spacing}{1.0}
+        {\huge \textbf{PHÂN TÍCH HIỆU SUẤT VÀ \\[4pt] DỰ BÁO SẢN LƯỢNG \\[4pt] HỆ THỐNG ĐIỆN MẶT TRỜI}}
+    \end{spacing}
+
+    \vspace{1.8cm}
+    \normalsize
+    \begin{flushleft}
+        \hspace{2cm} \textbf{Nhóm thực hiện:} The Outliers \\[5pt]
+        \hspace{2cm} \textbf{Sinh viên thực hiện:} \\[3pt]
+        \hspace{2cm}
+        \begin{tabular*}{7.5cm}{@{} l @{\extracolsep{\fill}} r @{}}
+            \hspace{0.5cm} 1. Nguyễn Vũ Nhựt   & PS44442 \\
+            \hspace{0.5cm} 2. Nguyễn Văn Sỹ    & PS43671 \\
+            \hspace{0.5cm} 3. Lê Công Toàn    & PS44145 \\
+            \hspace{0.5cm} 4. Nguyễn Xuân Hùng & PS44527 \\
+            \hspace{0.5cm} 5. Ngô Tấn Đạt     & PS44589 \\
+        \end{tabular*} \\[5pt]
+        \hspace{2cm} \textbf{Giảng viên hướng dẫn:} ThS. Văn Công Khanh
+    \end{flushleft}
+    \vfill
+    {\normalsize \textbf{TP. HỒ CHÍ MINH, THÁNG 6 NĂM 2026}}
+    \vspace{0.5cm}
+\end{center}
+\end{titlepage}
+
+
+\pagenumbering{arabic}
+\pagestyle{main}
+
+\chapter}[display]
+  {\normalfont\huge\bfseries}{}{0pt}{\huge}
+\titlespacing*{\chapter}{0pt}{-10pt}{20pt} 
+
+% ======================== HEADER / FOOTER ====================================
+\fancypagestyle{main}{
+    \fancyhf{}
+    \fancyhead[L]{\includegraphics[height=1cm]{figures/logo_fpoly.png}}
+    \fancyhead[R]{\small THE OUTLIERS}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp - Chuyên ngành Xử lý Dữ liệu}
+    \fancyfoot[R]{\small Trang \thepage\ / \pageref{LastPage}}
+    \renewcommand{\headrulewidth}{0.4pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+}
+
+\fancypagestyle{plain}{
+    \fancyhf{}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp - Chuyên ngành Xử lý Dữ liệu}
+    \fancyfoot[R]{\small Trang \thepage\ / \pageref{LastPage}}
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+}
+
+\fancypagestyle{front}{
+    \fancyhf{}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp - Chuyên ngành Xử lý Dữ liệu}
+    \fancyfoot[R]{\small Trang \thepage\ / \pageref{LastPage}}
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+}
+
+
+\begin{document}
+\pagestyle{front}
+
+\begin{titlepage}
+\enlargethispage{1.2cm}
+
+\begin{tikzpicture}[remember picture, overlay]
+    \draw[line width=2pt, fptorange]
+        ([shift={(1cm,-1cm)}]current page.north west)
+        rectangle
+        ([shift={(-1cm,1cm)}]current page.south east);
+    \draw[line width=0.5pt, fptorange]
+        ([shift={(1.15cm,-1.15cm)}]current page.north west)
+        rectangle
+        ([shift={(-1.15cm,1.15cm)}]current page.south east);
+\end{tikzpicture}
+
+\begin{center}
+    \textbf{\large TRƯỜNG CAO ĐẲNG FPT POLYTECHNIC}
+
+    \vspace{0.5cm}
+    \includegraphics[width=0.38\textwidth]{figures/logo_fpoly.png}
+
+    \vspace{0.4cm}
+    {\Large \textbf{DỰ ÁN TỐT NGHIỆP}} \\[4pt]
+    {\large \textbf{CHUYÊN NGÀNH: XỬ LÝ DỮ LIỆU}}
+
+    \vspace{1.6cm}
+    
+    \begin{spacing}{1.0}
+        {\huge \textbf{PHÂN TÍCH HIỆU SUẤT VÀ \\[4pt] DỰ BÁO SẢN LƯỢNG \\[4pt] HỆ THỐNG ĐIỆN MẶT TRỜI}}
+    \end{spacing}
+
+    \vspace{1.8cm}
+    \normalsize
+    \begin{flushleft}
+        \hspace{2cm} \textbf{Nhóm thực hiện:} The Outliers \\[5pt]
+        \hspace{2cm} \textbf{Sinh viên thực hiện:} \\[3pt]
+        \hspace{2cm}
+        \begin{tabular*}{7.5cm}{@{} l @{\extracolsep{\fill}} r @{}}
+            \hspace{0.5cm} 1. Nguyễn Vũ Nhựt   & PS44442 \\
+            \hspace{0.5cm} 2. Nguyễn Văn Sỹ    & PS43671 \\
+            \hspace{0.5cm} 3. Lê Công Toàn    & PS44145 \\
+            \hspace{0.5cm} 4. Nguyễn Xuân Hùng & PS44527 \\
+            \hspace{0.5cm} 5. Ngô Tấn Đạt     & PS44589 \\
+        \end{tabular*} \\[5pt]
+        \hspace{2cm} \textbf{Giảng viên hướng dẫn:} ThS. Văn Công Khanh
+    \end{flushleft}
+    \vfill
+    {\normalsize \textbf{TP. HỒ CHÍ MINH, THÁNG 6 NĂM 2026}}
+    \vspace{0.5cm}
+\end{center}
+\end{titlepage}
+
+
+\pagenumbering{arabic}
+\pagestyle{main}
+
+\chapter}[display]
+  {\normalfont\huge\bfseries}{}{0pt}{\huge}
+\titlespacing*{\chapter}{0pt}{-10pt}{20pt} 
+
+% ======================== HEADER / FOOTER ====================================
+\fancypagestyle{main}{
+    \fancyhf{}
+    \fancyhead[L]{\includegraphics[height=1cm]{figures/logo_fpoly.png}}
+    \fancyhead[R]{\small THE OUTLIERS}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp - Chuyên ngành Xử lý Dữ liệu}
+    \fancyfoot[R]{\small Trang \thepage\ / \pageref{LastPage}}
+    \renewcommand{\headrulewidth}{0.4pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+}
+
+\fancypagestyle{plain}{
+    \fancyhf{}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp - Chuyên ngành Xử lý Dữ liệu}
+    \fancyfoot[R]{\small Trang \thepage\ / \pageref{LastPage}}
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+}
+
+\fancypagestyle{front}{
+    \fancyhf{}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp - Chuyên ngành Xử lý Dữ liệu}
+    \fancyfoot[R]{\small Trang \thepage\ / \pageref{LastPage}}
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+}
+
+
+\begin{document}
+\pagestyle{front}
+
+\begin{titlepage}
+\enlargethispage{1.2cm}
+
+\begin{tikzpicture}[remember picture, overlay]
+    \draw[line width=2pt, fptorange]
+        ([shift={(1cm,-1cm)}]current page.north west)
+        rectangle
+        ([shift={(-1cm,1cm)}]current page.south east);
+    \draw[line width=0.5pt, fptorange]
+        ([shift={(1.15cm,-1.15cm)}]current page.north west)
+        rectangle
+        ([shift={(-1.15cm,1.15cm)}]current page.south east);
+\end{tikzpicture}
+
+\begin{center}
+    \textbf{\large TRƯỜNG CAO ĐẲNG FPT POLYTECHNIC}
+
+    \vspace{0.5cm}
+    \includegraphics[width=0.38\textwidth]{figures/logo_fpoly.png}
+
+    \vspace{0.4cm}
+    {\Large \textbf{DỰ ÁN TỐT NGHIỆP}} \\[4pt]
+    {\large \textbf{CHUYÊN NGÀNH: XỬ LÝ DỮ LIỆU}}
+
+    \vspace{1.6cm}
+    
+    \begin{spacing}{1.0}
+        {\huge \textbf{PHÂN TÍCH HIỆU SUẤT VÀ \\[4pt] DỰ BÁO SẢN LƯỢNG \\[4pt] HỆ THỐNG ĐIỆN MẶT TRỜI}}
+    \end{spacing}
+
+    \vspace{1.8cm}
+    \normalsize
+    \begin{flushleft}
+        \hspace{2cm} \textbf{Nhóm thực hiện:} The Outliers \\[5pt]
+        \hspace{2cm} \textbf{Sinh viên thực hiện:} \\[3pt]
+        \hspace{2cm}
+        \begin{tabular*}{7.5cm}{@{} l @{\extracolsep{\fill}} r @{}}
+            \hspace{0.5cm} 1. Nguyễn Vũ Nhựt   & PS44442 \\
+            \hspace{0.5cm} 2. Nguyễn Văn Sỹ    & PS43671 \\
+            \hspace{0.5cm} 3. Lê Công Toàn    & PS44145 \\
+            \hspace{0.5cm} 4. Nguyễn Xuân Hùng & PS44527 \\
+            \hspace{0.5cm} 5. Ngô Tấn Đạt     & PS44589 \\
+        \end{tabular*} \\[5pt]
+        \hspace{2cm} \textbf{Giảng viên hướng dẫn:} ThS. Văn Công Khanh
+    \end{flushleft}
+    \vfill
+    {\normalsize \textbf{TP. HỒ CHÍ MINH, THÁNG 6 NĂM 2026}}
+    \vspace{0.5cm}
+\end{center}
+\end{titlepage}
+
+
+\pagenumbering{arabic}
+\pagestyle{main}
+
+\chapter}[display]
+  {\normalfont\huge\bfseries}{}{0pt}{\huge}
+\titlespacing*{\chapter}{0pt}{-10pt}{20pt} 
+
+% ======================== HEADER / FOOTER ====================================
+\fancypagestyle{main}{
+    \fancyhf{}
+    \fancyhead[L]{\includegraphics[height=1cm]{figures/logo_fpoly.png}}
+    \fancyhead[R]{\small THE OUTLIERS}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp - Chuyên ngành Xử lý Dữ liệu}
+    \fancyfoot[R]{\small Trang \thepage\ / \pageref{LastPage}}
+    \renewcommand{\headrulewidth}{0.4pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+}
+
+\fancypagestyle{plain}{
+    \fancyhf{}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp - Chuyên ngành Xử lý Dữ liệu}
+    \fancyfoot[R]{\small Trang \thepage\ / \pageref{LastPage}}
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+}
+
+\fancypagestyle{front}{
+    \fancyhf{}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp - Chuyên ngành Xử lý Dữ liệu}
+    \fancyfoot[R]{\small Trang \thepage\ / \pageref{LastPage}}
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+}
+
+
+\begin{document}
+\pagestyle{front}
+
+\begin{titlepage}
+\enlargethispage{1.2cm}
+
+\begin{tikzpicture}[remember picture, overlay]
+    \draw[line width=2pt, fptorange]
+        ([shift={(1cm,-1cm)}]current page.north west)
+        rectangle
+        ([shift={(-1cm,1cm)}]current page.south east);
+    \draw[line width=0.5pt, fptorange]
+        ([shift={(1.15cm,-1.15cm)}]current page.north west)
+        rectangle
+        ([shift={(-1.15cm,1.15cm)}]current page.south east);
+\end{tikzpicture}
+
+\begin{center}
+    \textbf{\large TRƯỜNG CAO ĐẲNG FPT POLYTECHNIC}
+
+    \vspace{0.5cm}
+    \includegraphics[width=0.38\textwidth]{figures/logo_fpoly.png}
+
+    \vspace{0.4cm}
+    {\Large \textbf{DỰ ÁN TỐT NGHIỆP}} \\[4pt]
+    {\large \textbf{CHUYÊN NGÀNH: XỬ LÝ DỮ LIỆU}}
+
+    \vspace{1.6cm}
+    
+    \begin{spacing}{1.0}
+        {\huge \textbf{PHÂN TÍCH HIỆU SUẤT VÀ \\[4pt] DỰ BÁO SẢN LƯỢNG \\[4pt] HỆ THỐNG ĐIỆN MẶT TRỜI}}
+    \end{spacing}
+
+    \vspace{1.8cm}
+    \normalsize
+    \begin{flushleft}
+        \hspace{2cm} \textbf{Nhóm thực hiện:} The Outliers \\[5pt]
+        \hspace{2cm} \textbf{Sinh viên thực hiện:} \\[3pt]
+        \hspace{2cm}
+        \begin{tabular*}{7.5cm}{@{} l @{\extracolsep{\fill}} r @{}}
+            \hspace{0.5cm} 1. Nguyễn Vũ Nhựt   & PS44442 \\
+            \hspace{0.5cm} 2. Nguyễn Văn Sỹ    & PS43671 \\
+            \hspace{0.5cm} 3. Lê Công Toàn    & PS44145 \\
+            \hspace{0.5cm} 4. Nguyễn Xuân Hùng & PS44527 \\
+            \hspace{0.5cm} 5. Ngô Tấn Đạt     & PS44589 \\
+        \end{tabular*} \\[5pt]
+        \hspace{2cm} \textbf{Giảng viên hướng dẫn:} ThS. Văn Công Khanh
+    \end{flushleft}
+    \vfill
+    {\normalsize \textbf{TP. HỒ CHÍ MINH, THÁNG 6 NĂM 2026}}
+    \vspace{0.5cm}
+\end{center}
+\end{titlepage}
+
+
+\pagenumbering{arabic}
+\pagestyle{main}
+
+\chapter}[display]
   {\normalfont\huge\bfseries}{}{0pt}{\huge}
 \titlespacing*{\chapter}{0pt}{-10pt}{20pt} 
 
@@ -227,7 +771,7 @@
 \pagestyle{main}
 
 % Sinh tu Section4.tex - chi giu tu \chapter tro di.
-\chapter{Phát hiện Dị thường và Làm sạch Dữ liệu Nâng cao}
+\chapter{Phát hiện Dị thường và Làm sạch Dữ liệu}
 \label{chap:outlier_cleaning}
 
 \section{Tổng quan Kiến trúc Pipeline Xử lý Dữ liệu}
@@ -547,16 +1091,16 @@ Dựa trên các nghiên cứu kỹ thuật chuyên sâu về độ tin cậy qu
 
 \begin{enumerate}[label=\arabic*., leftmargin=*]
     \item \textbf{Sự cố Biến tần và Thiết bị Chuyển đổi (Inverter / Optimizer Failures):}
-    Theo báo cáo của IEA-PVPS~\cite{iea2023pvps}, bộ biến tần (Inverter) là mắt xích có độ tin cậy thấp nhất trong toàn bộ vòng đời hệ thống PV. Thời gian trung bình giữa hai lần hỏng (MTBF) của Inverter ngắn hơn tấm pin quang điện từ 300 đến 500 lần. Lỗi Inverter chiếm tới \textbf{36\%} tổng sản lượng tổn thất do thiết bị vật lý gây ra, với tỷ lệ hư hỏng hàng năm dao động từ 1\% đến 15\%/năm. Khi Inverter bị ngắt mạch bảo vệ quá nhiệt (Thermal trip) hoặc hỏng linh kiện bán dẫn, sản lượng trạm sụt giảm đột ngột về 0 giữa ban ngày dù bức xạ mặt trời đang đạt đỉnh cực đại ($> 700 \, \text{W/m}^2$).
+    Theo báo cáo độ tin cậy quang điện quốc tế của IEA-PVPS Task 13~\cite{iea2023pvps}, bộ biến tần (Inverter) là mắt xích có độ tin cậy thấp nhất trong toàn bộ vòng đời hệ thống quang điện. Thời gian trung bình giữa hai lần hỏng (MTBF) của Inverter ngắn hơn tấm pin quang điện từ 300 đến 500 lần. Lỗi Inverter chiếm tới \textbf{36\%} tổng sản lượng tổn thất do thiết bị vật lý gây ra, với tỷ lệ hư hỏng hàng năm dao động từ 1\% đến 15\%/năm~\cite{iea2023pvps}. Khi Inverter bị ngắt mạch bảo vệ quá nhiệt (Thermal trip) hoặc quá áp lưới theo chuẩn AS/NZS 4777.2, sản lượng trạm sụt giảm đột ngột về 0 giữa ban ngày dù bức xạ mặt trời đang đạt đỉnh cực đại ($> 700 \, \text{W/m}^2$)~\cite{wimalaratne2022unisolar}.
 
     \item \textbf{Hỏng Diode Bypass và Che bóng Cục bộ (Bypass Diode Faults \& Shading):}
-    Khi một tấm pin trong chuỗi (String) bị che bóng bởi cây cối, bụi bẩn bám dính dày đặc (Soiling) hoặc hỏng diode bypass, dòng điện của toàn bộ chuỗi bị bóp nghẹt theo tấm pin yếu nhất. Sự cố diode bypass có thể làm triệt tiêu tới \textbf{33\%} sản lượng điện của riêng tấm pin đó, tạo nên các vết sụt giảm sản lượng cục bộ dạng bậc thang phi tự nhiên.
+    Theo nghiên cứu suy thoái quang điện IEA-PVPS Task 13~\cite{iea2023pvps} và khảo sát thực nghiệm tại 42 trạm UNISOLAR~\cite{wimalaratne2022unisolar}, khi một tấm pin trong chuỗi (String) bị che bóng bởi cây cối, bụi bẩn bám dính dày đặc (Soiling) hoặc hỏng diode bypass, dòng điện của toàn bộ chuỗi bị bóp nghẹt theo tấm pin yếu nhất. Sự cố ngắn mạch hoặc hở mạch diode bypass có thể làm triệt tiêu tới \textbf{33\%} sản lượng điện của riêng tấm pin đó (do cấu trúc 3 diode bảo vệ 3 nhóm cell), tạo nên các vết sụt giảm sản lượng cục bộ dạng bậc thang cố định $33\%$ hoặc $50\%$ đã được mô hình GMM--IF nhận diện~\cite{li2025gmmif}.
 
     \item \textbf{Suy giảm do Quá nhiệt và Điểm nóng (Thermal Derating \& Hot-spots):}
-    Hệ số nhiệt độ (Temperature Coefficient) của pin silicon tinh thể dao động từ $-0{,}30\%$ đến $-0{,}50\%/^\circ\text{C}$ khi nhiệt độ vượt mốc điều kiện chuẩn STC ($25^\circ\text{C}$). Vào các ngày nắng gắt mùa hè, nhiệt độ bề mặt ô pin ($T_{\text{cell}}$) có thể tăng vọt lên tới $65^\circ\text{C}$, làm sụt giảm \textbf{12--20\%} công suất đỉnh chủ yếu do suy giảm điện áp hở mạch ($V_{oc}$). Nhiệt độ vượt ngưỡng $85--90^\circ\text{C}$ có thể gây ra hiện tượng điểm nóng (Hot-spots), dẫn đến suy thoái vĩnh viễn mối hàn và lớp phủ bảo vệ.
+    Theo các tiêu chuẩn kiểm định IEC 61215 và báo cáo kỹ thuật IEA-PVPS~\cite{iea2023pvps}, hệ số nhiệt độ công suất (Temperature Coefficient of Power $\gamma$) của pin silicon tinh thể dao động từ $-0{,}30\%$ đến $-0{,}50\%/^\circ\text{C}$ khi nhiệt độ cell vượt mốc STC ($25^\circ\text{C}$). Vào các ngày nắng gắt mùa hè bang Victoria, nhiệt độ bề mặt ô pin ($T_{\text{cell}}$) có thể tăng vọt lên tới $65-72^\circ\text{C}$, làm sụt giảm \textbf{12--20\%} công suất đỉnh chủ yếu do suy giảm điện áp hở mạch ($V_{\text{oc}}$)~\cite{wimalaratne2022unisolar}. Nhiệt độ vượt ngưỡng $85--90^\circ\text{C}$ có thể gây ra hiện tượng điểm nóng (Hot-spots), dẫn đến suy thoái vĩnh viễn mối hàn và lớp bọc EVA.
 
     \item \textbf{Nhiễu Cảm biến và Dòng điện Rò Ban đêm (Sensor Drift \& Dòng rò ban đêm):}
-    Hiện tượng rò rỉ dòng điện ngược (Reverse Current) từ lưới điện vào ban đêm hoặc cảm biến biến dòng (CT) bị trôi mốc 0 (Zero-drift fault) sinh ra các giá trị sản lượng dương giả mạo ($E > 0$) trong khoảng thời gian không có bức xạ ($18:30 - 05:30$). Ngoài ra, các xung nhiễu điện áp lưới (Voltage spikes) hoặc gián đoạn đường truyền viễn thông (Telemetry dropouts) tạo nên các đỉnh xung sản lượng vượt trần công suất thiết kế cực đại ($P > 1{,}2 \cdot P_{\text{stc}}$) hoặc các bước nhảy đột biến giữa các chu kỳ 15 phút kế cận.
+    Theo nghiên cứu thuật toán phát hiện ngoại lai quang điện của Li và cộng sự (2025)~\cite{li2025gmmif}, hiện tượng rò rỉ dòng điện ngược (Reverse Current) từ lưới điện vào ban đêm hoặc cảm biến biến dòng (CT) bị trôi mốc 0 (Zero-drift fault) sinh ra các giá trị sản lượng dương giả mạo ($0 < E \le 0{,}025\,\text{kWh}$) trong khoảng thời gian không có bức xạ mặt trời ($GHI = 0$). Ngoài ra, các xung nhiễu điện áp lưới (Voltage spikes) hoặc gián đoạn đường truyền viễn thông (Telemetry dropouts) tạo nên các đỉnh xung sản lượng vượt trần công suất thiết kế cực đại ($P > 1{,}2 \cdot P_{\text{stc}}$) hoặc các bước nhảy đột biến giữa các chu kỳ 15 phút kế cận~\cite{wimalaratne2022unisolar, li2025gmmif}.
 \end{enumerate}
 
 \subsubsection{Khung Thuật toán Phân lớp Lai GMM--IF và Rào chắn Vật lý}
