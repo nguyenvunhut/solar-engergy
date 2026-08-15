@@ -27,9 +27,6 @@ from core.io import read_json, write_csv, write_parquet
 from core.lgbm import chuan_bi_X
 from core.paths import Paths
 
-# Kich thuoc lo khi tinh SHAP. Ma tran dong gop la (so_dong x so_dac_trung+1) so
-# float32, tren 475k dong x 55 la ~100 MB - chia lo de dinh bo nho, khong doi ket qua.
-LO_SHAP = 100_000
 
 
 def _thu_muc_model(cfg: Cfg, paths: Paths, horizon: int) -> tuple[Path, str]:
@@ -88,35 +85,22 @@ def tinh_shap(cfg: Cfg, paths: Paths, horizon: int) -> pd.DataFrame:
     # nhung nhanh hon nhieu bac - do la thu duy nhat khien viec bo lay mau kha thi.
     # Cot CUOI CUNG cua pred_contrib la gia tri co so, phai cat bo truoc khi gop.
     n = len(X)
-    n_lo = (n + LO_SHAP - 1) // LO_SHAP
-    print(f"Tinh SHAP tren TOAN BO {n:,} dong x {len(features)} dac trung "
-          f"({n_lo} lo, moi lo {LO_SHAP:,} dong)...")
+    print(f"Tinh SHAP tren TOAN BO {n:,} dong x {len(features)} dac trung...")
 
     booster = model.booster_ if hasattr(model, "booster_") else model
     t0 = time.time()
-    phan = []
-    co_so = None
-    for i in range(n_lo):
-        a, b = i * LO_SHAP, min((i + 1) * LO_SHAP, n)
-        ct = np.asarray(
-            booster.predict(X.iloc[a:b], pred_contrib=True), dtype=np.float32
-        )
-        if co_so is None:
-            co_so = float(ct[0, -1])
-        phan.append(ct[:, :-1])
-        print(f"   lo {i + 1}/{n_lo}: dong {a:,}-{b:,} | {time.time() - t0:,.0f}s")
-
-    gia_tri = np.concatenate(phan, axis=0)
-    del phan
+    dong_gop = np.asarray(booster.predict(X, pred_contrib=True), dtype=np.float32)
+    co_so = float(dong_gop[0, -1])
+    gia_tri = dong_gop[:, :-1]
+    del dong_gop
     gc.collect()
     print(f"Xong trong {time.time() - t0:,.0f}s. Ma tran SHAP: {gia_tri.shape} "
           f"| gia tri co so {co_so:.6f}")
 
     # Kiem TINH CONG cua TreeSHAP: tong dong gop + gia tri co so phai bang du bao goc.
-    # Sai o day nghia la da cat nham cot co so hoac gop lo sai thu tu.
-    thu = model.predict(X.iloc[:2000])
-    sai_so = float(np.abs(gia_tri[:2000].sum(axis=1) + co_so - thu).max())
-    print(f"Kiem tinh cong (2.000 dong dau): sai lech lon nhat {sai_so:.3e}")
+    # Sai o day nghia la da cat nham cot gia tri co so. Kiem tren TAT CA cac dong.
+    sai_so = float(np.abs(gia_tri.sum(axis=1) + co_so - model.predict(X)).max())
+    print(f"Kiem tinh cong tren ca {n:,} dong: sai lech lon nhat {sai_so:.3e}")
 
     tam_quan_trong = pd.DataFrame(
         {
