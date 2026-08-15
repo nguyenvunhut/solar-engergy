@@ -120,6 +120,18 @@
 }
 
 % --- CẤU HÌNH TIÊU ĐỀ CHƯƠNG ---
+\usepackage{placeins}
+\makeatletter
+\newcommand{\needspace}[1]{%
+  \begingroup
+    \setlength{\dimen@}{#1}%
+    \vskip\z@\@plus\dimen@
+    \penalty -100\vskip\z@\@plus -\dimen@
+    \vskip\dimen@
+    \penalty 9999\vskip -\dimen@
+    \vskip\z@skip
+  \endgroup}
+\makeatother
 \usepackage{titlesec}
 \titleformat*{\section}{\fontsize{13pt}{15.6pt}\bfseries}
 \titleformat*{\subsection}{\fontsize{13pt}{15.6pt}\bfseries}
@@ -451,10 +463,12 @@ Báo cáo dự án tốt nghiệp được cấu trúc thành 7 chương liền 
 \begin{thebibliography}{99}
 \addcontentsline{toc}{chapter}{Tài liệu Tham khảo}
 
+% --- I. Nguồn Dữ liệu Dự án và Công trình Nghiên cứu Gốc ---
 \bibitem{wimalaratne2022unisolar}
-P.~Wimalaratne, D.~Jayasinghe, và C.~Arachchige,
-\newblock ``UNISOLAR: A Comprehensive High-Resolution Open Dataset of 42 Rooftop Photovoltaic Sites,''
-\newblock \textit{Data in Brief}, vol.~42, p.~108152, 2022.
+S.~Wimalaratne, D.~Haputhanthri, S.~Kahawala, G.~Gamage, D.~Alahakoon, và A.~Jennings,
+\newblock ``UNISOLAR: An Open Dataset of Photovoltaic Solar Energy Generation in a Large Multi-Campus University Setting,''
+\newblock \textit{15th International Conference on Human System Interaction (HSI)}, IEEE, 2022.
+\newblock DOI: \href{https://doi.org/10.1109/HSI55341.2022.9869474}{10.1109/HSI55341.2022.9869474}.
 
 \bibitem{openmeteo2023}
 Open-Meteo,
@@ -466,10 +480,12 @@ IEA-PVPS Task 13,
 \newblock ``Performance, Operation and Reliability of Photovoltaic Systems: Review of Failures and Degradation Mechanisms,''
 \newblock \textit{International Energy Agency Technical Report}, IEA-PVPS T13-15:2023, 2023.
 
+% --- II. Thuật toán Phát hiện Bất thường và Xử lý Dữ liệu ---
 \bibitem{li2025gmmif}
-Y.~Li, H.~Zhang, X.~Wang, và J.~Liu,
-\newblock ``A Two-Stage Hybrid Outlier Cleaning Framework for Distributed Rooftop Photovoltaic Generation Data Using GMM and Isolation Forest,''
-\newblock \textit{IEEE Access}, vol.~13, pp.~24510--24523, 2025.
+X.~Li, G.~Du, Y.~Li, Z.~Ma, L.~Liu, M.~Jiang, F.~Liu, và T.~Mu,
+\newblock ``Outlier Detection of Photovoltaic Power Generation System Data Based on GMM-IF Algorithm,''
+\newblock \textit{IEEE Access}, vol.~13, pp.~108823--108837, 2025.
+\newblock DOI: \href{https://doi.org/10.1109/ACCESS.2025.3581641}{10.1109/ACCESS.2025.3581641}.
 
 \bibitem{liu2008isolation}
 F.~T.~Liu, K.~M.~Ting, và Z.-H.~Zhou,
@@ -492,14 +508,16 @@ V.~Chandola, A.~Banerjee, và V.~Kumar,
 \newblock \textit{ACM Computing Surveys}, vol.~41, no.~3, pp.~1--58, 2009.
 
 \bibitem{kim2019missing}
-G.~Kim, S.~Park, và S.~Lee,
-\newblock ``Physical Constraint Imputation and Spatial Interpolation for Missing Solar Irradiance Data,''
-\newblock \textit{Solar Energy}, vol.~188, pp.~754--765, 2019.
+T.~Kim, W.~Ko, và J.~Kim,
+\newblock ``Analysis and Impact Evaluation of Missing Data Imputation in Day-ahead PV Generation Forecasting,''
+\newblock \textit{Applied Sciences}, vol.~9, no.~1, p.~204, 2019.
+\newblock DOI: \href{https://doi.org/10.3390/app9010204}{10.3390/app9010204}.
 
+% --- III. Mô hình Dự báo Chuỗi Thời gian và Học máy ---
 \bibitem{roy2025hourly}
-A.~Roy, M.~Rahman, và K.~Chowdhury,
-\newblock ``Hourly-Binned Regressors Outperform Complex Deep Learning for Local Solar Generation Forecasting,''
-\newblock \textit{Applied Energy}, vol.~355, p.~122301, 2025.
+M.~Roy, V.~Pyltsov, và Y.~Hu,
+\newblock ``IISE PG\&E Energy Analytics Challenge 2025: Hourly-Binned Regression Models Beat Transformers in Load Forecasting,''
+\newblock Columbia University, arXiv:2505.11390, 2025. [Online]. Available: \url{https://arxiv.org/abs/2505.11390}.
 
 \bibitem{haurwitz1945}
 B.~Haurwitz,
@@ -507,39 +525,50 @@ B.~Haurwitz,
 \newblock \textit{Journal of Meteorology}, vol.~2, no.~3, pp.~154--166, 1945.
 
 \bibitem{bailey2024}
-J.~Bailey, R.~Miller, và S.~Thompson,
-\newblock ``Clear-Sky PV Generation Modeling Under Complex Atmospheric Conditions,''
-\newblock \textit{Renewable Energy}, vol.~219, pp.~119--131, 2024.
+M.~D.~Bailey và cộng sự,
+\newblock ``Temporal and Spatial Downscaling for Solar Radiation,''
+\newblock arXiv:2405.11046, 2024. [Online]. Available: \url{https://arxiv.org/abs/2405.11046}.
 
 \bibitem{engerer2014kpv}
 N.~A.~Engerer và F.~P.~Mills,
-\newblock ``Validating the PV Clear-Sky Index and Modeling Rooftop Solar Production,''
-\newblock \textit{Solar Energy}, vol.~105, pp.~619--632, 2014.
+\newblock ``KPV: A clear-sky index for photovoltaics,''
+\newblock \textit{Solar Energy}, vol.~105, pp.~679--693, 2014.
+\newblock DOI: \href{https://doi.org/10.1016/j.solener.2014.04.019}{10.1016/j.solener.2014.04.019}.
 
 \bibitem{dev2018tes}
-S.~Dev, F.~M.~Savoy, Y.~H.~Lee, và S.~Winkler,
-\newblock ``High-Resolution Weather and Irradiance Monitoring for PV Plant Management,''
-\newblock \textit{IEEE Transactions on Geoscience and Remote Sensing}, vol.~56, no.~4, pp.~2120--2132, 2018.
+S.~Dev, T.~AlSkaif, M.~Hossari, R.~Godina, A.~Louwen, và W.~van Sark,
+\newblock ``Solar Irradiance Forecasting Using Triple Exponential Smoothing,''
+\newblock trong \textit{IEEE International Conference on Smart Energy Systems and Technologies (SEST)}, 2018.
+\newblock arXiv:1807.05872.
 
 \bibitem{pin2025wape}
-E.~Pin, M.~Rossi, và T.~Nguyen,
-\newblock ``Weighted Absolute Percentage Error (WAPE) as a Robust Standard for Intermittent Renewable Energy Forecasting Metrics,''
-\newblock \textit{Energy Reports}, vol.~11, pp.~402--415, 2025.
+A.~Temporal-Neto và cộng sự,
+\newblock ``PIN: A new metric to evaluate solar irradiance forecast models,''
+\newblock \textit{Energy Reports}, vol.~13, pp.~1--12, 2025.
+\newblock DOI: \href{https://doi.org/10.1016/j.egyr.2025.01.076}{10.1016/j.egyr.2025.01.076}.
 
 \bibitem{lundberg2017shap}
 S.~M.~Lundberg và S.-I.~Lee,
 \newblock ``A Unified Approach to Interpreting Model Predictions,''
-\newblock trong \textit{Advances in Neural Information Processing Systems (NeurIPS)}, vol.~30, 2017, pp.~4765--4774.
+\newblock trong \textit{Advances in Neural Information Processing Systems (NeurIPS)}, vol.~30, 2017.
+\newblock arXiv:1705.07874.
+
+\bibitem{zhang2015metrics}
+J.~Zhang, A.~Florita, B.-M.~Hodge, S.~Lu, H.~F.~Hamann, V.~Banunarayanan, và A.~M.~Brockway,
+\newblock ``A suite of metrics for assessing the performance of solar power forecasting,''
+\newblock \textit{Solar Energy}, vol.~111, pp.~157--175, 2015.
+\newblock DOI: \href{https://doi.org/10.1016/j.solener.2014.10.016}{10.1016/j.solener.2014.10.016}.
 
 \bibitem{zhang2013metrics}
 J.~Zhang, B.-M.~Hodge, và A.~Florita,
 \newblock ``Comprehensive Evaluation of Solar Irradiance and Power Forecasting Metrics,''
-\newblock \textit{Journal of Renewable and Sustainable Energy}, vol.~5, no.~4, p.~043126, 2013.
+\newblock NREL/CP-5500-60142, \textit{3rd International Workshop on Integration of Solar Power into Power Systems}, 2013.
 
 \bibitem{lonij2012tucson}
-V.~P.~Lonij, A.~E.~Brooks, A.~D.~Cronin, và F.~J.~Rocha,
-\newblock ``Intra-Hour Solar Forecasting with High-Density PV Networks and Cloud Tracking,''
-\newblock \textit{Solar Energy}, vol.~86, no.~5, pp.~1450--1461, 2012.
+V.~P.~Lonij, A.~E.~Brooks, K.~Koch, và A.~D.~Cronin,
+\newblock ``Analysis of 80 Rooftop PV Systems in the Tucson, AZ Area,''
+\newblock trong \textit{38th IEEE Photovoltaic Specialists Conference (PVSC)}, 2012, pp.~549--553.
+\newblock DOI: \href{https://doi.org/10.1109/PVSC.2012.6317674}{10.1109/PVSC.2012.6317674}.
 
 \bibitem{taylor2018prophet}
 S.~J.~Taylor và B.~Letham,
@@ -561,6 +590,34 @@ T.~Chen và C.~Guestrin,
 \newblock ``XGBoost: A Scalable Tree Boosting System,''
 \newblock trong \textit{Proceedings of the ACM SIGKDD International Conference on Knowledge Discovery and Data Mining}, 2016, pp.~785--794.
 
+\bibitem{aivietnam2025dvc}
+Đặng Nhã và Anh Dương,
+\newblock ``Data Version Control,''
+\newblock tài liệu bài giảng \textit{AI VIET NAM --- All-in-One 2025}, slide~9 (\textit{Theory Perspective --- ML Life Cycle}), 2025.
+
+\bibitem{kolassa2007mad}
+S.~Kolassa và W.~Schütz,
+\newblock ``Advantages of the MAD/Mean ratio over the MAPE,''
+\newblock \textit{Foresight: The International Journal of Applied Forecasting}, no.~6, pp.~40--43, 2007.
+
+\bibitem{nguyen2026meta}
+T.~N.~Nguyen và F.~Müsgens,
+\newblock ``A meta-analysis of solar forecasting based on skill score,''
+\newblock \textit{Journal of Renewable and Sustainable Energy}, vol.~18, no.~2, p.~026102, 2026.
+\newblock DOI: \href{https://doi.org/10.1063/5.0300682}{10.1063/5.0300682}.
+
+\bibitem{marquez2013skill}
+R.~Marquez và C.~F.~M.~Coimbra,
+\newblock ``Proposed Metric for Evaluation of Solar Forecasting Models,''
+\newblock \textit{Journal of Solar Energy Engineering} (ASME), vol.~135, no.~1, p.~011016, 2013.
+\newblock DOI: \href{https://doi.org/10.1115/1.4007496}{10.1115/1.4007496}.
+
+\bibitem{wwrp2009verif}
+WWRP/WGNE Joint Working Group on Forecast Verification Research,
+\newblock ``Forecast Verification: Issues, Methods and FAQ,''
+\newblock Bureau of Meteorology, Australia, 2009. [Online]. Available: \url{https://www.cawcr.gov.au/projects/verification/verif_web_page.html}.
+
+% --- IV. Kiến trúc Kho Dữ liệu, API và Công cụ Trực quan hóa ---
 \bibitem{kimball2013dwh}
 R.~Kimball và M.~Ross,
 \newblock \textit{The Data Warehouse Toolkit: The Definitive Guide to Dimensional Modeling}, 3rd ed.,
