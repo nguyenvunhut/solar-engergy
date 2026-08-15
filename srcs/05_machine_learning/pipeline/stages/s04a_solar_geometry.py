@@ -22,7 +22,13 @@ from core.config import Cfg
 
 THANG_MUA_HE_UC = (10, 11, 12, 1, 2, 3)   # Uc doi sang gio he thang 10 -> thang 3
 HANG_SO_HAURWITZ = 1098.0                 # W/m2
-HE_SO_SUY_HAO = 0.057                     # he so suy hao quang hoc khi quyen chuan
+# He so suy hao trong cong thuc Haurwitz, lay DUNG ban cua pvlib (pvlib/clearsky.py, ham
+# haurwitz): ghi = 1098 * cos(goc thien dinh) * exp(-0.059 / cos(goc thien dinh)).
+# Truoc day o day la 0.057 trong khi notebook 03_2 dung 0.059, nen ghi_cs hai ben lech
+# trung binh 0,365%. Sai lech do di thang vao he so cs_factor (phan vi 98 cua ty so
+# shortwave/ghi_cs) roi lan ra ghi_cs, chi_so_troi_quang, rad_x_sinelev - cuoi cung lam
+# WAPE kiem dinh lech toi 0,12 diem.
+HE_SO_SUY_HAO = 0.059                     # he so suy hao quang hoc khi quyen chuan
 
 
 def tinh_goc_mat_troi(ts, lat, lon, tz_gio) -> tuple[np.ndarray, np.ndarray]:

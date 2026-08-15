@@ -140,9 +140,17 @@ def join_causal(df: pd.DataFrame) -> tuple[pd.DataFrame, dict]:
             f"'{NHAN_DA_SUA}'. Dat nhan luc nay se lam rao chan o notebook 06_x cho qua "
             f"du lieu con ro ri."
         )
+    # CHI DOI DUNG MOT NHAN, y het notebook 01 cell 21:
+    #     df.loc[df['weather_join_method'] == 'raw_hour_causal_manual',
+    #            'weather_join_method'] = 'hour_causal_floor'
+    # KHONG duoc ghi de ca cot. Ban cu gan lai toan bo theo mat na 'khop' nen tren bo v4
+    # (nhan nguon la 'raw_hour_causal_join') no bien 2.730.100 dong thanh
+    # 'hour_causal_floor' va 1.846 dong thanh 'missing_weather', trong khi notebook giu
+    # nguyen 2.731.728 dong 'raw_hour_causal_join' va 218 dong 'missing_weather'.
+    # Gia tri thoi tiet hai ben van giong het - chi rieng cot nhan nay bi .py viet lai.
     if "weather_join_method" in out.columns:
-        out.loc[khop, "weather_join_method"] = NHAN_DA_SUA
-        out.loc[~khop, "weather_join_method"] = NHAN_THIEU
+        can_doi = out["weather_join_method"].astype(str).eq(NHAN_HOTFIX_NGUON)
+        out.loc[can_doi, "weather_join_method"] = NHAN_DA_SUA
 
     return out, {
         "so_ban_ghi_thoi_tiet": len(bang),

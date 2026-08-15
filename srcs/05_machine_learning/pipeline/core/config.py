@@ -111,6 +111,42 @@ class Cfg:
                     # khoa bat dau bang '_' la ghi chu, khong phai tham so
                     p.update({k: v for k, v in rieng.items() if not k.startswith("_")})
                     nguon = f"best_params.json: {ten_loss}.h{horizon}"
+
+            # best_params.json chi la ban CHEP TAY cua ket qua Optuna - khoa '_nguon'
+            # trong chinh file do ghi ro no duoc trich tu model_config.json cua lan tune
+            # goc. Ban chep thi chep sot duoc: 'alpha' (delta cua Huber) da bi bo qua, va
+            # vi train.yaml co san alpha = 1,0 nen cho trong do khong he lo ra - huber cu
+            # the chay bang 1,0 thay vi gia tri Optuna tim, WAPE kiem dinh lech 0,09 diem.
+            #
+            # BIEN BAN GOC van nguyen tren dia: model_config.json ma chinh lan tune do da
+            # ghi, nam trong thu muc stage s08 KHONG hau to. Do la bo tham so DA THUC SU
+            # duoc fit de tao ra ket qua tham chieu, nen no la nguon dung sau cung - phu
+            # de len ca mac dinh cua train.yaml lan ban chep best_params.json.
+            #
+            # Ke ca cac khoa nhu n_jobs / max_bin cung lay theo bien ban: LightGBM chi tai
+            # lap bit-for-bit khi so thread va so bin y het lan chay goc, nen ep theo bien
+            # ban moi dung nghia "tai lap", chu khong phai theo cau hinh may dang chay.
+            #
+            # Chi DE LEN GIA TRI cua khoa da co, KHONG them khoa moi. Bien ban cua mot so
+            # cau hinh duoc dump bang get_params() nen keo theo ca mac dinh cua LightGBM
+            # (boosting_type, subsample_freq...); nap them chung vao se lam doi tap khoa
+            # ghi ra model_config.json ma khong doi mot con so nao. Cai can lay o day la
+            # GIA TRI da thuc su duoc fit, khong phai danh sach khoa.
+            #
+            # Khong co bien ban (bo du lieu moi, chua tung tune) thi bo qua, roi ve
+            # best_params.json / default_params nhu cu.
+            goc = (
+                REPO_ROOT / self.paths["root"] / self.paths["stages"]["s08_train"]
+                / ten_loss / f"h{horizon}" / self.paths["files"]["model_config"]
+            )
+            if goc.exists():
+                with open(goc, encoding="utf-8") as f:
+                    ghi_nhan = json.load(f).get("model_params", {})
+                theo_bien_ban = {k: v for k, v in ghi_nhan.items() if k in p}
+                doi = sorted(k for k, v in theo_bien_ban.items() if p[k] != v)
+                if doi:
+                    p.update(theo_bien_ban)
+                    nguon += f" + {doi} theo bien ban tune goc"
         return p, nguon
 
 

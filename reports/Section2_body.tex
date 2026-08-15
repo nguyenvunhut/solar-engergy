@@ -1,0 +1,186 @@
+% Sinh tu Section2.tex - chi giu tu \chapter tro di.
+\chapter{Cơ sở Lý thuyết}
+\label{chap:lythuyet}
+
+\section{Tổng quan về Năng lượng mặt trời và Bức xạ quang điện}
+\label{sec:solar_theory}
+
+Hệ thống quang điện (PV) chuyển đổi năng lượng bức xạ mặt trời trực tiếp thành điện năng thông qua hiệu ứng quang điện trong chất bán dẫn. Hiệu suất chuyển đổi và khả năng vận hành của hệ thống phụ thuộc chặt chẽ vào các chỉ số lý thuyết sau:
+\begin{itemize}[noitemsep]
+    \item \textbf{Performance Ratio (PR):} Tỷ lệ đánh giá hiệu suất nguồn lưới, được xác định bằng tỷ số giữa sản lượng điện thực tế tạo ra và sản lượng lý thuyết trong điều kiện bức xạ lý tưởng. PR phản ánh mức độ tổn hao năng lượng do nhiệt độ, bụi bẩn và hiệu suất của bộ biến đổi (Inverter).
+    \item \textbf{Capacity Factor (CF):} Hệ số công suất, được tính bằng tỷ lệ giữa sản lượng điện thực tế thu được trong một khoảng thời gian so với sản lượng điện tối đa mà trạm có thể phát nếu vận hành liên tục ở công suất thiết kế cực đại.
+    \item \textbf{Specific Yield:} Sản lượng điện đặc trưng, biểu thị lượng điện năng tạo ra trên mỗi đơn vị công suất đỉnh lắp đặt (đo bằng đơn vị kWh/kWp), hỗ trợ so sánh hiệu suất giữa các trạm có quy mô khác nhau.
+\end{itemize}
+
+\section{Kiến trúc Kho dữ liệu đa chiều (Data Warehouse)}
+\label{sec:dwh_theory}
+
+Kiến trúc kho dữ liệu đa chiều được thiết kế theo phương pháp luận của Ralph Kimball, tập trung vào việc mô hình hóa dữ liệu nhằm tối ưu hóa hiệu năng truy vấn cho các bài toán phân tích thông minh (BI) và học máy.
+
+\subsection{Mô hình hóa đa chiều (Dimensional Modeling)}
+Mô hình hóa đa chiều phân tách dữ liệu thành hai nhóm chính:
+\begin{itemize}
+    \item \textbf{Bảng sự kiện (Fact Table):} Lưu trữ các chỉ số đo lường định lượng (Measures) phát sinh từ các sự kiện nghiệp vụ (ví dụ: sản lượng điện phát ra, các thông số thời tiết đo được). Bảng Fact thường chứa khối lượng dữ liệu rất lớn và liên kết với các bảng chiều qua các khóa ngoại.
+    \item \textbf{Bảng chiều (Dimension Table):} Lưu trữ các thuộc tính mô tả ngữ cảnh của sự kiện (thời gian, địa điểm, thông tin kỹ thuật của thiết bị). Các bảng chiều cung cấp các trục phân tích chéo, làm bộ lọc cho các câu lệnh truy vấn dữ liệu.
+\end{itemize}
+
+\subsection{Lược đồ Thiên hà (Galaxy Schema)}
+Trong các hệ thống phân tích tích hợp nhiều quy trình nghiệp vụ, lược đồ Thiên hà (Galaxy Schema hay Fact Constellation Schema) được sử dụng khi có nhiều bảng sự kiện dùng chung các bảng chiều được chuẩn hóa (Conformed Dimensions). Mô hình này cho phép:
+\begin{itemize}
+    \item Hợp nhất nhiều luồng sự kiện có tần suất ghi nhận khác nhau (ví dụ: dữ liệu đo sản lượng điện theo chu kỳ phút và dữ liệu thời tiết theo chu kỳ giờ) mà không gây trùng lặp thông tin thừa.
+    \item Thực hiện phân tích liên thông (Drill-through) giữa các bảng sự kiện khác nhau dựa trên các chiều chung như thời gian và không gian địa lý.
+\end{itemize}
+
+\subsection{Phương pháp tiếp cận Top-Down (Triết lý kiến trúc của Bill Inmon)}
+Trái ngược với phương pháp tiếp cận Bottom-Up của Ralph Kimball - vốn tập trung xây dựng các Data Mart trước rồi mới tích hợp thành một kho dữ liệu tổng thể - triết ly Top-Down của Bill Inmon định nghĩa kho dữ liệu (Data Warehouse) là một thực thể lưu trữ tập trung, duy nhất và đóng vai trò là Single Source of Truth (Nguồn sự thật duy nhất) của toàn bộ doanh nghiệp.
+\begin{itemize}
+    \item \textbf{Bản chất luồng dữ liệu:} Dữ liệu từ các hệ thống nguồn (Operational Systems) sau khi trích xuất sẽ được đổ trực tiếp vào một kho lưu trữ trung tâm được chuẩn hóa cấu trúc chặt chẽ. Từ lõi dữ liệu sạch thống nhất này, các phân nhánh dữ liệu chuyên biệt phục vụ cho các mục đích cụ thể (Data Marts) mới được phân tách và cấu trúc lại.
+    \item \textbf{Ưu điểm lý thuyết:} Đảm bảo tính nhất quán dữ liệu tối đa trên toàn hệ thống, triệt tiêu hoàn toàn rủi ro sai lệch số liệu giữa các phòng ban hoặc giữa các tác vụ phân tích khác nhau (như báo cáo trực quan hóa và huấn luyện học máy).
+\end{itemize}
+
+
+Dưới đây là bảng đối sánh chi tiết giữa hai phương pháp tiếp cận kinh điển của Bill Inmon và Ralph Kimball:
+\vspace{1em}
+% Tăng khoảng cách đệm (padding) giữa chữ và đường viền ô để bảng thoáng, dễ đọc hơn
+\renewcommand{\arraystretch}{1.5} 
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{p{3.5cm} p{5.5cm} p{5.5cm}}
+\toprule
+
+\textbf{Tiêu chí đối sánh} & \textbf{Tiếp cận Top-Down (Bill Inmon)} & \textbf{Tiếp cận Bottom-Up (Ralph Kimball)} \\ 
+\midrule
+
+\textbf{Kiến trúc tổng thể} & 
+Tập trung (Centralized DWH) trước, phân tán (Data Marts) sau. & 
+Phân tán (Data Marts) trước, hợp nhất (DWH) sau. \\
+
+\textbf{Mô hình hóa tầng lõi} & 
+Chuẩn hóa cấu trúc để giảm thiểu tối đa dư thừa dữ liệu (3NF). & 
+Mô hình hóa đa chiều (Dimensional Modeling) dựa trên các bảng Fact và Dimension. \\
+
+\textbf{Tính nhất quán} & 
+Rất cao, do mọi dữ liệu tiêu thụ đều được kế thừa từ một nguồn lõi duy nhất. & 
+Khó kiểm soát hơn, dễ xảy ra hiện tượng lệch pha định nghĩa giữa các Data Mart độc lập. \\
+
+\textbf{Độ linh hoạt hạ tầng} & 
+Thích hợp cho hệ thống tích hợp lớn, đa mục đích sử dụng (BI, Data Science, Data Streaming). & 
+Thích hợp cho các dự án cần triển khai nhanh, tập trung giải quyết một quy trình nghiệp vụ đơn lẻ. \\
+\bottomrule
+\end{tabular}
+\caption{Bảng so sánh lý thuyết Inmon vs. Kimball}
+\label{tab:comparison}
+\end{table}
+
+\section{Quy trình Trích xuất, Biến đổi và Nạp dữ liệu (ETL Pipeline)}
+\label{sec:etl_theory}
+
+Quy trình ETL (Extract - Transform - Load) đóng vai trò nền tảng trong việc làm sạch và chuẩn hóa dữ liệu trước khi đưa vào kho lưu trữ tập trung.
+
+\subsection{Lý thuyết về Nội suy dữ liệu khuyết thiếu (Data Imputation)}
+Dữ liệu chuỗi thời gian từ các thiết bị đo lường vật lý thường gặp hiện tượng mất mát dữ liệu do lỗi truyền thông hoặc hỏng hóc cảm biến. Các phương pháp toán học được áp dụng để khôi phục dữ liệu khuyết bao gồm:
+\begin{itemize}
+    \item \textbf{Nội suy dựa trên ràng buộc vật lý (Constraint-based Imputation):} Sử dụng các quy luật vật lý tự nhiên để gán giá trị trực tiếp. Đối với năng lượng mặt trời, sản lượng điện tối đa vào ban đêm được gán cứng bằng 0 dựa trên điều kiện bức xạ mặt trời triệt tiêu.
+    
+    \item \textbf{Nội suy tuyến tính (Linear Interpolation):} Giả định dữ liệu thay đổi đều giữa các mốc thời gian lân cận, phù hợp cho các khoảng khuyết ngắn:
+    \begin{equation}
+        y = y_1 + \frac{x - x_1}{x_2 - x_1} (y_2 - y_1)
+    \end{equation}
+
+    \item \textbf{Nội suy Cubic Spline:} Sử dụng các đa thức bậc ba cục bộ để tạo ra đường nội suy mượt mà và bảo toàn đạo hàm cấp một và cấp hai tại các điểm nút. Cho tập hợp các điểm $(x_i, y_i)$ với $i = 0, 1, \dots, n$, hàm nội suy $S(x)$ trên khoảng $[x_i, x_{i+1}]$ được định nghĩa là:
+    \begin{equation}
+        S_i(x) = a_i + b_i(x - x_i) + c_i(x - x_i)^2 + d_i(x - x_i)^3
+    \end{equation}
+    Để đảm bảo tính liên tục của hàm, các hệ số phải thỏa mãn các điều kiện biên và trơn:
+    \begin{align}
+        S_i(x_i) &= y_i, \quad S_i(x_{i+1}) = y_{i+1} \\
+        S'_i(x_{i+1}) &= S'_{i+1}(x_{i+1}) \\
+        S''_i(x_{i+1}) &= S''_{i+1}(x_{i+1})
+    \end{align}
+    Với điều kiện biên tự nhiên thông dụng: $S''(x_0) = S''(x_n) = 0$.
+
+    \item \textbf{Nội suy dựa trên mô hình hồi quy (Regression Imputation):} Khôi phục giá trị khuyết thiếu bằng cách ước lượng dựa trên các biến độc lập liên quan. Giả thuyết mô hình tuyến tính có dạng:
+    \begin{equation}
+        Y = X\beta + \varepsilon
+    \end{equation}
+    Trong đó $Y$ là biến cần nội suy, $X$ là ma trận các biến dự báo quan sát được (các biến khí tượng lân cận, các trễ thời gian). Vectơ hệ số hồi quy $\hat{\beta}$ được ước lượng bằng phương pháp bình phương tối thiểu cực tiểu (OLS) trên tập dữ liệu đầy đủ $X_{\text{obs}}$ và $Y_{\text{obs}}$:
+    \begin{equation}
+        \hat{\beta} = (X_{\text{obs}}^T X_{\text{obs}})^{-1} X_{\text{obs}}^T Y_{\text{obs}}
+    \end{equation}
+    Giá trị khuyết thiếu của bản ghi thứ $m$ sau đó được bù đắp bằng:
+    \begin{equation}
+        \hat{y}_m = x_m \hat{\beta}
+    \end{equation}
+\end{itemize}
+
+\subsection{Chiến lược nạp dữ liệu tối ưu hóa giao dịch}
+Khi xử lý các bảng sự kiện có quy mô hàng triệu bản ghi, việc nạp dữ liệu trực tiếp dễ gây tắc nghẽn tài nguyên và khóa bảng cơ sở dữ liệu. Các kỹ thuật toán học và hệ thống được áp dụng bao gồm:
+\begin{itemize}
+    \item \textbf{Nạp theo phân đoạn (Batching):} Phân chia giao dịch lớn thành các nhóm nhỏ dựa trên các phân đoạn thời gian (ví dụ: theo tháng) để giảm tải cho nhật ký giao dịch (Transaction Log).
+    \item \textbf{Sinh khóa đại diện tự động (Surrogate Key Generation):} Thiết lập cơ chế tạo khóa tự động tăng tiến tuần tự để tối ưu chỉ mục (Index) và tránh trùng lặp dữ liệu trong môi trường phân tán.
+    \item \textbf{Kiểm chứng toàn vẹn sau nạp (Post-load Validation):} So sánh tổng kiểm tra bản ghi giữa các tầng lưu trữ nhằm phát hiện lỗi mất mát dữ liệu và kích hoạt cơ chế hoàn tác (Rollback) khi xảy ra sai sót.
+\end{itemize}
+
+\section{Các phương pháp Phát hiện bất thường dữ liệu (Anomaly Detection)}
+\label{sec:anomaly_theory}
+
+Phát hiện bất thường dữ liệu nhằm nhận diện các hành vi bất thường của thiết bị hoặc lỗi ghi nhận số liệu.
+
+\subsection{Phương pháp thống kê Z-Score}
+Z-Score xác định mức độ lệch của một điểm dữ liệu so với giá trị trung bình theo đơn vị độ lệch chuẩn:
+\begin{equation}
+    Z = \frac{x - \mu}{\sigma}
+\end{equation}
+Trong đó $\mu$ là giá trị trung bình và $\sigma$ là độ lệch chuẩn của phân phối. Điểm dữ liệu bị coi là ngoại lai (Outlier) nếu nằm ngoài khoảng giới hạn thường gặp (ví dụ: $|Z| > 3$).
+
+\subsection{Phương pháp khoảng tứ phân vị IQR (Interquartile Range)}
+IQR là công cụ thống kê mạnh mẽ không phụ thuộc vào giả định phân phối chuẩn của dữ liệu. Khoảng tứ phân vị được xác định bởi:
+\begin{equation}
+    \text{IQR} = Q_3 - Q_1
+\end{equation}
+Trong đó $Q_1$ và $Q_3$ lần lượt là tứ phân vị thứ nhất (25\%) và thứ ba (75\%). Ngưỡng phát hiện bất thường được thiết lập tại giới hạn:
+\begin{equation}
+    [\text{Lower Bound}, \text{Upper Bound}] = [Q_1 - 1.5 \cdot \text{IQR}, Q_3 + 1.5 \cdot \text{IQR}]
+\end{equation}
+
+\subsection{Phương pháp Trung bình trượt và IQR cục bộ (Rolling IQR)}
+Đối với chuỗi thời gian có tính xu hướng và mùa vụ mạnh, việc sử dụng các chỉ số thống kê toàn cục dễ dẫn đến kết quả sai lệch. Do đó, phương pháp Rolling IQR cục bộ phân nhóm theo thực thể được áp dụng thông qua thuật toán sau:
+\begin{enumerate}
+    \item Cho chuỗi thời gian sản lượng điện $y(s, t)$ của trạm $s$ tại thời điểm $t$, ta tính trung bình trượt cục bộ trong cửa sổ thời gian $W$ có độ dài 1 giờ:
+    \begin{equation}
+        \mu(s, t) = \frac{1}{|W|} \sum_{\tau \in W} y(s, \tau)
+    \end{equation}
+    \item Xác định độ lệch tuyệt đối $d(s, t)$ của điểm dữ liệu so với trung bình trượt cục bộ:
+    \begin{equation}
+        d(s, t) = |y(s, t) - \mu(s, t)|
+    \end{equation}
+    \item Gom nhóm toàn bộ độ lệch $d(s, t)$ theo tổ hợp thực thể trạm $s$ và giờ trong ngày $h = \text{hour}(t) \in [0, 23]$ để tạo ra tập hợp cục bộ $G_{s, h}$.
+    \item Với mỗi tập hợp $G_{s, h}$, tính toán khoảng tứ phân vị cục bộ:
+    \begin{equation}
+        \text{IQR}_{s, h} = Q_3(G_{s, h}) - Q_1(G_{s, h})
+    \end{equation}
+    \item Ngưỡng biên trên bất thường $U_{s, h}$ của nhóm được xác định là:
+    \begin{equation}
+        U_{s, h} = Q_3(G_{s, h}) + 1.5 \cdot \text{IQR}_{s, h}
+    \end{equation}
+    \item Bản ghi tại thời điểm $t$ thuộc trạm $s$ bị gắn cờ ngoại lai nếu hiệu số lệch tuyệt đối vượt quá giới hạn trên cục bộ:
+    \begin{equation}
+        f(s, t) = \begin{cases} 1 & \text{nếu } d(s, t) > U_{s, h} \\ 0 & \text{ngược lại} \end{cases}
+    \end{equation}
+\end{enumerate}
+
+\section{Cơ sở thuật toán Dự báo chuỗi thời gian}
+\label{sec:forecast_theory}
+
+\begin{itemize}[noitemsep]
+    \item \textbf{Mô hình ARIMA:} Mô hình AutoRegressive Integrated Moving Average kết hợp các thành phần tự hồi quy (p), sai phân (d) và trung bình trượt (q):
+    \begin{equation}
+        \phi(B)(1-B)^d X_t = \theta(B) \varepsilon_t
+    \end{equation}
+    \item \textbf{Mô hình Prophet:} Mô hình phân tách chuỗi thời gian do Meta phát triển, xử lý tốt tính mùa vụ mạnh và các giá trị khuyết thiếu:
+    \begin{equation}
+        y(t) = g(t) + s(t) + h(t) + \varepsilon_t
+    \end{equation}
+    với $g(t)$ đại diện cho xu hướng, $s(t)$ cho tính mùa vụ, $h(t)$ cho ngày lễ và $\varepsilon_t$ cho sai số ngẫu nhiên.
+\end{itemize}

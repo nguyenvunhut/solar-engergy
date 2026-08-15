@@ -1,0 +1,550 @@
+﻿% !TeX program = xelatex
+% =============================================================================
+%  DỰ ÁN TỐT NGHIỆP — BÁO CÁO CHÍNH (BẢN OUTLINE SỰ KIỆN)
+%  Đề tài: Phân tích Hiệu suất và Dự báo Sản lượng Hệ thống Điện Mặt Trời
+%  Nhóm: The Outliers
+%  Trường: Cao đẳng FPT Polytechnic — Chuyên ngành Phân tích Dữ liệu
+% =============================================================================
+
+\documentclass[12pt, a4paper]{report}
+
+% ======================== PACKAGES ==========================================
+\usepackage{fontspec}
+\usepackage[vietnamese]{babel}
+
+% Ngan ch?n t? d?ng g?ch n?i t? (hyphenation) cu?i d�ng
+\hyphenpenalty=10000
+\exhyphenpenalty=10000
+\tolerance=10000
+\emergencystretch=3em
+
+\usepackage{geometry}
+\geometry{top=2.5cm, bottom=2.5cm, left=3cm, right=2cm}
+% ======================== CẤU HÌNH CODE PYTHON (MUTED STYLE) ==============================
+\usepackage{listings}
+\usepackage{xcolor} % Bắt buộc phải có để dùng \definecolor
+
+% Định nghĩa lại bảng màu dịu, ít sặc sỡ và chuyên nghiệp hơn
+\definecolor{mutedgreen}{rgb}{0.2,0.5,0.3}    % Màu xanh lá trầm cho comment
+\definecolor{mutedblue}{rgb}{0.15,0.35,0.6}   % Màu xanh dương dịu cho keywords thay cho magenta
+\definecolor{mutedgray}{rgb}{0.45,0.45,0.45}  % Màu xám cho số dòng
+\definecolor{mutedpurple}{rgb}{0.45,0.2,0.55} % Màu tím trầm cho strings thay cho codepurple
+\definecolor{softbackground}{rgb}{0.98,0.98,0.98} % Màu nền xám trắng siêu nhẹ tránh mỏi mắt
+\definecolor{bordergray}{rgb}{0.85,0.85,0.85}  % Màu viền xám nhạt
+
+\lstdefinestyle{pythonstyle}{
+    backgroundcolor   = \color{softbackground},
+    commentstyle      = \color{mutedgreen}\itshape, % Comment chữ nghiêng xanh trầm
+    keywordstyle      = \color{mutedblue}\bfseries, % Keyword chữ đậm xanh dịu
+    numberstyle       = \tiny\color{mutedgray},
+    stringstyle       = \color{mutedpurple},
+    basicstyle        = \ttfamily\small\color{black}, % Chữ code mặc định màu đen thuần
+    breakatwhitespace = false,
+    breaklines        = true,
+    captionpos        = t, 
+    keepspaces        = true,
+    numbers           = left,
+    numbersep         = 5pt,
+    showspaces        = false,
+    showstringspaces  = false,
+    showtabs          = false,
+    tabsize           = 4,
+    frame             = single,
+    rulecolor         = \color{bordergray}, % Viền mảnh màu xám nhạt tinh tế
+    extendedchars     = true,
+    }
+\lstset{style=pythonstyle}
+
+% Font - Arial (Sans-Serif, fully supports Vietnamese on Windows/XeLaTeX)`r`n\setmainfont{TeX Gyre Termes}
+\setmonofont{TeX Gyre Cursor}
+
+% Header / Footer
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+
+% Hyperlinks & Bookmarks
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks  = true,
+    linkcolor   = black,
+    citecolor   = blue,
+    filecolor   = magenta,
+    urlcolor    = blue,
+    pdftitle    = {Dự án Tốt nghiệp - Phân tích Hiệu suất và Dự báo Sản lượng Hệ thống Điện Mặt Trời},
+    pdfauthor   = {The Outliers - FPT Polytechnic},
+    bookmarksnumbered = true,
+}
+
+% Toán, ký hiệu
+\usepackage{amsmath, amssymb}
+
+% Danh sách
+\usepackage{enumitem}
+\usepackage{array}
+
+% Bảng biểu
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{array}
+
+% Hình ảnh
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+
+% Màu sắc & Code
+\usepackage{xcolor}
+\usepackage{listings}
+
+% Kẻ khung trang bìa
+\usepackage{tikz}
+
+% Danh mục hình, bảng
+\usepackage[titles]{tocloft}
+
+% Indent đoạn đầu
+\usepackage{indentfirst}
+\setlength{\parindent}{1cm}
+\setlength{\parskip}{6pt}
+
+% Line spacing
+\usepackage{setspace}
+\onehalfspacing
+\setlength{\headheight}{33pt}
+
+% ======================== CẤU HÌNH CODE PYTHON ==============================
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.96,0.96,0.94}
+\definecolor{fptorange}{RGB}{245,130,32}
+
+\lstdefinestyle{pythonstyle}{
+    backgroundcolor   = \color{backcolour},
+    commentstyle      = \color{codegreen},
+    keywordstyle      = \color{magenta},
+    numberstyle       = \tiny\color{codegray},
+    stringstyle       = \color{codepurple},
+    basicstyle        = \ttfamily\small,
+    breakatwhitespace = false,
+    breaklines        = true,
+    captionpos        = r,
+    keepspaces        = true,
+    numbers           = left,
+    numbersep         = 5pt,
+    showspaces        = false,
+    showstringspaces  = false,
+    showtabs          = false,
+    tabsize           = 4,
+    frame             = single,
+    rulecolor         = \color{codegray},
+}
+\lstset{style=pythonstyle}
+
+% --- CẤU HÌNH KHOẢNG TRỐNG TIÊU ĐỀ CHƯƠNG ---
+\usepackage{titlesec}
+% C? ch? 13pt cho c�c section headers
+\titleformat*{\section}{\fontsize{13pt}{15.6pt}\bfseries}
+\titleformat*{\subsection}{\fontsize{13pt}{15.6pt}\bfseries}
+\titleformat*{\subsubsection}{\fontsize{13pt}{15.6pt}\bfseries}
+% Cấu hình cho \chapter và \chapter*
+\titleformat{\chapter}[display]
+  {\normalfont\huge\bfseries}{}{0pt}{\huge}
+\titlespacing*{\chapter}{0pt}{-10pt}{20pt} 
+% Tham số: {lề trái}{khoảng trống phía trên}{khoảng trống phía dưới tiêu đề}
+% ======================== HEADER / FOOTER ====================================
+% Trang nội dung chính (Logo ở header trái, THE OUTLIERS ở header phải)
+\fancypagestyle{main}{
+    \fancyhf{}
+    \fancyhead[L]{\includegraphics[height=1cm]{figures/logo_fpoly.png}}
+    \fancyhead[R]{\small THE OUTLIERS}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp}
+    \fancyfoot[R]{\small Page \thepage\ of \pageref{LastPage}}
+    \renewcommand{\headrulewidth}{0.4pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+}
+
+% Trang đầu chương (plain)
+\fancypagestyle{plain}{
+    \fancyhf{}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp}
+    \fancyfoot[R]{\small Page \thepage\ of \pageref{LastPage}}
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+}
+
+% Trang mở đầu (roman numbering)
+\fancypagestyle{front}{
+    \fancyhf{}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp}
+    \fancyfoot[R]{\small Page \thepage\ of \pageref{LastPage}}
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+}
+
+% =============================================================================
+%                           BẮT ĐẦU TÀI LIỆU
+% =============================================================================
+
+% ── Bo sung cho chuong Hoc may (Section6_body.tex) ──
+\usepackage{flafter}   % float khong xuat hien truoc cho duoc nhac toi
+\usepackage{microtype}
+\usepackage{url}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+% \tep: in ten cot/ten tep co dau gach duoi ma khong vo
+\DeclareRobustCommand{\tep}[1]{\texttt{\detokenize{#1}}}
+\graphicspath{{images/}}
+
+\begin{document}
+
+% ────────────────────────────────────────────────────────────────────
+%  TRANG BÌA (COVER PAGE)
+% ────────────────────────────────────────────────────────────────────
+\begin{titlepage}
+\enlargethispage{1.2cm} % SỬA ĐỔI: Chỉ nới rộng tối đa 1.2cm để giữ chữ luôn nằm TRONG khung TikZ
+
+\begin{tikzpicture}[remember picture, overlay]
+    \draw[line width=2pt, fptorange]
+        ([shift={(1cm,-1cm)}]current page.north west)
+        rectangle
+        ([shift={(-1cm,1cm)}]current page.south east);
+    \draw[line width=0.5pt, fptorange]
+        ([shift={(1.15cm,-1.15cm)}]current page.north west)
+        rectangle
+        ([shift={(-1.15cm,1.15cm)}]current page.south east);
+\end{tikzpicture}
+
+\begin{center}
+    \textbf{\large TRƯỜNG CAO ĐẲNG FPT POLYTECHNIC}
+
+    \vspace{0.5cm} % Thu nhỏ khoảng cách dưới tên trường
+    % --- Logo trường Cao đẳng FPT Polytechnic ---
+    \includegraphics[width=0.38\textwidth]{figures/logo_fpoly.png}
+
+    \vspace{0.4cm}
+    {\Large \textbf{DỰ ÁN TỐT NGHIỆP}} \\[4pt]
+    {\large \textbf{CHUYÊN NGÀNH: XỬ LÝ DỮ LIỆU}}
+
+    \vspace{1.6cm}
+    
+    \begin{spacing}{1.0}
+        {\huge \textbf{PHÂN TÍCH HIỆU SUẤT VÀ \\[4pt] DỰ BÁO SẢN LƯỢNG \\[4pt] HỆ THỐNG ĐIỆN MẶT TRỜI}}
+    \end{spacing}
+
+    \vspace{1.8cm} % Thu nhỏ khoảng cách trước khi vào phần thông tin nhóm
+    \normalsize
+    \begin{flushleft}
+        \hspace{2cm} \textbf{Nhóm thực hiện:} The Outliers \\[5pt]
+        \hspace{2cm} \textbf{Sinh viên thực hiện:} \\[3pt]
+        % Tạo bảng phụ có chiều rộng cố định (12.5cm) để căn lề MSSV thẳng hàng bên phải
+        \hspace{2cm}
+        \begin{tabular*}{7.5cm}{@{} l @{\extracolsep{\fill}} r @{}}
+            \hspace{0.5cm} 1. Nguyễn Vũ Nhựt   & PS44442 \\
+            \hspace{0.5cm} 2. Nguyễn Văn Sỹ    & PS43671 \\
+            \hspace{0.5cm} 3. Lê Công Toàn    & PS44145 \\
+            \hspace{0.5cm} 4. Nguyễn Xuân Hùng & PS44527 \\
+            \hspace{0.5cm} 5. Ngô Tấn Đạt     & PS44589 \\
+        \end{tabular*} \\[5pt]
+        \hspace{2cm} \textbf{Giảng viên hướng dẫn:} Văn Công Khanh
+    \end{flushleft}
+    \vfill
+    {\normalsize \textbf{TP. HỒ CHÍ MINH, THÁNG 6 NĂM 2026}}
+    \vspace{0.5cm} % Tạo một khoảng đệm nhỏ an toàn với đường viền dưới
+\end{center}
+\end{titlepage}
+
+\pagenumbering{arabic}
+\pagestyle{front}
+
+% ────────────────────────────────────────────────────────────────────
+%  LỜI CẢM ƠN
+% ────────────────────────────────────────────────────────────────────
+\chapter*{Lời cảm ơn}
+\addcontentsline{toc}{chapter}{Lời cảm ơn}
+\textit{[Nội dung lời cảm ơn của sinh viên đối với giảng viên hướng dẫn, gia đình và nhà trường sẽ được viết tại đây.]}
+
+% ────────────────────────────────────────────────────────────────────
+%  NHẬN XÉT CỦA GIÁO VIÊN
+% ────────────────────────────────────────────────────────────────────
+\chapter*{Nhận xét của Giảng viên Hướng dẫn}
+\addcontentsline{toc}{chapter}{Nhận xét của Giảng viên Hướng dẫn}
+\textit{[Nội dung nhận xét và đánh giá của Giảng viên Hướng dẫn đối với kết quả thực hiện dự án của nhóm.]}
+
+\chapter*{Nhận xét của Giảng viên Phản biện}
+\addcontentsline{toc}{chapter}{Nhận xét của Giảng viên Phản biện}
+\textit{[Nội dung nhận xét và đánh giá của Giảng viên Phản biện tại buổi bảo vệ dự án tốt nghiệp.]}
+
+% ────────────────────────────────────────────────────────────────────
+%  TÓM TẮT DỰ ÁN
+% ────────────────────────────────────────────────────────────────────
+\chapter*{Tóm tắt Dự án}
+\addcontentsline{toc}{chapter}{Tóm tắt Dự án}
+Dự án tốt nghiệp ``Phân tích và Xử lý Bất thường trong Dữ liệu Sản lượng Năng lượng Mặt trời'' nhằm mục đích xây dựng một hệ thống phân tích dữ liệu toàn diện để phát hiện, xử lý và dự báo các bất thường trong sản lượng phát điện của các hệ thống quang điện (PV). 
+Bằng cách thu thập và tích hợp dữ liệu từ 42 trạm phát điện tại Úc cùng dữ liệu khí tượng viễn thám từ Open-Meteo, nhóm đã thiết kế một kho dữ liệu đa chiều (Data Warehouse) trên nền tảng Supabase theo mô hình Galaxy Schema. Quy trình ETL được tự động hóa để làm sạch dữ liệu, xử lý các hiện tượng khuyết thiếu, nhiễu ban đêm, và sai lệch do cảm biến. 
+
+Qua quá trình Phân tích Khám phá Dữ liệu (EDA), nhóm đã rút ra các insight quan trọng về sự ảnh hưởng của nhiệt độ, mức độ mây che phủ đến hiệu suất PV. Ngoài ra, dự án cũng áp dụng các mô hình học máy chuỗi thời gian như ARIMA và Prophet để thiết lập đường cơ sở (Baseline) dự báo sản lượng, kết hợp hiển thị trực quan thông qua Dashboard Tableau. Hệ thống không chỉ cung cấp cái nhìn toàn cảnh về tình trạng hoạt động của các trạm điện mặt trời, mà còn hỗ trợ ban quản lý đưa ra quyết định kịp thời nhằm tối ưu hóa hiệu suất và giảm thiểu rủi ro vận hành.
+
+% ────────────────────────────────────────────────────────────────────
+%  MỤC LỤC & DANH MỤC
+% ────────────────────────────────────────────────────────────────────
+\tableofcontents
+\listoffigures
+\listoftables
+
+\chapter*{Danh mục Từ viết tắt}
+\addcontentsline{toc}{chapter}{Danh mục Từ viết tắt}
+\vspace*{-15pt}
+
+\noindent\hspace*{-6pt}%
+    \begin{tabularx}{\textwidth}{@{} l X @{}}
+    \toprule
+    \textbf{Ký hiệu/Từ viết tắt} & \textbf{Ý nghĩa đầy đủ} \\
+    \midrule
+    API     & Application Programming Interface (Giao diện lập trình ứng dụng) \\
+    ARIMA   & AutoRegressive Integrated Moving Average \\
+    AWS     & Amazon Web Services \\
+    BI      & Business Intelligence (Phân tích thông minh doanh nghiệp) \\
+    CF      & Capacity Factor (Hệ số công suất) \\
+    CSDL    & Cơ sở dữ liệu \\
+    CT      & Current Transformer (Cảm biến dòng điện) \\
+    DWH     & Data Warehouse (Kho dữ liệu) \\
+    EDA     & Exploratory Data Analysis (Phân tích khám phá dữ liệu) \\
+    ETL     & Extract, Transform, Load (Trích xuất, Biến đổi, Nạp) \\
+    FK      & Foreign Key (Khóa ngoại) \\
+    GCP     & Google Cloud Platform \\
+    IoT     & Internet of Things (Internet vạn vật) \\
+    IQR     & Interquartile Range (Khoảng tứ phân vị) \\
+    kWp     & Kilowatt-peak (Công suất đỉnh cực đại) \\
+    LSTM    & Long Short-Term Memory \\
+    PK      & Primary Key (Khóa chính) \\
+    PR      & Performance Ratio (Hệ số hiệu suất) \\
+    PV      & Photovoltaic (Quang điện - Năng lượng mặt trời) \\
+    UI/UX   & User Interface / User Experience (Giao diện / Trải nghiệm người dùng) \\
+    WMO     & World Meteorological Organization (Tổ chức Khí tượng Thế giới) \\
+    XGBoost & Extreme Gradient Boosting \\
+    \bottomrule
+    \end{tabularx}
+
+\newpage
+\pagestyle{main}
+
+% ====================================================================
+%  CHƯƠNG 1: TỔNG QUAN ĐỀ TÀI VÀ BÀI TOÁN NGHIÊN CỨU
+% ====================================================================
+\chapter{Tổng quan Đề tài và Bài toán Nghiên cứu}
+\label{chap:tongquan}
+
+\section{Bối cảnh thực tế và lý do chọn đề tài}
+\label{sec:lydo}
+
+Năng lượng mặt trời đang ngày càng đóng vai trò quan trọng trong cơ cấu năng lượng tái tạo toàn cầu. Theo Cơ quan Năng lượng Quốc tế (IEA), công suất lắp đặt điện mặt trời trên toàn thế giới đã vượt mốc 1.600~GW vào cuối năm 2023, với tốc độ tăng trưởng trung bình 25\%/năm trong thập kỷ qua. Tại Việt Nam, chính sách khuyến khích phát triển điện mặt trời áp mái và điện mặt trời tập trung đã đưa tổng công suất lắp đặt lên hơn 16.500~MW. Tuy nhiên, hiệu suất thực tế của các hệ thống quang điện (PV) thường sai lệch đáng kể so với giá trị thiết kế do ảnh hưởng của nhiều yếu tố như: điều kiện thời tiết biến đổi, suy giảm chất lượng tấm pin, bụi bẩn, bóng che và lỗi thiết bị.
+
+Bài toán phân tích hiệu suất và phát hiện sớm các bất thường trong vận hành là then chốt giúp tối ưu hoá hiệu quả đầu tư và nâng cao độ tin cậy của lưới điện. Lý do nhóm chọn đề tài này bao gồm:
+\begin{itemize}[noitemsep]
+    \item \textbf{Tính thực tiễn:} Dự báo sản lượng và phát hiện bất thường có ứng dụng trực tiếp cho các doanh nghiệp vận hành nhà máy điện mặt trời.
+    \item \textbf{Tính liên ngành:} Kết hợp phân tích dữ liệu, thống kê, học máy và kiến trúc kho dữ liệu trong một đề tài thống nhất.
+    \item \textbf{Nguồn dữ liệu mở:} Dữ liệu từ Open-Meteo API miễn phí, chất lượng cao và phủ rộng toàn cầu.
+    \item \textbf{So sánh đa vùng:} Phân tích đồng thời dữ liệu từ nhiều khu vực tại Úc để đánh giá tổng quát về hiệu suất PV.
+\end{itemize}
+
+
+\section{Bài toán kinh doanh và các khó khăn cần giải quyết}
+\label{sec:problem}
+
+Trong vận hành thực tế các trạm điện mặt trời, ban quản lý thường đối mặt với các khó khăn lớn:
+\begin{itemize}[noitemsep]
+    \item \textbf{Tác động thời tiết bất định:} Sự thay đổi của mây che phủ, bức xạ và nhiệt độ môi trường khiến sản lượng điện biến động liên tục, gây khó khăn cho việc điều phối lưới điện.
+    \item \textbf{Suy hao và hỏng hóc thiết bị:} Các tấm pin bị bám bụi, inverter bị lỗi phần sụn hoặc quá nhiệt làm suy giảm đáng kể hiệu suất phát điện mà không được phát hiện kịp thời.
+    \item \textbf{Sai lệch số liệu giám sát:} Cảm biến đo bức xạ hoặc cảm biến CT đo dòng điện bị nhiễu xung điện đột ngột hoặc lệch pha tần suất dữ liệu (Granularity Mismatch) giữa dữ liệu sản lượng (15 phút) và dữ liệu thời tiết (1 giờ) khiến phân tích sai lệch.
+\end{itemize}
+Hệ quả của việc không giải quyết các vấn đề trên là doanh nghiệp ra quyết định chậm trễ, tổn thất tài chính lớn do mất sản lượng, và dữ liệu thu thập bị bẩn dẫn đến các mô hình dự báo không chính xác.
+
+\section{Mục tiêu dự án và Kết quả dự kiến}
+\label{sec:muctieu}
+
+Dự án tốt nghiệp đặt ra các mục tiêu cốt lõi sau:
+\begin{enumerate}[noitemsep]
+    \item Thiết kế và triển khai kho dữ liệu (\textit{Data Warehouse}) tích hợp đồng bộ dữ liệu sản lượng và thời tiết theo mô hình Galaxy Schema (Fact Constellation) kết hợp phân nhánh Data Marts chuyên biệt.
+    \item Xây dựng pipeline dữ liệu tự động làm sạch (xử lý khuyết thiếu, lọc nhiễu ban đêm, phát hiện bất thường cảm biến).
+    \item Thực hiện phân tích khám phá chuyên sâu (EDA) để rút ra các insight vận hành quan trọng như hiện tượng suy giảm hiệu suất do nhiệt độ và độ nhiễu ban đêm.
+    \item Xây dựng hệ thống dữ liệu đáp ứng đồng thời hiệu năng truy vấn báo cáo (OLAP) và hiệu năng huấn luyện/dự báo học máy (MLOps) mà không làm quá tải tài nguyên Cloud.
+    \item Huấn luyện các mô hình dự báo sản lượng Baseline (ARIMA, Prophet) và so sánh hiệu năng.
+\end{enumerate}
+\textbf{Kết quả dự kiến (Sneak Peek):} Một hệ thống Dashboard Tableau trực quan hóa mượt mà cho phép các nhà quản lý theo dõi toàn diện hiệu suất vận hành của 42 trạm tại Úc, tự động cảnh báo lỗi cảm biến và hiển thị dự báo sản lượng cho các chu kỳ tiếp theo với độ tin cậy cao.
+
+
+\section{Đối tượng và phạm vi nghiên cứu}
+\label{sec:phamvi}
+
+\begin{itemize}[noitemsep]
+    \item \textbf{Đối tượng nghiên cứu:} Hiệu suất phát điện của hệ thống quang điện (PV) và các yếu tố khí tượng viễn thám (bức xạ sóng ngắn, nhiệt độ, độ phủ mây, lượng mưa).
+    \item \textbf{Phạm vi không gian:} 42 trạm điện mặt trời tại Úc.
+    \item \textbf{Phạm vi thời gian:} Dữ liệu lịch sử từ 01/01/2020 đến 30/04/2022.
+\end{itemize}
+
+\section{Bố cục báo cáo}
+\label{sec:bocuc}
+
+Báo cáo dự án tốt nghiệp được cấu trúc thành 7 chương chính như sau:
+\begin{itemize}[noitemsep]
+    \item \textbf{Chương 1:} Tổng quan Đề tài và Bài toán Nghiên cứu.
+    \item \textbf{Chương 2:} Cơ sở Lý thuyết (các mô hình dự báo, phát hiện outlier và DWH).
+    \item \textbf{Chương 3:} Thu thập Dữ liệu và Thiết kế Kho dữ liệu.
+    \item \textbf{Chương 4:} Quy trình ETL, Làm sạch và Biến đổi Dữ liệu.
+    \item \textbf{Chương 5:} Phân tích Khám phá Dữ liệu (EDA) và Trực quan hóa.
+    \item \textbf{Chương 6:} Mô hình hóa và Dự báo Sản lượng Baseline.
+    \item \textbf{Chương 7:} Đánh giá Dự án, Đề xuất và Theo dõi Vận hành.
+\end{itemize}
+
+
+% ====================================================================
+%  CHƯƠNG 2: CƠ SỞ LÝ THUYẾT
+% ====================================================================
+% Chuong nay lay tu Section2.tex - sua noi dung o file do.
+\input{Section2_body}
+
+% Chuong nay lay tu Section3.tex - sua noi dung o file do.
+\input{Section3_body}
+
+% Chuong nay lay tu Section4.tex - sua noi dung o file do.
+\input{Section4_body}
+
+\chapter{Trực quan Dữ liệu và Xây dựng Dashboard}
+\label{chap:dashboard}
+
+\section{Chiến lược Kết nối Dữ liệu và Thiết kế UI/UX}
+\label{sec:dashboard_strategy}
+\textit{[Kết nối các bảng Fact và Dimension từ Supabase vào công cụ BI (Tableau) thông qua các Relationship (1-M). Lựa chọn bộ màu sắc và bố cục Dashboard theo quy luật Gestalt để làm nổi bật các chỉ số quan trọng.]}
+
+\section{Chi tiết Hệ thống Dashboard Phân tích}
+\label{sec:dashboard_details}
+\subsection{Dashboard 1: Tổng quan Vận hành (Executive Overview)}
+\textit{[Cung cấp cái nhìn toàn cảnh về sản lượng điện tổng, công suất hoạt động trung bình, và xu hướng theo thời gian của 42 trạm phát.]}
+
+\subsection{Dashboard 2: Phân tích Hiệu suất và Khí hậu}
+\textit{[Phân tích tương quan giữa sản lượng điện với nhiệt độ và bức xạ. Phát hiện các mốc suy giảm hiệu suất.]}
+
+\subsection{Dashboard 3: Giám sát Bất thường và Lỗi Cảm biến}
+\textit{[Trực quan hóa các điểm dữ liệu bất thường (Outliers), tần suất xuất hiện lỗi tại các trạm để kỹ sư có kế hoạch bảo trì.]}
+
+
+% ====================================================================
+%  CHƯƠNG 6: KHAI PHÁ DỮ LIỆU VÀ BUSINESS INSIGHTS
+% ====================================================================
+\chapter{Khai phá Dữ liệu và Business Insights}
+\label{chap:insights}
+
+Theo tinh thần phân tích chuyên sâu (Đừng chỉ mô tả $\rightarrow$ phải giải thích), chương này tập trung vào việc bóc tách các điểm nghẽn vận hành và đưa ra các phát hiện có giá trị kinh doanh (Business Insights) dựa trên logic dữ liệu, thay vì chỉ dựa vào các biểu đồ bề nổi. Các mô hình học máy cơ sở (ARIMA/Prophet) được tích hợp như một công cụ chẩn đoán bổ trợ.
+
+\section{Insight 1: Hiện tượng suy giảm hiệu suất do nhiệt độ (Thermal Degradation)}
+\textit{[Dữ liệu chứng minh rằng khi nhiệt độ môi trường vượt quá ngưỡng giới hạn (ví dụ: $25^\circ\text{C}$), hiệu suất chuyển đổi quang điện của tấm pin sụt giảm đáng kể. Điều này giải thích tại sao vào buổi trưa bức xạ cao nhất nhưng công suất lại không đạt đỉnh.]}
+
+\section{Insight 2: Điểm mù vận hành từ ``Độ nhiễu ban đêm''}
+\textit{[Phát hiện hàng loạt trạm ghi nhận sản lượng phát điện vào ban đêm. Nguyên nhân được phân tích là do nhiễu xung điện từ biến tần (Inverter) hoặc dòng rò. Nếu không lọc bỏ, dữ liệu này sẽ làm sai lệch nghiêm trọng các báo cáo tổng sản lượng.]}
+
+\section{Insight 3: Ứng dụng Mô hình dự báo (Baseline) để tối ưu vận hành}
+\textit{[Ứng dụng mô hình Time-Series (như Prophet) để thiết lập đường cơ sở (Baseline) dự báo sản lượng. Sự chênh lệch lớn giữa sản lượng thực tế và Baseline đóng vai trò là ``cờ báo'' (Alert) để ban quản lý cử đội bảo trì đến kiểm tra các tấm pin bị bụi bẩn bám dính hoặc hỏng hóc.]}
+
+
+% ====================================================================
+%  CHƯƠNG 7: KẾT LUẬN VÀ HƯỚNG PHÁT TRIỂN
+% ====================================================================
+% Chuong nay lay tu Section6.tex - sua noi dung o file do.
+\chapter{Thiết kế, Huấn luyện và Đánh giá Mô hình Dự báo Sản lượng Quang điện}
+\label{chap:hocmay}
+% ── Tinh chinh float RIENG cho chuong Hoc may ──
+% Ban bao cao rieng (Section6.tex) co cac tham so nay trong preamble; bo di thi LaTeX
+% dung mac dinh von rat de dat, float bi day sang trang khac va de lai khoang trong
+% 3-5 cm giua trang. Dat lai o day va tra ve mac dinh ngay sau chuong, de khong doi
+% bo cuc cac chuong khac cua nhom.
+\setcounter{topnumber}{3}
+\setcounter{bottomnumber}{2}
+\setcounter{totalnumber}{4}
+\renewcommand{\topfraction}{0.92}
+\renewcommand{\bottomfraction}{0.7}
+\renewcommand{\textfraction}{0.06}
+\renewcommand{\floatpagefraction}{0.85}
+\input{Section6_body}
+
+% Danh muc tai lieu rieng cua chuong Hoc may. Chuong nay dung \cite (24 cho);
+% khong nap khoi nay thi moi trich dan hien thanh dau ?.
+\input{Section6_thamkhao}
+
+% Tra float ve mac dinh LaTeX cho cac chuong con lai.
+\setcounter{topnumber}{2}
+\setcounter{bottomnumber}{1}
+\setcounter{totalnumber}{3}
+\renewcommand{\topfraction}{0.7}
+\renewcommand{\bottomfraction}{0.3}
+\renewcommand{\textfraction}{0.2}
+\renewcommand{\floatpagefraction}{0.5}
+
+
+\chapter{Kết luận và Hướng phát triển}
+\label{chap:conclusion}
+
+\section{Kết luận Tổng quan}
+\label{sec:conclusion}
+\textit{[Tóm tắt lại việc hoàn thành các mục tiêu dự án: Xây dựng thành công Data Warehouse, làm sạch dữ liệu nhiễu, và phát triển hệ thống Dashboard trực quan giúp doanh nghiệp chuyển đổi từ quản lý thụ động sang giám sát dựa trên dữ liệu.]}
+
+\section{Khuyến nghị Chiến lược (Actionable Insights)}
+\label{sec:recommendations}
+\textit{[Đề xuất các hành động cụ thể: Lắp đặt hệ thống làm mát tự động để giảm suy hao nhiệt, thiết lập quy trình kiểm tra Inverter định kỳ để khắc phục độ nhiễu ban đêm, và ứng dụng kết quả dự báo để lập kế hoạch vệ sinh tấm pin.]}
+
+\section{Hạn chế của Dự án}
+\label{sec:limitations}
+\textit{[Những giới hạn về phần cứng, thời gian xử lý dữ liệu lớn, hoặc sự thiếu hụt của các mô hình học sâu (Deep Learning) phức tạp hơn.]}
+
+\section{Hướng phát triển trong tương lai}
+\label{sec:future_work}
+\subsection{Nâng cấp Hệ thống Phân tích Dự đoán (Predictive Analytics)}
+\textit{[Tích hợp các mô hình Machine Learning mạnh mẽ hơn (XGBoost, LSTM) để dự báo biến động công suất theo thời gian thực.]}
+
+\subsection{Tự động hóa và Đưa lên Đám mây (Cloud \& Automation)}
+\textit{[Triển khai toàn bộ Pipeline ETL lên các dịch vụ Cloud như AWS/GCP để xử lý luồng dữ liệu Streaming từ các cảm biến IoT.]}
+
+\newpage
+% ====================================================================
+%  PHỤ LỤC A: KẾ HẠCH THỰC HIỆN
+% ====================================================================
+\chapter*{Phụ lục A: Kế hoạch Thực hiện}
+\addcontentsline{toc}{chapter}{Phụ lục A: Kế hoạch Thực hiện}
+\label{app:kehoach}
+\textit{[Bảng phân công nhiệm vụ chi tiết và kế hoạch 14 tuần thực hiện dự án của các thành viên.]}
+
+
+% ====================================================================
+%  PHỤ LỤC B: CẤU TRÚC MÃ NGUỒN
+% ====================================================================
+\chapter*{Phụ lục B: Cấu trúc Mã nguồn}
+\addcontentsline{toc}{chapter}{Phụ lục B: Cấu trúc Mã nguồn}
+\label{app:code}
+\textit{[Sơ đồ cấu trúc thư mục của package Python du\_an\_tot\_nghiep và các script tiện ích.]}
+
+
+% ====================================================================
+%  TÀI LIỆU THAM KHẢO
+% ====================================================================
+\chapter*{Tài liệu Tham khảo}
+\addcontentsline{toc}{chapter}{Tài liệu Tham khảo}
+\label{chap:thamkhao}
+
+\begin{enumerate}[label={[\arabic*]}, noitemsep]
+    \item Box, G. E. P., Jenkins, G. M., Reinsel, G. C., \& Ljung, G. M. (2015). \textit{Time Series Analysis: Forecasting and Control}. 5th ed. Wiley.
+    \item Taylor, S. J., \& Letham, B. (2018). Forecasting at Scale. \textit{The American Statistician}, 72(1), 37--45.
+    \item Breiman, L. (2001). Random Forests. \textit{Machine Learning}, 45(1), 5--32.
+    \item Chen, T., \& Guestrin, C. (2016). XGBoost: A Scalable Tree Boosting System. \textit{Proceedings of KDD 2016}, 785--794.
+    \item Hochreiter, S., \& Schmidhuber, J. (1997). Long Short-Term Memory. \textit{Neural Computation}, 9(8), 1735--1780.
+    \item Vaswani, A., et al. (2017). Attention Is All You Need. \textit{Proceedings of NeurIPS 2017}, 5998--6008.
+    \item Kimball, R., \& Ross, M. (2013). \textit{The Data Warehouse Toolkit}. 3rd ed. Wiley.
+    \item NASA POWER Project. (2024). \url{https://power.larc.nasa.gov/}.
+    \item Supabase Documentation. (2024). \url{https://supabase.com/docs}.
+    \item IEA -- International Energy Agency. (2024). \url{https://www.iea.org/reports/renewables-2024}.
+    \item Chandola, V., Banerjee, A., \& Kumar, V. (2009). Anomaly Detection: A Survey. \textit{ACM Computing Surveys}, 41(3), Article 15.
+    \item Tukey, J. W. (1977). \textit{Exploratory Data Analysis}. Addison-Wesley.
+\end{enumerate}
+
+\end{document}
