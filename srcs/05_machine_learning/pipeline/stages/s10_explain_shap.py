@@ -14,7 +14,9 @@ X_test_h{n}.parquet qua (site_id, timestamp) de lay gia tri that.
 
 from __future__ import annotations
 
+import gc
 import pickle
+import time
 from pathlib import Path
 
 import numpy as np
@@ -25,8 +27,9 @@ from core.io import read_json, write_csv, write_parquet
 from core.lgbm import chuan_bi_X
 from core.paths import Paths
 
-SO_MAU_SHAP = 2000  # TreeExplainer tren 486k dong rat cham; 2000 mau da du on dinh
-SEED_MAU = 42
+# Kich thuoc lo khi tinh SHAP. Ma tran dong gop la (so_dong x so_dac_trung+1) so
+# float32, tren 475k dong x 55 la ~100 MB - chia lo de dinh bo nho, khong doi ket qua.
+LO_SHAP = 100_000
 
 
 def _thu_muc_model(cfg: Cfg, paths: Paths, horizon: int) -> tuple[Path, str]:
@@ -49,8 +52,6 @@ def _thu_muc_model(cfg: Cfg, paths: Paths, horizon: int) -> tuple[Path, str]:
 
 def tinh_shap(cfg: Cfg, paths: Paths, horizon: int) -> pd.DataFrame:
     """Tinh SHAP cho mo hinh vo dich cua 1 horizon, ghi ra 08_explain/."""
-    import shap
-
     thu_muc, loss = _thu_muc_model(cfg, paths, horizon)
     h_label = f"h{horizon}"
     print(f"Mo hinh vo dich {h_label}: {loss.upper()} tai {thu_muc}")
@@ -78,16 +79,44 @@ def tinh_shap(cfg: Cfg, paths: Paths, horizon: int) -> pd.DataFrame:
     X = chuan_bi_X(test_df, features, medians, dtype="float64")
     print(f"Da nap {len(X):,} dong x {len(features)} dac trung")
 
-    # PHAI dung np.random.seed + np.random.choice (bo sinh so cu - RandomState), DUNG Y
-    # notebook 08 cell 6. np.random.default_rng(42) la bo sinh so MOI (PCG64), cung mot
-    # seed nhung ra day chi so KHAC HAN -> lay 2.000 dong khac -> moi gia tri SHAP deu
-    # lech. Doi sang default_rng cho "hien dai" la mat kha nang doi chieu voi bao cao.
-    np.random.seed(SEED_MAU)
-    idx = np.random.choice(len(X), size=min(SO_MAU_SHAP, len(X)), replace=False)
-    X_mau = X.iloc[idx].copy()
+    # SHAP tren TOAN BO ma tran test, KHONG lay mau. Ban cu lay ngau nhien 2.000 dong
+    # cho nhanh nen bang xep hang tam quan trong chi la uoc luong tren mau - da du de
+    # doi thu hang hai dac trung dan dau (direct_normal_irradiance vs ky_vong).
+    #
+    # Dung booster_.predict(pred_contrib=True) thay cho shap.TreeExplainer: LightGBM cai
+    # dat san chinh thuat toan TreeSHAP cua Lundberg trong loi C++, ra CUNG bo gia tri
+    # nhung nhanh hon nhieu bac - do la thu duy nhat khien viec bo lay mau kha thi.
+    # Cot CUOI CUNG cua pred_contrib la gia tri co so, phai cat bo truoc khi gop.
+    n = len(X)
+    n_lo = (n + LO_SHAP - 1) // LO_SHAP
+    print(f"Tinh SHAP tren TOAN BO {n:,} dong x {len(features)} dac trung "
+          f"({n_lo} lo, moi lo {LO_SHAP:,} dong)...")
 
-    explainer = shap.TreeExplainer(model)
-    gia_tri = explainer.shap_values(X_mau)
+    booster = model.booster_ if hasattr(model, "booster_") else model
+    t0 = time.time()
+    phan = []
+    co_so = None
+    for i in range(n_lo):
+        a, b = i * LO_SHAP, min((i + 1) * LO_SHAP, n)
+        ct = np.asarray(
+            booster.predict(X.iloc[a:b], pred_contrib=True), dtype=np.float32
+        )
+        if co_so is None:
+            co_so = float(ct[0, -1])
+        phan.append(ct[:, :-1])
+        print(f"   lo {i + 1}/{n_lo}: dong {a:,}-{b:,} | {time.time() - t0:,.0f}s")
+
+    gia_tri = np.concatenate(phan, axis=0)
+    del phan
+    gc.collect()
+    print(f"Xong trong {time.time() - t0:,.0f}s. Ma tran SHAP: {gia_tri.shape} "
+          f"| gia tri co so {co_so:.6f}")
+
+    # Kiem TINH CONG cua TreeSHAP: tong dong gop + gia tri co so phai bang du bao goc.
+    # Sai o day nghia la da cat nham cot co so hoac gop lo sai thu tu.
+    thu = model.predict(X.iloc[:2000])
+    sai_so = float(np.abs(gia_tri[:2000].sum(axis=1) + co_so - thu).max())
+    print(f"Kiem tinh cong (2.000 dong dau): sai lech lon nhat {sai_so:.3e}")
 
     tam_quan_trong = pd.DataFrame(
         {
@@ -95,6 +124,7 @@ def tinh_shap(cfg: Cfg, paths: Paths, horizon: int) -> pd.DataFrame:
             "mean_abs_shap": np.abs(gia_tri).mean(axis=0),
         }
     ).sort_values("mean_abs_shap", ascending=False)
+    tam_quan_trong["so_dong_tinh"] = n
 
     print(f"TOP 10 DAC TRUNG QUAN TRONG NHAT ({h_label}):")
     print(tam_quan_trong.head(10).to_string(index=False))
@@ -110,8 +140,8 @@ def tinh_shap(cfg: Cfg, paths: Paths, horizon: int) -> pd.DataFrame:
     cot_meta = [c for c in (SITE_COL, TIMESTAMP_COL) if c in test_df.columns]
     khung = pd.concat(
         [
-            test_df.iloc[idx][cot_meta].reset_index(drop=True),
-            pd.DataFrame(gia_tri, columns=features),
+            test_df[cot_meta].copy(),
+            pd.DataFrame(gia_tri, columns=features, index=X.index),
         ],
         axis=1,
     )

@@ -39,7 +39,12 @@ from core.columns import (
 from core.config import Cfg
 from core.io import read_json, write_csv, write_json, write_parquet
 from core.lgbm import chuan_bi_X
-from core.metrics import PHAM_VI_CHINH_THUC, metrics_3_pham_vi, metrics_theo_site
+from core.metrics import (
+    PHAM_VI_CHINH_THUC,
+    _cot_loc,
+    metrics_3_pham_vi,
+    metrics_theo_site,
+)
 from core.paths import Paths
 from core.target import du_bao_ve_kwh, them_muc_tieu
 
@@ -64,6 +69,7 @@ def _dung_ma_tran_test(cfg: Cfg, paths: Paths, horizon: int, features: list[str]
       1. loc 4 dieu kien (exclude_from_training, has_complete_history_features,
          target khong NaN, bo exclude_sites)
       2. them_muc_tieu() - sinh y_true = shift(-h) VA 14 cot tat dinh hau to _mt
+      3. HOP DONG TAM DU BAO - nhan phai nam DUNG tai moc T + h*15 phut (xem duoi)
     Nho dung chung 1 ham voi luc train nen khong the lech logic.
     """
     from stages.s08a_prepare import _doc_tap
@@ -75,7 +81,29 @@ def _dung_ma_tran_test(cfg: Cfg, paths: Paths, horizon: int, features: list[str]
     # dung khung nay, no du 486.160 dong thay vi 486.120 sau khi shift(-h) + dropna.
     nen = test[[c for c in (SITE_COL, TIMESTAMP_COL, SOURCE_COL, DAYLIGHT_COL)
                 if c in test.columns]].copy()
-    return them_muc_tieu(test, horizon, cfg), nen
+
+    # HOP DONG TAM DU BAO. Bon dieu kien loc o buoc 1 duc lo hong tren luoi thoi gian,
+    # nen groupby.shift(-h) tro toi "DONG HOP LE THU h ke tiep" chu khong chac la moc
+    # T + h*15 phut. Nhung dong do bi cham diem nhu du bao 15 phut trong khi khoang cach
+    # that co the la hang gio - lam WAPE dep len mot cach gia tao. Bat buoc moc nhan phai
+    # dung tam, sai thi loai (dung quy tac cua notebook 07, o buoc dung ma tran test).
+    #
+    # KHONG dua kiem tra nay vao core.target.them_muc_tieu(): notebook 06 (train/val)
+    # KHONG co no, nen them vao do se lam lech ca s08 dang khop tuyet doi voi notebook.
+    # Day la quy tac rieng cua buoc cham diem tap test.
+    h = int(horizon)
+    freq = int(cfg.data["freq_minutes"])
+    ts_nguon = pd.to_datetime(test[TIMESTAMP_COL], errors="coerce")
+    ts_nhan = pd.to_datetime(
+        test.groupby(SITE_COL)[TIMESTAMP_COL].shift(-h), errors="coerce"
+    )
+    dung_tam = (ts_nhan - ts_nguon).eq(pd.Timedelta(minutes=freq * h))
+
+    scored = them_muc_tieu(test, horizon, cfg)
+    giu = dung_tam.reindex(scored.index).fillna(False).to_numpy()
+    print(f"   Nhan khong nam dung tai T+{freq * h} phut (da loai): "
+          f"{int((~giu).sum()):,} dong")
+    return scored[giu], nen
 
 
 def _mask_hep_nhat(scored: pd.DataFrame) -> pd.Series:
@@ -84,11 +112,19 @@ def _mask_hep_nhat(scored: pd.DataFrame) -> pd.Series:
     Copy quy tac cua notebook 07 (bien use_mask): bang metric theo tram phai tinh tren
     du lieu DO THAT ban ngay, vi tram nao cung co hang loat dong dem bang 0 - gop chung
     vao se lam moi tram deu dep nhu nhau.
+
+    PHAI loc bang _cot_loc, tuc uu tien cot 'nhan_' tai T+h, DUNG bo cot ma pham vi
+    measured_daylight cua metrics_3_pham_vi dang dung. Ban cu doc thang cot tho tai T
+    nen bang theo tram chay tren mot tap khac han con so headline: 226.720 thay vi
+    229.548 dong o h1, va 217.583 thay vi 229.297 o h4 - tuc bang phu va con so cong bo
+    khong con noi ve cung mot tap du lieu.
     """
-    do_that = ((scored[SOURCE_COL] == "measured") if SOURCE_COL in scored.columns
+    nguon = _cot_loc(scored, SOURCE_COL)
+    do_that = ((nguon == "measured") if nguon is not None
                else pd.Series(True, index=scored.index))
-    if DAYLIGHT_COL in scored.columns:
-        ban_ngay = do_that & scored[DAYLIGHT_COL].fillna(False).astype(bool)
+    ngay = _cot_loc(scored, DAYLIGHT_COL)
+    if ngay is not None:
+        ban_ngay = do_that & ngay.fillna(False).astype(bool)
         if ban_ngay.sum():
             return ban_ngay
     return do_that if do_that.sum() else pd.Series(True, index=scored.index)
@@ -115,7 +151,17 @@ def cham_diem_1_horizon(cfg: Cfg, paths: Paths, horizon: int, win: dict) -> dict
     # float64 - dung y notebook 07 (.astype(float)). Khac notebook 06 (float32) la co
     # chu dich, xem runtime.yaml: dtype_cham_diem.
     X = chuan_bi_X(scored, features, medians, dtype=cfg.runtime["dtype_cham_diem"])
-    scored[PRED_COL] = du_bao_ve_kwh(model.predict(X), scored, cfg)
+    # Chan k bang DUNG nguong ma mo hinh nay da train, doc tu model_config.json cua no
+    # (khong lay train.k_target_max = 1,5 co dinh). Notebook 07 lam dung vay va bao loi
+    # neu thieu khoa; bat chuoc ca cho bao loi de khong am tham cham diem bang tran khac.
+    if "clip_k" not in cfg_model:
+        raise KeyError(
+            f"model_config.json cua {thu_muc_model} thieu 'clip_k'. Khong the cham diem "
+            f"tap test bang tran khac voi tran da dung luc train - chay lai stage s08."
+        )
+    scored[PRED_COL] = du_bao_ve_kwh(
+        model.predict(X), scored, cfg, clip_k=float(cfg_model["clip_k"])
+    )
     scored["residual"] = scored[TARGET_SHIFTED] - scored[PRED_COL]
 
     m = metrics_3_pham_vi(scored)

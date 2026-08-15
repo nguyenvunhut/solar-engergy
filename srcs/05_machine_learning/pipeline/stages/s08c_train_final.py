@@ -16,12 +16,13 @@ import time
 
 import pandas as pd
 
-from core.columns import PRED_COL, TARGET_SHIFTED
+from core.columns import PRED_COL, SITE_COL, TARGET_SHIFTED, TIMESTAMP_COL
 from core.context import Ctx
+from core.io import cot_co_san, read_parquet
 from core.lgbm import chuan_bi_X, fit_an_toan, kiem_tra_gpu, them_tham_so_gpu
 from core.metrics import compute_metrics, metrics_3_pham_vi
 from core.phase_lag import do_tre_theo_site, quet_do_tre
-from core.target import du_bao_ve_kwh
+from core.target import du_bao_ve_kwh, them_muc_tieu
 from core.weights import scope_masks
 
 
@@ -117,16 +118,37 @@ def doc_val_that(ctx: Ctx) -> pd.DataFrame:
     tren bai DA HOC. Do da tren bo v4: pooled 3 fold cho 886.148 dong va WAPE h4
     26,09%, con tap validation that cho 288.815 dong va 26,97% - tuc ban cu lac quan
     hon gan mot diem. Notebook 06 da sua tu 2026-08-09, ban .py nay sua theo.
-    """
-    from stages.s08b_train_folds import doc_fold  # dung chung cach xu ly
 
+    KHONG duoc dung doc_fold() o day. doc_fold() la duong doc cua tap HOC nen no loc
+    them exclude_from_training / has_complete_history_features / w > 0 - dung cho fold,
+    sai cho holdout. Notebook 06_4 (load_val_holdout) chi loai 2 site khong dang tin roi
+    loc ban ngay, giu nguyen moi dong con lai de pham vi 'all' phan anh CA tap validation.
+    Loc thua lam 'all' tut tu 318.981 xuong 288.811 dong, tuc thanh ban sao cua
+    'measured_daylight' va mat y nghia doi chieu "toan bo du lieu vs du lieu do that".
+    """
     duong_dan = ctx.paths.selected("val_selected")
     if not duong_dan.exists():
         raise FileNotFoundError(
             f"Khong tim thay tap validation that: {duong_dan}. "
             "Chay stage s07 truoc de sinh tep nay."
         )
-    return doc_fold(ctx, None, "val", duong_dan=duong_dan)
+    from stages.s08a_prepare import _loc_ban_ngay
+
+    cfg = ctx.cfg
+    muon = list(dict.fromkeys(
+        ctx.features + cfg.features["cot_phu"] + cfg.features["cot_bat_buoc"]
+    ))
+    d = read_parquet(duong_dan, columns=[c for c in muon if c in cot_co_san(duong_dan)])
+    d = d.sort_values([SITE_COL, TIMESTAMP_COL]).reset_index(drop=True)
+
+    loai = cfg.data["exclude_sites"]
+    if loai and SITE_COL in d.columns:
+        n0 = len(d)
+        d = d[~d[SITE_COL].isin(loai)].reset_index(drop=True)
+        print(f"   Loai site {loai}: {n0:,} -> {len(d):,} dong")
+
+    d = them_muc_tieu(d, ctx.horizon_steps, cfg)
+    return _loc_ban_ngay(d, float(cfg.features["eps_elev"]))
 
 
 def tinh_metrics_val(ctx: Ctx) -> Ctx:

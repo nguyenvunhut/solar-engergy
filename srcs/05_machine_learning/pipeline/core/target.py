@@ -122,14 +122,24 @@ def nguong_cat(cfg: Cfg) -> float:
     return float(gt) if gt else float(cfg.train["k_target_max"])
 
 
-def du_bao_ve_kwh(k_pred: np.ndarray, df: pd.DataFrame, cfg: Cfg) -> np.ndarray:
+def du_bao_ve_kwh(
+    k_pred: np.ndarray, df: pd.DataFrame, cfg: Cfg, clip_k: float | None = None
+) -> np.ndarray:
     """Nhan nguoc k_pred ve kWh that, chan tran cong suat, ep 0 khi troi toi.
 
     Bo qua buoc nay thi y_pred ra toan so 0..1,5 trong khi y_true la kWh (hang chuc)
     - dung bug "du bao duoi dat, thuc te tren troi" da gap truoc day.
+
+    clip_k: tran chan k khi cham diem. De None thi dung train.k_target_max (= 1,5) -
+    DUNG cach notebook 06_4 cham tap validation. Truyen vao thi dung con so do - dung
+    cach notebook 07 cham tap TEST: no doc clip_k tu model_config.json cua chinh mo hinh
+    thang cuoc, tuc chan bang DUNG nguong ma luc train da cat nhan (1,3764). Hai notebook
+    that su khac nhau o diem nay, nen tham so phai de mo chu khong duoc chon cung mot ben:
+    ep ca hai ve 1,5 thi tap test lech, ep ca hai ve clip_k thi tap validation lech.
     """
     eps = float(cfg.features["eps_elev"])
-    k = np.clip(k_pred, cfg.train["k_target_min"], cfg.train["k_target_max"])
+    tran = float(cfg.train["k_target_max"]) if clip_k is None else float(clip_k)
+    k = np.clip(k_pred, cfg.train["k_target_min"], tran)
     y = k * mau_chuan_hoa(df, eps)
     if "tran_cong_suat" in df.columns:
         he_so = float(cfg.train["tran_cong_suat_he_so"])

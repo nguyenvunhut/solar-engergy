@@ -11,7 +11,7 @@ import pandas as pd
 
 from .columns import NHAN_OUTLIER, NHAN_SOURCE, TARGET_SHIFTED
 from .config import Cfg
-from .target import eligibility_mask, mau_chuan_hoa
+from .target import eligibility_mask, mau_chuan_hoa, nguong_cat
 
 # Cac experiment coi gmm_if_consensus la du lieu dung duoc
 _GIU_GMM = {"measured_only_headline", "measured_plus_etl_imputed", "tran_theo_du_lieu"}
@@ -63,10 +63,15 @@ def build_sample_weight(df: pd.DataFrame, cfg: Cfg) -> pd.Series:
         w.loc[physical] = 0.0
 
     # THU NGHIEM 2: tang trong so vung dinh. k cang gan tran thi trong so cang lon.
+    # Tran cua k o day PHAI la nguong cat dang hieu luc (nguong_cat), tuc phan vi 99 suy
+    # tu chinh tap train - dung con so ma k_target dung. Truoc day cho nay ghi cung 1.5:
+    # moi dong co k > nguong (dung 1% quan sat) nhan trong so toi 2,5 trong khi notebook
+    # chi cho toi 1 + 1,3764 = 2,3764. Lech trong so o vung dinh keo WAPE kiem dinh lech
+    # 0,01 - 0,09 diem du du lieu vao hai ben giong het nhau tung byte.
     he_so_dinh = float(cfg.train["he_so_trong_so_dinh"])
     if he_so_dinh > 0:
         eps = float(cfg.features["eps_elev"])
-        k = (df[TARGET_SHIFTED] / mau_chuan_hoa(df, eps)).clip(0, 1.5).fillna(0.0)
+        k = (df[TARGET_SHIFTED] / mau_chuan_hoa(df, eps)).clip(0, nguong_cat(cfg)).fillna(0.0)
         w = w * (1.0 + he_so_dinh * k)
     return w
 

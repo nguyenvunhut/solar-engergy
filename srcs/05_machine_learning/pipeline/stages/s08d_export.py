@@ -35,6 +35,10 @@ from core.target import nguong_cat
 # notebook (notebook cung loc dung 3 khoa device/gpu_platform_id/gpu_device_id).
 _KHOA_GPU = ("device", "gpu_platform_id", "gpu_device_id", "gpu_use_dp")
 
+# Cot mang QUY MO cua tram, dong thoi la ten MAU SO chuan hoa dang dung. Hai khoa
+# 'cot_quy_mo' va 'mau_so' trong model_config.json deu tro ve day nen khong the lech nhau.
+COT_QUY_MO = "site_scale"
+
 
 def _pham_vi_chinh(m: dict) -> dict:
     """Lay pham vi measured_daylight; khong co thi lui dan sang measured roi all."""
@@ -70,7 +74,7 @@ def ghi_model(ctx: Ctx) -> None:
         # Bon khoa duoi cho biet PHAI nhan nguoc mau chuan hoa khi du bao. Bo qua la
         # y_pred ra thang do 0..1,5 trong khi y_true la kWh - bug "du bao duoi dat".
         "chuan_hoa": bool(ctx.cfg.train["chuan_hoa"]),
-        "cot_quy_mo": "site_scale",
+        "cot_quy_mo": COT_QUY_MO,
         "cot_sin_elev": "sin_elevation",
         "cot_tran": "tran_cong_suat",
         "eps_elev": float(ctx.cfg.features["eps_elev"]),
@@ -78,6 +82,13 @@ def ghi_model(ctx: Ctx) -> None:
         # nay va stage s09 doc lai de cham diem bang DUNG nguong da train; thieu no thi
         # khong ai kiem duoc hai ben co cat cung mot muc hay khong.
         "clip_k": float(nguong_cat(ctx.cfg)),
+        # Cong tac chon MAU SO chuan hoa muc tieu. Notebook 06 co hai lua chon:
+        # 'site_scale' (quy mo tram nhan sin goc cao) va 'lonij' (phan vi 80 cua 15 ngay
+        # lien truoc, Lonij et al. 2012). Pipeline .py chi cai dat duong site_scale -
+        # core.target.mau_chuan_hoa() khong co nhanh lonij - nen gia tri ghi ra luon la
+        # ten cot quy mo dang dung. Thieu khoa nay thi stage s09 va notebook 07 khong
+        # biet ban ghi duoc chuan hoa bang mau so nao de nhan nguoc cho dung.
+        "mau_so": COT_QUY_MO,
         "model_params": {k: v for k, v in ctx.best_params.items() if k not in _KHOA_GPU},
     })
     # KHONG them khoa nao khac vao day (truoc co 'train_tren_gpu' - da bo): notebook
