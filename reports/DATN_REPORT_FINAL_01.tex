@@ -692,15 +692,15 @@ Dựa trên yêu cầu nghiệp vụ, dự án xây dựng bộ khung đo lườ
     \end{itemize}
     \item \textbf{Nhóm KPI Tổn thất và Tài chính (Loss \& Financial KPIs):}
     \begin{itemize}[noitemsep]
-        \item $\text{Thermal Loss (kWh)} = \text{Sản lượng thất thoát do nhiệt độ tế bào quang điện vượt quá } 25^\circ\text{C}$.
-        \item $\text{Inverter Clipping Loss (kWh)} = \text{Sản lượng bị cắt giảm do công suất DC vượt quá ngưỡng biến tần}$.
-        \item $\text{Estimated Financial Loss (\$) } = \text{Tổn thất sản lượng} \times \text{Đơn giá điện FiT}$.
+        \item \textbf{Thermal Loss (kWh)}: Sản lượng thất thoát do nhiệt độ tế bào quang điện vượt quá $25^\circ\text{C}$.
+        \item \textbf{Inverter Clipping Loss (kWh)}: Sản lượng bị cắt giảm do công suất DC vượt quá ngưỡng biến tần.
+        \item \textbf{Estimated Financial Loss (\$)}: $\text{Tổn thất sản lượng} \times \text{Đơn giá điện FiT}$.
     \end{itemize}
     \item \textbf{Nhóm KPI Cảnh báo Dị thường và Bảo trì (Anomaly \& Maintenance KPIs):}
     \begin{itemize}[noitemsep]
         \item $\text{Anomaly Rate (\%)} = \frac{\text{Số bản ghi dị thường}}{\text{Tổng số bản ghi}} \times 100\%$ (Mục tiêu phát hiện: $1{,}22\%$).
-        \item $\text{Inverter Zero Output Count} = \text{Số sự cố biến tần mất phát giữa trưa nắng gắt } (GHI \ge 700\,\text{W/m}^2)$.
-        \item $\text{Dòng rò ban đêm Records} = \text{Số bản ghi trôi điểm 0 ban đêm cần hiệu chuẩn cảm biến}$.
+        \item \textbf{Inverter Zero Output Count}: Số sự cố biến tần mất phát giữa trưa nắng gắt ($GHI \ge 700\,\text{W/m}^2$).
+        \item \textbf{Dòng rò ban đêm Records}: Số bản ghi trôi điểm 0 ban đêm cần hiệu chuẩn cảm biến.
     \end{itemize}
 \end{enumerate}
 
@@ -4692,25 +4692,52 @@ Bốn việc cụ thể, xếp theo mức dễ làm:
 
 \section{Kết luận Tổng quan}
 \label{sec:conclusion}
-\textit{[Tóm tắt lại việc hoàn thành các mục tiêu dự án: Xây dựng thành công Data Warehouse, làm sạch dữ liệu nhiễu, và phát triển hệ thống Dashboard trực quan giúp doanh nghiệp chuyển đổi từ quản lý thụ động sang giám sát dựa trên dữ liệu.]}
+Dự án đã hoàn thành toàn diện các mục tiêu nghiên cứu và kỹ thuật đặt ra, giải quyết trọn vẹn bài toán từ khâu thu thập, tiền xử lý, lưu trữ, phân tích bất thường cho đến dự báo sản lượng và trực quan hóa dữ liệu vận hành hệ thống điện mặt trời:
 
-\section{Khuyến nghị Chiến lược (Khuyến nghị Hành động Thực tiễn)}
+\begin{itemize}
+    \item \textbf{Xây dựng kiến trúc dữ liệu vững chắc:} Thiết kế và vận hành thành công Data Warehouse trên nền tảng Supabase (PostgreSQL) theo mô hình Galaxy Schema, tích hợp cơ chế Connection Pooling, Indexing tối ưu và Materialized Views, đáp ứng khả năng truy vấn phân tích đa chiều với hiệu năng cao.
+    \item \textbf{Chuẩn hóa và xử lý dữ liệu chuỗi thời gian:} Triển khai hoàn chỉnh pipeline ETL/ELT tự động với thuật toán Causal Cascade Imputation, đảm bảo xử lý triệt để dữ liệu khuyết thiếu mà không gây hiện tượng rò rỉ thông tin tương lai (data leakage), đồng thời đồng bộ hóa thành công dữ liệu đa tần số thời gian (15 phút và 1 giờ).
+    \item \textbf{Phân tích bất thường và dự báo sản lượng chuyên sâu:} Ứng dụng mô hình phân lớp lai GMM--IF (Gaussian Mixture Model -- Isolation Forest) để nhận diện và phân loại chính xác các dạng bất thường kỹ thuật (như suy hao do nhiệt, che khuất, hoặc lỗi cảm biến). Phát triển mô hình hồi quy LightGBM kết hợp tối ưu siêu tham số Optuna và giải thích mô hình bằng SHAP (SHapley Additive exPlanations), đạt độ chính xác cao trong việc dự báo công suất phát điện.
+    \item \textbf{Hỗ trợ ra quyết định dựa trên dữ liệu:} Triển khai hệ thống Dashboard quản trị hoàn chỉnh trên Tableau Desktop với cấu trúc UI/UX theo bảng màu ngữ nghĩa và các trường tính toán phức hợp, giúp doanh nghiệp chuyển đổi từ phương thức bảo trì thụ động (reactive maintenance) sang giám sát chủ động theo thời gian thực (data-driven proactive monitoring).
+\end{itemize}
+
+\section{Khuyến nghị Chiến lược (Actionable Recommendations)}
 \label{sec:recommendations}
-\textit{[Đề xuất các hành động cụ thể: Lắp đặt hệ thống làm mát tự động để giảm suy hao nhiệt, thiết lập quy trình kiểm tra Inverter định kỳ để khắc phục độ nhiễu ban đêm, và ứng dụng kết quả dự báo để lập kế hoạch vệ sinh tấm pin.]}
+Dựa trên kết quả phân tích thực nghiệm từ dữ liệu vận hành, nhóm đề xuất các giải pháp kỹ thuật và vận hành cụ thể nhằm tối ưu hóa hiệu suất (Performance Ratio -- PR) của hệ thống:
+
+\begin{enumerate}
+    \item \textbf{Kiểm soát và giảm thiểu tổn thất do nhiệt độ (Thermal Loss Mitigation):} Kết quả mô hình SHAP chỉ ra nhiệt độ bề mặt tấm pin (Module Temperature) là một trong những yếu tố làm suy giảm hiệu suất mạnh nhất khi bức xạ đạt đỉnh. Đơn vị vận hành cần thiết lập cơ chế cảnh báo tự động khi chênh lệch nhiệt độ vượt ngưỡng an toàn, đồng thời cân nhắc lắp đặt hệ thống phun sương làm mát bề mặt cục bộ vào các khung giờ nắng gắt nhằm duy trì dải nhiệt độ tối ưu cho pin quang điện.
+    \item \textbf{Chuẩn hóa quy trình kiểm tra Inverter và tái hiệu chuẩn cảm biến:} Hiện tượng tiêu thụ công suất ký sinh ban đêm (parasitic power consumption) và độ nhiễu tín hiệu telemetry cần được xử lý thông qua quy trình kiểm định Inverter định kỳ. Cần thực hiện tái hiệu chuẩn (recalibration) định kỳ cảm biến bức xạ (pyranometer) để tránh hiện tượng trôi dạt cảm biến (sensor drift), đảm bảo tính chính xác của dữ liệu đầu vào cho hệ thống giám sát.
+    \item \textbf{Tối ưu hóa lịch trình vệ sinh bề mặt tấm pin (Dynamic Soiling Mitigation):} Thay vì áp dụng lịch vệ sinh định kỳ cố định (vốn gây lãng phí chi phí nhân công và nước), doanh nghiệp nên ứng dụng chênh lệch giữa công suất dự báo của mô hình AI và công suất phát thực tế để xác định mức độ tích tụ bụi bẩn (soiling ratio). Lịch bảo trì sẽ chỉ được kích hoạt khi chi phí tổn thất sản lượng điện vượt qua chi phí vệ sinh thực tế.
+\end{enumerate}
 
 \section{Hạn chế của Dự án}
 \label{sec:limitations}
-\textit{[Những giới hạn về phần cứng, thời gian xử lý dữ liệu lớn, hoặc sự thiếu hụt của các mô hình học sâu (Học sâu) phức tạp hơn.]}
+Mặc dù đã đạt được các kết quả khả quan, đề tài vẫn tồn tại một số hạn chế nhất định do điều kiện thực nghiệm:
+
+\begin{itemize}
+    \item \textbf{Phạm vi dữ liệu đo đạc chuyên sâu:} Hệ thống dữ liệu hiện tại chưa tích hợp cảm biến đo lường chỉ số bám bụi chuyên dụng (Soiling Sensor) hoặc hình ảnh nhiệt hồng ngoại (IR Thermography) từ thiết bị bay không người lái (UAV), dẫn đến việc chẩn đoán các lỗi cục bộ (hot-spots, nứt tế bào cell, hỏng bypass diode) còn phụ thuộc gián tiếp vào suy luận từ thông số dòng/áp.
+    \item \textbf{Độ trễ trong kiến trúc xử lý:} Quy trình xử lý hiện tại chủ yếu vận hành theo cơ chế Batch Processing định kỳ theo chu kỳ giờ/ngày. Hệ thống chưa hỗ trợ xử lý phân tán luồng dữ liệu liên tục (Streaming Pipeline) ở mức độ mili-giây để phản hồi tức thời các sự cố lưới điện (grid transient events).
+    \item \textbf{Hạn chế về hạ tầng tính toán cho Deep Learning:} Do giới hạn về tài nguyên phần cứng máy trạm, dự án tập trung tối ưu hóa các thuật toán dạng Tree-based Ensemble (LightGBM) thay vì huấn luyện các kiến trúc mạng nơ-ron học sâu phức tạp (như Temporal Fusion Transformer hay Informer) đòi hỏi khối lượng dữ liệu khổng lồ và năng lực GPU chuyên dụng để hội tụ.
+\end{itemize}
 
 \section{Hướng phát triển trong tương lai}
 \label{sec:future_work}
-\subsection{Nâng cấp Hệ thống Phân tích Dự đoán (Phân tích Dự báo)}
-\textit{[Tích hợp các mô hình Machine Learning mạnh mẽ hơn (XGBoost, LSTM) để dự báo biến động công suất theo thời gian thực.]}
 
-\subsection{Tự động hóa và Đưa lên Đám mây (Cloud \& Automation)}
+\subsection{Nâng cấp Hệ thống Phân tích Dự đoán}
+Nhằm nâng cao độ tin cậy và khả năng ứng dụng thực tiễn, hệ thống dự báo sẽ được mở rộng theo các hướng:
+\begin{itemize}
+    \item \textbf{Tích hợp các kiến trúc Deep Learning chuỗi thời gian:} Nghiên cứu và triển khai các mô hình học sâu chuyên biệt cho dữ liệu tuần tự dài hạn như Temporal Fusion Transformer (TFT), N-BEATS hoặc PatchTST nhằm mô hình hóa chính xác hơn các phụ thuộc phi tuyến tính phức tạp và đưa ra dự báo đa bước thời gian (multi-horizon forecasting) đi kèm khoảng tin cậy (uncertainty quantification).
+    \item \textbf{Kết hợp dữ liệu khí tượng vệ tinh và Nowcasting:} Tích hợp nguồn cấp dữ liệu dự báo thời tiết số (Numerical Weather Prediction -- NWP) và ảnh vệ tinh thời gian thực để nâng cao năng lực dự báo ngắn hạn (nowcasting 15--60 phút), hỗ trợ hiệu quả cho bài toán điều độ công suất hòa lưới điện quốc gia.
+\end{itemize}
+
+\subsection{Tự động hóa và Đưa lên Nền tảng Đám mây (Cloud \& Automation)}
 \label{sec:future_work_cloud}
-\textit{[Triển khai toàn bộ Pipeline ETL lên các dịch vụ Cloud như AWS/GCP để xử lý luồng dữ liệu Streaming từ các cảm biến IoT.]}
-
+Chuyển đổi toàn diện hệ thống từ môi trường kết hợp (hybrid) sang hạ tầng điện toán đám mây hoàn chỉnh:
+\begin{itemize}
+    \item \textbf{Xây dựng Streaming Pipeline trên nền tảng Cloud:} Chuyển dịch hạ tầng sang các dịch vụ như AWS (Kinesis, Lambda, Glue, Redshift) hoặc GCP (Pub/Sub, Dataflow, BigQuery) để thu nhận và xử lý dòng dữ liệu streaming từ hàng nghìn inverter và cảm biến IoT theo thời gian thực.
+    \item \textbf{Tự động hóa quy trình MLOps và DataOps:} Ứng dụng Apache Airflow để điều phối workflow dữ liệu tự động, sử dụng MLflow cho việc quản lý vòng đời mô hình (Model Registry), và cấu hình cơ chế tự động huấn luyện lại mô hình (Continuous Training) khi hệ thống phát hiện hiện tượng trôi dạt dữ liệu (Data Drift) hoặc trôi dạt khái niệm (Concept Drift).
+\end{itemize}
 \newpage
 % ====================================================================
 %  PHỤ LỤC A: KẾ HOẠCH THỰC HIỆN VÀ PHÂN CÔNG NHIỆM VỤ
@@ -4755,24 +4782,24 @@ Sprint 8 & Tuần 14 & Đóng gói ứng dụng, Báo cáo Final & Streamlit App
 \toprule
 \textbf{Thành Viên} & \textbf{MSSV} & \textbf{Phạm Vi Công Việc Chính} & \textbf{Tỷ Lệ (\%)} \\
 \midrule
-\textbf{Ngô Tấn Đạt} & PS44589 & 
-\textbf{Trưởng nhóm (Team Leader):} Điều phối tổng thể, Thiết kế kiến trúc Pipeline ETL/MLOps, Nghiên cứu thuật toán phân lớp lai GMM--IF, Huấn luyện mô hình LightGBM/Optuna/SHAP, Biên tập báo cáo tổng thể. & 
-$100\%$ \\
-\midrule
 \textbf{Nguyễn Vũ Nhựt} & PS44442 & 
-Thiết kế Kiến trúc Kho Dữ liệu (Supabase DWH), Viết DDL bảng Fact/Dim theo Galaxy Schema, Cấu hình Connection Pooling, Tối ưu hóa chỉ mục (Indexes) và truy vấn SQL. & 
+\textbf{Trưởng nhóm (Team Leader / PM):} Điều phối tiến độ dự án (Sprint/Jira), kiểm soát quy chuẩn kỹ thuật hệ thống, thực hiện Code Review, kiểm duyệt chất lượng dữ liệu và rà soát, hoàn thiện báo cáo tổng thể. & 
 $100\%$ \\
 \midrule
-\textbf{Nguyễn Văn Sỹ} & PS43671 & 
-Phân tích Khám phá Dữ liệu (EDA), Kiểm định phân phối đơn biến và đa biến, Khảo sát tương quan bức xạ -- nhiệt độ, Tổng hợp các biểu đồ phân phối mẫu hình phát điện. & 
+\textbf{Ngô Tấn Đạt} & PS44589 & 
+\textbf{Lead Data Architect / AI:} Thiết kế kiến trúc Pipeline ETL/MLOps, quản lý cơ sở dữ liệu và hạ tầng DWH (Supabase/PostgreSQL), phát triển API, nghiên cứu và huấn luyện mô hình (GMM--IF, LightGBM/Optuna/SHAP). & 
 $100\%$ \\
 \midrule
 \textbf{Lê Công Toàn} & PS44145 & 
-Xây dựng module Tiền xử lý dữ liệu (Transform), Triển khai thuật toán Điền khuyết nhân quả (Causal Cascade Imputation), Xử lý đồng bộ độ phân giải thời gian (15m vs 1h). & 
+Xây dựng module Tiền xử lý dữ liệu (Transform), nghiên cứu cơ sở toán học và triển khai thuật toán Điền khuyết nhân quả (Causal Cascade Imputation), đồng bộ dữ liệu đa tần số thời gian (15m vs 1h). & 
+$100\%$ \\
+\midrule
+\textbf{Nguyễn Văn Sỹ} & PS43671 & 
+Phân tích Khám phá Dữ liệu (EDA), khai phá insight từ mẫu hình phát điện, phát triển Hệ thống Dashboard Quản trị trên Tableau Desktop, thiết kế UI/UX theo bảng màu ngữ nghĩa và xây dựng Calculated Fields phức hợp. & 
 $100\%$ \\
 \midrule
 \textbf{Nguyễn Xuân Hùng} & PS44527 & 
-Phát triển Hệ thống Trực quan hóa Quản trị trên Tableau Desktop, Thiết kế giao diện UI/UX theo bảng màu ngữ nghĩa, Xây dựng các trường tính toán (Calculated Fields) phức hợp. & 
+Quản lý tài liệu nghiệp vụ và đặc tả kỹ thuật, kiểm định và đối soát tính toàn vẹn dữ liệu (Data Quality \& Verification), hỗ trợ triển khai cấu trúc kho dữ liệu và tổng hợp kết quả kiểm thử. & 
 $100\%$ \\
 \bottomrule
 \end{tabularx}
@@ -4780,12 +4807,11 @@ $100\%$ \\
 \label{tab:member_assignment}
 \end{table}
 
-
 % ====================================================================
-%  PHỤ LỤC B: CẤU TRÚC GÓI MÃ NGUỒN VÀ HỆ THỐNG
+%  PHỤ LỤC B: CẤU TRÚC GÓI MÃ NGUỒN 
 % ====================================================================
-\chapter*{Phụ lục B: Cấu trúc Gói Mã nguồn và Hệ thống}
-\addcontentsline{toc}{chapter}{Phụ lục B: Cấu trúc Gói Mã nguồn và Hệ thống}
+\chapter*{Phụ lục B: Cấu trúc Gói Mã nguồn}
+\addcontentsline{toc}{chapter}{Phụ lục B: Cấu trúc Gói Mã nguồn}
 \label{app:code}
 
 Toàn bộ mã nguồn của dự án được tổ chức theo cấu trúc module hóa hướng đối tượng chuẩn công nghiệp, cho phép tái lập 100\% kết quả nghiên cứu:
@@ -4829,8 +4855,8 @@ datn_outlier_hs_nlmt/
 % ====================================================================
 %  PHỤ LỤC C: SƠ ĐỒ VÒNG ĐỜI HỌC MÁY - BẢN NHÃN GỐC TIẾNG ANH
 % ====================================================================
-\chapter*{Phụ lục C: Vòng đời học máy --- bản nhãn gốc}
-\addcontentsline{toc}{chapter}{Phụ lục C: Vòng đời học máy --- bản nhãn gốc}
+\chapter*{Phụ lục C: Vòng đời học máy}
+\addcontentsline{toc}{chapter}{Phụ lục C: Vòng đời học máy}
 \label{app:ml_lifecycle_en}
 
 Hình~\ref{fig:ml_lifecycle} ở Mục~$6.1.2$ sử dụng bản vẽ đã được Việt hóa tiêu đề để phục vụ công tác trình bày báo cáo. Phụ lục này trích dẫn bản vẽ nguyên tác tiếng Anh theo tài liệu đào tạo chuyên ngành MLOps quốc tế để người đọc tiện tra cứu các thuật ngữ kỹ thuật gốc.
@@ -4874,29 +4900,28 @@ Hệ thống phân lớp lai GMM--IF gán nhãn $33.280$ bản ghi dị thườn
 
 \begin{table}[H]
 \centering
-\small
-\renewcommand{\arraystretch}{1.3}
-\begin{tabularx}{\textwidth}{@{} >{\raggedright\arraybackslash}p{2.8cm} >{\raggedright\arraybackslash}p{3.4cm} >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X @{}}
+\footnotesize
+\renewcommand{\arraystretch}{1.35}
+\begin{tabularx}{\textwidth}{@{} >{\raggedright\arraybackslash}p{2.6cm} >{\raggedright\arraybackslash}p{3.4cm} >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X @{}}
 \toprule
 \textbf{Mã Kỹ Thuật} & \textbf{Điều Kiện Kích Hoạt} & \textbf{Bản Chất Sự Cố / Vật Lý} & \textbf{Hành Động Khuyến Nghị} \\
 \midrule
-\texttt{zero\_drift} & $GHI = 0\,\text{W/m}^2$, $h \le 0^\circ$, $0 < E \le 0{,}025\,\text{kWh}$ & Biến dòng CT bị trôi điểm cân bằng điện áp 0V ban đêm. & Tầng ETL tự động ép về $0$; Lên lịch hiệu chuẩn biến dòng CT. \\
+\texttt{zero\_drift} & $GHI = 0\,\text{W/m}^2$, $h \le 0^\circ$,\newline $0 < E \le 0{,}025\,\text{kWh}$ & Biến dòng CT bị trôi điểm cân bằng điện áp 0V ban đêm. & Tầng ETL tự động ép về $0$; Lên lịch hiệu chuẩn biến dòng CT. \\
 \midrule
-\texttt{night\_leakage} & $GHI = 0\,\text{W/m}^2$, $h \le 0^\circ$, $E > 0{,}025\,\text{kWh}$ & Dòng rò cảm ứng hoặc vi xử lý Inverter tiêu thụ điện tự dùng. & Kiểm tra an toàn cách điện tủ phân phối AC và chống rò. \\
+\texttt{night\_leakage} & $GHI = 0\,\text{W/m}^2$, $h \le 0^\circ$,\newline $E > 0{,}025\,\text{kWh}$ & Dòng rò cảm ứng hoặc vi xử lý Inverter tiêu thụ điện tự dùng. & Kiểm tra an toàn cách điện tủ phân phối AC và chống rò. \\
 \midrule
-\texttt{underperformance} & $GHI \ge 500\,\text{W/m}^2$, $E < 0{,}5 \times E_{\text{expected}}$ & Hỏng diode bypass, đứt cầu chì DC 1 chuỗi, hoặc cell pin bị rạn nứt. & Cử kỹ sư dùng camera nhiệt hồng ngoại quét tìm chuỗi pin lỗi. \\
+\texttt{underperformance} & $GHI \ge 500\,\text{W/m}^2$,\newline $E < 0{,}5 \times E_{\text{expected}}$ & Hỏng diode bypass, đứt cầu chì DC 1 chuỗi, hoặc cell pin bị rạn nứt. & Cử kỹ sư dùng camera nhiệt hồng ngoại quét tìm chuỗi pin lỗi. \\
 \midrule
-\texttt{inverter\_zero\_output} & $GHI \ge 700\,\text{W/m}^2$, $E = 0\,\text{kWh}$ & Biến tần ngắt mạch khẩn cấp do quá áp lưới ($>253\text{V}$) hoặc quá nhiệt. & Kiểm tra rơ-le bảo vệ điện áp lưới và hệ thống quạt tản nhiệt. \\
+\texttt{inverter\_zero\_}\newline\texttt{output} & $GHI \ge 700\,\text{W/m}^2$,\newline $E = 0\,\text{kWh}$ & Biến tần ngắt mạch khẩn cấp do quá áp lưới ($>253\text{V}$) hoặc quá nhiệt. & Kiểm tra rơ-le bảo vệ điện áp lưới và hệ thống quạt tản nhiệt. \\
 \midrule
-\texttt{thermal\_derating} & $T_{\text{amb}} \ge 40^\circ\text{C}$, $GHI \ge 800$, $0{,}6 \le E/E_{\text{exp}} \le 0{,}85$ & Biến tần tự động giảm tải để bảo vệ linh kiện bán dẫn công suất IGBT. & Lắp tấm chắn nắng phản quang; vệ sinh lưới tản nhiệt biến tần. \\
+\texttt{thermal\_}\newline\texttt{derating} & $T_{\text{amb}} \ge 40^\circ\text{C}$, $GHI \ge 800$,\newline $0{,}6 \le E/E_{\text{exp}} \le 0{,}85$ & Biến tần tự động giảm tải để bảo vệ linh kiện bán dẫn công suất IGBT. & Lắp tấm chắn nắng phản quang; vệ sinh lưới tản nhiệt biến tần. \\
 \midrule
-\texttt{inverter\_clipping} & $GHI \ge 850\,\text{W/m}^2$, $E \approx P_{\text{AC, max}}$ (đỉnh phẳng) & Công suất DC vượt định mức AC ($ILR = 1{,}25$). & Tối ưu kinh tế thiết kế theo chuẩn CEC; không cần can thiệp kỹ thuật. \\
+\texttt{inverter\_}\newline\texttt{clipping} & $GHI \ge 850\,\text{W/m}^2$,\newline $E \approx P_{\text{AC, max}}$ (đỉnh phẳng) & Công suất DC vượt định mức AC ($ILR = 1{,}25$). & Tối ưu kinh tế thiết kế theo chuẩn CEC; không cần can thiệp kỹ thuật. \\
 \bottomrule
 \end{tabularx}
 \caption{Bảng ma trận tra cứu chi tiết 6 mã dị thường kỹ thuật GMM--IF và quy trình xử lý.}
 \label{tab:outlier_matrix_detail}
 \end{table}
-
 
 \newpage
 \begin{thebibliography}{99}
