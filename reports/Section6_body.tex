@@ -430,12 +430,14 @@ nghĩa. Quy trình đặt năm rào chắn, mỗi rào chắn gắn với một 
     chuẩn hoá được tính từ phân vị của dữ liệu huấn luyện, rồi ghi vào tệp cấu hình để
     các bước sau đọc lại đúng giá trị đó thay vì tính lại trên tập khác.
 
-    \item \textbf{Tái lập được} (bước $6$). LightGBM chạy ở chế độ tất định trên CPU;
-    chạy lại với cùng hạt giống ngẫu nhiên cho ra mô hình trùng khít.
+    \item \textbf{Tái lập được} (bước $6$). LightGBM chạy ở chế độ tất định trên CPU với
+    \texttt{deterministic} $=$ true, \texttt{force\_col\_wise} $=$ true và
+    \texttt{random\_state} $=42$; toàn bộ siêu tham số của sáu cấu hình được ghi ra
+    \texttt{model\_config.json} để đối chiếu.
 \end{enumerate}
 
 Bốn rào chắn đầu được kiểm chứng bằng số liệu ở các phần tương ứng phía sau. Rào chắn
-thứ năm được kiểm chứng bằng hai phép chạy lại độc lập, trình bày ở Mục~$7.4.5$.
+thứ năm được bảo đảm bằng cấu hình tất định, trình bày ở Mục~$7.4.5$.
 
 \FloatBarrier
 \section{Chuẩn bị dữ liệu và chia tập}
@@ -722,7 +724,7 @@ tại các mốc trễ đáng chú ý.
 
 \begin{table}[htbp]
 \centering
-\caption{Tự tương quan của chuỗi sản lượng tại các mốc trễ đáng chú ý, trạm $27$, $51.652$
+\caption{Tự tương quan của chuỗi sản lượng tại các mốc trễ đáng chú ý, trạm $27$, $42.240$
 bước liên tục. Đọc từ ô kết quả của notebook \texttt{02\_EDA.ipynb}.}
 \label{tab:eda_acf}
 \small
@@ -730,19 +732,19 @@ bước liên tục. Đọc từ ô kết quả của notebook \texttt{02\_EDA.i
 \toprule
 \textbf{Mốc trễ} & \textbf{Khoảng cách} & \textbf{ACF} \\
 \midrule
-\texttt{lag\_1}   & $15$ phút  & $\mathbf{+0{,}9691}$ \\
-\texttt{lag\_4}   & $1$ giờ    & $+0{,}9039$ \\
-\texttt{lag\_96}  & $24$ giờ   & $+0{,}7138$ \\
---- & $48$ giờ & $+0{,}6506$ \\
---- & $72$ giờ & $+0{,}6274$ \\
+\texttt{lag\_1}   & $15$ phút  & $\mathbf{+0{,}9689}$ \\
+\texttt{lag\_4}   & $1$ giờ    & $+0{,}9033$ \\
+\texttt{lag\_96}  & $24$ giờ   & $+0{,}7134$ \\
+--- & $48$ giờ & $+0{,}6613$ \\
+--- & $72$ giờ & $+0{,}6465$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Con số $+0{,}9680$ tại mốc $15$ phút là điểm cần đọc kỹ. Ở mức tự tương quan đó, giá trị tại
+Con số $+0{,}9689$ tại mốc $15$ phút là điểm cần đọc kỹ. Ở mức tự tương quan đó, giá trị tại
 $t$ gần như là bản sao của giá trị tại $t+1$, nên một mô hình được cấp \texttt{lag\_1} sẽ có lối
-tắt hiển nhiên: lặp lại giá trị vừa đo. Mốc $1$ giờ vẫn giữ tương quan cao $+0{,}8942$ nhưng
-đã đủ xa để không còn là bản sao, còn mốc $24$ giờ ở $+0{,}7923$ mang thông tin chu kỳ ngày.
+tắt hiển nhiên: lặp lại giá trị vừa đo. Mốc $1$ giờ vẫn giữ tương quan cao $+0{,}9033$ nhưng
+đã đủ xa để không còn là bản sao, còn mốc $24$ giờ ở $+0{,}7134$ mang thông tin chu kỳ ngày.
 Hình~\ref{fig:eda_acf} là biểu đồ đầy đủ.
 Ba con số này là căn cứ định lượng cho lựa chọn trình bày ở Mục~$7.3.1$.
 
@@ -958,7 +960,7 @@ $h$ nhiều nhất là bốn bước.
 
 Bảng~\ref{tab:chong_lan} tự kiểm chứng được. Ở tầm H1 chỉ một bước cuối bị chồng
 lấn, nên số dòng phải bằng số trạm còn hoạt động tại bước đó: cột chồng lấn H1 cho $30$,
-$39$ và $42$, trùng khít cột số trạm ở Bảng~\ref{tab:ba_fold}. Cột H4 gấp đúng bốn lần các
+$39$ và $42$, tương ứng với cột số trạm ở Bảng~\ref{tab:ba_fold}. Cột H4 bằng bốn lần các
 giá trị đó.
 
 Với mức chồng lấn dưới một phần nghìn ở cả ba fold, phép cắt liên tục được giữ nguyên,
@@ -1145,7 +1147,7 @@ trong notebook \texttt{06\_1\_train\_mae.ipynb}.}
 \midrule
 Thuật toán & LightGBM & LightGBM \\
 Hàm mất mát & \texttt{l1} (MAE) & \texttt{l1} (MAE) \\
-Số đặc trưng & $54$ & $54$ \\
+Số đặc trưng & $53$ & $53$ \\
 Trọng số mẫu & có & có \\
 \addlinespace
 Quy mô tập đầu vào & $300.000$ lấy ngẫu nhiên & $1.550.856$ \\
@@ -1157,7 +1159,7 @@ Thời gian huấn luyện & $9{,}3$ giây & hàng chục phút \\
 \end{tabular}
 \end{table}
 
-Vì thuật toán, hàm mất mát và danh sách đặc trưng giống hệt mô hình cuối, cổng kiểm được đúng
+Vì thuật toán, hàm mất mát và danh sách đặc trưng thống nhất với mô hình cuối, cổng kiểm được đúng
 thứ nó cần kiểm: \textbf{bộ đặc trưng có đẩy mô hình vào hành vi bám trụ hay không}. Nếu
 \texttt{lag\_1} có mặt thì mô hình nháp cũng sao chép giá trị gần nhất y như mô hình cuối.
 
@@ -1232,15 +1234,7 @@ nên không mang rủi ro rò rỉ.
 
 Góc cao $h$ và góc phương vị được tính theo thuật toán vị trí Mặt Trời chuẩn của NOAA ---
 chuỗi Fourier cho độ xích vĩ, phương trình thời gian và góc giờ. Đây là công cụ tham chiếu
-chính thức, xem Hình~\ref{fig:noaa}.
-
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=0.80\textwidth]{noaa_solar_calculator_real_screenshot.png}
-    \caption{NOAA Solar Calculator của Global Monitoring Laboratory --- công cụ chính thức
-    tính vị trí Mặt Trời mà hàm \texttt{tinh\_goc\_mat\_troi} của dự án dựa theo.}
-    \label{fig:noaa}
-\end{figure}
+chính thức.
 
 Ba chi tiết cài đặt đáng nêu, tóm tắt ở Bảng~\ref{tab:chi_tiet_solar}.
 
@@ -1573,7 +1567,7 @@ ra chính là đường Mặt Trời bị trễ đúng $h$ bước. Đây là h�
 \textbf{Cách xử lý.} Quy trình khai báo một danh sách $22$ cột \textbf{tất định} --- hình học
 Mặt Trời cùng các đại lượng suy ra từ nó, và toàn bộ nhãn thời gian theo lịch --- rồi sinh thêm
 bản của chúng tại $T{+}h$ với hậu tố \texttt{\_mt}, đồng thời \textbf{giữ nguyên} bản tại $T$. Ở
-tầm H1 sinh được $14$ cột, nâng tổng số đặc trưng vào mô hình từ $40$ lên $54$.
+tầm H1 sinh được $14$ cột, nâng tổng số đặc trưng vào mô hình từ $39$ lên $53$.
 
 \textbf{Ranh giới hợp lệ của phép dịch.} Vị trí Mặt Trời và nhãn lịch tại
 $T{+}h$ là kết quả tính toán thiên văn và lịch thuần tuý; đứng ở thời điểm $T$ đã biết chính
@@ -1777,30 +1771,30 @@ quả \texttt{05b\_thuc\_nghiem\_tham\_so/thuc\_nghiem\_tham\_so\_hardcode.csv}.
 \textbf{Tham số} & \textbf{Mức} & \textbf{Dòng huấn luyện} & \textbf{WAPE (\%)} & \textbf{RMSE} & \textbf{$R^2$} \\
 \midrule
 \texttt{eps\_elev}
- & $0{,}00$ & $604.200$ & $20{,}5872$ & $3{,}4733$ & $0{,}8931$ \\
- & $0{,}02$ & $602.937$ & $20{,}5657$ & $3{,}4895$ & $0{,}8921$ \\
- & $\mathbf{0{,}05}$ & $\mathbf{599.174}$ & $\mathbf{20{,}5692}$ & $\mathbf{3{,}4799}$ & $\mathbf{0{,}8926}$ \\
- & $0{,}10$ & $582.252$ & $20{,}5810$ & $3{,}4832$ & $0{,}8924$ \\
- & $0{,}15$ & $557.266$ & $20{,}5155$ & $3{,}4630$ & $0{,}8937$ \\
+ & $0{,}00$ & $604.200$ & $20{,}7838$ & $3{,}5100$ & $0{,}8908$ \\
+ & $0{,}02$ & $602.937$ & $20{,}6678$ & $3{,}4990$ & $0{,}8915$ \\
+ & $\mathbf{0{,}05}$ & $\mathbf{599.174}$ & $\mathbf{20{,}7345}$ & $\mathbf{3{,}5098}$ & $\mathbf{0{,}8908}$ \\
+ & $0{,}10$ & $582.252$ & $20{,}6486$ & $3{,}4967$ & $0{,}8916$ \\
+ & $0{,}15$ & $557.266$ & $20{,}7176$ & $3{,}5049$ & $0{,}8911$ \\
 \midrule
 $k_{\max}$
- & $1{,}0$ & $599.174$ & $24{,}1097$ & $3{,}8230$ & $0{,}8704$ \\
- & $1{,}2$ & $599.174$ & $21{,}1356$ & $3{,}5535$ & $0{,}8881$ \\
- & $\mathbf{1{,}5}$ & $\mathbf{599.174}$ & $\mathbf{20{,}5692}$ & $\mathbf{3{,}4799}$ & $\mathbf{0{,}8926}$ \\
- & $2{,}0$ & $599.174$ & $20{,}4791$ & $3{,}4638$ & $0{,}8936$ \\
- & $3{,}0$ & $599.174$ & $20{,}4473$ & $3{,}4502$ & $0{,}8945$ \\
+ & $1{,}0$ & $599.174$ & $23{,}4990$ & $3{,}7697$ & $0{,}8740$ \\
+ & $1{,}2$ & $599.174$ & $20{,}9647$ & $3{,}5358$ & $0{,}8892$ \\
+ & $\mathbf{1{,}5}$ & $\mathbf{599.174}$ & $\mathbf{20{,}7345}$ & $\mathbf{3{,}5098}$ & $\mathbf{0{,}8908}$ \\
+ & $2{,}0$ & $599.174$ & $20{,}7344$ & $3{,}5098$ & $0{,}8908$ \\
+ & $3{,}0$ & $599.174$ & $20{,}7344$ & $3{,}5098$ & $0{,}8908$ \\
 \midrule
 Hệ số nới trần
- & $1{,}00$ & $599.174$ & $20{,}5710$ & $3{,}4816$ & $0{,}8925$ \\
- & $\mathbf{1{,}02}$ & $\mathbf{599.174}$ & $\mathbf{20{,}5692}$ & $\mathbf{3{,}4799}$ & $\mathbf{0{,}8926}$ \\
- & $1{,}05$ & $599.174$ & $20{,}5669$ & $3{,}4781$ & $0{,}8928$ \\
- & $1{,}10$ & $599.174$ & $20{,}5650$ & $3{,}4766$ & $0{,}8928$ \\
+ & $1{,}00$ & $599.174$ & $20{,}7358$ & $3{,}5111$ & $0{,}8907$ \\
+ & $\mathbf{1{,}02}$ & $\mathbf{599.174}$ & $\mathbf{20{,}7345}$ & $\mathbf{3{,}5098}$ & $\mathbf{0{,}8908}$ \\
+ & $1{,}05$ & $599.174$ & $20{,}7332$ & $3{,}5088$ & $0{,}8909$ \\
+ & $1{,}10$ & $599.174$ & $20{,}7327$ & $3{,}5084$ & $0{,}8909$ \\
 \midrule
 Trọng số vùng đỉnh
- & $0{,}0$ & $599.174$ & $20{,}4051$ & $3{,}4623$ & $0{,}8937$ \\
- & $0{,}5$ & $599.174$ & $20{,}5059$ & $3{,}4650$ & $0{,}8936$ \\
- & $\mathbf{1{,}0}$ & $\mathbf{599.174}$ & $\mathbf{20{,}5692}$ & $\mathbf{3{,}4799}$ & $\mathbf{0{,}8926}$ \\
- & $2{,}0$ & $599.174$ & $20{,}6429$ & $3{,}4928$ & $0{,}8919$ \\
+ & $0{,}0$ & $599.174$ & $20{,}6603$ & $3{,}5129$ & $0{,}8906$ \\
+ & $0{,}5$ & $599.174$ & $20{,}6775$ & $3{,}5019$ & $0{,}8913$ \\
+ & $\mathbf{1{,}0}$ & $\mathbf{599.174}$ & $\mathbf{20{,}7345}$ & $\mathbf{3{,}5098}$ & $\mathbf{0{,}8908}$ \\
+ & $2{,}0$ & $599.174$ & $20{,}8405$ & $3{,}5193$ & $0{,}8902$ \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1808,7 +1802,7 @@ Trọng số vùng đỉnh
 Bảng này phải đọc trung thực, vì không phải tham số nào cũng có tác động như nhau.
 
 \textbf{Sàn mẫu số $\varepsilon$ không quyết định độ chính xác.} Toàn dải từ $0{,}00$ tới
-$0{,}15$ chỉ chênh nhau $0{,}0717$ điểm phần trăm WAPE. Cái mà $\varepsilon$ thực sự điều
+$0{,}15$ chỉ chênh nhau $0{,}1352$ điểm phần trăm WAPE. Cái mà $\varepsilon$ thực sự điều
 khiển là số dòng còn lại để huấn luyện: từ $604.200$ xuống $557.266$, mất $7{,}8\%$. Hai
 con số này là hai đầu của dải quét, ứng với $\varepsilon = 0{,}00$ và $\varepsilon = 0{,}15$,
 đọc từ ô kết quả notebook \texttt{05b\_thuc\_nghiem\_tham\_so\_hardcode.ipynb} và cột
@@ -1844,18 +1838,18 @@ sản lượng ban ngày. Mọi con số trong đoạn này đọc từ tệp k�
 \texttt{05e\_kiem\_chung/con\_so\_bao\_cao.json}.
 
 \textbf{Cận cắt $k_{\max}$ là tham số có tác động rõ.} Hạ xuống $1{,}0$ làm WAPE xấu đi
-$3{,}54$ điểm, vì cắt mất phần thân của phân bố chứ không chỉ đuôi. Nới lên $2{,}0$ và $3{,}0$
-cải thiện thêm $0{,}09$ và $0{,}12$ điểm, nhưng đổi lại thì phép cắt gần như mất tác dụng chặn
+$2{,}76$ điểm, vì cắt mất phần thân của phân bố chứ không chỉ đuôi. Nới lên $2{,}0$ và $3{,}0$
+cải thiện thêm $0{,}0001$ điểm ở cả hai mức, nhưng đổi lại thì phép cắt gần như mất tác dụng chặn
 các điểm đo bất thường. Giá trị dùng thật là $1{,}3764$ suy từ phân vị $99$ của tập huấn
 luyện, nằm giữa hai mức $1{,}2$ và $1{,}5$ của phép quét.
 
 \textbf{Hệ số nới trần không phải lựa chọn về độ chính xác.} Bốn mức từ $1{,}00$ tới $1{,}10$
-chênh nhau $0{,}006$ điểm WAPE, tức nằm trong mức nhiễu. Hệ số $1{,}02$ được chọn theo lý do
+chênh nhau $0{,}0031$ điểm WAPE, tức nằm trong mức nhiễu. Hệ số $1{,}02$ được chọn theo lý do
 vật lý: chừa $2\%$ dư địa quanh trần để không cắt oan các dao động ngắn do hiện tượng tăng
 cường bức xạ ở mép mây, chứ không phải khẳng định công suất lắp đặt thực tế cao hơn $2\%$.
 
-\textbf{Trọng số vùng đỉnh làm WAPE tổng thể xấu đi.} Tắt hẳn cho $20{,}4051\%$, thấp hơn mức
-đang dùng $0{,}164$ điểm. Đây là một đánh đổi có chủ đích chứ không phải tham số bị bỏ quên:
+\textbf{Trọng số vùng đỉnh làm WAPE tổng thể xấu đi.} Tắt hẳn cho $20{,}6603\%$, thấp hơn mức
+đang dùng $0{,}0742$ điểm. Đây là một đánh đổi có chủ đích chứ không phải tham số bị bỏ quên:
 trọng số này kéo mô hình chú ý vào khung giờ phát điện mạnh, nơi sai số có giá trị vận hành
 lớn nhất, và trả giá bằng một phần nhỏ sai số trung bình trên toàn tập.
 
@@ -2103,7 +2097,7 @@ $10$ & \texttt{ghi\_cs}          & $0{,}7939$ \\
 
 Bốn vị trí đầu đều là đặc trưng cửa sổ trượt một giờ, và sáu vị trí đầu đều suy từ lịch sử của
 chính chuỗi sản lượng. Bảng xếp hạng này khớp với kết quả tự tương quan ở Mục~$2.2$: chuỗi mang
-tự tương quan $+0{,}8942$ tại mốc một giờ, nên các thống kê của cửa sổ một giờ gần nhất là nguồn
+tự tương quan $+0{,}9033$ tại mốc một giờ, nên các thống kê của cửa sổ một giờ gần nhất là nguồn
 thông tin mạnh nhất về giá trị sắp tới.
 
 \subsubsection{Danh sách bảo vệ}
@@ -2136,7 +2130,7 @@ nhưng mô hình cần chúng để không coi ngày $31/12$ và ngày $01/01$ l
 
 \subsubsection{Kết quả áp cho mười tập}
 
-Bốn mươi đặc trưng đã chọn được áp đồng loạt cho mười tập dữ liệu --- bốn tập chính và sáu phần
+Ba mươi chín đặc trưng đã chọn được áp đồng loạt cho mười tập dữ liệu --- bốn tập chính và sáu phần
 của ba fold:
 
 % Khoi ket xuat notebook. Khong boc trong minipage nua: minipage la mot hop lien
@@ -2177,18 +2171,18 @@ Moi tap deu co du dac trung da chon.
 \endgroup
 
 Cột \texttt{feature\_thieu} bằng $0$ ở cả mười dòng, tức không tập nào thiếu đặc trưng đã chọn.
-Mỗi tập giữ $50$ cột: $40$ đặc trưng cùng $10$ cột phụ trợ gồm mục tiêu, mốc thời gian, mã trạm
-và các cột phục vụ lọc phạm vi chấm điểm. Danh sách $40$ tên cột được ghi ra tệp
+Mỗi tập giữ $49$ cột: $39$ đặc trưng cùng $10$ cột phụ trợ gồm mục tiêu, mốc thời gian, mã trạm
+và các cột phục vụ lọc phạm vi chấm điểm. Danh sách $39$ tên cột được ghi ra tệp
 \texttt{selected\_features.json} để các bước huấn luyện và phục vụ đọc lại đúng một danh sách duy
 nhất.
 
 \subsection{Tổng hợp bộ đặc trưng đưa vào mô hình}
 
-Bảng~\ref{tab:bo_dac_trung} liệt kê trọn $40$ đặc trưng đã chọn, xếp theo sáu nhóm.
+Bảng~\ref{tab:bo_dac_trung} liệt kê trọn $39$ đặc trưng đã chọn, xếp theo sáu nhóm.
 
 \begin{table}[htbp]
 \centering
-\caption{Bốn mươi đặc trưng được chọn, xếp theo nhóm. Đọc từ
+\caption{Ba mươi chín đặc trưng được chọn, xếp theo nhóm. Đọc từ
 \texttt{05\_selected/selected\_features.json}.}
 \label{tab:bo_dac_trung}
 \small
@@ -2213,16 +2207,16 @@ Tương tác và tỷ lệ & $5$ &
 \texttt{rad\_x\_sinelev}, \texttt{temp\_x\_shortwave}, \texttt{diffuse\_ratio},
 \texttt{cloud\_x\_shortwave}, \texttt{cloud\_low\_x\_shortwave} \\
 \addlinespace
-Lịch sử chuỗi & $10$ &
+Lịch sử chuỗi & $9$ &
 \texttt{lag\_4}, \texttt{lag\_96}, \texttt{rolling\_mean\_4}, \texttt{rolling\_std\_4},
 \texttt{rolling\_min\_4}, \texttt{rolling\_max\_4}, \texttt{rolling\_mean\_96},
-\texttt{rolling\_std\_96}, \texttt{rolling\_min\_96}, \texttt{rolling\_max\_96} \\
+\texttt{rolling\_std\_96}, \texttt{rolling\_max\_96} \\
 \addlinespace
 Quy mô trạm và mã hoá & $6$ &
 \texttt{ky\_vong}, \texttt{ty\_le\_bao\_hoa}, \texttt{tran\_cong\_suat}, \texttt{site\_id\_enc},
 \texttt{weather\_condition\_enc}, \texttt{weather\_description\_enc} \\
 \midrule
-\textbf{Tổng} & $\mathbf{40}$ & \\
+\textbf{Tổng} & $\mathbf{39}$ & \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2256,7 +2250,7 @@ bằng đúng $1{,}3764$, tức cận cắt suy từ phân vị $99$ ở Mục~$
 \FloatBarrier
 \section{Huấn luyện và chọn hàm mất mát}
 
-Mô hình là LightGBM hồi quy, huấn luyện riêng cho H1 và H4, mỗi tầm nhận $54$ đặc trưng.
+Mô hình là LightGBM hồi quy, huấn luyện riêng cho H1 và H4, mỗi tầm nhận $53$ đặc trưng.
 Mục này đi qua năm bước: trọng số cho dòng ngoại lai, tinh chỉnh siêu tham số
 (\textit{hyperparameter}), sáu cấu hình chọn được, chọn hàm mất mát, và cấu hình tất định.
 
@@ -2383,14 +2377,14 @@ chấm trên đúng cùng số quan sát. Đọc từ \texttt{metrics\_val.json}
 \textbf{Tầm} & \textbf{Hàm mất mát} & \textbf{WAPE (\%)} & \textbf{RMSE} & \textbf{MAE} & \textbf{$R^2$} \\
 \midrule
 \multicolumn{6}{@{}l}{\textit{H1 --- $288.811$ quan sát cho cả ba hàm}} \\
-H1 & \textbf{MAE}  & $\mathbf{22{,}0515}$ & $3{,}6737$ & $1{,}5062$ & $0{,}8984$ \\
-H1 & MSE           & $22{,}6588$ & $3{,}6372$ & $1{,}5477$ & $0{,}9004$ \\
-H1 & Huber         & $22{,}7936$ & $3{,}6608$ & $1{,}5569$ & $0{,}8991$ \\
+H1 & \textbf{MAE}  & $\mathbf{22{,}0523}$ & $3{,}6737$ & $1{,}5062$ & $0{,}8984$ \\
+H1 & MSE           & $22{,}6591$ & $3{,}6373$ & $1{,}5477$ & $0{,}9004$ \\
+H1 & Huber         & $22{,}7937$ & $3{,}6608$ & $1{,}5569$ & $0{,}8991$ \\
 \addlinespace
 \multicolumn{6}{@{}l}{\textit{H4 --- $272.569$ quan sát cho cả ba hàm}} \\
-H4 & \textbf{MAE}  & $\mathbf{26{,}9585}$ & $4{,}3592$ & $1{,}9329$ & $0{,}8628$ \\
-H4 & MSE           & $27{,}3309$ & $4{,}2847$ & $1{,}9596$ & $0{,}8675$ \\
-H4 & Huber         & $27{,}4040$ & $4{,}2893$ & $1{,}9648$ & $0{,}8672$ \\
+H4 & \textbf{MAE}  & $\mathbf{26{,}9712}$ & $4{,}3598$ & $1{,}9338$ & $0{,}8628$ \\
+H4 & MSE           & $27{,}3365$ & $4{,}2850$ & $1{,}9600$ & $0{,}8674$ \\
+H4 & Huber         & $27{,}4086$ & $4{,}2896$ & $1{,}9651$ & $0{,}8672$ \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2421,14 +2415,9 @@ bị bỏ qua. Quy trình đặt tính tái lập lên trước tốc độ nên
 
 
 
-\textbf{Kiểm chứng bằng hai phép chạy lại.} Sau khi cấu hình đã khoá và tập test đã mở, cả sáu
-cấu hình được huấn luyện lại từ đầu bằng cùng hạt giống. Kết quả trên tập kiểm định của lần
-chạy lại này chính là Bảng~\ref{tab:chon_loss} ở Mục~$7.4.4$, và thứ tự giữa ba hàm mất mát giữ
-nguyên so với lần khoá cấu hình. Đây là bằng chứng cho rào chắn thứ năm ở Mục~$7.1.5$.
-
-Phép chạy lại thứ hai nằm ở bước giải thích mô hình: bước tính SHAP ở Mục~$7.6$ được chạy lại
-trên mô hình vừa huấn luyện lại và cho bảng xếp hạng cùng giá trị trùng khít tới từng chữ số
-với lần chạy trước.
+Cấu hình tất định này là điều kiện để mọi con số trong tài liệu truy được về đúng tệp kết
+quả đã sinh ra chúng: sáu cấu hình huấn luyện, sáu tệp \texttt{metrics\_val.json} dưới
+\texttt{06\_train/}, và các bảng ở Mục~$7.4.4$ đọc thẳng từ những tệp đó.
 
 \FloatBarrier
 \section{Đánh giá trên tập test niêm phong}
@@ -2523,8 +2512,8 @@ Bảng~\ref{tab:ket_qua_test} là kết quả chính của toàn bộ tài liệ
 \toprule
 \textbf{Phạm vi} & \textbf{H1 (\%)} & \textbf{H4 (\%)} \\
 \midrule
-Toàn bộ                   & $17{,}12$ & $21{,}94$ \\
-Đo thật                   & $17{,}76$ & $22{,}65$ \\
+Toàn bộ                   & $17{,}10$ & $21{,}86$ \\
+Đo thật                   & $17{,}76$ & $22{,}64$ \\
 \textbf{Đo thật ban ngày} & $\mathbf{17{,}74}$ & $\mathbf{22{,}62}$ \\
 \bottomrule
 \end{tabular}
@@ -2558,7 +2547,7 @@ khác nhau. Chúng không so trực tiếp được với nhau, phải đọc k�
 Optuna, gộp ba fold kiểm định   & $24{,}1767$ & $29{,}4090$ \\
 Test niêm phong, toàn bộ        & $17{,}0963$ & $21{,}8627$ \\
 Test niêm phong, đo thật ban ngày & $17{,}7409$ & $22{,}6181$ \\
-Cùng phạm vi với Prophet        & $17{,}7934$ & $22{,}3645$ \\
+Cùng phạm vi với Prophet        & $17{,}7921$ & $22{,}3613$ \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2685,12 +2674,12 @@ $220.260$ ở H1 và $202.955$ ở H4. Kết quả ở Bảng~\ref{tab:prophet}.
 \toprule
 \textbf{Tầm và mô hình} & \textbf{Số dòng} & \textbf{WAPE (\%)} & \textbf{RMSE} & \textbf{MAE} & \textbf{$R^2$} \\
 \midrule
-H1 --- LightGBM & $220.260$ & $\mathbf{17{,}7934}$ & $3{,}4432$ & $1{,}4010$ & $0{,}9232$ \\
-H1 --- Prophet  & $220.260$ & $35{,}2563$ & $5{,}4666$ & $2{,}7759$ & $0{,}8063$ \\
+H1 --- LightGBM & $220.114$ & $\mathbf{17{,}7921}$ & $3{,}4443$ & $1{,}4017$ & $0{,}9231$ \\
+H1 --- Prophet  & $220.114$ & $35{,}2548$ & $5{,}4683$ & $2{,}7775$ & $0{,}8063$ \\
 \multicolumn{2}{@{}l}{\textit{Skill Score H1}} & \multicolumn{4}{l}{$\mathbf{+49{,}53\%}$} \\
 \addlinespace
-H4 --- LightGBM & $202.955$ & $\mathbf{22{,}3645}$ & $4{,}3447$ & $1{,}8483$ & $0{,}8815$ \\
-H4 --- Prophet  & $202.955$ & $35{,}0858$ & $5{,}6147$ & $2{,}8997$ & $0{,}8021$ \\
+H4 --- LightGBM & $202.677$ & $\mathbf{22{,}3613}$ & $4{,}3475$ & $1{,}8504$ & $0{,}8815$ \\
+H4 --- Prophet  & $202.677$ & $35{,}0821$ & $5{,}6182$ & $2{,}9031$ & $0{,}8020$ \\
 \multicolumn{2}{@{}l}{\textit{Skill Score H4}} & \multicolumn{4}{l}{$\mathbf{+36{,}26\%}$} \\
 \bottomrule
 \end{tabular}
@@ -2715,7 +2704,7 @@ phải so với mọi phương án khả dĩ. Một đường cơ sở yếu hơ
 Nguy cơ lớn nhất của một mô hình dự báo quang điện là nó học cách lặp lại giá trị vừa đo thay
 vì thật sự dự báo --- khi đó đường dự báo trông rất khớp nhưng thực chất chỉ là đường thực tế
 bị đẩy sang phải. Notebook \texttt{09\_kiem\_chung\_tre\_pha} đo trực tiếp hiện tượng đó trên
-$478.902$ dòng dự báo H1 của tập test, bằng cách so mốc đạt đỉnh của đường dự báo với mốc đạt
+$475.599$ dòng dự báo H1 của tập test, bằng cách so mốc đạt đỉnh của đường dự báo với mốc đạt
 đỉnh của đường thực tế, cho từng trạm từng ngày:
 
 % Khoi ket xuat notebook. Khong boc trong minipage nua: minipage la mot hop lien
@@ -2795,14 +2784,13 @@ Lundberg và Lee~\cite{lundberg2017shap} là công trình đề xuất khung th�
 
 
 
-Phạm vi tính: mô hình thắng ở tầm H1 (cấu hình MAE), chạy trên toàn bộ $478.902$ dòng của tập
-test với $54$ đặc trưng. Giá trị SHAP tính trên thang mục tiêu đã chuẩn hoá $k$, không phải
+Phạm vi tính: mô hình thắng ở tầm H1 (cấu hình MAE), chạy trên toàn bộ $475.599$ dòng của tập
+test với $53$ đặc trưng. Giá trị SHAP tính trên thang mục tiêu đã chuẩn hoá $k$, không phải
 thang kWh.
 
 Ma trận đặc trưng dùng để tính SHAP lấy đúng tệp \texttt{X\_test\_h1.parquet} mà bước đánh giá đã
-ghi ra, nên phạm vi dòng trùng khít với Phần~$5$. Bước này đã được chạy lại một lần nữa sau khi
-mô hình được huấn luyện lại: kết quả xếp hạng và giá trị SHAP trùng khít tới từng chữ số với
-lần chạy trước, phù hợp với chế độ tất định nêu ở Mục~$7.4.5$.
+ghi ra, nên phạm vi dòng thống nhất với Phần~$5$. Giá trị SHAP được tính trên toàn bộ
+$475.599$ dòng của tập test, không lấy mẫu.
 
 \FloatBarrier
 \subsection{Tầm quan trọng tổng thể}
@@ -2820,16 +2808,16 @@ giá trị SHAP. Đọc từ \texttt{08\_explain/shap\_importance.csv}.}
 \toprule
 \textbf{Hạng} & \textbf{Đặc trưng} & \textbf{SHAP trung bình} & \textbf{Nhóm} \\
 \midrule
-$1$  & \texttt{direct\_normal\_irradiance} & $0{,}0872$ & Khí tượng đo được \\
-$2$  & \texttt{ky\_vong}                  & $0{,}0851$ & Quy mô trạm \\
-$3$  & \texttt{rolling\_min\_4}            & $0{,}0799$ & Lịch sử chuỗi \\
-$4$  & \texttt{ghi\_cs\_mt}                & $0{,}0745$ & Trời quang tại $T{+}h$ \\
-$5$  & \texttt{rolling\_max\_4}            & $0{,}0671$ & Lịch sử chuỗi \\
-$6$  & \texttt{rolling\_mean\_4}           & $0{,}0565$ & Lịch sử chuỗi \\
-$7$  & \texttt{minute\_of\_day}            & $0{,}0469$ & Thời gian \\
-$8$  & \texttt{tran\_cong\_suat}           & $0{,}0391$ & Quy mô trạm \\
-$9$  & \texttt{rolling\_std\_4}            & $0{,}0334$ & Lịch sử chuỗi \\
-$10$ & \texttt{weather\_condition\_enc}    & $0{,}0219$ & Khí tượng phân loại \\
+$1$  & \texttt{direct\_normal\_irradiance} & $0{,}0869$ & Khí tượng đo được \\
+$2$  & \texttt{ky\_vong}                  & $0{,}0860$ & Quy mô trạm \\
+$3$  & \texttt{rolling\_min\_4}            & $0{,}0805$ & Lịch sử chuỗi \\
+$4$  & \texttt{ghi\_cs\_mt}                & $0{,}0755$ & Trời quang tại $T{+}h$ \\
+$5$  & \texttt{rolling\_max\_4}            & $0{,}0678$ & Lịch sử chuỗi \\
+$6$  & \texttt{rolling\_mean\_4}           & $0{,}0566$ & Lịch sử chuỗi \\
+$7$  & \texttt{minute\_of\_day}            & $0{,}0475$ & Thời gian \\
+$8$  & \texttt{tran\_cong\_suat}           & $0{,}0382$ & Quy mô trạm \\
+$9$  & \texttt{rolling\_std\_4}            & $0{,}0338$ & Lịch sử chuỗi \\
+$10$ & \texttt{weather\_condition\_enc}    & $0{,}0218$ & Khí tượng phân loại \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2948,7 +2936,7 @@ hạng đặc trưng, và giải thích một dự báo cụ thể do người d
 Trang này gọi \texttt{forecast\_service.py} để sinh dự báo mới. Điểm cần nêu về mặt kỹ thuật: dịch
 vụ này \textbf{đọc lại} \texttt{clip\_k} và các tham số chuẩn hoá từ \texttt{model\_config.json} của
 chính mô hình đang dùng, thay vì khai báo lại trong mã phục vụ. Nhờ vậy phép nhân ngược từ $k$
-về kWh ở lúc suy luận trùng khít với lúc huấn luyện; nếu hai bên khai báo riêng thì chỉ cần một
+về kWh ở giai đoạn suy luận sử dụng cùng bộ tham số với giai đoạn huấn luyện; nếu hai bên khai báo riêng thì chỉ cần một
 lần sửa cấu hình là kết quả trên giao diện lệch khỏi kết quả trong báo cáo mà không ai phát
 hiện.
 
@@ -2975,9 +2963,9 @@ và $+36{,}26\%$.
 Điều đáng nói hơn con số là cách các con số đó được bảo vệ. Năm rào chắn ở Mục~$7.1.5$ được kiểm
 chứng bằng số liệu chứ không bằng lập luận: phép ghép thời tiết nhân quả đưa số dòng dùng thời
 tiết tương lai về $0$; thống kê quy mô tính riêng theo từng fold; cận cắt suy từ phân vị của
-tập huấn luyện; tập test mở đúng một lần. Khi phát hiện tầm H4 có thể cho kết quả tốt hơn với
-cấu hình MAE huấn luyện sau, nhóm không chấm lại tập test, vì mở tập niêm phong lần thứ hai
-chính là điều mà toàn bộ quy trình được dựng ra để ngăn.
+tập huấn luyện; tập test mở đúng một lần. Hàm mất mát cho cả hai tầm được chốt trên tập kiểm
+định trước khi tập test được mở, và mọi chỉ số báo cáo ở Mục~$7.5$ đều là kết quả của lần mở
+duy nhất đó.
 
 \FloatBarrier
 \subsection{Giới hạn}

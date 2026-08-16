@@ -67,7 +67,19 @@ class Paths:
         vao, ma van KHONG BAO GIO ghi de len ket qua goc (ghi luon di qua stage()).
         """
         moi = self.stage(ten_stage)
-        return moi if moi.exists() else self.stage_goc(ten_stage)
+        # FIX (2026-08-16): truoc day chi kiem moi.exists(). Thu muc "<stage>_new" van
+        # ton tai duoi dang RONG (bi tao lai khi dung dvc/rsync hoac khi doi thu muc
+        # data/model/v4), nen exists() tra True va ham nay tra ve thu muc rong -> stage
+        # sau mo file khong thay, bao FileNotFoundError thay vi lui ve ban goc.
+        # Thu muc rong phai coi nhu CHUA CO.
+        if moi.is_file():
+            return moi
+        # Phai co TEP THAT, khong chi thu muc con rong: sau khi doi data/model/v4 sang
+        # cho khac, "05_selected_new" con lai dung mot thu muc con rong la
+        # "time_series_folds", nen any(iterdir()) van tra True.
+        if moi.is_dir() and any(x.is_file() for x in moi.rglob("*")):
+            return moi
+        return self.stage_goc(ten_stage)
 
     # ── File trong thu muc ──
     def file(self, ten_file: str, **kwargs) -> str:

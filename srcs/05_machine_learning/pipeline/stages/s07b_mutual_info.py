@@ -32,7 +32,11 @@ BAO_VE = [
     "shortwave_radiation", "direct_normal_irradiance", "diffuse_solar_radiation",
     "temperature_c",
     # lich su 1 ngay, khong gay tre pha
-    "lag_96", "rolling_mean_96", "rolling_max_96", "rolling_std_96", "rolling_min_96",
+    # rolling_min_96 DA BO khoi danh sach bao ve (2026-08-16): cua so 96 buoc = dung 24 gio
+    # nen luon trum qua ban dem, ma ban dem san luong = 0 -> gia tri nho nhat luon bang 0.
+    # Do lai tren tap train: cua so ngheo so 0 nhat trong ca 42 tram van chua 36 buoc bang 0,
+    # tram nhieu nhat 41 buoc. Cot hang so: phuong sai 0, diem MI 0, s07a gan nhan CONSTANT.
+    "lag_96", "rolling_mean_96", "rolling_max_96", "rolling_std_96",
     # mua vu - xem docstring dau file
     "doy_sin", "doy_cos",
 ]
