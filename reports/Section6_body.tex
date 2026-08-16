@@ -330,7 +330,8 @@ vỏn vẹn $0{,}03$ điểm phần trăm.
 
 Hai quan sát trên dẫn tới một kết luận: dù chọn hệ số nào trong khoảng
 $1{,}5$--$6$, lượng dữ liệu bị loại đều không vượt quá một phần nghìn của bộ dữ liệu, nên
-lựa chọn hệ số không đủ sức làm thay đổi kết quả mô hình. Mức $4$ đang dùng là một
+ảnh hưởng trực tiếp lên lượng dữ liệu bị loại là nhỏ trong dải khảo sát. Thực nghiệm này
+chưa đo trực tiếp độ nhạy của mô hình cuối theo hệ số. Mức $4$ đang dùng là một
 quyết định nằm trong vùng an toàn, không phải một mức tối ưu đã được chứng minh.
 
 % Mục này gồm sơ đồ 8 bước và bảng ánh xạ, hai float lớn không nhét vừa cuối trang
@@ -697,8 +698,8 @@ $02/10/2020$ cho một đường cong trơn, lên đều rồi hạ gần đối
 hai ngày chênh nhau gần $30$ lần: $0{,}0926 / 0{,}0031 = 29{,}9$.
 
 Cả hai đều thuộc nhóm ngày nhiều nắng, tức lượng bức xạ khả dụng trong ngày tương đương, nhưng
-cho hai chuỗi khác hẳn. Phần chênh lệch đó là do mây, và mô hình không thể suy ra nó từ lịch
-hay từ vị trí Mặt Trời. Đây là căn cứ sinh hai đặc trưng \texttt{chi\_so\_troi\_quang} và
+cho hai chuỗi khác hẳn. Mẫu hình này phù hợp với biến động liên quan tới điều kiện mây, thứ
+không suy ra được từ lịch hay vị trí Mặt Trời. Đây là căn cứ sinh hai đặc trưng \texttt{chi\_so\_troi\_quang} và
 \texttt{rad\_x\_sinelev}: chúng cấp cho mô hình tín hiệu về mức che phủ \textbf{ngay tại bước hiện
 tại}, thay vì bắt mô hình suy ra gián tiếp từ các mốc trễ.
 
@@ -913,9 +914,8 @@ trạm; ở fold $2$ là $39$ trạm so với $42$. Chênh lệch đó nghĩa l�
 thuộc về những trạm mà mô hình chưa từng nhìn thấy một dòng nào lúc huấn luyện. Tới
 fold $3$ thì cả $42$ trạm đều đã có mặt ở phần huấn luyện nên tình huống này không còn.
 
-Ảnh hưởng của nó làm sai số đo trên fold $1$ và fold $2$ bi quan hơn thực tế vận
-hành, vì trong vận hành thật mô hình luôn đã có lịch sử của trạm mà nó dự báo. Chiều ảnh
-hưởng là an toàn, sai số bị đánh giá nặng hơn chứ không nhẹ đi, nhưng khi so sánh các
+Tình huống này có thể làm tăng sai số đo trên fold $1$ và fold $2$ so với kịch bản chỉ dự báo
+các trạm đã xuất hiện trong phần huấn luyện. Khi so sánh các
 cấu hình bằng WAPE gộp ba fold thì phần đóng góp của fold $1$ vẫn mang theo thành phần sai
 lệch này.
 
@@ -1285,8 +1285,9 @@ lẫn:
     \textbf{tự tính} bằng mô hình Haurwitz từ góc cao Mặt Trời.
 \end{itemize}
 
-Vì $GHI_{cs}$ ứng với điều kiện không mây, nó là mức trần mà bức xạ đo được chỉ có thể tiệm
-cận chứ không nên vượt qua.
+Vì $GHI_{cs}$ ứng với điều kiện không mây, nó là mức tham chiếu trời quang chứ không phải
+cận trên vật lý: bức xạ đo có thể vượt mức này trong những khoảng ngắn do hiện tượng tăng
+cường bức xạ ở mép mây.
 
 Từ góc cao suy ra bức xạ ngang trời quang:
 
@@ -1560,8 +1561,8 @@ liệu thay vì chọn trước bằng lập luận.
 
 \textbf{Vấn đề.} Nhãn cần dự báo nằm ở thời điểm $T{+}h$, nhưng các đặc trưng hình học Mặt Trời
 và nhãn lịch --- \texttt{sin\_elevation}, \texttt{ghi\_cs}, \texttt{hour} --- vẫn là giá trị tại $T$. Mô
-hình do đó dùng vị trí Mặt Trời lúc $T$ để dựng lại sản lượng lúc $T{+}h$, và đường dự báo sinh
-ra chính là đường Mặt Trời bị trễ đúng $h$ bước. Đây là hệ quả cấu trúc của bài toán, và tác
+hình do đó dùng vị trí Mặt Trời lúc $T$ để dựng lại sản lượng lúc $T{+}h$, tạo nguy cơ đường
+dự báo thiên lệch pha về phía $T$, nhất là khi nhóm đặc trưng này có đóng góp lớn. Đây là hệ quả cấu trúc của bài toán, và tác
 động của nó lan rộng vì cùng đại lượng đó cũng là mẫu số chuẩn hoá ở Mục~$7.3.5$.
 
 \textbf{Cách xử lý.} Quy trình khai báo một danh sách $22$ cột \textbf{tất định} --- hình học
@@ -1602,15 +1603,12 @@ Chiều $16$--$18$h & $189.966$ & $2{,}9646$ & $\mathbf{2{,}4136}$ & $-18{,}6\%$
 
 Hai khung giờ cho hai kết luận ngược nhau, nên không phương án nào thắng tuyệt đối. Trên toàn
 bộ ban ngày hai bản chênh nhau $0{,}4\%$, tức gần như tương đương; chênh lệch chỉ lộ ra khi
-tách theo khung giờ. Buổi sáng sản lượng thật đi sau Mặt Trời, vì tấm pin còn lạnh và
-ẩm sương, inverter đang trong giai đoạn khởi động, nên giá trị tại $T$ khớp hơn $26{,}3\%$;
-buổi chiều thì ngược lại, giá trị tại $T{+}h$ khớp hơn $18{,}6\%$. Quy trình vì vậy giữ cả hai
+tách theo khung giờ: buổi sáng giá trị tại $T$ khớp hơn $26{,}3\%$, buổi chiều thì ngược lại,
+giá trị tại $T{+}h$ khớp hơn $18{,}6\%$. Quy trình vì vậy giữ cả hai
 bản và để mô hình tự chọn theo khung giờ, thay vì áp một phương án cho cả ngày.
 
-Bảng này được tính lại từ dữ liệu chứ không chép từ khối ghi chú trong mã nguồn. Khối ghi chú
-đó ghi ba cặp số khác ($3{,}1873$ với $3{,}1884$; $1{,}5934$ với $2{,}1833$; $3{,}4002$ với
-$2{,}8574$) nhưng không kèm phạm vi dòng nên không dựng lại được. Hai lần đo cùng chiều ở cả ba
-khung giờ; báo cáo lấy bản dựng lại được.
+Bảng được tính trực tiếp trên phạm vi $999.010$ dòng đã khai báo và là nguồn số liệu dùng trong
+báo cáo.
 
 \FloatBarrier
 \subsection{Chuẩn hoá mục tiêu theo vật lý}
@@ -1683,24 +1681,24 @@ quả \texttt{05\_selected/quet\_muc\_phan\_vi\_nguong\_cat.csv}.}
 \toprule
 \textbf{Mức phân vị} & \textbf{Ngưỡng cắt} & \textbf{Tỷ lệ bị cắt (\%)} & \textbf{WAPE kiểm định (\%)} \\
 \midrule
-$0{,}900$ & $1{,}1525$ & $10{,}00$ & $22{,}6101$ \\
-$0{,}950$ & $1{,}2341$ & $5{,}00$  & $22{,}5211$ \\
-$0{,}975$ & $1{,}3090$ & $2{,}50$  & $22{,}4949$ \\
-$\mathbf{0{,}990}$ & $\mathbf{1{,}4015}$ & $\mathbf{1{,}00}$ & $\mathbf{22{,}4901}$ \\
-$0{,}995$ & $1{,}4832$ & $0{,}50$  & $22{,}4900$ \\
-$0{,}999$ & $1{,}9297$ & $0{,}10$  & $22{,}4900$ \\
-$1{,}000$ & $13{,}4137$ & $0{,}00$ & $22{,}4900$ \\
+$0{,}900$ & $1{,}1412$ & $10{,}00$ & $25{,}2239$ \\
+$0{,}950$ & $1{,}2200$ & $5{,}00$ & $25{,}0739$ \\
+$0{,}975$ & $1{,}2916$ & $2{,}50$ & $25{,}0267$ \\
+$\mathbf{0{,}990}$ & $\mathbf{1{,}3782}$ & $\mathbf{1{,}00}$ & $\mathbf{25{,}0141}$ \\
+$0{,}995$ & $1{,}4508$ & $0{,}50$ & $25{,}0135$ \\
+$0{,}999$ & $1{,}7266$ & $0{,}10$ & $25{,}0135$ \\
+$1{,}000$ & $7{,}4245$ & $0{,}00$ & $25{,}0135$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Đường cong WAPE phẳng từ mức $0{,}99$ trở lên, ba mức cuối chỉ chênh nhau $0{,}0001$ điểm
-phần trăm. Bên dưới mức đó thì sai số xấu dần, tới $22{,}6101\%$ ở phân vị $0{,}90$ vì cắt mất
+Đường cong WAPE phẳng từ mức $0{,}99$ trở lên, ba mức cuối chỉ chênh nhau $0{,}0000$ điểm
+phần trăm. Bên dưới mức đó thì sai số xấu dần, tới $25{,}2239\%$ ở phân vị $0{,}90$ vì cắt mất
 $10\%$ dữ liệu. Dòng cuối cùng cho thấy phép cắt vẫn cần thiết: bỏ hẳn nó thì ngưỡng nhảy
-lên $13{,}4137$, tức đuôi phân bố có những điểm gấp gần mười lần phần thân. Mức $0{,}99$ là
+lên $7{,}4245$, tức đuôi phân bố có những điểm gấp nhiều lần phần thân. Mức $0{,}99$ là
 điểm mà đường cong bắt đầu phẳng mà vẫn chặn được đuôi đó.
 
-\textbf{Hai giá trị ngưỡng trong báo cáo.} Bảng~\ref{tab:quet_phan_vi} ghi ngưỡng $1{,}4015$
+\textbf{Hai giá trị ngưỡng trong báo cáo.} Bảng~\ref{tab:quet_phan_vi} ghi ngưỡng $1{,}3782$
 tại mức $0{,}99$, còn tệp cấu hình mô hình ghi $1{,}3764$. Hai con số này không mâu thuẫn: cùng
 một mức phân vị nhưng tính trên hai tập khác nhau. Phép quét chạy trên tập kiểm định để đo WAPE
 tương ứng với từng mức, nên ngưỡng của nó là phân vị $99$ của $k$ trên tập kiểm định
@@ -1844,7 +1842,7 @@ các điểm đo bất thường. Giá trị dùng thật là $1{,}3764$ suy t�
 luyện, nằm giữa hai mức $1{,}2$ và $1{,}5$ của phép quét.
 
 \textbf{Hệ số nới trần không phải lựa chọn về độ chính xác.} Bốn mức từ $1{,}00$ tới $1{,}10$
-chênh nhau $0{,}0031$ điểm WAPE, tức nằm trong mức nhiễu. Hệ số $1{,}02$ được chọn theo lý do
+chênh nhau $0{,}0031$ điểm WAPE, tức độ nhạy quan sát được rất nhỏ. Hệ số $1{,}02$ được chọn theo lý do
 vật lý: chừa $2\%$ dư địa quanh trần để không cắt oan các dao động ngắn do hiện tượng tăng
 cường bức xạ ở mép mây, chứ không phải khẳng định công suất lắp đặt thực tế cao hơn $2\%$.
 
@@ -2035,8 +2033,8 @@ hiện ở các bước khác của quy trình. Trong $114$ cột của tệp đ
 danh sách và bị loại; $74$ cột còn lại đi tiếp vào bước chấm điểm. Cách khai báo dư này là có
 chủ đích: thêm một tên không tồn tại thì vô hại, còn sót một tên rò rỉ thì hỏng cả kết quả.
 
-Danh sách cấm được đặt trước phép chấm điểm chứ không sau, vì một cột rò rỉ luôn đạt điểm cao:
-nếu để nó dự thi thì chính thước đo sẽ chọn nó. Hình~\ref{fig:deny_list} là đoạn khai báo.
+Danh sách cấm được đặt trước phép chấm điểm chứ không sau, vì một cột rò rỉ có thể đạt điểm rất cao
+một cách giả tạo: nếu để nó dự thi thì chính thước đo sẽ chọn nó. Hình~\ref{fig:deny_list} là đoạn khai báo.
 
 \begin{figure}[htbp]
     \centering
@@ -2348,7 +2346,8 @@ chỉ $0{,}73$ ở H4. Đọc ngang bảng còn thấy hai xu hướng. Các c�
 hẳn, $146$ và $134$ so với $71$--$99$ của Huber, tức cây sâu và chia nhỏ hơn, phù hợp với
 việc MSE phạt nặng sai số lớn nên có động cơ khớp sát từng vùng dữ liệu. Mức phạt $L_1$ mà
 Optuna chọn cho Huber ở cả hai tầm đều gần chạm cận trên của miền ($9{,}49$ và $9{,}88$), cho
-thấy cấu hình này cần ràng buộc mạnh mới ổn định.
+thấy Optuna ưu tiên vùng gần cận trên, nên miền tìm kiếm nên được mở rộng trước khi diễn giải
+thêm.
 
 \textbf{Hai chỗ chạm biên miền tìm kiếm.} \texttt{subsample} của MAE--H1 bằng $0{,}7003$, tức
 đúng cận dưới; \texttt{reg\_alpha} của Huber đạt $9{,}49$--$9{,}88$ trên miền $[0;10]$. Khi một
@@ -2394,7 +2393,7 @@ H4 & Huber         & $27{,}4086$ & $4{,}2896$ & $1{,}9651$ & $0{,}8672$ \\
 hình được chấm trên tập sạch hơn thì chênh lệch WAPE phản ánh phạm vi chứ không phản ánh hàm
 mất mát.
 
-Đáng chú ý là MAE thắng theo WAPE nhưng thua theo RMSE ở cả hai tầm. Điều này đúng với bản chất
+Đáng chú ý là MAE đạt WAPE thấp hơn còn MSE đạt RMSE thấp hơn, ở cả hai tầm. Điều này đúng với bản chất
 hai hàm: MSE phạt bình phương sai số nên ép sai số lớn xuống mạnh hơn, cho RMSE tốt hơn; MAE
 phạt tuyến tính nên bám phần thân phân bố, cho sai số tương đối tổng thể thấp hơn. Dự án lấy
 WAPE làm tiêu chí chọn vì nó là chỉ số được báo cáo, và vì mục tiêu vận hành là tổng sai số
@@ -2492,10 +2491,9 @@ sang mốc nhãn thành \texttt{nhan\_energy\_source} và \texttt{nhan\_is\_dayl
     ở H$4$.
 \end{itemize}
 
-Bản trước lọc theo cột tại $T$. Vì nhãn là sản lượng tại $T{+}h$, cách đó để lọt vào phạm vi
-``đo thật ban ngày'' những dòng mà nhãn thực chất do bước điền khuyết của tầng ETL sinh ra hoặc
-rơi vào ban đêm. Sửa lại cho bám mốc nhãn làm WAPE H$1$ tăng $0{,}05$ điểm và H$4$ tăng
-$0{,}13$ điểm, tức con số cũ dễ hơn thực tế.
+Phạm vi chấm điểm được xác định theo nhãn tại $T{+}h$. Nếu lọc theo cột tại $T$ thì phạm vi
+``đo thật ban ngày'' sẽ nhận thêm những dòng mà nhãn thực chất do bước điền khuyết của tầng ETL
+sinh ra hoặc rơi vào ban đêm.
 
 \FloatBarrier
 \subsection{Kết quả}
@@ -2523,7 +2521,7 @@ Cả hai tầm dùng cấu hình MAE, đúng hai cấu hình thắng trên tập
 
 Phạm vi chính thức gồm $229.548$ dòng ở H1 và $229.297$ dòng ở H4.
 
-Sai số phân bố không đều giữa các trạm. Ở H1, trạm tốt nhất đạt $11{,}89\%$ còn trạm kém nhất
+Sai số phân bố không đều giữa các trạm. Ở H1, trạm có WAPE thấp nhất đạt $11{,}89\%$ còn trạm có WAPE cao nhất
 $28{,}32\%$, trung vị $18{,}12\%$; ở H4 khoảng này là $15{,}12\%$ đến $35{,}88\%$, trung vị
 $22{,}72\%$. Chênh lệch hơn hai lần giữa hai đầu cho thấy một mô hình dùng chung cho cả $40$
 trạm vẫn để lại phần khác biệt riêng của từng trạm mà đặc trưng hiện có chưa mô tả hết.
@@ -2552,8 +2550,8 @@ Cùng phạm vi với Prophet        & $17{,}7921$ & $22{,}3613$ \\
 \end{tabular}
 \end{table}
 
-Sai số trên test thấp hơn trên ba fold kiểm định tới hơn sáu điểm. Nguyên nhân nằm ở vị trí của
-hai tập trên trục thời gian, không phải ở việc test dễ hơn. Ba fold kiểm định nằm ở giai đoạn
+Sai số trên test thấp hơn trên ba fold kiểm định tới hơn sáu điểm. Một nguyên nhân có khả năng
+đóng góp là vị trí của hai tập trên trục thời gian và lượng lịch sử khả dụng. Ba fold kiểm định nằm ở giai đoạn
 \textbf{sớm} của chuỗi, nơi lịch sử dùng để tính \texttt{lag\_96} và các cửa sổ trượt còn ngắn, nên
 nhiều mốc dự báo thiếu ngữ cảnh. Tập test nằm ở \textbf{cuối} chuỗi, mọi mốc đều đã có đủ lịch
 sử phía sau. Chênh lệch này đến từ phạm vi dữ liệu và không cho phép kết luận rằng tập test đã
@@ -2563,7 +2561,7 @@ trước khi tập test được mở.
 \FloatBarrier
 \subsection{Đối chứng với Prophet}
 
-\subsubsection{Chỉ số dự báo vượt trội}
+\subsubsection{Chỉ số kỹ năng dự báo (Forecast Skill Score)}
 
 Một con số WAPE đứng một mình không nói lên chất lượng. Nó cần được đặt cạnh một mô hình đối
 chứng. Chỉ số Forecast Skill Score đo phần sai số cắt giảm được so với đối chứng. Dạng chuẩn của
@@ -2597,8 +2595,8 @@ system. Weather forecasts may be more accurate simply because the weather is eas
 
 Điều này đúng với dữ liệu của đề tài: WAPE trên tập test thấp hơn trên ba fold kiểm định tới hơn
 sáu điểm phần trăm, mà nguyên nhân đã phân tích ở trên là do vị trí hai tập trên trục thời gian
-chứ không do mô hình khá lên. Chỉ số kỹ năng khử đúng loại chênh lệch đó, vì mô hình và đối
-chứng cùng chịu một điều kiện dữ liệu. Marquez và Coimbra nêu thêm một lợi ích thứ hai, rằng tỷ
+chứ không do mô hình khá lên. Chỉ số kỹ năng chuẩn hoá hiệu năng theo cùng một mô hình đối
+chứng, nên việc so sánh giữa các điều kiện bớt phụ thuộc vào độ khó tuyệt đối của từng tập. Marquez và Coimbra nêu thêm một lợi ích thứ hai, rằng tỷ
 số này ổn định qua các tầm dự báo khác nhau:
 
 \begin{quote}\small
@@ -2662,7 +2660,7 @@ sổ thời gian Phát triển với mô hình chính, rồi dự báo tại đ�
 Khi chấm điểm, hai mô hình dùng cùng một tập dòng, cùng tử số và cùng mẫu số. Phạm vi
 này yêu cầu cả giá trị tại $T$ lẫn nhãn tại $T{+}h$ đều là số đo thật, đồng thời dòng tại $T$
 là ban ngày, chặt hơn phạm vi đo thật ban ngày của mô hình chính, nên số dòng nhỏ hơn:
-$220.260$ ở H1 và $202.955$ ở H4. Kết quả ở Bảng~\ref{tab:prophet}.
+$220.114$ ở H1 và $202.677$ ở H4. Kết quả ở Bảng~\ref{tab:prophet}.
 
 \begin{table}[htbp]
 \centering
@@ -2746,7 +2744,7 @@ luyện sau xử lý tiếp.
 
 Notebook còn đo một giả thuyết cạnh tranh: nếu độ lệch bắt nguồn từ việc dữ liệu khí tượng chỉ
 có độ hạt một giờ, thì đỉnh thực tế xảy ra càng gần cuối khối giờ sẽ càng lệch nhiều.
-Số đo bác bỏ điều đó, cả bốn vị trí trong khối giờ đều cho trung vị đúng $15$ phút, xem Bảng~\ref{tab:lech_theo_vi_tri}.
+Số đo không ủng hộ giả thuyết đó: cả bốn vị trí trong khối giờ đều cho trung vị đúng $15$ phút, xem Bảng~\ref{tab:lech_theo_vi_tri}.
 
 \begin{table}[htbp]
 \centering
@@ -2830,8 +2828,8 @@ chọn đặc trưng, bốn vị trí đầu đều là thống kê cửa sổ t
 Hai điểm rút ra. Thứ nhất, thông tin tương hỗ đo quan hệ của một đặc trưng với mục tiêu khi
 đứng riêng, còn SHAP đo phần đóng góp của nó trong mô hình đã huấn luyện, nơi các đặc
 trưng chia nhau thông tin; hai thước đo trả lời hai câu hỏi khác nhau nên không buộc phải trùng
-thứ hạng. Thứ hai, việc \texttt{ghi\_cs\_mt} lọt vào nhóm bốn đầu là bằng chứng cho thấy nhóm đặc
-trưng tất định tại $T{+}h$ ở Mục~$3.4$ thực sự được mô hình dùng, chứ không phải cột thừa.
+thứ hạng. Thứ hai, việc \texttt{ghi\_cs\_mt} lọt vào nhóm bốn đầu cho thấy riêng cột này có đóng góp đáng kể,
+ủng hộ tính hữu ích của ít nhất một đặc trưng trong nhóm tất định tại $T{+}h$ ở Mục~$3.4$.
 
 Hình~\ref{fig:shap_beeswarm} trình bày phân bố giá trị SHAP của từng đặc trưng trên toàn bộ tập
 test.
@@ -2859,9 +2857,9 @@ trong tập test, ghi ở Bảng~\ref{tab:shap_local}.
 \toprule
 \textbf{Trường hợp} & \textbf{Trạm} & \textbf{Thời điểm} & \textbf{Thực tế (kWh)} & \textbf{Tổng SHAP} \\
 \midrule
-Đẩy dự báo lên  & $10$ & $07/04/2022$ $10{:}30$ & $5{,}9688$ & $+0{,}5972$ \\
-Kéo dự báo xuống & $40$ & $18/04/2022$ $08{:}00$ & $0{,}1250$ & $-0{,}6860$ \\
-Gần mức nền     & $28$ & $21/02/2022$ $11{:}15$ & $1{,}8066$ & $-0{,}0004$ \\
+Đẩy dự báo lên  & $10$ & $09/03/2022$ $10{:}15$ & $5{,}5312$ & $+0{,}6684$ \\
+Kéo dự báo xuống & $27$ & $28/01/2022$ $17{:}15$ & $2{,}8750$ & $-0{,}8110$ \\
+Gần mức nền     & $36$ & $31/03/2022$ $17{:}15$ & $2{,}8906$ & $-0{,}0000$ \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2960,8 +2958,9 @@ $17{,}74\%$ ở tầm $15$ phút và $22{,}62\%$ ở tầm một giờ trên t�
 thật ban ngày. So với đối chứng Prophet trên cùng tập dòng, chỉ số vượt trội đạt $+49{,}53\%$
 và $+36{,}26\%$.
 
-Điều đáng nói hơn con số là cách các con số đó được bảo vệ. Năm rào chắn ở Mục~$7.1.5$ được kiểm
-chứng bằng số liệu chứ không bằng lập luận: phép ghép thời tiết nhân quả đưa số dòng dùng thời
+Điều đáng nói hơn con số là cách các con số đó được bảo vệ. Bốn rào chắn đầu ở Mục~$7.1.5$ được
+kiểm chứng bằng số liệu chứ không bằng lập luận, còn rào chắn thứ năm được bảo đảm bằng cấu hình
+tất định: phép ghép thời tiết nhân quả đưa số dòng dùng thời
 tiết tương lai về $0$; thống kê quy mô tính riêng theo từng fold; cận cắt suy từ phân vị của
 tập huấn luyện; tập test mở đúng một lần. Hàm mất mát cho cả hai tầm được chốt trên tập kiểm
 định trước khi tập test được mở, và mọi chỉ số báo cáo ở Mục~$7.5$ đều là kết quả của lần mở
@@ -2977,7 +2976,7 @@ duy nhất đó.
     \item \textbf{Sai số phân bố không đều giữa các trạm}, từ $11{,}89\%$ tới $28{,}32\%$ ở
     tầm H1, và $15{,}12\%$ tới $35{,}88\%$ ở tầm H4. Mô hình dùng chung chưa mô tả hết phần khác
     biệt riêng của từng trạm.
-    \item \textbf{Độ trễ pha còn tồn tại ở mức thấp}: trung vị $+15$ phút, và $32$ trên $40$
+    \item \textbf{Độ trễ pha vẫn còn tồn tại}: trung vị $+15$ phút, và $32$ trên $40$
     trạm nghiêng về phía trễ.
     \item \textbf{Phép đối chứng Prophet không tách được đóng góp của biến khí tượng}, vì hai
     mô hình khác nhau đồng thời ở thuật toán và tập đầu vào.
@@ -2993,8 +2992,6 @@ duy nhất đó.
 Bốn việc cụ thể, xếp theo mức dễ làm:
 
 \begin{enumerate}
-    \item Huấn luyện bổ sung cấu hình MAE cho tầm H4 rồi khoá lại trước khi mở một tập test
-    mới, để phép so ở H4 có đủ ba hàm mất mát.
     \item Mở rộng miền tìm kiếm ở hai chỗ chạm biên, hạ cận dưới của \texttt{subsample} và
     nâng cận trên của \texttt{reg\_alpha}.
     \item Chạy hai cấu hình đối chứng còn thiếu để tách phần đóng góp của nhóm đặc trưng khí
