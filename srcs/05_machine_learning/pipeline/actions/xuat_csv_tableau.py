@@ -34,7 +34,7 @@ from pathlib import Path
 import pandas as pd
 
 GOC_REPO = Path(__file__).resolve().parents[4]
-AUDIT = GOC_REPO / "data/model/v3/07_final_test/prediction_audit.parquet"
+AUDIT = GOC_REPO / "data/model/v4/07_final_test/prediction_audit.parquet"
 RA = GOC_REPO / "reports/exports"
 
 BUOC_PHUT = 15
