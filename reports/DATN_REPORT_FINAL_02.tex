@@ -3523,24 +3523,24 @@ Bảng~\ref{tab:quet_phan_vi}.
 \toprule
 \textbf{Mức phân vị} & \textbf{Ngưỡng cắt} & \textbf{Tỷ lệ bị cắt (\%)} & \textbf{WAPE kiểm định (\%)} \\
 \midrule
-$0{,}900$ & $1{,}1525$ & $10{,}00$ & $22{,}6101$ \\
-$0{,}950$ & $1{,}2341$ & $5{,}00$  & $22{,}5211$ \\
-$0{,}975$ & $1{,}3090$ & $2{,}50$  & $22{,}4949$ \\
-$\mathbf{0{,}990}$ & $\mathbf{1{,}4015}$ & $\mathbf{1{,}00}$ & $\mathbf{22{,}4901}$ \\
-$0{,}995$ & $1{,}4832$ & $0{,}50$  & $22{,}4900$ \\
-$0{,}999$ & $1{,}9297$ & $0{,}10$  & $22{,}4900$ \\
-$1{,}000$ & $13{,}4137$ & $0{,}00$ & $22{,}4900$ \\
+$0{,}900$ & $1{,}1412$ & $10{,}00$ & $25{,}2239$ \\
+$0{,}950$ & $1{,}2200$ & $5{,}00$  & $25{,}0739$ \\
+$0{,}975$ & $1{,}2916$ & $2{,}50$  & $25{,}0267$ \\
+$\mathbf{0{,}990}$ & $\mathbf{1{,}3782}$ & $\mathbf{1{,}00}$ & $\mathbf{25{,}0141}$ \\
+$0{,}995$ & $1{,}4508$ & $0{,}50$  & $25{,}0135$ \\
+$0{,}999$ & $1{,}7266$ & $0{,}10$  & $25{,}0135$ \\
+$1{,}000$ & $7{,}4245$ & $0{,}00$ & $25{,}0135$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Đường cong WAPE phẳng từ mức $0{,}99$ trở lên, ba mức cuối chỉ chênh nhau $0{,}0001$ điểm
-phần trăm. Bên dưới mức đó thì sai số xấu dần, tới $22{,}6101\%$ ở phân vị $0{,}90$ vì cắt mất
+Đường cong WAPE phẳng từ mức $0{,}99$ trở lên, ba mức cuối chỉ chênh nhau $0{,}0000$ điểm
+phần trăm. Bên dưới mức đó thì sai số xấu dần, tới $25{,}2239\%$ ở phân vị $0{,}90$ vì cắt mất
 $10\%$ dữ liệu. Dòng cuối cùng cho thấy phép cắt vẫn cần thiết: bỏ hẳn nó thì ngưỡng nhảy
-lên $13{,}4137$, tức đuôi phân bố có những điểm gấp gần mười lần phần thân. Mức $0{,}99$ là
+lên $7{,}4245$, tức đuôi phân bố có những điểm gấp gần mười lần phần thân. Mức $0{,}99$ là
 điểm mà đường cong bắt đầu phẳng mà vẫn chặn được đuôi đó.
 
-\textbf{Hai giá trị ngưỡng trong báo cáo.} Bảng~\ref{tab:quet_phan_vi} ghi ngưỡng $1{,}4015$
+\textbf{Hai giá trị ngưỡng trong báo cáo.} Bảng~\ref{tab:quet_phan_vi} ghi ngưỡng $1{,}3782$
 tại mức $0{,}99$, còn tệp cấu hình mô hình ghi $1{,}3764$. Hai con số này không mâu thuẫn: cùng
 một mức phân vị nhưng tính trên hai tập khác nhau. Phép quét chạy trên tập kiểm định để đo WAPE
 tương ứng với từng mức, nên ngưỡng của nó là phân vị $99$ của $k$ trên tập kiểm định
@@ -3925,7 +3925,7 @@ thông tin mạnh nhất về giá trị sắp tới.
 
 Lấy thẳng $35$ đặc trưng đứng đầu sẽ loại mất một số biến khí tượng và hình học Mặt Trời có điểm
 thấp nhưng cần cho mô hình đọc được điều kiện vật lý tại bước hiện tại. Notebook vì vậy khai báo
-một danh sách bảo vệ gồm $22$ đặc trưng, cả $22$ đều có mặt trong dữ liệu, và bổ sung lại những
+một danh sách bảo vệ gồm $21$ đặc trưng, cả $21$ đều có mặt trong dữ liệu, và bổ sung lại những
 đặc trưng nằm ngoài ngưỡng cắt:
 
 % Khoi ket xuat notebook. Khong boc trong minipage nua: minipage la mot hop lien
@@ -3936,15 +3936,15 @@ một danh sách bảo vệ gồm $22$ đặc trưng, cả $22$ đều có mặt
 \footnotesize\renewcommand{\baselinestretch}{1.0}\selectfont
 \begin{verbatim}
 --- DANH SACH BAO VE ---
-Co trong du lieu   : 22/22
-Bi Top K cat, da bo sung lai (5): ['azimuth_sin', 'temperature_c',
-                                   'rolling_min_96', 'doy_sin', 'doy_cos']
-Tong dac trung duoc chon: 35 (Top K) + 5 (bao ve) = 40
+Co trong du lieu   : 21/21
+Bi Top K cat, da bo sung lai (4): ['azimuth_sin', 'temperature_c',
+                                   'doy_sin', 'doy_cos']
+Tong dac trung duoc chon: 35 (Top K) + 4 (bao ve) = 39
 \end{verbatim}
 \vspace{2pt}\hrule\par\vspace{6pt}
 \endgroup
 
-Năm đặc trưng được bổ sung nằm ở hạng $36$, $40$, $49$, $54$ và $68$ theo điểm thông tin tương
+Bốn đặc trưng được bổ sung nằm ở hạng $36$, $40$, $49$ và $54$ theo điểm thông tin tương
 hỗ. Hai cột \texttt{doy\_sin} và \texttt{doy\_cos} mã hoá vị trí trong năm dưới dạng vòng; điểm của
 chúng thấp vì trên một mẫu ngẫu nhiên rải khắp $18$ tháng, mùa gần như không phân biệt được ---
 nhưng mô hình cần chúng để không coi ngày $31/12$ và ngày $01/01$ là hai thời điểm xa nhau.
@@ -4468,7 +4468,7 @@ sổ thời gian Phát triển với mô hình chính, rồi dự báo tại đ�
 Khi chấm điểm, hai mô hình dùng cùng một tập dòng, cùng tử số và cùng mẫu số. Phạm vi
 này yêu cầu cả giá trị tại $T$ lẫn nhãn tại $T{+}h$ đều là số đo thật, đồng thời dòng tại $T$
 là ban ngày, chặt hơn phạm vi đo thật ban ngày của mô hình chính, nên số dòng nhỏ hơn:
-$220.260$ ở H1 và $202.955$ ở H4. Kết quả ở Bảng~\ref{tab:prophet}.
+$220.114$ ở H1 và $202.677$ ở H4. Kết quả ở Bảng~\ref{tab:prophet}.
 
 \begin{table}[htbp]
 \centering
@@ -4661,20 +4661,21 @@ trong tập test, ghi ở Bảng~\ref{tab:shap_local}.
 \toprule
 \textbf{Trường hợp} & \textbf{Trạm} & \textbf{Thời điểm} & \textbf{Thực tế (kWh)} & \textbf{Tổng SHAP} \\
 \midrule
-Đẩy dự báo lên  & $10$ & $07/04/2022$ $10{:}30$ & $5{,}9688$ & $+0{,}5972$ \\
-Kéo dự báo xuống & $40$ & $18/04/2022$ $08{:}00$ & $0{,}1250$ & $-0{,}6860$ \\
-Gần mức nền     & $28$ & $21/02/2022$ $11{:}15$ & $1{,}8066$ & $-0{,}0004$ \\
+Đẩy dự báo lên  & $10$ & $09/03/2022$ $10{:}15$ & $5{,}5312$ & $+0{,}6684$ \\
+Kéo dự báo xuống & $27$ & $28/01/2022$ $17{:}15$ & $2{,}8750$ & $-0{,}8110$ \\
+Gần mức nền     & $36$ & $31/03/2022$ $17{:}15$ & $2{,}8906$ & $-0{,}0000$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 Ba trường hợp này minh hoạ ba chế độ khác nhau của mô hình. Ở ca đẩy lên, đóng góp lớn nhất đến
-từ \texttt{direct\_normal\_irradiance} ($+0{,}1047$) và \texttt{rolling\_min\_4} ($+0{,}0695$) --- bức xạ
-trực xạ mạnh cộng với nền sản lượng giờ trước còn cao. Ở ca kéo xuống, hai đặc trưng đẩy mạnh
-nhất theo chiều âm là \texttt{rolling\_max\_4} ($-0{,}1953$) và \texttt{rolling\_min\_4} ($-0{,}1111$),
-kèm \texttt{direct\_normal\_irradiance} ($-0{,}1019$): sáng sớm, sản lượng giờ trước gần như bằng
-không và bức xạ trực xạ chưa lên. Ở ca gần nền, tổng đóng góp gần triệt tiêu vì các phần dương
-và âm cân nhau. Ba hình dạng thác trình bày ở Hình~\ref{fig:shap_local}.
+từ \texttt{direct\_normal\_irradiance} ($+0{,}0923$) và \texttt{minute\_of\_day} ($+0{,}0645$) --- bức xạ
+trực xạ mạnh vào giữa buổi sáng, đúng nhánh lên của đường sản lượng trong ngày. Ở ca kéo xuống,
+hai đặc trưng đẩy mạnh nhất theo chiều âm là \texttt{ky\_vong} ($-0{,}2193$) và
+\texttt{tran\_cong\_suat} ($-0{,}0929$), kèm \texttt{direct\_normal\_irradiance} ($-0{,}0812$): chiều
+muộn, Mặt Trời đã xuống thấp nên mức kỳ vọng suy từ quy mô trạm cao hơn sản lượng thực tế. Ở ca
+gần nền, tổng đóng góp gần triệt tiêu vì các phần dương và âm cân nhau. Hai hình dạng thác tương
+phản trình bày ở Hình~\ref{fig:shap_local}.
 
 \begin{figure}[htbp]
     \centering
@@ -4790,11 +4791,9 @@ duy nhất đó.
 \FloatBarrier
 \subsection{Hướng phát triển}
 
-Bốn việc cụ thể, xếp theo mức dễ làm:
+Ba việc cụ thể, xếp theo mức dễ làm:
 
 \begin{enumerate}
-    \item Huấn luyện bổ sung cấu hình MAE cho tầm H4 rồi khoá lại trước khi mở một tập test
-    mới, để phép so ở H4 có đủ ba hàm mất mát.
     \item Mở rộng miền tìm kiếm ở hai chỗ chạm biên, hạ cận dưới của \texttt{subsample} và
     nâng cận trên của \texttt{reg\_alpha}.
     \item Chạy hai cấu hình đối chứng còn thiếu để tách phần đóng góp của nhóm đặc trưng khí
