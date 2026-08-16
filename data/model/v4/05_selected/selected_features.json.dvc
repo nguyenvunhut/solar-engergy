@@ -1,5 +1,5 @@
 outs:
-- md5: 86f83f4ecfe9d96a61ad310ffadf1060
-  size: 1561
+- md5: 670dbbcf3e2e32a8ebb0630e263f24ae
+  size: 1495
   hash: md5
   path: selected_features.json

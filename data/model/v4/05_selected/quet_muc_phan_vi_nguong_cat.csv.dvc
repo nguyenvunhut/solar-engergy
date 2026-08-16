@@ -1,0 +1,5 @@
+outs:
+- md5: 10bf70d1fb9c88892f8fc3faf042b945
+  size: 248
+  hash: md5
+  path: quet_muc_phan_vi_nguong_cat.csv

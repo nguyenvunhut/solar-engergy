@@ -1,0 +1,5 @@
+outs:
+- md5: 934f69ff126d810e54bba0f07a9d4c08
+  size: 188
+  hash: md5
+  path: thuc_nghiem_clip_csi.csv

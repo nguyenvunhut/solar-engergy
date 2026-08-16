@@ -385,3 +385,7 @@ data/mlmart_base/v3_*
 
 # Scrum 8 defense presentation/report PDF
 docs/scrum_8_project_delivery_defense/Phân tích Dữ liệu Năng lượng Mặt trời.pdf
+
+# Ban sao luu artifact truoc lan chay lai 16/08/2026 - KHONG dua vao git,
+# ke ca tep .dvc, de tranh lan lon voi ban v4 dang dung.
+data/model/v4_goc_*/
