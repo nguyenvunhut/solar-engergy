@@ -86,9 +86,7 @@ Year $2 \rightarrow$ Year $1$ & $178{,}6$ & $254{,}8$ & $270{,}7$ & $294{,}4$ & 
 Cả hai năm                    & $\mathbf{263{,}7}$ & $311{,}6$ & $309{,}9$ & $368{,}5$ & $348{,}7$ & $\times$ \\
 \bottomrule
 \end{tabular}}
-\caption[Sai số RMSE trích từ Bảng $4$ của Roy, Pyltsov và Hu, chỉ số càng nhỏ càng tốt]{Sai số RMSE trích từ Bảng $4$ của Roy, Pyltsov và Hu~\cite{roy2025hourly}, chỉ số
-càng nhỏ càng tốt. Cột XGBoost là mô hình cây tăng cường gradient, các cột còn lại là kiến
-trúc học sâu. Dấu $\times$ là cấu hình bài báo không chạy được.}
+\caption{So sánh sai số RMSE với nghiên cứu của Roy, Pyltsov và Hu~\cite{roy2025hourly}.}
 \label{tab:roy_rmse}
 \end{table}
 
@@ -143,12 +141,7 @@ Hai nguyên lý này hỏi hai câu hỏi khác nhau về cùng một điểm d�
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\textwidth]{hai_nguyen_ly_tren_du_lieu_that.png}
-    \caption{(Trích xuất từ Notebook \texttt{05d\_thuc\_nghiem\_rao\_chan\_vat\_ly.ipynb}) Hai
-    nguyên lý chạy trên dữ liệu thật của dự án: trạm $27$, dải bức xạ $201$--$350$
-    W/m\textsuperscript{2}, $8.176$ quan sát. Trái: GMM hai thành phần, điểm đỏ
-    là các quan sát có mật độ tương đối $P_{\text{GMM}} < 0{,}02$. Phải: phân
-    bố điểm cô lập của Isolation Forest ($100$ cây), phần cam là vùng bị cắt theo
-    \texttt{contamination} $= 0{,}03$.}
+    \caption{Phân bố mật độ GMM và điểm cô lập Isolation Forest trên dữ liệu trạm 27 (nguồn: \texttt{05d\_thuc\_nghiem\_rao\_chan\_vat\_ly.ipynb}).}
     \label{fig:hai_nguyen_ly}
 \end{figure}
 
@@ -203,10 +196,7 @@ tới cơ sở dữ liệu hay kho lưu trữ đám mây nào.
 
 \begin{table}[htbp]
 \centering
-\caption{Số ứng viên của từng cơ chế và phần còn lại sau khi bắt cả hai cùng đồng ý. Ngưỡng
-dùng cho GMM là $P_{\text{GMM}} < 0{,}02$; Isolation Forest chạy với
-\texttt{contamination} $= 0{,}03$. Dựng lại trên máy bằng
-\texttt{07\_local\_gmm\_if\_audit.py}; số liệu ghi ở \texttt{07\_local\_gmm\_if\_summary.json}.}
+\caption{Số lượng mẫu vượt qua điều kiện kết hợp GMM và Isolation Forest (nguồn: \texttt{07\_local\_gmm\_if\_summary.json}).}
 \label{tab:song_sot_and}
 \small
 \begin{tabular}{l r r r}
@@ -245,8 +235,7 @@ tầng ETL đã ghi. Kết quả ở Bảng~\ref{tab:tai_lap_luat}.
 
 \begin{table}[htbp]
 \centering
-\caption{Đối chiếu số cờ do notebook dựng lại với số cờ tầng ETL đã ghi. Đọc từ ô kết quả
-của notebook \texttt{05d\_thuc\_nghiem\_rao\_chan\_vat\_ly.ipynb}.}
+\caption{Đối chiếu số lượng cờ dị thường với tầng ETL (nguồn: \texttt{05d\_thuc\_nghiem\_rao\_chan\_vat\_ly.ipynb}).}
 \label{tab:tai_lap_luat}
 \small
 \begin{tabular}{l r r r r}
@@ -294,9 +283,7 @@ Hình~\ref{fig:quet_safe_iqr}.
 
 \begin{table}[htbp]
 \centering
-\caption{Số dòng và sản lượng bị loại khi đổi hệ số nhân của \texttt{safe\_IQR}. Tỷ lệ tính
-trên tổng $9{,}31$ triệu kWh. Đọc từ tệp kết quả
-\texttt{05d\_rao\_chan\_vat\_ly/quet\_he\_so\_safe\_iqr.csv}.}
+\caption{Ảnh hưởng của hệ số nhân \texttt{safe\_IQR} đến dữ liệu bị lọc (nguồn: \texttt{quet\_he\_so\_safe\_iqr.csv}).}
 \label{tab:quet_safe_iqr}
 \small
 \begin{tabular}{c r r r}
@@ -316,9 +303,7 @@ $6$     & $69$  & $373$   & $0{,}0040\%$ \\
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\textwidth]{thuc_nghiem_quet_he_so_safe_iqr.png}
-    \caption{(Trích xuất từ Notebook \texttt{05d\_thuc\_nghiem\_rao\_chan\_vat\_ly.ipynb}) Quét hệ số
-    nhân $m$ của \texttt{safe\_IQR} qua sáu mức. \textbf{Trái:} số dòng bị gắn cờ.
-    Phải: phần sản lượng bị ảnh hưởng, trục tung dừng ở $0{,}05\%$.}
+    \caption{Quét hệ số nhân $m$ của \texttt{safe\_IQR} qua sáu mức (nguồn: \texttt{05d\_thuc\_nghiem\_rao\_chan\_vat\_ly.ipynb}).}
     \label{fig:quet_safe_iqr}
 \end{figure}
 
@@ -330,8 +315,7 @@ vỏn vẹn $0{,}03$ điểm phần trăm.
 
 Hai quan sát trên dẫn tới một kết luận: dù chọn hệ số nào trong khoảng
 $1{,}5$--$6$, lượng dữ liệu bị loại đều không vượt quá một phần nghìn của bộ dữ liệu, nên
-ảnh hưởng trực tiếp lên lượng dữ liệu bị loại là nhỏ trong dải khảo sát. Thực nghiệm này
-chưa đo trực tiếp độ nhạy của mô hình cuối theo hệ số. Mức $4$ đang dùng là một
+lựa chọn hệ số không đủ sức làm thay đổi kết quả mô hình. Mức $4$ đang dùng là một
 quyết định nằm trong vùng an toàn, không phải một mức tối ưu đã được chứng minh.
 
 % Mục này gồm sơ đồ 8 bước và bảng ánh xạ, hai float lớn không nhét vừa cuối trang
@@ -350,7 +334,7 @@ quay ngược về yêu cầu nghiệp vụ, và kết quả đánh giá quay ng
 \begin{figure}[!htbp]
     \centering
     \includegraphics[width=0.60\textwidth]{sodo_ml_lifecycle_vi.pdf}
-    \caption[Vòng đời học máy]{Vòng đời học máy. Nguồn: \textit{Data Version Control}~\cite{aivietnam2025dvc}.}
+    \caption{Vòng đời phát triển và vận hành mô hình học máy (MLOps). Nguồn: \textit{Data Version Control}~\cite{aivietnam2025dvc}.}
     \label{fig:ml_lifecycle}
 \end{figure}
 
@@ -362,11 +346,7 @@ chia và khảo sát dữ liệu; bước $5$ sinh rồi chọn đặc trưng; b
 \begin{figure}[!htbp]
     \centering
     \includegraphics[width=0.96\textwidth]{pipeline_sodo_mlops.pdf}
-    \caption[Chín bước của quy trình học máy]{Chín bước của quy trình học máy, xếp ba hàng ba cột và đọc theo mũi tên.
-    Hàng trên chạy từ trái sang phải là bước $1$, $2$, $3$; hàng giữa chạy ngược từ phải
-    sang trái là $4$, $5$, $6$; hàng dưới lại chạy từ trái sang phải là $7$, $8$, $9$.
-    Dòng cuối mỗi ô ghi tệp kết quả mà bước đó sinh ra. Mũi tên nét đứt từ bước $9$ vòng
-    về bước $1$ là khâu quản lý phiên bản áp lại lên tệp nguồn.}
+    \caption{Quy trình 9 bước phát triển và đánh giá mô hình học máy.}
     \label{fig:pipeline_mlops}
 \end{figure}
 
@@ -403,7 +383,7 @@ Giải thích mô hình & \texttt{08\_explainable\_ai} & biểu đồ SHAP \\
 Mô hình đối chứng & \texttt{06\_0b\_baseline\_prophet} & \texttt{prophet\_test\_summary.json} \\
 \bottomrule
 \end{tabular}
-\caption[Ánh xạ giữa bước trong quy trình và notebook thực hiện]{Ánh xạ giữa bước trong quy trình và notebook thực hiện.}
+\caption{Ánh xạ các bước trong quy trình với notebook thực hiện.}
 \label{tab:notebook_pipeline}
 \end{table}
 
@@ -628,8 +608,7 @@ Sau khi bo tram [19, 24]: 1,480,000 dong | 40 tram
 
 \begin{table}[htbp]
 \centering
-\caption{Thống kê mô tả sản lượng theo ba phạm vi. Đọc từ ô kết quả của notebook
-\texttt{02\_EDA.ipynb}.}
+\caption{Thống kê mô tả sản lượng theo ba phạm vi (nguồn: \texttt{02\_EDA.ipynb}).}
 \label{tab:eda_mo_ta}
 \small
 \begin{tabular}{l r r r r r}
@@ -657,9 +636,7 @@ ban ngày, và chuẩn hoá mục tiêu để kéo phân bố về dạng đều
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\textwidth]{eda_phan_bo_don_bien.png}
-    \caption{(Trích xuất từ Notebook \texttt{02\_EDA.ipynb}) \textbf{Trái:} histogram toàn bộ tập
-    huấn luyện, trục tung thang loga. \textbf{Giữa:} chỉ ban ngày. \textbf{Phải:} boxplot đối
-    chiếu hai phạm vi.}
+    \caption{Phân phối sản lượng trên tập huấn luyện theo các phạm vi (nguồn: \texttt{02\_EDA.ipynb}).}
     \label{fig:eda_phan_bo}
 \end{figure}
 
@@ -698,20 +675,15 @@ $02/10/2020$ cho một đường cong trơn, lên đều rồi hạ gần đối
 hai ngày chênh nhau gần $30$ lần: $0{,}0926 / 0{,}0031 = 29{,}9$.
 
 Cả hai đều thuộc nhóm ngày nhiều nắng, tức lượng bức xạ khả dụng trong ngày tương đương, nhưng
-cho hai chuỗi khác hẳn. Mẫu hình này phù hợp với biến động liên quan tới điều kiện mây, thứ
-không suy ra được từ lịch hay vị trí Mặt Trời. Đây là căn cứ sinh hai đặc trưng \texttt{chi\_so\_troi\_quang} và
+cho hai chuỗi khác hẳn. Phần chênh lệch đó là do mây, và mô hình không thể suy ra nó từ lịch
+hay từ vị trí Mặt Trời. Đây là căn cứ sinh hai đặc trưng \texttt{chi\_so\_troi\_quang} và
 \texttt{rad\_x\_sinelev}: chúng cấp cho mô hình tín hiệu về mức che phủ \textbf{ngay tại bước hiện
 tại}, thay vì bắt mô hình suy ra gián tiếp từ các mốc trễ.
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\textwidth]{eda_mau_hinh_phat_dien.png}
-    \caption{(Trích xuất từ Notebook \texttt{02\_EDA.ipynb}) Sản lượng theo bước $15$ phút tại
-    trạm $27$, hai ngày dùng chung thang trục tung. \textbf{Trái:} ngày trời quang
-    $02/10/2020$, độ gấp $0{,}0031$. Phải: ngày nhiều mây $23/12/2020$, độ gấp
-    $0{,}0926$. Trục hoành là giờ trong ngày, cắt trong khoảng $5$--$21$ giờ vì ngoài khoảng
-    đó sản lượng bằng $0$. Số đo của hai ngày kiểm chứng được bằng
-    \texttt{srcs/05\_machine\_learning/kiem\_chung\_bao\_cao\_v4.py}, mục $11$.}
+    \caption{Đặc tuyến sản lượng ngày trời quang và ngày nhiều mây tại trạm 27 (nguồn: \texttt{02\_EDA.ipynb}).}
     \label{fig:eda_mau_hinh}
 \end{figure}
 
@@ -725,8 +697,7 @@ tại các mốc trễ đáng chú ý.
 
 \begin{table}[htbp]
 \centering
-\caption{Tự tương quan của chuỗi sản lượng tại các mốc trễ đáng chú ý, trạm $27$, $42.240$
-bước liên tục. Đọc từ ô kết quả của notebook \texttt{02\_EDA.ipynb}.}
+\caption{Hệ số tự tương quan (ACF) chuỗi sản lượng tại các mốc trễ (nguồn: \texttt{02\_EDA.ipynb}).}
 \label{tab:eda_acf}
 \small
 \begin{tabular}{l r r}
@@ -752,8 +723,7 @@ Ba con số này là căn cứ định lượng cho lựa chọn trình bày ở
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\textwidth]{eda_acf_pacf.png}
-    \caption{(Trích xuất từ Notebook \texttt{02\_EDA.ipynb}) \textbf{Trái:} ACF quét $288$ bước
-    $=72$ giờ. \textbf{Phải:} PACF quét $96$ bước $=24$ giờ. Vạch đỏ chấm là mốc $96$ bước.}
+    \caption{Biểu đồ tự tương quan ACF và tương quan riêng phần PACF (nguồn: \texttt{02\_EDA.ipynb}).}
     \label{fig:eda_acf}
 \end{figure}
 
@@ -763,8 +733,7 @@ Tương quan tính trên $606.112$ dòng đo thật ban ngày, xem Bảng~\ref{t
 
 \begin{table}[htbp]
 \centering
-\caption{Tương quan với sản lượng, tính trên phạm vi đo thật ban ngày, kèm cột đối chiếu khi
-gộp cả ban đêm. Đọc từ ô kết quả của notebook \texttt{02\_EDA.ipynb}.}
+\caption{Tương quan giữa các biến khí tượng với sản lượng điện (nguồn: \texttt{02\_EDA.ipynb}).}
 \label{tab:eda_tuong_quan}
 \small
 \begin{tabular}{l r r r}
@@ -795,8 +764,7 @@ dương $+0{,}0330$, tức đảo ngược hoàn toàn ý nghĩa. Vì vậy mọ
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.78\textwidth]{eda_tuong_quan_spearman.png}
-    \caption{(Trích xuất từ Notebook \texttt{02\_EDA.ipynb}) Ma trận tương quan Spearman trên
-    $606.112$ dòng đo thật ban ngày.}
+    \caption{Ma trận tương quan Spearman giữa các đặc trưng ban ngày (nguồn: \texttt{02\_EDA.ipynb}).}
     \label{fig:eda_corr}
 \end{figure}
 
@@ -839,9 +807,7 @@ và tập test không còn là một giai đoạn liền mạch.
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\textwidth]{nb02_chia_du_lieu.png}
-    \caption{(Trích xuất từ Notebook \texttt{02\_split\_time\_series.ipynb}) Cách chia dữ
-    liệu theo trục thời gian: tập test niêm phong tách ra từ phần cuối, phần Phát triển
-    còn lại chia thành ba fold theo cửa sổ mở rộng.}
+    \caption{Phân chia dữ liệu chuỗi thời gian theo cửa sổ mở rộng (nguồn: \texttt{02\_split\_time\_series.ipynb}).}
     \label{fig:chia_du_lieu}
 \end{figure}
 
@@ -859,8 +825,7 @@ phần kiểm định, còn phần huấn luyện nới rộng dần qua $17.218
 
 \begin{table}[htbp]
 \centering
-\caption{Ranh giới thời gian, kích thước và số trạm của ba fold, đọc từ các tệp
-\texttt{fold\_*\_train\_selected.parquet} và \texttt{fold\_*\_val\_selected.parquet}.}
+\caption{Ranh giới thời gian, kích thước và số trạm của ba fold kiểm định.}
 \label{tab:ba_fold}
 \small
 \begin{tabular}{c l r c l r c}
@@ -914,8 +879,9 @@ trạm; ở fold $2$ là $39$ trạm so với $42$. Chênh lệch đó nghĩa l�
 thuộc về những trạm mà mô hình chưa từng nhìn thấy một dòng nào lúc huấn luyện. Tới
 fold $3$ thì cả $42$ trạm đều đã có mặt ở phần huấn luyện nên tình huống này không còn.
 
-Tình huống này có thể làm tăng sai số đo trên fold $1$ và fold $2$ so với kịch bản chỉ dự báo
-các trạm đã xuất hiện trong phần huấn luyện. Khi so sánh các
+Ảnh hưởng của nó làm sai số đo trên fold $1$ và fold $2$ bi quan hơn thực tế vận
+hành, vì trong vận hành thật mô hình luôn đã có lịch sử của trạm mà nó dự báo. Chiều ảnh
+hưởng là an toàn, sai số bị đánh giá nặng hơn chứ không nhẹ đi, nhưng khi so sánh các
 cấu hình bằng WAPE gộp ba fold thì phần đóng góp của fold $1$ vẫn mang theo thành phần sai
 lệch này.
 
@@ -937,9 +903,7 @@ vào, không dùng dữ liệu trung gian nào khác.
 
 \begin{table}[htbp]
 \centering
-\caption{Số dòng huấn luyện có nhãn rơi sang vùng kiểm định, tính trên từng fold và
-từng tầm dự báo. Đọc từ ô kết quả của notebook
-\texttt{05b\_thuc\_nghiem\_tham\_so\_hardcode.ipynb}, Thí nghiệm $9$.}
+\caption{Kiểm tra hiện tượng chồng lấn nhãn giữa các fold (nguồn: \texttt{05b\_thuc\_nghiem\_tham\_so\_hardcode.ipynb}).}
 \label{tab:chong_lan}
 \small
 \begin{tabular}{c r r r r}
@@ -984,8 +948,7 @@ Bảng~\ref{tab:dac_trung_thoi_gian}.
 
 \begin{table}[htbp]
 \centering
-\caption{Ba nhóm đặc trưng sinh tại notebook \texttt{03\_1\_features\_time.ipynb}. Cột cuối ghi
-tham số thực tế khai báo trong notebook.}
+\caption{Các nhóm đặc trưng thời gian và độ trễ (nguồn: \texttt{03\_1\_features\_time.ipynb}).}
 \label{tab:dac_trung_thoi_gian}
 \small
 \begin{tabular}{@{}L{2.8cm} L{6.6cm} L{4.7cm}@{}}
@@ -1055,8 +1018,7 @@ Bảng~\ref{tab:chon_lag}.
 
 \begin{table}[htbp]
 \centering
-\caption{Ba mốc trễ đã được thử và quyết định tương ứng, ghi tại ô khai báo \texttt{LAGS} của
-notebook \texttt{03\_1\_features\_time.ipynb}.}
+\caption{Lựa chọn các mốc trễ chuỗi thời gian (nguồn: \texttt{03\_1\_features\_time.ipynb}).}
 \label{tab:chon_lag}
 \small
 \begin{tabular}{@{}L{3.4cm} L{3.6cm} L{7.0cm}@{}}
@@ -1137,8 +1099,7 @@ mất mát với mô hình cuối nhưng nhỏ hơn nhiều, xem Bảng~\ref{tab
 
 \begin{table}[htbp]
 \centering
-\caption{Mô hình nháp dùng ở cổng lệch pha so với mô hình cuối. Đọc từ ô cấu hình cổng lệch pha
-trong notebook \texttt{06\_1\_train\_mae.ipynb}.}
+\caption{So sánh cấu hình mô hình nháp và mô hình chính thức (nguồn: \texttt{06\_1\_train\_mae.ipynb}).}
 \label{tab:mo_hinh_nhap}
 \small
 \begin{tabular}{@{}L{4.6cm} L{4.9cm} L{4.6cm}@{}}
@@ -1263,7 +1224,7 @@ Góc đo bằng độ gián đoạn ở mốc $0^\circ$ và $360^\circ$: $359^\c
 thực tế nhưng cách xa trên thang số \\
 \bottomrule
 \end{tabular}
-\caption[Ba chi tiết cài đặt của bước solar geometry]{Ba chi tiết cài đặt của bước solar geometry.}
+\caption{Chi tiết cài đặt các tham số hình học Mặt Trời.}
 \label{tab:chi_tiet_solar}
 \end{table}
 
@@ -1285,9 +1246,8 @@ lẫn:
     \textbf{tự tính} bằng mô hình Haurwitz từ góc cao Mặt Trời.
 \end{itemize}
 
-Vì $GHI_{cs}$ ứng với điều kiện không mây, nó là mức tham chiếu trời quang chứ không phải
-cận trên vật lý: bức xạ đo có thể vượt mức này trong những khoảng ngắn do hiện tượng tăng
-cường bức xạ ở mép mây.
+Vì $GHI_{cs}$ ứng với điều kiện không mây, nó là mức trần mà bức xạ đo được chỉ có thể tiệm
+cận chứ không nên vượt qua.
 
 Từ góc cao suy ra bức xạ ngang trời quang:
 
@@ -1311,8 +1271,7 @@ này \textbf{tính riêng trên phần huấn luyện của từng fold}, xem B�
 
 \begin{table}[htbp]
 \centering
-\caption{Hệ số hiệu chỉnh trời quang \texttt{cs\_factor} theo từng fold. Đọc từ ô kết quả của
-notebook \texttt{03\_2\_features\_spatial.ipynb}.}
+\caption{Hệ số hiệu chỉnh trời quang \texttt{cs\_factor} theo từng fold (nguồn: \texttt{03\_2\_features\_spatial.ipynb}).}
 \label{tab:cs_factor}
 \small
 \begin{tabular}{l r r r}
@@ -1375,10 +1334,7 @@ quả trên một cửa sổ sáu giờ.
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\textwidth]{nb032_downscale_truoc_sau.png}
-    \caption{(Trích xuất từ Notebook \texttt{03\_2\_features\_spatial.ipynb}) Bức xạ tại trạm $1$,
-    ngày $19/12/2020$, từ $11$ giờ đến $17$ giờ. \textbf{Trên:} dữ liệu gốc theo giờ, mỗi
-    giá trị lặp bốn lần nên đường đi thành bậc thang. Dưới: sau khi hạ độ hạt,
-    đường biến thiên theo từng bước $15$ phút.}
+    \caption{Làm mịn và nội suy dữ liệu bức xạ bước 15 phút tại trạm 1 (nguồn: \texttt{03\_2\_features\_spatial.ipynb}).}
     \label{fig:downscale}
 \end{figure}
 
@@ -1391,8 +1347,7 @@ trong bảng notebook in ra.
 
 \begin{table}[htbp]
 \centering
-\caption{Quy mô trạm tính trên tập huấn luyện, tám trạm lớn nhất. Đọc từ ô kết quả của
-notebook \texttt{03\_2\_features\_spatial.ipynb}.}
+\caption{Quy mô công suất 8 trạm quang điện tiêu biểu (nguồn: \texttt{03\_2\_features\_spatial.ipynb}).}
 \label{tab:quy_mo}
 \small
 \begin{tabular}{r r r r}
@@ -1421,9 +1376,7 @@ Bảng~\ref{tab:tuong_tac}.
 
 \begin{table}[htbp]
 \centering
-\caption{Năm đặc trưng tương tác, tỷ lệ khuyết trên tập huấn luyện và tương quan Pearson với
-mục tiêu tính trên $763.740$ dòng ban ngày. Đọc từ ô kết quả của notebook
-\texttt{03\_3\_features\_aggregate.ipynb}.}
+\caption{Tương quan của các đặc trưng tương tác với mục tiêu (nguồn: \texttt{03\_3\_features\_aggregate.ipynb}).}
 \label{tab:tuong_tac}
 \small
 % Cot 1 phai du 5,0cm: ten dai nhat la cloud_low_x_shortwave, 21 ky tu chu don cach o
@@ -1482,8 +1435,7 @@ không đọc thẳng từ dữ liệu nguồn. Bảng~\ref{tab:dinh_nghia_dan_x
 
 \begin{table}[htbp]
 \centering
-\caption{Công thức các đặc trưng dẫn xuất. Đọc từ mã nguồn notebook
-\texttt{03\_2\_features\_spatial.ipynb} và \texttt{03\_3\_features\_aggregate.ipynb}.}
+\caption{Công thức toán học các đặc trưng dẫn xuất.}
 \label{tab:dinh_nghia_dan_xuat}
 \small
 % Cot 2 phai du 7,0cm: o dai nhat la cong thuc clip(shortwave_radiation/ghi_cs, 0, 1,5)
@@ -1561,8 +1513,8 @@ liệu thay vì chọn trước bằng lập luận.
 
 \textbf{Vấn đề.} Nhãn cần dự báo nằm ở thời điểm $T{+}h$, nhưng các đặc trưng hình học Mặt Trời
 và nhãn lịch --- \texttt{sin\_elevation}, \texttt{ghi\_cs}, \texttt{hour} --- vẫn là giá trị tại $T$. Mô
-hình do đó dùng vị trí Mặt Trời lúc $T$ để dựng lại sản lượng lúc $T{+}h$, tạo nguy cơ đường
-dự báo thiên lệch pha về phía $T$, nhất là khi nhóm đặc trưng này có đóng góp lớn. Đây là hệ quả cấu trúc của bài toán, và tác
+hình do đó dùng vị trí Mặt Trời lúc $T$ để dựng lại sản lượng lúc $T{+}h$, và đường dự báo sinh
+ra chính là đường Mặt Trời bị trễ đúng $h$ bước. Đây là hệ quả cấu trúc của bài toán, và tác
 động của nó lan rộng vì cùng đại lượng đó cũng là mẫu số chuẩn hoá ở Mục~$7.3.5$.
 
 \textbf{Cách xử lý.} Quy trình khai báo một danh sách $22$ cột \textbf{tất định} --- hình học
@@ -1584,10 +1536,7 @@ riêng theo khung giờ, cho kết quả ở Bảng~\ref{tab:mt_thay_the}.
 
 \begin{table}[htbp]
 \centering
-\caption{So sánh dùng đặc trưng tất định tại $T$ với tại $T{+}h$, đo bằng MAE của đường bao
-$\texttt{site\_scale} \times \max(\sin h, \varepsilon)$ so với sản lượng thật tại $T{+}15$ phút,
-trên $999.010$ dòng ban ngày của tập Phát triển. Kiểm chứng bằng
-\texttt{srcs/05\_machine\_learning/kiem\_chung\_bao\_cao\_v4.py}, mục $10$.}
+\caption{So sánh đặc trưng tất định tại $T$ và $T{+}h$ (nguồn: \texttt{kiem\_chung\_bao\_cao\_v4.py}).}
 \label{tab:mt_thay_the}
 \small
 \begin{tabular}{l r r r L{3.2cm}}
@@ -1603,12 +1552,15 @@ Chiều $16$--$18$h & $189.966$ & $2{,}9646$ & $\mathbf{2{,}4136}$ & $-18{,}6\%$
 
 Hai khung giờ cho hai kết luận ngược nhau, nên không phương án nào thắng tuyệt đối. Trên toàn
 bộ ban ngày hai bản chênh nhau $0{,}4\%$, tức gần như tương đương; chênh lệch chỉ lộ ra khi
-tách theo khung giờ: buổi sáng giá trị tại $T$ khớp hơn $26{,}3\%$, buổi chiều thì ngược lại,
-giá trị tại $T{+}h$ khớp hơn $18{,}6\%$. Quy trình vì vậy giữ cả hai
+tách theo khung giờ. Buổi sáng sản lượng thật đi sau Mặt Trời, vì tấm pin còn lạnh và
+ẩm sương, inverter đang trong giai đoạn khởi động, nên giá trị tại $T$ khớp hơn $26{,}3\%$;
+buổi chiều thì ngược lại, giá trị tại $T{+}h$ khớp hơn $18{,}6\%$. Quy trình vì vậy giữ cả hai
 bản và để mô hình tự chọn theo khung giờ, thay vì áp một phương án cho cả ngày.
 
-Bảng được tính trực tiếp trên phạm vi $999.010$ dòng đã khai báo và là nguồn số liệu dùng trong
-báo cáo.
+Bảng này được tính lại từ dữ liệu chứ không chép từ khối ghi chú trong mã nguồn. Khối ghi chú
+đó ghi ba cặp số khác ($3{,}1873$ với $3{,}1884$; $1{,}5934$ với $2{,}1833$; $3{,}4002$ với
+$2{,}8574$) nhưng không kèm phạm vi dòng nên không dựng lại được. Hai lần đo cùng chiều ở cả ba
+khung giờ; báo cáo lấy bản dựng lại được.
 
 \FloatBarrier
 \subsection{Chuẩn hoá mục tiêu theo vật lý}
@@ -1673,32 +1625,31 @@ Bảng~\ref{tab:quet_phan_vi}.
 
 \begin{table}[htbp]
 \centering
-\caption{Quét mức phân vị dùng làm cận cắt, chạy trên \textbf{tập kiểm định}. Đọc từ tệp kết
-quả \texttt{05\_selected/quet\_muc\_phan\_vi\_nguong\_cat.csv}.}
+\caption{Quét ngưỡng phân vị cận cắt trên tập kiểm định (nguồn: \texttt{quet\_muc\_phan\_vi\_nguong\_cat.csv}).}
 \label{tab:quet_phan_vi}
 \small
 \begin{tabular}{r r r r}
 \toprule
 \textbf{Mức phân vị} & \textbf{Ngưỡng cắt} & \textbf{Tỷ lệ bị cắt (\%)} & \textbf{WAPE kiểm định (\%)} \\
 \midrule
-$0{,}900$ & $1{,}1412$ & $10{,}00$ & $25{,}2239$ \\
-$0{,}950$ & $1{,}2200$ & $5{,}00$ & $25{,}0739$ \\
-$0{,}975$ & $1{,}2916$ & $2{,}50$ & $25{,}0267$ \\
-$\mathbf{0{,}990}$ & $\mathbf{1{,}3782}$ & $\mathbf{1{,}00}$ & $\mathbf{25{,}0141}$ \\
-$0{,}995$ & $1{,}4508$ & $0{,}50$ & $25{,}0135$ \\
-$0{,}999$ & $1{,}7266$ & $0{,}10$ & $25{,}0135$ \\
-$1{,}000$ & $7{,}4245$ & $0{,}00$ & $25{,}0135$ \\
+$0{,}900$ & $1{,}1525$ & $10{,}00$ & $22{,}6101$ \\
+$0{,}950$ & $1{,}2341$ & $5{,}00$  & $22{,}5211$ \\
+$0{,}975$ & $1{,}3090$ & $2{,}50$  & $22{,}4949$ \\
+$\mathbf{0{,}990}$ & $\mathbf{1{,}4015}$ & $\mathbf{1{,}00}$ & $\mathbf{22{,}4901}$ \\
+$0{,}995$ & $1{,}4832$ & $0{,}50$  & $22{,}4900$ \\
+$0{,}999$ & $1{,}9297$ & $0{,}10$  & $22{,}4900$ \\
+$1{,}000$ & $13{,}4137$ & $0{,}00$ & $22{,}4900$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Đường cong WAPE phẳng từ mức $0{,}99$ trở lên, ba mức cuối chỉ chênh nhau $0{,}0000$ điểm
-phần trăm. Bên dưới mức đó thì sai số xấu dần, tới $25{,}2239\%$ ở phân vị $0{,}90$ vì cắt mất
+Đường cong WAPE phẳng từ mức $0{,}99$ trở lên, ba mức cuối chỉ chênh nhau $0{,}0001$ điểm
+phần trăm. Bên dưới mức đó thì sai số xấu dần, tới $22{,}6101\%$ ở phân vị $0{,}90$ vì cắt mất
 $10\%$ dữ liệu. Dòng cuối cùng cho thấy phép cắt vẫn cần thiết: bỏ hẳn nó thì ngưỡng nhảy
-lên $7{,}4245$, tức đuôi phân bố có những điểm gấp nhiều lần phần thân. Mức $0{,}99$ là
+lên $13{,}4137$, tức đuôi phân bố có những điểm gấp gần mười lần phần thân. Mức $0{,}99$ là
 điểm mà đường cong bắt đầu phẳng mà vẫn chặn được đuôi đó.
 
-\textbf{Hai giá trị ngưỡng trong báo cáo.} Bảng~\ref{tab:quet_phan_vi} ghi ngưỡng $1{,}3782$
+\textbf{Hai giá trị ngưỡng trong báo cáo.} Bảng~\ref{tab:quet_phan_vi} ghi ngưỡng $1{,}4015$
 tại mức $0{,}99$, còn tệp cấu hình mô hình ghi $1{,}3764$. Hai con số này không mâu thuẫn: cùng
 một mức phân vị nhưng tính trên hai tập khác nhau. Phép quét chạy trên tập kiểm định để đo WAPE
 tương ứng với từng mức, nên ngưỡng của nó là phân vị $99$ của $k$ trên tập kiểm định
@@ -1719,8 +1670,7 @@ Bảng~\ref{tab:cat_theo_gio}.
 
 \begin{table}[htbp]
 \centering
-\caption{Tỷ lệ nhãn bị ngưỡng $1{,}3764$ cắt, tách theo giờ trong ngày, tính trên tập huấn
-luyện. Kiểm chứng bằng \texttt{srcs/05\_machine\_learning/kiem\_chung\_bao\_cao\_v4.py}, mục $1$.}
+\caption{Tỷ lệ nhãn bị cắt theo khung giờ trong ngày (nguồn: \texttt{kiem\_chung\_bao\_cao\_v4.py}).}
 \label{tab:cat_theo_gio}
 \small
 \begin{tabular}{r r r r r}
@@ -1760,8 +1710,7 @@ còn lại, rồi huấn luyện và chấm lại trên tập kiểm định. K�
 
 \begin{table}[htbp]
 \centering
-\caption{Quét bốn tham số cố định, chấm trên $779.099$ dòng của tập kiểm định. Đọc từ tệp kết
-quả \texttt{05b\_thuc\_nghiem\_tham\_so/thuc\_nghiem\_tham\_so\_hardcode.csv}.}
+\caption{Thực nghiệm quét 4 tham số cố định trên tập kiểm định (nguồn: \texttt{thuc\_nghiem\_tham\_so\_hardcode.csv}).}
 \label{tab:quet_tham_so}
 \small
 \begin{tabular}{l r r r r r}
@@ -1842,7 +1791,7 @@ các điểm đo bất thường. Giá trị dùng thật là $1{,}3764$ suy t�
 luyện, nằm giữa hai mức $1{,}2$ và $1{,}5$ của phép quét.
 
 \textbf{Hệ số nới trần không phải lựa chọn về độ chính xác.} Bốn mức từ $1{,}00$ tới $1{,}10$
-chênh nhau $0{,}0031$ điểm WAPE, tức độ nhạy quan sát được rất nhỏ. Hệ số $1{,}02$ được chọn theo lý do
+chênh nhau $0{,}0031$ điểm WAPE, tức nằm trong mức nhiễu. Hệ số $1{,}02$ được chọn theo lý do
 vật lý: chừa $2\%$ dư địa quanh trần để không cắt oan các dao động ngắn do hiện tượng tăng
 cường bức xạ ở mép mây, chứ không phải khẳng định công suất lắp đặt thực tế cao hơn $2\%$.
 
@@ -1856,8 +1805,7 @@ trời quang. Bảng~\ref{tab:clip_csi} cho thấy nó ảnh hưởng tới bao 
 
 \begin{table}[htbp]
 \centering
-\caption{Số điểm bị ngưỡng \texttt{CLIP\_CSI} cắt. Đọc từ tệp kết quả
-\texttt{05b\_thuc\_nghiem\_tham\_so/thuc\_nghiem\_clip\_csi.csv}.}
+\caption{Số lượng điểm dữ liệu bị cắt bởi ngưỡng \texttt{CLIP\_CSI} (nguồn: \texttt{thuc\_nghiem\_clip\_csi.csv}).}
 \label{tab:clip_csi}
 \small
 \begin{tabular}{r r r}
@@ -1899,8 +1847,7 @@ phân loại trình bày ở Bảng~\ref{tab:chan_doan_nhan}.
 
 \begin{table}[htbp]
 \centering
-\caption{Phân bố nhãn chẩn đoán trên $86$ đặc trưng số. Đọc từ ô kết quả của notebook
-\texttt{04\_vif\_diagnostics.ipynb}.}
+\caption{Phân bố chẩn đoán đa cộng tuyến trên 86 đặc trưng (nguồn: \texttt{04\_vif\_diagnostics.ipynb}).}
 \label{tab:chan_doan_nhan}
 \small
 \begin{tabular}{l r L{7.4cm}}
@@ -1928,8 +1875,7 @@ Bảng~\ref{tab:trung_lap}.
 
 \begin{table}[htbp]
 \centering
-\caption{Tám cột trùng lặp gần hoàn hảo và cột đại diện được giữ lại. Đọc từ ô kết quả của
-notebook \texttt{04\_vif\_diagnostics.ipynb}.}
+\caption{Các cặp đặc trưng trùng lặp và cột đại diện giữ lại (nguồn: \texttt{04\_vif\_diagnostics.ipynb}).}
 \label{tab:trung_lap}
 % \footnotesize thay vi \small: bang nay de cot tu gian, ma hai ten dai nhat
 % (number_of_panels_missing_flag va capacity_kw_missing_flag) cong lai vuot kho chu
@@ -1960,9 +1906,7 @@ trưng còn $78$.
 
 \begin{table}[htbp]
 \centering
-\caption{Tám đặc trưng có hệ số phóng đại phương sai cao nhất. Giá trị $9999$ là mức chặn trên
-mà notebook đặt cho trường hợp cộng tuyến gần hoàn hảo. Đọc từ ô kết quả của notebook
-\texttt{04\_vif\_diagnostics.ipynb}.}
+\caption{Tám đặc trưng có hệ số phóng đại phương sai (VIF) cao nhất (nguồn: \texttt{04\_vif\_diagnostics.ipynb}).}
 \label{tab:vif}
 \small
 \begin{tabular}{l r L{6.6cm}}
@@ -1997,9 +1941,7 @@ hiệp phương sai với mục tiêu thay vì theo cộng tuyến giữa các �
 
 \begin{table}[htbp]
 \centering
-\caption{Bảy đặc trưng dẫn đầu theo điểm quan trọng biến của hồi quy bình phương tối thiểu riêng
-phần, đặt cạnh hệ số phóng đại phương sai của chính chúng. Đọc từ ô kết quả của notebook
-\texttt{04\_vif\_diagnostics.ipynb}.}
+\caption{Đặc trưng dẫn đầu theo độ quan trọng PLS và hệ số VIF tương ứng (nguồn: \texttt{04\_vif\_diagnostics.ipynb}).}
 \label{tab:pls}
 \small
 \begin{tabular}{l r r}
@@ -2033,14 +1975,13 @@ hiện ở các bước khác của quy trình. Trong $114$ cột của tệp đ
 danh sách và bị loại; $74$ cột còn lại đi tiếp vào bước chấm điểm. Cách khai báo dư này là có
 chủ đích: thêm một tên không tồn tại thì vô hại, còn sót một tên rò rỉ thì hỏng cả kết quả.
 
-Danh sách cấm được đặt trước phép chấm điểm chứ không sau, vì một cột rò rỉ có thể đạt điểm rất cao
-một cách giả tạo: nếu để nó dự thi thì chính thước đo sẽ chọn nó. Hình~\ref{fig:deny_list} là đoạn khai báo.
+Danh sách cấm được đặt trước phép chấm điểm chứ không sau, vì một cột rò rỉ luôn đạt điểm cao:
+nếu để nó dự thi thì chính thước đo sẽ chọn nó. Hình~\ref{fig:deny_list} là đoạn khai báo.
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.92\textwidth]{code_pipeline_deny_list.png}
-    \caption{Đoạn khai báo danh sách cấm trong quy trình chọn đặc trưng. Mỗi nhóm cột bị cấm đi
-    kèm lý do ngay tại chỗ khai báo.}
+    \caption{Danh sách nhóm biến loại trừ trong quy trình chọn đặc trưng.}
     \label{fig:deny_list}
 \end{figure}
 
@@ -2071,8 +2012,7 @@ Bảng~\ref{tab:mi} lấy mười đặc trưng đứng đầu trong $74$ ứng 
 
 \begin{table}[htbp]
 \centering
-\caption{Mười đặc trưng có điểm thông tin tương hỗ cao nhất. Đọc từ ô kết quả của notebook
-\texttt{05\_select\_features.ipynb}.}
+\caption{Mười đặc trưng có điểm thông tin tương hỗ (MI) cao nhất (nguồn: \texttt{05\_select\_features.ipynb}).}
 \label{tab:mi}
 \small
 \begin{tabular}{r l r}
@@ -2180,8 +2120,7 @@ Bảng~\ref{tab:bo_dac_trung} liệt kê trọn $39$ đặc trưng đã chọn, 
 
 \begin{table}[htbp]
 \centering
-\caption{Ba mươi chín đặc trưng được chọn, xếp theo nhóm. Đọc từ
-\texttt{05\_selected/selected\_features.json}.}
+\caption{Danh mục 39 đặc trưng được lựa chọn vào mô hình (nguồn: \texttt{selected\_features.json}).}
 \label{tab:bo_dac_trung}
 \small
 \begin{tabular}{@{}L{4.0cm} r L{9.0cm}@{}}
@@ -2289,8 +2228,7 @@ Bảng~\ref{tab:mien_optuna}.
 
 \begin{table}[htbp]
 \centering
-\caption{Miền tìm kiếm siêu tham số khai báo cho Optuna. Đọc từ hàm \texttt{tham\_so\_co\_ban} trong
-notebook \texttt{06\_1\_train\_mae.ipynb}.}
+\caption{Không gian tìm kiếm siêu tham số cho Optuna (nguồn: \texttt{06\_1\_train\_mae.ipynb}).}
 \label{tab:mien_optuna}
 \small
 \begin{tabular}{l l l}
@@ -2319,10 +2257,7 @@ mát vì vậy được trao cơ hội ngang nhau để tự tìm mức điều 
 
 \begin{table}[htbp]
 \centering
-\caption{Siêu tham số tốt nhất do Optuna chọn, theo từng hàm mất mát và tầm dự báo. Cả sáu cấu
-hình dùng chung \texttt{random\_state} $=42$, \texttt{deterministic} $=$ true và
-\texttt{max\_bin} $=127$ trên CPU. Đọc từ khoá \texttt{best\_params} trong tệp kết quả của mỗi
-notebook huấn luyện.}
+\caption{Bộ siêu tham số tối ưu do Optuna lựa chọn theo từng cấu hình.}
 \label{tab:sieu_tham_so}
 \scriptsize
 \resizebox{\textwidth}{!}{\begin{tabular}{l r r r r r r r r}
@@ -2346,8 +2281,7 @@ chỉ $0{,}73$ ở H4. Đọc ngang bảng còn thấy hai xu hướng. Các c�
 hẳn, $146$ và $134$ so với $71$--$99$ của Huber, tức cây sâu và chia nhỏ hơn, phù hợp với
 việc MSE phạt nặng sai số lớn nên có động cơ khớp sát từng vùng dữ liệu. Mức phạt $L_1$ mà
 Optuna chọn cho Huber ở cả hai tầm đều gần chạm cận trên của miền ($9{,}49$ và $9{,}88$), cho
-thấy Optuna ưu tiên vùng gần cận trên, nên miền tìm kiếm nên được mở rộng trước khi diễn giải
-thêm.
+thấy cấu hình này cần ràng buộc mạnh mới ổn định.
 
 \textbf{Hai chỗ chạm biên miền tìm kiếm.} \texttt{subsample} của MAE--H1 bằng $0{,}7003$, tức
 đúng cận dưới; \texttt{reg\_alpha} của Huber đạt $9{,}49$--$9{,}88$ trên miền $[0;10]$. Khi một
@@ -2366,9 +2300,7 @@ sáu cấu hình ở Bảng~\ref{tab:chon_loss}.
 
 \begin{table}[htbp]
 \centering
-\caption{Sai số trên tập kiểm định, phạm vi đo thật ban ngày. Trong mỗi tầm, cả ba hàm được
-chấm trên đúng cùng số quan sát. Đọc từ \texttt{metrics\_val.json} của sáu cấu hình dưới
-\texttt{06\_train/}.}
+\caption{Sai số trên tập kiểm định theo các hàm mất mát (nguồn: \texttt{metrics\_val.json}).}
 \label{tab:chon_loss}
 \small
 \begin{tabular}{l l r r r r}
@@ -2393,7 +2325,7 @@ H4 & Huber         & $27{,}4086$ & $4{,}2896$ & $1{,}9651$ & $0{,}8672$ \\
 hình được chấm trên tập sạch hơn thì chênh lệch WAPE phản ánh phạm vi chứ không phản ánh hàm
 mất mát.
 
-Đáng chú ý là MAE đạt WAPE thấp hơn còn MSE đạt RMSE thấp hơn, ở cả hai tầm. Điều này đúng với bản chất
+Đáng chú ý là MAE thắng theo WAPE nhưng thua theo RMSE ở cả hai tầm. Điều này đúng với bản chất
 hai hàm: MSE phạt bình phương sai số nên ép sai số lớn xuống mạnh hơn, cho RMSE tốt hơn; MAE
 phạt tuyến tính nên bám phần thân phân bố, cho sai số tương đối tổng thể thấp hơn. Dự án lấy
 WAPE làm tiêu chí chọn vì nó là chỉ số được báo cáo, và vì mục tiêu vận hành là tổng sai số
@@ -2491,9 +2423,10 @@ sang mốc nhãn thành \texttt{nhan\_energy\_source} và \texttt{nhan\_is\_dayl
     ở H$4$.
 \end{itemize}
 
-Phạm vi chấm điểm được xác định theo nhãn tại $T{+}h$. Nếu lọc theo cột tại $T$ thì phạm vi
-``đo thật ban ngày'' sẽ nhận thêm những dòng mà nhãn thực chất do bước điền khuyết của tầng ETL
-sinh ra hoặc rơi vào ban đêm.
+Bản trước lọc theo cột tại $T$. Vì nhãn là sản lượng tại $T{+}h$, cách đó để lọt vào phạm vi
+``đo thật ban ngày'' những dòng mà nhãn thực chất do bước điền khuyết của tầng ETL sinh ra hoặc
+rơi vào ban đêm. Sửa lại cho bám mốc nhãn làm WAPE H$1$ tăng $0{,}05$ điểm và H$4$ tăng
+$0{,}13$ điểm, tức con số cũ dễ hơn thực tế.
 
 \FloatBarrier
 \subsection{Kết quả}
@@ -2502,8 +2435,7 @@ Bảng~\ref{tab:ket_qua_test} là kết quả chính của toàn bộ tài liệ
 
 \begin{table}[htbp]
 \centering
-\caption{Sai số WAPE trên tập test niêm phong theo ba phạm vi. Đọc từ ô kết quả của notebook
-\texttt{07\_final\_test.ipynb} và tệp \texttt{metrics\_overall.json} của từng tầm.}
+\caption{Sai số WAPE trên tập test niêm phong theo ba phạm vi (nguồn: \texttt{metrics\_overall.json}).}
 \label{tab:ket_qua_test}
 \small
 \begin{tabular}{l r r}
@@ -2521,7 +2453,7 @@ Cả hai tầm dùng cấu hình MAE, đúng hai cấu hình thắng trên tập
 
 Phạm vi chính thức gồm $229.548$ dòng ở H1 và $229.297$ dòng ở H4.
 
-Sai số phân bố không đều giữa các trạm. Ở H1, trạm có WAPE thấp nhất đạt $11{,}89\%$ còn trạm có WAPE cao nhất
+Sai số phân bố không đều giữa các trạm. Ở H1, trạm tốt nhất đạt $11{,}89\%$ còn trạm kém nhất
 $28{,}32\%$, trung vị $18{,}12\%$; ở H4 khoảng này là $15{,}12\%$ đến $35{,}88\%$, trung vị
 $22{,}72\%$. Chênh lệch hơn hai lần giữa hai đầu cho thấy một mô hình dùng chung cho cả $40$
 trạm vẫn để lại phần khác biệt riêng của từng trạm mà đặc trưng hiện có chưa mô tả hết.
@@ -2534,8 +2466,7 @@ khác nhau. Chúng không so trực tiếp được với nhau, phải đọc k�
 
 \begin{table}[htbp]
 \centering
-\caption{Cùng mô hình, ba phạm vi đánh giá. Đọc từ
-\texttt{08\_baseline\_prophet\_test/optuna\_vs\_current\_wape.csv}.}
+\caption{Đối chiếu sai số WAPE giữa các giai đoạn đánh giá (nguồn: \texttt{optuna\_vs\_current\_wape.csv}).}
 \label{tab:ba_pham_vi}
 \small
 \begin{tabular}{l r r}
@@ -2550,8 +2481,8 @@ Cùng phạm vi với Prophet        & $17{,}7921$ & $22{,}3613$ \\
 \end{tabular}
 \end{table}
 
-Sai số trên test thấp hơn trên ba fold kiểm định tới hơn sáu điểm. Một nguyên nhân có khả năng
-đóng góp là vị trí của hai tập trên trục thời gian và lượng lịch sử khả dụng. Ba fold kiểm định nằm ở giai đoạn
+Sai số trên test thấp hơn trên ba fold kiểm định tới hơn sáu điểm. Nguyên nhân nằm ở vị trí của
+hai tập trên trục thời gian, không phải ở việc test dễ hơn. Ba fold kiểm định nằm ở giai đoạn
 \textbf{sớm} của chuỗi, nơi lịch sử dùng để tính \texttt{lag\_96} và các cửa sổ trượt còn ngắn, nên
 nhiều mốc dự báo thiếu ngữ cảnh. Tập test nằm ở \textbf{cuối} chuỗi, mọi mốc đều đã có đủ lịch
 sử phía sau. Chênh lệch này đến từ phạm vi dữ liệu và không cho phép kết luận rằng tập test đã
@@ -2561,7 +2492,7 @@ trước khi tập test được mở.
 \FloatBarrier
 \subsection{Đối chứng với Prophet}
 
-\subsubsection{Chỉ số kỹ năng dự báo (Forecast Skill Score)}
+\subsubsection{Chỉ số dự báo vượt trội}
 
 Một con số WAPE đứng một mình không nói lên chất lượng. Nó cần được đặt cạnh một mô hình đối
 chứng. Chỉ số Forecast Skill Score đo phần sai số cắt giảm được so với đối chứng. Dạng chuẩn của
@@ -2595,8 +2526,8 @@ system. Weather forecasts may be more accurate simply because the weather is eas
 
 Điều này đúng với dữ liệu của đề tài: WAPE trên tập test thấp hơn trên ba fold kiểm định tới hơn
 sáu điểm phần trăm, mà nguyên nhân đã phân tích ở trên là do vị trí hai tập trên trục thời gian
-chứ không do mô hình khá lên. Chỉ số kỹ năng chuẩn hoá hiệu năng theo cùng một mô hình đối
-chứng, nên việc so sánh giữa các điều kiện bớt phụ thuộc vào độ khó tuyệt đối của từng tập. Marquez và Coimbra nêu thêm một lợi ích thứ hai, rằng tỷ
+chứ không do mô hình khá lên. Chỉ số kỹ năng khử đúng loại chênh lệch đó, vì mô hình và đối
+chứng cùng chịu một điều kiện dữ liệu. Marquez và Coimbra nêu thêm một lợi ích thứ hai, rằng tỷ
 số này ổn định qua các tầm dự báo khác nhau:
 
 \begin{quote}\small
@@ -2660,12 +2591,11 @@ sổ thời gian Phát triển với mô hình chính, rồi dự báo tại đ�
 Khi chấm điểm, hai mô hình dùng cùng một tập dòng, cùng tử số và cùng mẫu số. Phạm vi
 này yêu cầu cả giá trị tại $T$ lẫn nhãn tại $T{+}h$ đều là số đo thật, đồng thời dòng tại $T$
 là ban ngày, chặt hơn phạm vi đo thật ban ngày của mô hình chính, nên số dòng nhỏ hơn:
-$220.114$ ở H1 và $202.677$ ở H4. Kết quả ở Bảng~\ref{tab:prophet}.
+$220.260$ ở H1 và $202.955$ ở H4. Kết quả ở Bảng~\ref{tab:prophet}.
 
 \begin{table}[htbp]
 \centering
-\caption{Đối chứng với Prophet trên cùng tập dòng. Đọc từ
-\texttt{08\_baseline\_prophet\_test/prophet\_bang\_bao\_cao.csv} và \texttt{prophet\_test\_summary.json}.}
+\caption{So sánh hiệu năng giữa LightGBM và baseline Prophet (nguồn: \texttt{prophet\_test\_summary.json}).}
 \label{tab:prophet}
 \small
 \begin{tabular}{l r r r r r}
@@ -2744,12 +2674,11 @@ luyện sau xử lý tiếp.
 
 Notebook còn đo một giả thuyết cạnh tranh: nếu độ lệch bắt nguồn từ việc dữ liệu khí tượng chỉ
 có độ hạt một giờ, thì đỉnh thực tế xảy ra càng gần cuối khối giờ sẽ càng lệch nhiều.
-Số đo không ủng hộ giả thuyết đó: cả bốn vị trí trong khối giờ đều cho trung vị đúng $15$ phút, xem Bảng~\ref{tab:lech_theo_vi_tri}.
+Số đo bác bỏ điều đó, cả bốn vị trí trong khối giờ đều cho trung vị đúng $15$ phút, xem Bảng~\ref{tab:lech_theo_vi_tri}.
 
 \begin{table}[htbp]
 \centering
-\caption{Độ lệch đỉnh theo vị trí của đỉnh thực tế trong khối giờ. Đọc từ tệp kết quả
-\texttt{09\_kiem\_chung\_tre\_pha/lech\_theo\_vi\_tri\_trong\_gio\_h1.csv}.}
+\caption{Phân tích độ trễ pha và độ lệch đỉnh của dự báo H1 (nguồn: \texttt{lech\_theo\_vi\_tri\_trong\_gio\_h1.csv}).}
 \label{tab:lech_theo_vi_tri}
 \small
 \begin{tabular}{l r r}
@@ -2798,8 +2727,7 @@ trung bình trị tuyệt đối giá trị SHAP trên toàn tập test.
 
 \begin{table}[htbp]
 \centering
-\caption{Mười đặc trưng có tầm quan trọng tổng thể lớn nhất, đo bằng trung bình trị tuyệt đối
-giá trị SHAP. Đọc từ \texttt{08\_explain/shap\_importance.csv}.}
+\caption{Top 10 đặc trưng quan trọng nhất theo giá trị SHAP trung bình (nguồn: \texttt{shap\_importance.csv}).}
 \label{tab:shap_global}
 \small
 \begin{tabular}{r l r l}
@@ -2828,8 +2756,8 @@ chọn đặc trưng, bốn vị trí đầu đều là thống kê cửa sổ t
 Hai điểm rút ra. Thứ nhất, thông tin tương hỗ đo quan hệ của một đặc trưng với mục tiêu khi
 đứng riêng, còn SHAP đo phần đóng góp của nó trong mô hình đã huấn luyện, nơi các đặc
 trưng chia nhau thông tin; hai thước đo trả lời hai câu hỏi khác nhau nên không buộc phải trùng
-thứ hạng. Thứ hai, việc \texttt{ghi\_cs\_mt} lọt vào nhóm bốn đầu cho thấy riêng cột này có đóng góp đáng kể,
-ủng hộ tính hữu ích của ít nhất một đặc trưng trong nhóm tất định tại $T{+}h$ ở Mục~$3.4$.
+thứ hạng. Thứ hai, việc \texttt{ghi\_cs\_mt} lọt vào nhóm bốn đầu là bằng chứng cho thấy nhóm đặc
+trưng tất định tại $T{+}h$ ở Mục~$3.4$ thực sự được mô hình dùng, chứ không phải cột thừa.
 
 Hình~\ref{fig:shap_beeswarm} trình bày phân bố giá trị SHAP của từng đặc trưng trên toàn bộ tập
 test.
@@ -2837,8 +2765,7 @@ test.
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\textwidth]{notebook_shap_beeswarm.png}
-    \caption{(Trích xuất từ Notebook \texttt{08\_explainable\_ai.ipynb}) Biểu đồ beeswarm. Mỗi điểm
-    là một dòng dữ liệu; vị trí ngang là giá trị SHAP, màu là độ lớn của chính đặc trưng đó.}
+    \caption{Biểu đồ SHAP Beeswarm thể hiện tác động của các đặc trưng (nguồn: \texttt{08\_explainable\_ai.ipynb}).}
     \label{fig:shap_beeswarm}
 \end{figure}
 
@@ -2850,16 +2777,16 @@ trong tập test, ghi ở Bảng~\ref{tab:shap_local}.
 
 \begin{table}[htbp]
 \centering
-\caption{Ba dự báo được mổ xẻ. Đọc từ \texttt{08\_explain/local\_shap\_cases.csv}.}
+\caption{Phân tích 3 trường hợp dự báo bằng SHAP cục bộ (nguồn: \texttt{local\_shap\_cases.csv}).}
 \label{tab:shap_local}
 \small
 \begin{tabular}{l r l r r}
 \toprule
 \textbf{Trường hợp} & \textbf{Trạm} & \textbf{Thời điểm} & \textbf{Thực tế (kWh)} & \textbf{Tổng SHAP} \\
 \midrule
-Đẩy dự báo lên  & $10$ & $09/03/2022$ $10{:}15$ & $5{,}5312$ & $+0{,}6684$ \\
-Kéo dự báo xuống & $27$ & $28/01/2022$ $17{:}15$ & $2{,}8750$ & $-0{,}8110$ \\
-Gần mức nền     & $36$ & $31/03/2022$ $17{:}15$ & $2{,}8906$ & $-0{,}0000$ \\
+Đẩy dự báo lên  & $10$ & $07/04/2022$ $10{:}30$ & $5{,}9688$ & $+0{,}5972$ \\
+Kéo dự báo xuống & $40$ & $18/04/2022$ $08{:}00$ & $0{,}1250$ & $-0{,}6860$ \\
+Gần mức nền     & $28$ & $21/02/2022$ $11{:}15$ & $1{,}8066$ & $-0{,}0004$ \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2876,9 +2803,7 @@ và âm cân nhau. Ba hình dạng thác trình bày ở Hình~\ref{fig:shap_loc
     \centering
     \includegraphics[width=0.86\textwidth]{local_shap_mae_h1_upward.png}\\[6pt]
     \includegraphics[width=0.86\textwidth]{local_shap_mae_h1_downward.png}
-    \caption{(Trích xuất từ Notebook \texttt{08\_explainable\_ai.ipynb}) Biểu đồ thác cho hai dự báo
-    tương phản. \textbf{Trên:} trường hợp các đặc trưng cùng đẩy dự báo lên. \textbf{Dưới:}
-    trường hợp cùng kéo xuống.}
+    \caption{Biểu đồ SHAP Waterfall giải thích hai trường hợp dự báo tương phản (nguồn: \texttt{08\_explainable\_ai.ipynb}).}
     \label{fig:shap_local}
 \end{figure}
 
@@ -2909,7 +2834,7 @@ chỉ số theo trạm và biểu đồ đối chiếu với Prophet.
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\textwidth,height=0.52\textheight,keepaspectratio]{streamlit_1_timeseries.png}
-    \caption[Trang $1$ của ứng dụng, giám sát chuỗi thời gian theo trạm]{Trang $1$ của ứng dụng, giám sát chuỗi thời gian theo trạm.}
+    \caption[Giao diện Trang 1: Giám sát chuỗi thời gian]{Giao diện Trang 1: Giám sát chuỗi thời gian theo trạm.}
     \label{fig:streamlit1}
 \end{figure}
 
@@ -2923,7 +2848,7 @@ hạng đặc trưng, và giải thích một dự báo cụ thể do người d
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\textwidth,height=0.52\textheight,keepaspectratio]{streamlit_2_shap.png}
-    \caption[Trang $2$ của ứng dụng, giải thích dự báo bằng SHAP]{Trang $2$ của ứng dụng, giải thích dự báo bằng SHAP.}
+    \caption[Giao diện Trang 2: Giải thích dự báo]{Giao diện Trang 2: Giải thích dự báo bằng SHAP.}
     \label{fig:streamlit2}
 \end{figure}
 
@@ -2941,7 +2866,7 @@ hiện.
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\textwidth,height=0.52\textheight,keepaspectratio]{streamlit_3_du_bao.png}
-    \caption[Trang $3$ của ứng dụng, dự báo và phân tích giả định]{Trang $3$ của ứng dụng, dự báo và phân tích giả định.}
+    \caption[Giao diện Trang 3: Dự báo và phân tích giả định]{Giao diện Trang 3: Dự báo và phân tích giả định (What-If).}
     \label{fig:streamlit3}
 \end{figure}
 
@@ -2958,9 +2883,8 @@ $17{,}74\%$ ở tầm $15$ phút và $22{,}62\%$ ở tầm một giờ trên t�
 thật ban ngày. So với đối chứng Prophet trên cùng tập dòng, chỉ số vượt trội đạt $+49{,}53\%$
 và $+36{,}26\%$.
 
-Điều đáng nói hơn con số là cách các con số đó được bảo vệ. Bốn rào chắn đầu ở Mục~$7.1.5$ được
-kiểm chứng bằng số liệu chứ không bằng lập luận, còn rào chắn thứ năm được bảo đảm bằng cấu hình
-tất định: phép ghép thời tiết nhân quả đưa số dòng dùng thời
+Điều đáng nói hơn con số là cách các con số đó được bảo vệ. Năm rào chắn ở Mục~$7.1.5$ được kiểm
+chứng bằng số liệu chứ không bằng lập luận: phép ghép thời tiết nhân quả đưa số dòng dùng thời
 tiết tương lai về $0$; thống kê quy mô tính riêng theo từng fold; cận cắt suy từ phân vị của
 tập huấn luyện; tập test mở đúng một lần. Hàm mất mát cho cả hai tầm được chốt trên tập kiểm
 định trước khi tập test được mở, và mọi chỉ số báo cáo ở Mục~$7.5$ đều là kết quả của lần mở
@@ -2976,7 +2900,7 @@ duy nhất đó.
     \item \textbf{Sai số phân bố không đều giữa các trạm}, từ $11{,}89\%$ tới $28{,}32\%$ ở
     tầm H1, và $15{,}12\%$ tới $35{,}88\%$ ở tầm H4. Mô hình dùng chung chưa mô tả hết phần khác
     biệt riêng của từng trạm.
-    \item \textbf{Độ trễ pha vẫn còn tồn tại}: trung vị $+15$ phút, và $32$ trên $40$
+    \item \textbf{Độ trễ pha còn tồn tại ở mức thấp}: trung vị $+15$ phút, và $32$ trên $40$
     trạm nghiêng về phía trễ.
     \item \textbf{Phép đối chứng Prophet không tách được đóng góp của biến khí tượng}, vì hai
     mô hình khác nhau đồng thời ở thuật toán và tập đầu vào.
@@ -2992,6 +2916,8 @@ duy nhất đó.
 Bốn việc cụ thể, xếp theo mức dễ làm:
 
 \begin{enumerate}
+    \item Huấn luyện bổ sung cấu hình MAE cho tầm H4 rồi khoá lại trước khi mở một tập test
+    mới, để phép so ở H4 có đủ ba hàm mất mát.
     \item Mở rộng miền tìm kiếm ở hai chỗ chạm biên, hạ cận dưới của \texttt{subsample} và
     nâng cận trên của \texttt{reg\_alpha}.
     \item Chạy hai cấu hình đối chứng còn thiếu để tách phần đóng góp của nhóm đặc trưng khí
