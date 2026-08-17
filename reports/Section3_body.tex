@@ -1,0 +1,178 @@
+% ====================================================================
+%  CHƯƠNG 3: QUY TRÌNH ETL VÀ MÔ HÌNH HÓA DỮ LIỆU
+% ====================================================================
+\chapter{Thu thập, Tiền xử lý và Mô hình hóa Kho Dữ liệu}
+\label{chap:etl_modeling}
+
+\section{Tổng quan Kiến trúc Pipeline Xử lý Dữ liệu}
+\label{sec:pipeline_overview}
+
+Để đảm bảo tính tự động hóa, độ chính xác cao và khả năng tái sử dụng khi có dữ liệu phát sinh mới từ các trạm pin, dự án không xử lý dữ liệu thủ công trên Excel mà thiết kế một quy trình xử lý dữ liệu tự động hoàn chỉnh bằng ngôn ngữ Python. Toàn bộ luồng thực thi từ khâu tải dữ liệu, tiền xử lý, điền khuyết chuỗi thời gian, lọc dữ liệu ngoại lai, nạp vào kho dữ liệu Supabase DWH đến việc xây dựng các siêu thị dữ liệu (Data Marts) được điều phối thông suốt thông qua kiến trúc mô-đun độc lập (Hình~\ref{fig:code_execution_pipeline}).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{figures/code_execution_pipeline.png}
+    \caption{Sơ đồ luồng thực thi quy trình xử lý dữ liệu tự động (Code Execution Pipeline).}
+    \label{fig:code_execution_pipeline}
+\end{figure}
+
+Toàn bộ quy trình được tổ chức thành các mô-đun chức năng độc lập:
+\begin{enumerate}[label=\arabic*., leftmargin=*]
+    \item \textbf{\texttt{config.py}:} Khởi tạo môi trường, cấu hình thông tin kết nối CSDL Supabase, thiết lập hệ thống ghi vết nhật ký (ghi vết nhật ký hệ thống) và định nghĩa các tham số nghiệp vụ (ngưỡng cắt trần công suất danh định $P_{\text{stc}}$, ngưỡng bức xạ ban đêm $GHI \le 25\,\text{W/m}^2$, đơn giá điện FiT).
+    \item \textbf{\texttt{eda.py}:} Quét toàn diện tập dữ liệu thô ($2.731.946$ dòng), kiểm tra dữ liệu thiếu, trùng lặp và phát hiện các điểm đứt gãy thời gian.
+    \item \textbf{\texttt{cleaner.py}:} Thực hiện làm sạch dữ liệu, xử lý đứt gãy thời gian bằng Resampling 15 phút, áp dụng 5 rào chắn vật lý và mô hình phân lớp lai GMM--IF để lọc sạch nhiễu cảm biến, gắn 6 mã lý do kỹ thuật và trích xuất đặc trưng nghiệp vụ (trích xuất đặc trưng nghiệp vụ).
+    \item \textbf{\texttt{splitter.py}:} Tách bảng phẳng khổng lồ thành mô hình Lược đồ Thiên hà (Galaxy Schema) gồm 2 bảng Fact và 4 bảng Dimension.
+    \item \textbf{\texttt{aggregate.py}:} Tạo các bảng tổng hợp (Siêu thị dữ liệu chuyên đề) tính toán trước các chỉ số KPI theo ngày, tháng, trạm phát nhằm tối ưu hóa hiệu năng tải biểu đồ cho Tableau Dashboard.
+    \item \textbf{\texttt{main.py}:} Tệp thực thi trung tâm, tự động hóa toàn bộ luồng ETL từ đầu đến cuối chỉ với một dòng lệnh duy nhất.
+\end{enumerate}
+
+\section{Đánh giá Chất lượng và Khám phá Dữ liệu (EDA)}
+\label{sec:eda_quality}
+
+Trước khi can thiệp vào dữ liệu, hệ thống thực thi module \texttt{eda.py} để kiểm định chất lượng $2.731.946$ bản ghi sản lượng nhằm trả lời câu hỏi cốt lõi: \textit{``Dữ liệu có đáng tin cậy để đưa vào phân tích kinh doanh hay không?''}.
+
+\subsection{Kiểm tra Dữ liệu Thiếu, Trùng lặp và Đứt gãy Chuỗi Thời gian (điểm gián đoạn thời gian)}
+Thông qua các thuật toán kiểm định chất lượng dữ liệu bằng Pandas, nhóm đã phát hiện các vấn đề kỹ thuật quan trọng:
+\begin{itemize}[noitemsep]
+    \item \textbf{Dữ liệu trùng lặp:} Phát hiện 38 cặp bản ghi trùng lặp mã trạm và mốc thời gian, được tự động loại bỏ để giữ lại bản ghi mới nhất (\texttt{keep='last'}).
+    \item \textbf{Lỗ hổng Đứt gãy Thời gian (561 điểm gián đoạn thời gian):} Phát hiện 561 điểm nhảy cóc thời gian (chiếm $0{,}0247\%$ tổng dữ liệu) do lỗi đường truyền viễn thông của trạm phát về trung tâm. Đây là phát hiện quan trọng, vì nếu không xử lý liên tục chuỗi thời gian, các phép tính toán trung bình trượt và biến động ngày/đêm sẽ bị sai lệch hoàn toàn.
+    \item \textbf{Nhiễu Cảm biến Ban đêm (Dòng rò ban đêm):} Hơn 18.000 bản ghi ghi nhận sản lượng dương ($E > 0$) vào các khung giờ từ 22h đêm đến 4h sáng khi bức xạ triệt tiêu hoàn toàn ($GHI = 0$).
+\end{itemize}
+
+\section{Làm sạch và Chuẩn hóa Dữ liệu (Data Cleaning)}
+\label{sec:data_cleaning}
+
+\subsection{Chuẩn hóa Cấu trúc Cột và Xử lý Lỗi Logic}
+Tệp dữ liệu gốc chứa các tên cột dạng \texttt{PascalCase} và khoảng trắng (như \texttt{SiteKey}, \texttt{SolarGeneration}, \texttt{CampusKey}). Module \texttt{cleaner.py} tự động chuẩn hóa toàn bộ về định dạng chuẩn \texttt{snake\_case} và ép đúng kiểu dữ liệu số thực:
+
+\begin{lstlisting}[language=Python, caption={Đoạn mã Python chuẩn hóa cấu trúc cột sang snake\_case}, label={lst:clean_columns}]
+# cleaner.py — Chuan hoa ten cot sang snake_case va loai bo ky tu thua
+df.columns = (
+    df.columns
+    .str.strip()
+    .str.lower()
+    .str.replace(" ", "_", regex=False)
+    .str.replace(".", "_", regex=False)
+)
+# Ep kieu du lieu thoi gian va so thuc
+df["timestamp"] = pd.to_datetime(df["timestamp"])
+val_num = pd.to_numeric(df["energy_generated_kwh"], errors="coerce")
+    df["energy_generated_kwh"] = val_num.fillna(0.0)
+\end{lstlisting}
+
+\subsection{Xử lý Dữ liệu Ngoại lai (Outliers) và Gán Mã Lý do Kỹ thuật}
+Thay vì xóa bỏ dữ liệu ngoại lai một cách cơ học (dễ làm mất dấu vết sự cố hỏng hóc thiết bị thực tế), dự án kết hợp 5 quy tắc rào chắn vật lý và mô hình phân lớp lai GMM--IF để nhận diện chính xác $33.280$ dòng dị thường ($1{,}22\%$), đồng thời gán 6 mã lý do kỹ thuật chuẩn hóa (\texttt{gmm\_if\_outlier\_reason}):
+
+\begin{table}[H]
+\centering
+\small
+\renewcommand{\arraystretch}{1.25}
+\begin{tabularx}{\textwidth}{@{} l l X @{}}
+\toprule
+\textbf{Mã Lý do Dị thường} & \textbf{Tỷ lệ (\%)} & \textbf{Ý nghĩa Nghiệp vụ \& Hướng Xử lý} \\
+\midrule
+\texttt{GMM\_IF\_CONSENSUS} & 0.45\% & Dị thường đa chiều được GMM và IF đồng thuận xác nhận. \\
+\texttt{PHYSICAL\_OVER\_CAPACITY} & 0.08\% & Vượt trần công suất danh định ($E > 1{,}25 \cdot P_{\text{stc}} \cdot 0{,}25\text{h}$) do lỗi cảm biến đo. \\
+\texttt{PHYSICAL\_HIGH\_ENERGY\_NO\_SUN} & 0.42\% & Phát điện ban đêm ($GHI \le 25\,\text{W/m}^2, E > 0$) $\rightarrow$ Trôi mốc 0 cảm biến CT. \\
+\texttt{PHYSICAL\_HIGH\_ENERGY\_LOW\_RAD} & 0.12\% & Bức xạ yếu nhưng sản lượng cao bất thường $\rightarrow$ Xung điện áp lưới. \\
+\texttt{PHYSICAL\_LOW\_ENERGY\_STRONG\_SUN} & 0.09\% & Nắng gắt ($GHI \ge 700\,\text{W/m}^2$) mất phát $\rightarrow$ Biến tần ngắt mạch/quá nhiệt. \\
+\texttt{PHYSICAL\_DISTRIBUTION\_JUMP} & 0.06\% & Bước nhảy phân bố sản lượng cục bộ đột ngột $\rightarrow$ Lỗi truyền thông. \\
+\bottomrule
+\end{tabularx}
+\caption{Bảng phân loại 6 mã lý do dị thường phục vụ công tác bảo trì O\&M.}
+\label{tab:outlier_reasons}
+\end{table}
+
+\section{Trích xuất Đặc trưng Nghiệp vụ (trích xuất đặc trưng nghiệp vụ)}
+\label{sec:feature_engineering}
+
+Đây là bước tạo ra các chỉ số nghiệp vụ đo lường mới từ dữ liệu thô, cung cấp góc nhìn phân tích đa chiều cho hệ thống BI:
+
+\subsection{Đặc trưng Vận hành và Hiệu suất Kỹ thuật}
+Module \texttt{cleaner.py} tự động tính toán các chỉ số vận hành cốt lõi:
+\begin{lstlisting}[language=Python, caption={Đoạn mã Python trích xuất các đặc trưng vận hành và tài chính}, label={lst:engineer_features}]
+# 1. Tinh san luong ly thuyet theo buc xa thuc te (Theoretical Energy)
+rad_factor = df["shortwave_radiation"] / 1000.0
+    df["theoretical_energy_kwh"] = df["capacity_kw"] * rad_factor * 0.25
+
+# 2. He so hieu suat quang dien (Performance Ratio - PR)
+theo_e = df["theoretical_energy_kwh"].replace(0, np.nan)
+    df["pr_pct"] = (df["energy_generated_kwh"] / theo_e) * 100.0
+df["pr_pct"] = df["pr_pct"].clip(lower=0.0, upper=120.0)
+
+# 3. Nang suat rieng (Specific Yield - kWh/kWp)
+df["specific_yield"] = df["energy_generated_kwh"] / df["capacity_kw"]
+
+# 4. Ton that uoc tinh do nhiet do cao vuot nguong 25 do C (Thermal Loss)
+df["temp_loss_kwh"] = np.where(
+    df["temperature_2m"] > 25.0,
+    df["capacity_kw"] * 0.004 * (df["temperature_2m"] - 25.0) * 0.25,
+    0.0
+)
+\end{lstlisting}
+
+\subsection{Đặc trưng Thời gian Chu kỳ}
+Trích xuất các chiều thời gian phục vụ phân tích xu hướng tăng trưởng (YoY), tính mùa vụ và so sánh ngày nghỉ:
+\begin{itemize}[noitemsep]
+    \item Năm (\texttt{year}), Tháng (\texttt{month}), Quý (\texttt{quarter}), Giờ trong ngày (\texttt{hour}).
+    \item Cờ phân biệt ngày nghỉ cuối tuần (\texttt{is\_weekend}) và cờ ban ngày có nắng (\texttt{is\_day}).
+\end{itemize}
+
+\section{Mô hình hóa Lược đồ Thiên hà (Galaxy Schema)}
+\label{sec:galaxy_modeling}
+
+Dữ liệu sau khi làm sạch được module \texttt{splitter.py} phân tách và chuẩn hóa thành mô hình \textbf{Lược đồ Thiên hà (Galaxy Schema)} trên cơ sở dữ liệu Supabase PostgreSQL.
+
+\subsection{Các Sơ đồ Thiết kế Mô hình Dữ liệu}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.88\textwidth]{figures/conceptual_model.png}
+\caption{Sơ đồ mô hình khái niệm (Conceptual Model) thể hiện mối quan hệ giữa các thực thể hệ thống điện mặt trời.}
+\label{fig:conceptual_model}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.92\textwidth]{figures/logical_model.png}
+\caption{Sơ đồ mô hình logic (Logical Model) theo kiến trúc Galaxy Schema kết nối 2 bảng Fact và 4 bảng Dimension dùng chung.}
+\label{fig:logical_model}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/physical_model.png}
+\caption{Sơ đồ mô hình vật lý (Physical Model) triển khai thực tế trên PostgreSQL Supabase.}
+\label{fig:physical_model}
+\end{figure}
+
+\subsection{Cấu trúc Các Bảng trong Kho Dữ liệu}
+\begin{enumerate}[noitemsep]
+    \item \textbf{\texttt{dim\_solar\_plant} (Bảng Chiều Trạm phát):} 42 trạm phát với thông tin công suất danh định (\texttt{capacity\_kw}), khuôn viên (\texttt{campus\_name}) và vị trí địa lý.
+    \item \textbf{\texttt{dim\_date} (Bảng Chiều Ngày):} 851 ngày lịch biểu trong chu kỳ 28 tháng với các thuộc tính phân tích thời gian.
+    \item \textbf{\texttt{dim\_time} (Bảng Chiều Giờ):} 96 mốc thời gian vi mô 15 phút trong ngày.
+    \item \textbf{\texttt{dim\_weather\_type} (Bảng Chiều Thời tiết):} Danh mục mã thời tiết chuẩn WMO.
+    \item \textbf{\texttt{fact\_solar\_energy\_gen} (Bảng Sự kiện Sản lượng):} $2.731.946$ bản ghi sản lượng 15 phút kèm cờ dị thường và mã lý do.
+    \item \textbf{\texttt{fact\_weather} (Bảng Sự kiện Khí tượng):} Các thông số bức xạ và thời tiết chu kỳ 1 giờ.
+\end{enumerate}
+
+\section{Tạo Bảng Tổng hợp và Siêu thị Dữ liệu (Siêu thị dữ liệu chuyên đề)}
+\label{sec:data_marts}
+
+Để đảm bảo các Dashboard trên Tableau tải tức thời (dưới 1 giây) khi các nhà quản lý thực hiện lọc dữ liệu, module \texttt{aggregate.py} thực hiện tính toán trước (Pre-calculated Aggregation) các bảng Data Marts chuyên biệt:
+
+\begin{itemize}[noitemsep]
+    \item \textbf{\texttt{agg\_daily\_plant\_performance.csv}:} Tổng hợp sản lượng hàng ngày, chỉ số PR trung bình, Specific Yield và tổn thất ước tính của 42 trạm phát.
+    \item \textbf{\texttt{agg\_monthly\_campus\_summary.csv}:} Tổng hợp sản lượng theo tháng của 4 khuôn viên trường phục vụ báo cáo xu hướng tăng trưởng YoY.
+    \item \textbf{\texttt{agg\_hourly\_temperature\_efficiency.csv}:} Ma trận tương quan giữa các dải nhiệt độ, bức xạ và hiệu suất chuyển đổi, làm nổi bật điểm suy giảm hiệu suất do nhiệt độ.
+    \item \textbf{\texttt{agg\_anomaly\_diagnostic\_summary.csv}:} Thống kê số lượng và tỷ lệ của 6 mã lý do dị thường theo từng trạm phát phục vụ phân tích bảo trì O\&M.
+\end{itemize}
+
+\section{Kiểm tra Tính Toàn vẹn và Bảo mật Dữ liệu}
+\label{sec:integrity_security}
+
+\begin{enumerate}[noitemsep]
+    \item \textbf{Kiểm tra Khóa ngoại (Anti-Join Check):} Thực hiện truy vấn Anti-Join giữa bảng Fact và Dimension, đảm bảo $100\%$ bản ghi có khóa tham chiếu hợp lệ (0 bản ghi mồ côi).
+    \item \textbf{Xác thực Toàn vẹn Dữ liệu (Fingerprint Checksum MD5):} Hàm \texttt{fingerprint\_supabase()} đối chiếu mã băm MD5, tổng sản lượng ($74.982.150{,}45\,\text{kWh}$) và tổng số $2.731.946$ dòng dữ liệu trước và sau quá trình nạp để ngăn ngừa mất mát dữ liệu.
+    \item \textbf{Bảo mật Phân quyền (Row-Level Security -- RLS):} Phân quyền truy cập an toàn trên Supabase Cloud, cấp quyền chỉ đọc (Read-only) cho Dashboard Tableau và tài khoản quản trị cho kỹ sư dữ liệu.
+\end{enumerate}

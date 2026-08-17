@@ -1,0 +1,5 @@
+outs:
+- md5: 8c1ac3d53d6d3b137805ed73cfb24a5c
+  size: 16711
+  hash: md5
+  path: v4_category_maps.json

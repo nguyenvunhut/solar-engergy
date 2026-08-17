@@ -200,11 +200,14 @@ def load_fact_solar_energy_gen(cur):
             s.sitekey::int AS geo_id,
             dd.date_id,
             dt.time_id,
+            -- Chỉ ép về 0 khi vừa trong khung đêm vừa không có bức xạ.
+            -- Chỉ xét giờ sẽ xoá nhầm sản lượng thật buổi tối mùa hè.
             CASE
                 WHEN (
                     s.timestamp::time >= TIME '18:30'
                     OR s.timestamp::time < TIME '05:30'
                 )
+                AND w.wx_rad = 0
                 THEN 0
                 ELSE s.energy_generated_kwh
             END AS energy_generated_kwh,
@@ -216,6 +219,21 @@ def load_fact_solar_energy_gen(cur):
         JOIN {TARGET_SCHEMA}.dim_time dt ON dt.time_string = to_char(s.timestamp, 'HH24:MI')
         JOIN {TARGET_SCHEMA}.dim_solar_site ds ON ds.site_id = s.sitekey::int
         JOIN {TARGET_SCHEMA}.dim_geography dg ON dg.geo_id = s.sitekey::int
+        -- Bức xạ theo giờ, dùng cho điều kiện ép 0 ở trên.
+        -- DISTINCT ON để mỗi (trạm, giờ) chỉ còn một dòng, tránh nhân đôi bản ghi.
+        LEFT JOIN (
+            SELECT DISTINCT ON (sitekey::int, timestamp)
+                   sitekey::int        AS wx_site,
+                   timestamp           AS wx_ts,
+                   shortwave_radiation AS wx_rad
+            FROM {SOURCE_SCHEMA}.fact_weather
+            -- Chỉ đọc thời tiết của tháng đang nạp, khớp với vòng lặp batch ở trên.
+            WHERE timestamp >= '{m_start}'::timestamp - interval '1 hour'
+              AND timestamp <  '{m_end}'::timestamp
+            ORDER BY sitekey::int, timestamp, shortwave_radiation DESC
+        ) w
+          ON w.wx_site = s.sitekey::int
+         AND w.wx_ts   = date_trunc('hour', s.timestamp)
         WHERE s.timestamp >= '{m_start}'::timestamp AND s.timestamp < '{m_end}'::timestamp;
         """
         cur.execute(sql_batch)

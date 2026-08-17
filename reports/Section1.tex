@@ -1,0 +1,1274 @@
+% !TeX program = xelatex
+% =============================================================================
+%  DỰ ÁN TỐT NGHIỆP — BÁO CÁO CHUYÊN ĐỀ
+%  Đề tài: Phân tích Hiệu suất và Dự báo Sản lượng Hệ thống Điện Mặt Trời
+%  Nhóm: The Outliers
+%  Trường: Cao đẳng FPT Polytechnic — Chuyên ngành Xử lý Dữ liệu
+% =============================================================================
+
+\documentclass[12pt, a4paper]{report}
+
+% ======================== PACKAGES CƠ BẢN & FONT ============================
+\usepackage{geometry}
+\geometry{a4paper, top=2.5cm, bottom=2.5cm, left=3cm, right=2cm, headheight=33pt, footskip=1.1cm}
+
+% --- FONT CHO XELATEX (HỖ TRỢ TIẾNG VIỆT 100% - FORMAL, TỐI GIẢN, HIỆN ĐẠI) ---
+\usepackage{fontspec}
+\setmainfont{Times New Roman}
+\setmonofont{Consolas}
+
+% ======================== MÀU SẮC & CODE LISTINGS ===========================
+\usepackage{xcolor}
+\usepackage{listings}
+% Định nghĩa bảng màu Tableau trích xuất từ main_fixed_01.twb & tableau_theme.json
+\definecolor{tblNavy}{HTML}{4E79A7}
+\definecolor{tblOrange}{HTML}{F28E2B}
+\definecolor{tblGreen}{HTML}{59A14F}
+\definecolor{tblRed}{HTML}{E15759}
+\definecolor{tblTeal}{HTML}{76B7B2}
+\definecolor{tblYellow}{HTML}{EDC948}
+\definecolor{tblPurple}{HTML}{B07AA1}
+\definecolor{tblGray}{HTML}{79706E}
+\definecolor{tblSeqWarm}{HTML}{F28E2B}
+
+% Định nghĩa màu sắc cho Code Block
+\definecolor{mutedgreen}{rgb}{0.2,0.5,0.3} 
+\definecolor{mutedblue}{rgb}{0.15,0.35,0.6} 
+\definecolor{mutedgray}{rgb}{0.45,0.45,0.45} 
+\definecolor{mutedpurple}{rgb}{0.45,0.2,0.55} 
+\definecolor{softbackground}{rgb}{0.98,0.98,0.98} 
+\definecolor{bordergray}{rgb}{0.85,0.85,0.85} 
+\definecolor{fptorange}{RGB}{245,130,32}
+
+\lstdefinestyle{pythonstyle}{
+    backgroundcolor   = \color{softbackground},
+    commentstyle      = \color{mutedgreen}\itshape,
+    keywordstyle      = \color{mutedblue}\bfseries,
+    numberstyle       = \tiny\color{mutedgray},
+    stringstyle       = \color{mutedpurple},
+    basicstyle        = \ttfamily\footnotesize\color{black},
+    breakatwhitespace = false,
+    breaklines        = true,
+    columns           = fullflexible,
+    captionpos        = t, 
+    keepspaces        = true,
+    numbers           = left,
+    numbersep         = 5pt,
+    showspaces        = false,
+    showstringspaces  = false,
+    showtabs          = false,
+    tabsize           = 4,
+    frame             = single,
+    rulecolor         = \color{bordergray}
+}
+\lstset{style=pythonstyle}
+
+% Ngăn chặn tràn viền tài liệu (Overfull \hbox)
+\usepackage{microtype}
+\usepackage{xurl}
+\def\UrlBreaks{\do\/\do-\do\_}
+\hyphenpenalty=1000
+\exhyphenpenalty=1000
+\tolerance=2000
+\emergencystretch=2.5em
+\hfuzz=1pt
+
+% ======================== TRANG TRÍ & ĐỊNH DẠNG =============================
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{amsmath, amssymb}
+\usepackage{enumitem}
+\usepackage{array}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\arraybackslash}p{#1}}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{graphicx}
+\graphicspath{{images/}{figures/}{./}}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{tikz}
+\usepackage[titles]{tocloft}
+
+% VIỆT HÓA TOÀN BỘ CÁC TIÊU ĐỀ HỆ THỐNG
+\renewcommand{\figurename}{Hình}
+\renewcommand{\tablename}{Bảng}
+\renewcommand{\contentsname}{Mục Lục}
+\renewcommand{\listfigurename}{Danh Mục Hình Vẽ}
+\renewcommand{\listtablename}{Danh Mục Bảng Biểu}
+\providecommand{\tep}[1]{\texttt{#1}}
+
+\usepackage{indentfirst}
+\setlength{\parindent}{1cm}
+\setlength{\parskip}{6pt}
+
+\usepackage{setspace}
+\onehalfspacing
+\setlength{\headheight}{33pt}
+
+% Hyperlinks & Bookmarks
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks  = true,
+    linkcolor   = black,
+    citecolor   = blue,
+    filecolor   = magenta,
+    urlcolor    = blue,
+    pdftitle    = {Dự án Tốt nghiệp - Phân tích Hiệu suất và Dự báo Sản lượng Hệ thống Điện Mặt Trời},
+    pdfauthor   = {The Outliers - FPT Polytechnic},
+    bookmarksnumbered = true,
+}
+
+% --- CẤU HÌNH TIÊU ĐỀ CHƯƠNG ---
+\usepackage{placeins}
+\makeatletter
+\newcommand{\needspace}[1]{%
+  \begingroup
+    \setlength{\dimen@}{#1}%
+    \vskip\z@\@plus\dimen@
+    \penalty -100\vskip\z@\@plus -\dimen@
+    \vskip\dimen@
+    \penalty 9999\vskip -\dimen@
+    \vskip\z@skip
+  \endgroup}
+\makeatother
+\usepackage{titlesec}
+\titleformat*{\section}{\fontsize{13pt}{15.6pt}\bfseries}
+\titleformat*{\subsection}{\fontsize{13pt}{15.6pt}\bfseries}
+\titleformat*{\subsubsection}{\fontsize{13pt}{15.6pt}\bfseries}
+\titleformat{\chapter}[display]
+  {\normalfont\huge\bfseries}{}{0pt}{\huge}
+\titlespacing*{\chapter}{0pt}{-10pt}{20pt} 
+
+% ======================== HEADER / FOOTER ====================================
+\fancypagestyle{main}{
+    \fancyhf{}
+    \fancyhead[L]{\includegraphics[height=1cm]{figures/logo_fpoly.png}}
+    \fancyhead[R]{\small THE OUTLIERS}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp - Chuyên ngành Xử lý Dữ liệu}
+    \fancyfoot[R]{\small Trang \thepage\ / \pageref{LastPage}}
+    \renewcommand{\headrulewidth}{0.4pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+}
+
+\fancypagestyle{plain}{
+    \fancyhf{}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp - Chuyên ngành Xử lý Dữ liệu}
+    \fancyfoot[R]{\small Trang \thepage\ / \pageref{LastPage}}
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+}
+
+\fancypagestyle{front}{
+    \fancyhf{}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp - Chuyên ngành Xử lý Dữ liệu}
+    \fancyfoot[R]{\small Trang \thepage\ / \pageref{LastPage}}
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+}
+
+
+\begin{document}
+\pagestyle{front}
+
+\begin{titlepage}
+\enlargethispage{1.2cm}
+
+\begin{tikzpicture}[remember picture, overlay]
+    \draw[line width=2pt, fptorange]
+        ([shift={(1cm,-1cm)}]current page.north west)
+        rectangle
+        ([shift={(-1cm,1cm)}]current page.south east);
+    \draw[line width=0.5pt, fptorange]
+        ([shift={(1.15cm,-1.15cm)}]current page.north west)
+        rectangle
+        ([shift={(-1.15cm,1.15cm)}]current page.south east);
+\end{tikzpicture}
+
+\begin{center}
+    \textbf{\large TRƯỜNG CAO ĐẲNG FPT POLYTECHNIC}
+
+    \vspace{0.5cm}
+    \includegraphics[width=0.38\textwidth]{figures/logo_fpoly.png}
+
+    \vspace{0.4cm}
+    {\Large \textbf{DỰ ÁN TỐT NGHIỆP}} \\[4pt]
+    {\large \textbf{CHUYÊN NGÀNH: XỬ LÝ DỮ LIỆU}}
+
+    \vspace{1.6cm}
+    
+    \begin{spacing}{1.0}
+        {\huge \textbf{PHÂN TÍCH HIỆU SUẤT VÀ \\[4pt] DỰ BÁO SẢN LƯỢNG \\[4pt] HỆ THỐNG ĐIỆN MẶT TRỜI}}
+    \end{spacing}
+
+    \vspace{1.8cm}
+    \normalsize
+    \begin{flushleft}
+        \hspace{2cm} \textbf{Nhóm thực hiện:} The Outliers \\[5pt]
+        \hspace{2cm} \textbf{Sinh viên thực hiện:} \\[3pt]
+        \hspace{2cm}
+        \begin{tabular*}{7.5cm}{@{} l @{\extracolsep{\fill}} r @{}}
+            \hspace{0.5cm} 1. Nguyễn Vũ Nhựt   & PS44442 \\
+            \hspace{0.5cm} 2. Nguyễn Văn Sỹ    & PS43671 \\
+            \hspace{0.5cm} 3. Lê Công Toàn    & PS44145 \\
+            \hspace{0.5cm} 4. Nguyễn Xuân Hùng & PS44527 \\
+            \hspace{0.5cm} 5. Ngô Tấn Đạt     & PS44589 \\
+        \end{tabular*} \\[5pt]
+        \hspace{2cm} \textbf{Giảng viên hướng dẫn:} ThS. Văn Công Khanh
+    \end{flushleft}
+    \vfill
+    {\normalsize \textbf{TP. HỒ CHÍ MINH, THÁNG 6 NĂM 2026}}
+    \vspace{0.5cm}
+\end{center}
+\end{titlepage}
+
+
+\pagenumbering{arabic}
+\pagestyle{front}
+
+\chapter}[display]
+  {\normalfont\huge\bfseries}{}{0pt}{\huge}
+\titlespacing*{\chapter}{0pt}{-10pt}{20pt} 
+
+% ======================== HEADER / FOOTER ====================================
+\fancypagestyle{main}{
+    \fancyhf{}
+    \fancyhead[L]{\includegraphics[height=1cm]{figures/logo_fpoly.png}}
+    \fancyhead[R]{\small THE OUTLIERS}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp - Chuyên ngành Xử lý Dữ liệu}
+    \fancyfoot[R]{\small Trang \thepage\ / \pageref{LastPage}}
+    \renewcommand{\headrulewidth}{0.4pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+}
+
+\fancypagestyle{plain}{
+    \fancyhf{}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp - Chuyên ngành Xử lý Dữ liệu}
+    \fancyfoot[R]{\small Trang \thepage\ / \pageref{LastPage}}
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+}
+
+\fancypagestyle{front}{
+    \fancyhf{}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp - Chuyên ngành Xử lý Dữ liệu}
+    \fancyfoot[R]{\small Trang \thepage\ / \pageref{LastPage}}
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+}
+
+
+\begin{document}
+\pagestyle{front}
+
+\begin{titlepage}
+\enlargethispage{1.2cm}
+
+\begin{tikzpicture}[remember picture, overlay]
+    \draw[line width=2pt, fptorange]
+        ([shift={(1cm,-1cm)}]current page.north west)
+        rectangle
+        ([shift={(-1cm,1cm)}]current page.south east);
+    \draw[line width=0.5pt, fptorange]
+        ([shift={(1.15cm,-1.15cm)}]current page.north west)
+        rectangle
+        ([shift={(-1.15cm,1.15cm)}]current page.south east);
+\end{tikzpicture}
+
+\begin{center}
+    \textbf{\large TRƯỜNG CAO ĐẲNG FPT POLYTECHNIC}
+
+    \vspace{0.5cm}
+    \includegraphics[width=0.38\textwidth]{figures/logo_fpoly.png}
+
+    \vspace{0.4cm}
+    {\Large \textbf{DỰ ÁN TỐT NGHIỆP}} \\[4pt]
+    {\large \textbf{CHUYÊN NGÀNH: XỬ LÝ DỮ LIỆU}}
+
+    \vspace{1.6cm}
+    
+    \begin{spacing}{1.0}
+        {\huge \textbf{PHÂN TÍCH HIỆU SUẤT VÀ \\[4pt] DỰ BÁO SẢN LƯỢNG \\[4pt] HỆ THỐNG ĐIỆN MẶT TRỜI}}
+    \end{spacing}
+
+    \vspace{1.8cm}
+    \normalsize
+    \begin{flushleft}
+        \hspace{2cm} \textbf{Nhóm thực hiện:} The Outliers \\[5pt]
+        \hspace{2cm} \textbf{Sinh viên thực hiện:} \\[3pt]
+        \hspace{2cm}
+        \begin{tabular*}{7.5cm}{@{} l @{\extracolsep{\fill}} r @{}}
+            \hspace{0.5cm} 1. Nguyễn Vũ Nhựt   & PS44442 \\
+            \hspace{0.5cm} 2. Nguyễn Văn Sỹ    & PS43671 \\
+            \hspace{0.5cm} 3. Lê Công Toàn    & PS44145 \\
+            \hspace{0.5cm} 4. Nguyễn Xuân Hùng & PS44527 \\
+            \hspace{0.5cm} 5. Ngô Tấn Đạt     & PS44589 \\
+        \end{tabular*} \\[5pt]
+        \hspace{2cm} \textbf{Giảng viên hướng dẫn:} ThS. Văn Công Khanh
+    \end{flushleft}
+    \vfill
+    {\normalsize \textbf{TP. HỒ CHÍ MINH, THÁNG 6 NĂM 2026}}
+    \vspace{0.5cm}
+\end{center}
+\end{titlepage}
+
+
+\pagenumbering{arabic}
+\pagestyle{front}
+
+\chapter}[display]
+  {\normalfont\huge\bfseries}{}{0pt}{\huge}
+\titlespacing*{\chapter}{0pt}{-10pt}{20pt} 
+
+% ======================== HEADER / FOOTER ====================================
+\fancypagestyle{main}{
+    \fancyhf{}
+    \fancyhead[L]{\includegraphics[height=1cm]{figures/logo_fpoly.png}}
+    \fancyhead[R]{\small THE OUTLIERS}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp - Chuyên ngành Xử lý Dữ liệu}
+    \fancyfoot[R]{\small Trang \thepage\ / \pageref{LastPage}}
+    \renewcommand{\headrulewidth}{0.4pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+}
+
+\fancypagestyle{plain}{
+    \fancyhf{}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp - Chuyên ngành Xử lý Dữ liệu}
+    \fancyfoot[R]{\small Trang \thepage\ / \pageref{LastPage}}
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+}
+
+\fancypagestyle{front}{
+    \fancyhf{}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp - Chuyên ngành Xử lý Dữ liệu}
+    \fancyfoot[R]{\small Trang \thepage\ / \pageref{LastPage}}
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+}
+
+
+\begin{document}
+\pagestyle{front}
+
+\begin{titlepage}
+\enlargethispage{1.2cm}
+
+\begin{tikzpicture}[remember picture, overlay]
+    \draw[line width=2pt, fptorange]
+        ([shift={(1cm,-1cm)}]current page.north west)
+        rectangle
+        ([shift={(-1cm,1cm)}]current page.south east);
+    \draw[line width=0.5pt, fptorange]
+        ([shift={(1.15cm,-1.15cm)}]current page.north west)
+        rectangle
+        ([shift={(-1.15cm,1.15cm)}]current page.south east);
+\end{tikzpicture}
+
+\begin{center}
+    \textbf{\large TRƯỜNG CAO ĐẲNG FPT POLYTECHNIC}
+
+    \vspace{0.5cm}
+    \includegraphics[width=0.38\textwidth]{figures/logo_fpoly.png}
+
+    \vspace{0.4cm}
+    {\Large \textbf{DỰ ÁN TỐT NGHIỆP}} \\[4pt]
+    {\large \textbf{CHUYÊN NGÀNH: XỬ LÝ DỮ LIỆU}}
+
+    \vspace{1.6cm}
+    
+    \begin{spacing}{1.0}
+        {\huge \textbf{PHÂN TÍCH HIỆU SUẤT VÀ \\[4pt] DỰ BÁO SẢN LƯỢNG \\[4pt] HỆ THỐNG ĐIỆN MẶT TRỜI}}
+    \end{spacing}
+
+    \vspace{1.8cm}
+    \normalsize
+    \begin{flushleft}
+        \hspace{2cm} \textbf{Nhóm thực hiện:} The Outliers \\[5pt]
+        \hspace{2cm} \textbf{Sinh viên thực hiện:} \\[3pt]
+        \hspace{2cm}
+        \begin{tabular*}{7.5cm}{@{} l @{\extracolsep{\fill}} r @{}}
+            \hspace{0.5cm} 1. Nguyễn Vũ Nhựt   & PS44442 \\
+            \hspace{0.5cm} 2. Nguyễn Văn Sỹ    & PS43671 \\
+            \hspace{0.5cm} 3. Lê Công Toàn    & PS44145 \\
+            \hspace{0.5cm} 4. Nguyễn Xuân Hùng & PS44527 \\
+            \hspace{0.5cm} 5. Ngô Tấn Đạt     & PS44589 \\
+        \end{tabular*} \\[5pt]
+        \hspace{2cm} \textbf{Giảng viên hướng dẫn:} ThS. Văn Công Khanh
+    \end{flushleft}
+    \vfill
+    {\normalsize \textbf{TP. HỒ CHÍ MINH, THÁNG 6 NĂM 2026}}
+    \vspace{0.5cm}
+\end{center}
+\end{titlepage}
+
+
+\pagenumbering{arabic}
+\pagestyle{front}
+
+\chapter}[display]
+  {\normalfont\huge\bfseries}{}{0pt}{\huge}
+\titlespacing*{\chapter}{0pt}{-10pt}{20pt} 
+
+% ======================== HEADER / FOOTER ====================================
+\fancypagestyle{main}{
+    \fancyhf{}
+    \fancyhead[L]{\includegraphics[height=1cm]{figures/logo_fpoly.png}}
+    \fancyhead[R]{\small THE OUTLIERS}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp - Chuyên ngành Xử lý Dữ liệu}
+    \fancyfoot[R]{\small Trang \thepage\ / \pageref{LastPage}}
+    \renewcommand{\headrulewidth}{0.4pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+}
+
+\fancypagestyle{plain}{
+    \fancyhf{}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp - Chuyên ngành Xử lý Dữ liệu}
+    \fancyfoot[R]{\small Trang \thepage\ / \pageref{LastPage}}
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+}
+
+\fancypagestyle{front}{
+    \fancyhf{}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp - Chuyên ngành Xử lý Dữ liệu}
+    \fancyfoot[R]{\small Trang \thepage\ / \pageref{LastPage}}
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+}
+
+
+\begin{document}
+\pagestyle{front}
+
+\begin{titlepage}
+\enlargethispage{1.2cm}
+
+\begin{tikzpicture}[remember picture, overlay]
+    \draw[line width=2pt, fptorange]
+        ([shift={(1cm,-1cm)}]current page.north west)
+        rectangle
+        ([shift={(-1cm,1cm)}]current page.south east);
+    \draw[line width=0.5pt, fptorange]
+        ([shift={(1.15cm,-1.15cm)}]current page.north west)
+        rectangle
+        ([shift={(-1.15cm,1.15cm)}]current page.south east);
+\end{tikzpicture}
+
+\begin{center}
+    \textbf{\large TRƯỜNG CAO ĐẲNG FPT POLYTECHNIC}
+
+    \vspace{0.5cm}
+    \includegraphics[width=0.38\textwidth]{figures/logo_fpoly.png}
+
+    \vspace{0.4cm}
+    {\Large \textbf{DỰ ÁN TỐT NGHIỆP}} \\[4pt]
+    {\large \textbf{CHUYÊN NGÀNH: XỬ LÝ DỮ LIỆU}}
+
+    \vspace{1.6cm}
+    
+    \begin{spacing}{1.0}
+        {\huge \textbf{PHÂN TÍCH HIỆU SUẤT VÀ \\[4pt] DỰ BÁO SẢN LƯỢNG \\[4pt] HỆ THỐNG ĐIỆN MẶT TRỜI}}
+    \end{spacing}
+
+    \vspace{1.8cm}
+    \normalsize
+    \begin{flushleft}
+        \hspace{2cm} \textbf{Nhóm thực hiện:} The Outliers \\[5pt]
+        \hspace{2cm} \textbf{Sinh viên thực hiện:} \\[3pt]
+        \hspace{2cm}
+        \begin{tabular*}{7.5cm}{@{} l @{\extracolsep{\fill}} r @{}}
+            \hspace{0.5cm} 1. Nguyễn Vũ Nhựt   & PS44442 \\
+            \hspace{0.5cm} 2. Nguyễn Văn Sỹ    & PS43671 \\
+            \hspace{0.5cm} 3. Lê Công Toàn    & PS44145 \\
+            \hspace{0.5cm} 4. Nguyễn Xuân Hùng & PS44527 \\
+            \hspace{0.5cm} 5. Ngô Tấn Đạt     & PS44589 \\
+        \end{tabular*} \\[5pt]
+        \hspace{2cm} \textbf{Giảng viên hướng dẫn:} ThS. Văn Công Khanh
+    \end{flushleft}
+    \vfill
+    {\normalsize \textbf{TP. HỒ CHÍ MINH, THÁNG 6 NĂM 2026}}
+    \vspace{0.5cm}
+\end{center}
+\end{titlepage}
+
+
+\pagenumbering{arabic}
+\pagestyle{front}
+
+\chapter}[display]
+  {\normalfont\huge\bfseries}{}{0pt}{\huge}
+\titlespacing*{\chapter}{0pt}{-10pt}{20pt} 
+
+% ======================== HEADER / FOOTER ====================================
+\fancypagestyle{main}{
+    \fancyhf{}
+    \fancyhead[L]{\includegraphics[height=1cm]{figures/logo_fpoly.png}}
+    \fancyhead[R]{\small THE OUTLIERS}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp - Chuyên ngành Xử lý Dữ liệu}
+    \fancyfoot[R]{\small Trang \thepage\ / \pageref{LastPage}}
+    \renewcommand{\headrulewidth}{0.4pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+}
+
+\fancypagestyle{plain}{
+    \fancyhf{}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp - Chuyên ngành Xử lý Dữ liệu}
+    \fancyfoot[R]{\small Trang \thepage\ / \pageref{LastPage}}
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+}
+
+\fancypagestyle{front}{
+    \fancyhf{}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp - Chuyên ngành Xử lý Dữ liệu}
+    \fancyfoot[R]{\small Trang \thepage\ / \pageref{LastPage}}
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+}
+
+
+\begin{document}
+\pagestyle{front}
+
+\begin{titlepage}
+\enlargethispage{1.2cm}
+
+\begin{tikzpicture}[remember picture, overlay]
+    \draw[line width=2pt, fptorange]
+        ([shift={(1cm,-1cm)}]current page.north west)
+        rectangle
+        ([shift={(-1cm,1cm)}]current page.south east);
+    \draw[line width=0.5pt, fptorange]
+        ([shift={(1.15cm,-1.15cm)}]current page.north west)
+        rectangle
+        ([shift={(-1.15cm,1.15cm)}]current page.south east);
+\end{tikzpicture}
+
+\begin{center}
+    \textbf{\large TRƯỜNG CAO ĐẲNG FPT POLYTECHNIC}
+
+    \vspace{0.5cm}
+    \includegraphics[width=0.38\textwidth]{figures/logo_fpoly.png}
+
+    \vspace{0.4cm}
+    {\Large \textbf{DỰ ÁN TỐT NGHIỆP}} \\[4pt]
+    {\large \textbf{CHUYÊN NGÀNH: XỬ LÝ DỮ LIỆU}}
+
+    \vspace{1.6cm}
+    
+    \begin{spacing}{1.0}
+        {\huge \textbf{PHÂN TÍCH HIỆU SUẤT VÀ \\[4pt] DỰ BÁO SẢN LƯỢNG \\[4pt] HỆ THỐNG ĐIỆN MẶT TRỜI}}
+    \end{spacing}
+
+    \vspace{1.8cm}
+    \normalsize
+    \begin{flushleft}
+        \hspace{2cm} \textbf{Nhóm thực hiện:} The Outliers \\[5pt]
+        \hspace{2cm} \textbf{Sinh viên thực hiện:} \\[3pt]
+        \hspace{2cm}
+        \begin{tabular*}{7.5cm}{@{} l @{\extracolsep{\fill}} r @{}}
+            \hspace{0.5cm} 1. Nguyễn Vũ Nhựt   & PS44442 \\
+            \hspace{0.5cm} 2. Nguyễn Văn Sỹ    & PS43671 \\
+            \hspace{0.5cm} 3. Lê Công Toàn    & PS44145 \\
+            \hspace{0.5cm} 4. Nguyễn Xuân Hùng & PS44527 \\
+            \hspace{0.5cm} 5. Ngô Tấn Đạt     & PS44589 \\
+        \end{tabular*} \\[5pt]
+        \hspace{2cm} \textbf{Giảng viên hướng dẫn:} ThS. Văn Công Khanh
+    \end{flushleft}
+    \vfill
+    {\normalsize \textbf{TP. HỒ CHÍ MINH, THÁNG 6 NĂM 2026}}
+    \vspace{0.5cm}
+\end{center}
+\end{titlepage}
+
+
+\pagenumbering{arabic}
+\pagestyle{front}
+
+\chapter}[display]
+  {\normalfont\huge\bfseries}{}{0pt}{\huge}
+\titlespacing*{\chapter}{0pt}{-10pt}{20pt} 
+
+% ======================== HEADER / FOOTER ====================================
+\fancypagestyle{main}{
+    \fancyhf{}
+    \fancyhead[L]{\includegraphics[height=1cm]{figures/logo_fpoly.png}}
+    \fancyhead[R]{\small THE OUTLIERS}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp - Chuyên ngành Xử lý Dữ liệu}
+    \fancyfoot[R]{\small Trang \thepage\ / \pageref{LastPage}}
+    \renewcommand{\headrulewidth}{0.4pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+}
+
+\fancypagestyle{plain}{
+    \fancyhf{}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp - Chuyên ngành Xử lý Dữ liệu}
+    \fancyfoot[R]{\small Trang \thepage\ / \pageref{LastPage}}
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+}
+
+\fancypagestyle{front}{
+    \fancyhf{}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp - Chuyên ngành Xử lý Dữ liệu}
+    \fancyfoot[R]{\small Trang \thepage\ / \pageref{LastPage}}
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+}
+
+
+\begin{document}
+\pagestyle{front}
+
+\begin{titlepage}
+\enlargethispage{1.2cm}
+
+\begin{tikzpicture}[remember picture, overlay]
+    \draw[line width=2pt, fptorange]
+        ([shift={(1cm,-1cm)}]current page.north west)
+        rectangle
+        ([shift={(-1cm,1cm)}]current page.south east);
+    \draw[line width=0.5pt, fptorange]
+        ([shift={(1.15cm,-1.15cm)}]current page.north west)
+        rectangle
+        ([shift={(-1.15cm,1.15cm)}]current page.south east);
+\end{tikzpicture}
+
+\begin{center}
+    \textbf{\large TRƯỜNG CAO ĐẲNG FPT POLYTECHNIC}
+
+    \vspace{0.5cm}
+    \includegraphics[width=0.38\textwidth]{figures/logo_fpoly.png}
+
+    \vspace{0.4cm}
+    {\Large \textbf{DỰ ÁN TỐT NGHIỆP}} \\[4pt]
+    {\large \textbf{CHUYÊN NGÀNH: XỬ LÝ DỮ LIỆU}}
+
+    \vspace{1.6cm}
+    
+    \begin{spacing}{1.0}
+        {\huge \textbf{PHÂN TÍCH HIỆU SUẤT VÀ \\[4pt] DỰ BÁO SẢN LƯỢNG \\[4pt] HỆ THỐNG ĐIỆN MẶT TRỜI}}
+    \end{spacing}
+
+    \vspace{1.8cm}
+    \normalsize
+    \begin{flushleft}
+        \hspace{2cm} \textbf{Nhóm thực hiện:} The Outliers \\[5pt]
+        \hspace{2cm} \textbf{Sinh viên thực hiện:} \\[3pt]
+        \hspace{2cm}
+        \begin{tabular*}{7.5cm}{@{} l @{\extracolsep{\fill}} r @{}}
+            \hspace{0.5cm} 1. Nguyễn Vũ Nhựt   & PS44442 \\
+            \hspace{0.5cm} 2. Nguyễn Văn Sỹ    & PS43671 \\
+            \hspace{0.5cm} 3. Lê Công Toàn    & PS44145 \\
+            \hspace{0.5cm} 4. Nguyễn Xuân Hùng & PS44527 \\
+            \hspace{0.5cm} 5. Ngô Tấn Đạt     & PS44589 \\
+        \end{tabular*} \\[5pt]
+        \hspace{2cm} \textbf{Giảng viên hướng dẫn:} ThS. Văn Công Khanh
+    \end{flushleft}
+    \vfill
+    {\normalsize \textbf{TP. HỒ CHÍ MINH, THÁNG 6 NĂM 2026}}
+    \vspace{0.5cm}
+\end{center}
+\end{titlepage}
+
+
+\pagenumbering{arabic}
+\pagestyle{front}
+
+\chapter}[display]
+  {\normalfont\huge\bfseries}{}{0pt}{\huge}
+\titlespacing*{\chapter}{0pt}{-10pt}{20pt} 
+
+% ======================== HEADER / FOOTER ====================================
+\fancypagestyle{main}{
+    \fancyhf{}
+    \fancyhead[L]{\includegraphics[height=1cm]{figures/logo_fpoly.png}}
+    \fancyhead[R]{\small THE OUTLIERS}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp — Chuyên ngành Xử lý Dữ liệu}
+    \fancyfoot[R]{\small Trang \thepage\ / \pageref{LastPage}}
+    \renewcommand{\headrulewidth}{0.4pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+}
+
+\fancypagestyle{plain}{
+    \fancyhf{}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp — Chuyên ngành Xử lý Dữ liệu}
+    \fancyfoot[R]{\small Trang \thepage\ / \pageref{LastPage}}
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+}
+
+\fancypagestyle{front}{
+    \fancyhf{}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp — Chuyên ngành Xử lý Dữ liệu}
+    \fancyfoot[R]{\small Trang \thepage\ / \pageref{LastPage}}
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+}
+
+
+\begin{document}
+\pagestyle{front}
+
+\begin{titlepage}
+\enlargethispage{1.2cm}
+
+\begin{tikzpicture}[remember picture, overlay]
+    \draw[line width=2pt, fptorange]
+        ([shift={(1cm,-1cm)}]current page.north west)
+        rectangle
+        ([shift={(-1cm,1cm)}]current page.south east);
+    \draw[line width=0.5pt, fptorange]
+        ([shift={(1.15cm,-1.15cm)}]current page.north west)
+        rectangle
+        ([shift={(-1.15cm,1.15cm)}]current page.south east);
+\end{tikzpicture}
+
+\begin{center}
+    \textbf{\large TRƯỜNG CAO ĐẲNG FPT POLYTECHNIC}
+
+    \vspace{0.5cm}
+    \includegraphics[width=0.38\textwidth]{figures/logo_fpoly.png}
+
+    \vspace{0.4cm}
+    {\Large \textbf{DỰ ÁN TỐT NGHIỆP}} \\[4pt]
+    {\large \textbf{CHUYÊN NGÀNH: XỬ LÝ DỮ LIỆU}}
+
+    \vspace{1.6cm}
+    
+    \begin{spacing}{1.0}
+        {\huge \textbf{PHÂN TÍCH HIỆU SUẤT VÀ \\[4pt] DỰ BÁO SẢN LƯỢNG \\[4pt] HỆ THỐNG ĐIỆN MẶT TRỜI}}
+    \end{spacing}
+
+    \vspace{1.8cm}
+    \normalsize
+    \begin{flushleft}
+        \hspace{2cm} \textbf{Nhóm thực hiện:} The Outliers \\[5pt]
+        \hspace{2cm} \textbf{Sinh viên thực hiện:} \\[3pt]
+        \hspace{2cm}
+        \begin{tabular*}{7.5cm}{@{} l @{\extracolsep{\fill}} r @{}}
+            \hspace{0.5cm} 1. Nguyễn Vũ Nhựt   & PS44442 \\
+            \hspace{0.5cm} 2. Nguyễn Văn Sỹ    & PS43671 \\
+            \hspace{0.5cm} 3. Lê Công Toàn    & PS44145 \\
+            \hspace{0.5cm} 4. Nguyễn Xuân Hùng & PS44527 \\
+            \hspace{0.5cm} 5. Ngô Tấn Đạt     & PS44589 \\
+        \end{tabular*} \\[5pt]
+        \hspace{2cm} \textbf{Giảng viên hướng dẫn:} Văn Công Khanh
+    \end{flushleft}
+    \vfill
+    {\normalsize \textbf{TP. HỒ CHÍ MINH, THÁNG 6 NĂM 2026}}
+    \vspace{0.5cm}
+\end{center}
+\end{titlepage}
+
+
+\pagenumbering{arabic}
+
+\chapter*{Lời cảm ơn}
+\addcontentsline{toc}{chapter}{Lời cảm ơn}
+
+Lời đầu tiên, nhóm tác giả xin bày tỏ lòng biết ơn sâu sắc và chân thành nhất đến Ban Giám hiệu Trường Cao đẳng FPT Polytechnic, cùng toàn thể quý Thầy, Cô thuộc Bộ môn Công nghệ Thông tin và Chuyên ngành Xử lý Dữ liệu đã tận tình truyền đạt những tri thức nền tảng và chuyên sâu về Kho dữ liệu (Data Warehouse), Quy trình ETL, Phân tích Khám phá Dữ liệu (EDA), và Hệ thống Thông minh Doanh nghiệp (Business Intelligence) trong suốt thời gian nhóm học tập và rèn luyện tại trường.
+
+Đặc biệt, nhóm xin gửi lời tri ân sâu sắc nhất đến \textbf{Thầy Văn Công Khanh} -- Giảng viên Hướng dẫn dự án tốt nghiệp. Trong suốt quá trình thực hiện đề tài, Thầy đã luôn dành nhiều tâm huyết định hướng phương pháp luận khoa học, kiên nhẫn chỉ dẫn từ việc kiểm định chất lượng dữ liệu, thiết kế mô hình hóa kho dữ liệu Galaxy Schema, đến tư duy phân tích các giá trị kinh doanh thực tiễn. Những lời phản biện sắc bén, sự động viên kịp thời và những góp ý quý báu của Thầy chính là nguồn động lực to lớn giúp nhóm vượt qua các thử thách kỹ thuật và hoàn thành đồ án tốt nghiệp này theo đúng chuẩn mực phân tích dữ liệu thực tế tại doanh nghiệp.
+
+Nhóm cũng xin gửi lời cảm ơn trân trọng đến quý Thầy, Cô trong Hội đồng phản biện tốt nghiệp đã dành thời gian quý báu đánh giá và đóng góp những ý kiến chuyên môn sâu sắc giúp đề tài ngày càng hoàn thiện hơn.
+
+Sau cùng, chúng con xin gửi lời tri ân sâu sắc đến gia đình, người thân cùng tất cả bạn bè đã luôn là điểm tựa vững chắc, đồng hành và tạo mọi điều kiện thuận lợi nhất để chúng con hoàn thành trọn vẹn đồ án tốt nghiệp này.
+
+Mặc dù nhóm đã nỗ lực hết mình với tinh thần trách nhiệm cao nhất, song do giới hạn về kinh nghiệm thực tế, báo cáo khó tránh khỏi những thiếu sót nhất định. Nhóm rất mong tiếp tục nhận được sự chỉ bảo và đóng góp ý kiến quý báu từ Thầy Văn Công Khanh và quý Thầy, Cô.
+
+\vspace{0.8cm}
+\begin{flushright}
+    \textit{TP. Hồ Chí Minh, tháng 6 năm 2026} \\
+    \textbf{Nhóm sinh viên thực hiện (The Outliers)}
+\end{flushright}
+
+\chapter*{Nhận xét của Giảng viên Hướng dẫn}
+\addcontentsline{toc}{chapter}{Nhận xét của Giảng viên Hướng dẫn}
+\label{chap:nhanxet_gvhd}
+
+\begin{enumerate}[label=\textbf{\arabic*.}, leftmargin=*]
+    \item \textbf{Về tinh thần, thái độ làm việc của nhóm sinh viên:}
+    \vspace{0.8cm}
+    \dotfill
+    \vspace{0.8cm}
+    \dotfill
+    
+    \item \textbf{Về chất lượng nội dung và kết quả thực hiện đề tài:}
+    \vspace{0.8cm}
+    \dotfill
+    \vspace{0.8cm}
+    \dotfill
+    
+    \item \textbf{Về tính thực tiễn và khả năng ứng dụng của sản phẩm:}
+    \vspace{0.8cm}
+    \dotfill
+    \vspace{0.8cm}
+    \dotfill
+    
+    \item \textbf{Những hạn chế cần khắc phục:}
+    \vspace{0.8cm}
+    \dotfill
+    
+    \item \textbf{Điểm đánh giá và kết luận:}
+    \begin{itemize}[noitemsep]
+        \item Điểm số: \dotfill / 10
+        \item Đồng ý cho phép nhóm sinh viên được bảo vệ trước Hội đồng chấm Tốt nghiệp: \textbf{[  ] Đồng ý \quad [  ] Không đồng ý}
+    \end{itemize}
+\end{enumerate}
+
+\vspace{1cm}
+\begin{flushright}
+    \textit{TP. Hồ Chí Minh, ngày \dots\dots tháng \dots\dots năm 2026} \\[5pt]
+    \textbf{Giảng viên Hướng dẫn} \\[40pt]
+    \textbf{ThS. Văn Công Khanh}
+\end{flushright}
+
+
+\chapter*{Nhận xét của Giảng viên Phản biện}
+\addcontentsline{toc}{chapter}{Nhận xét của Giảng viên Phản biện}
+\label{chap:nhanxet_gvpb}
+
+\begin{enumerate}[label=\textbf{\arabic*.}, leftmargin=*]
+    \item \textbf{Về bố cục, hình thức trình bày của báo cáo tốt nghiệp:}
+    \vspace{0.8cm}
+    \dotfill
+    \vspace{0.8cm}
+    \dotfill
+    
+    \item \textbf{Về phương pháp nghiên cứu và hàm lượng công nghệ kỹ thuật:}
+    \vspace{0.8cm}
+    \dotfill
+    \vspace{0.8cm}
+    \dotfill
+    
+    \item \textbf{Về kết quả thực nghiệm và giá trị ứng dụng thực tế:}
+    \vspace{0.8cm}
+    \dotfill
+    \vspace{0.8cm}
+    \dotfill
+    
+    \item \textbf{Các câu hỏi chất vấn dành cho nhóm sinh viên tại buổi bảo vệ:}
+    \vspace{0.8cm}
+    \dotfill
+    \vspace{0.8cm}
+    \dotfill
+    
+    \item \textbf{Điểm đánh giá và kết luận:}
+    \begin{itemize}[noitemsep]
+        \item Điểm số: \dotfill / 10
+        \item Đồng ý cho phép đề tài được nghiệm thu: \textbf{[  ] Đồng ý \quad [  ] Không đồng ý}
+    \end{itemize}
+\end{enumerate}
+
+\vspace{1cm}
+\begin{flushright}
+    \textit{TP. Hồ Chí Minh, ngày \dots\dots tháng \dots\dots năm 2026} \\[5pt]
+    \textbf{Giảng viên Phản biện} \\[40pt]
+    \textbf{(Ký và ghi rõ họ tên)}
+\end{flushright}
+
+
+\chapter*{Tóm tắt Dự án}
+\addcontentsline{toc}{chapter}{Tóm tắt Dự án}
+Dự án tốt nghiệp ``Phân tich Hiệu suất và Dự báo Sản lượng Hệ thống Điện Mặt Trời'' được thực hiện nhằm xây dựng một nền tảng dữ liệu toàn diện (Nền tảng Dữ liệu Toàn diện) phục vụ công tác giám sát, quản trị vận hành và tối ưu hóa tài chính cho các hệ thống năng lượng mặt trời (PV). 
+
+Xuất phát từ bài toán thực tế của các doanh nghiệp vận hành: mặc dù công suất lắp đặt ngày càng mở rộng nhưng hiệu suất thực tế thường bị thất thoát ẩn do điều kiện thời tiết biến đổi, suy giảm nhiệt độ, bám bụi và hỏng hóc thiết bị biến tần (Inverter). Dự án đã thu thập và tích hợp khối dữ liệu lớn gồm $2.731.946$ bản ghi sản lượng 15 phút từ 42 trạm phát tại 4 khuôn viên thuộc Đại học La Trobe (Úc) cùng dữ liệu khí tượng ERA5-Land từ Open-Meteo API.
+
+Nhóm đã xây dựng quy trình ETL tự động hóa bằng Python, thực hiện làm sạch dữ liệu, xử lý các điểm đứt gãy thời gian, áp dụng rào chắn vật lý và mô hình phân lớp lai GMM--IF để lọc sạch nhiễu cảm biến và gắn nhãn 6 mã lý do kỹ thuật. Dữ liệu được mô hình hóa theo kiến trúc Lược đồ Thiên hà (Galaxy Schema) trên PostgreSQL Supabase và tổng hợp thành các Siêu thị dữ liệu (Siêu thị dữ liệu chuyên đề). Hệ thống 3 Dashboard tương tác trên Tableau cung cấp cho Ban Giám đốc, Quản lý Vận hành và Kỹ sư bảo trì cái nhìn sâu sắc về tỷ lệ hiệu suất (PR), sản lượng đặc trưng (Specific Yield), và tổn thất tài chính, qua đó chuyển đổi dữ liệu thô thành các quyết định vận hành bền vững.
+
+% ────────────────────────────────────────────────────────────────────
+%  MỤC LỤC & DANH MỤC
+% ────────────────────────────────────────────────────────────────────
+
+\tableofcontents
+\listoffigures
+\listoftables
+
+\newpage
+\chapter*{Danh mục Từ viết tắt}
+\addcontentsline{toc}{chapter}{Danh mục Từ viết tắt}
+\vspace*{-15pt}
+
+\begin{table}[H]
+\centering
+\scriptsize
+\renewcommand{\arraystretch}{1.15}
+\begin{tabularx}{\textwidth}{@{} l >{\raggedright\arraybackslash}X @{\hspace{10pt}} l >{\raggedright\arraybackslash}X @{}}
+\toprule
+\textbf{Ký hiệu} & \textbf{Ý nghĩa đầy đủ} & \textbf{Ký hiệu} & \textbf{Ý nghĩa đầy đủ} \\
+\midrule
+AOD       & Aerosol Optical Depth (Độ dày sol khí)     & kWp       & Kilowatt-peak (Công suất đỉnh cực đại) \\
+API       & Application Programming Interface         & LCOE      & Levelized Cost of Electricity \\
+AS/NZS    & Chuẩn kỹ thuật Úc / New Zealand            & Loss Rate & Tỷ lệ tổn thất sản lượng/năng lượng \\
+BESS      & Battery Energy Storage System (Pin lưu trữ)& MAE       & Mean Absolute Error (Sai số tuyệt đối TB) \\
+BI        & Business Intelligence (Phân tích thông minh)& ML       & Machine Learning (Học máy) \\
+BOM       & Bureau of Meteorology (Cục Khí tượng Úc)   & MLOps     & Machine Learning Operations \\
+CEC       & Clean Energy Council (Hội đồng NL Sạch Úc) & MPPT      & Maximum Power Point Tracking \\
+CF        & Capacity Factor (Hệ số công suất trạm)     & MSE       & Mean Squared Error (Sai số bình phương) \\
+CSDL      & Cơ sở dữ liệu                              & NOCT      & Nominal Operating Cell Temperature \\
+CSI       & Clear-Sky Index (Chỉ số trời quang)        & O\&M      & Operations and Maintenance (Vận hành) \\
+CT        & Current Transformer (Biến dòng đo AC)      & OLAP      & Online Analytical Processing \\
+DDL       & Data Definition Language (Định nghĩa CSDL) & PK        & Primary Key (Khóa chính) \\
+DHI       & Diffuse Horizontal Irradiance (Tán xạ ngang)& POA      & Plane of Array (Bức xạ mặt phẳng pin) \\
+DNI       & Direct Normal Irradiance (Trực xạ pháp tuyến)& PR       & Performance Ratio (Hệ số hiệu suất) \\
+DVC       & Data Version Control (Quản lý bản dữ liệu) & PV        & Photovoltaic (Quang điện mặt trời) \\
+DWH       & Data Warehouse (Kho dữ liệu doanh nghiệp)  & RACI      & Ma trận phân công trách nhiệm \\
+EDA       & Exploratory Data Analysis (Khám phá DL)    & RLS       & Row-Level Security (Bảo mật cấp dòng) \\
+ERA5      & Bộ dữ liệu khí hậu tái phân tích ECMWF     & RMSE      & Root Mean Squared Error \\
+ETL       & Extract, Transform, Load                   & ROI       & Return on Investment (Tỷ suất sinh lời) \\
+FiT       & Feed-in Tariff (Giá biểu mua điện bán lưới)& SHAP      & SHapley Additive exPlanations \\
+FK        & Foreign Key (Khóa ngoại)                   & SQL       & Structured Query Language \\
+GBDT      & Gradient Boosted Decision Tree             & SS        & Skill Score (Điểm kỹ năng cải thiện) \\
+GHI       & Global Horizontal Irradiance (Bức xạ tổng) & STC       & Standard Test Conditions ($1000\,\text{W/m}^2, 25^\circ\text{C}$) \\
+GMM       & Gaussian Mixture Model (Hỗn hợp Gauss)     & TPE       & Tree-structured Parzen Estimator \\
+GMM--IF   & Hybrid GMM và Isolation Forest             & UI/UX     & Giao diện và Trải nghiệm người dùng \\
+HVAC      & Heating, Ventilation, Air Conditioning     & VIF       & Variance Inflation Factor (Đa cộng tuyến) \\
+IEA       & International Energy Agency                & WAPE      & Weighted Absolute Percentage Error \\
+IF        & Isolation Forest (Rừng cô lập)             & WMO       & World Meteorological Organization \\
+IGBT      & Transistor lưỡng cực cổng cách ly          & XAI       & Explainable Artificial Intelligence \\
+ILR       & Inverter Loading Ratio (Quá tải DC/AC)     & IQR       & Interquartile Range (Khoảng tứ phân vị) \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\newpage
+
+
+% ====================================================================
+%  CHƯƠNG 1: GIỚI THIỆU DỰ ÁN VÀ BÀI TOÁN KINH DOANH
+% ====================================================================
+\chapter{Tổng quan Đề tài và Bài toán Dự án}
+\label{chap:tongquan}
+
+\section{Bối cảnh Thực tế và Lý do Chọn Đề tài}
+\label{sec:lydo}
+
+Trong xu hướng chuyển dịch năng lượng tái tạo toàn cầu nhằm giảm phát thải khí nhà kính và hướng tới mục tiêu Net Zero, năng lượng mặt trời (quang điện -- Photovoltaic, viết tắt là PV) đang khẳng định vai trò là một trong những nguồn năng lượng sạch có tốc độ phát triển mạnh mẽ nhất. Theo báo cáo thường niên của Cơ quan Năng lượng Quốc tế (IEA)~\cite{iea2023pvps}, tổng công suất lắp đặt quang điện trên toàn cầu đã vượt mốc 1.600~GW. Việc ứng dụng các hệ thống điện mặt trời áp mái tại các cơ quan, trường đại học và khu công nghiệp giúp tiết kiệm đáng kể chi phí điện lưới và chủ động nguồn năng lượng xanh tại chỗ.
+
+Tuy nhiên, đặc tính cơ bản của năng lượng mặt trời là \textbf{tính bất định cao và phụ thuộc phi tuyến vào các điều kiện khí tượng} (bức xạ mặt trời, nhiệt độ môi trường, độ che phủ mây và tốc độ gió). Bên cạnh đó, trong quá trình vận hành dài hạn, các hệ thống quang điện luôn đối mặt với hiện tượng suy giảm hiệu suất do nhiệt độ cao, suy thoái thiết bị biến tần (Inverter), bụi bẩn bám trên bề mặt tấm pin hoặc lỗi truyền thông từ các cảm biến đo đạc.
+
+Do đó, hai bài toán nghiệp vụ cốt lõi đặt ra cho các đơn vị quản lý và vận hành trạm điện mặt trời là:
+\begin{enumerate}[noitemsep]
+    \item \textbf{Phân tích và Đánh giá Hiệu suất Vận hành:} Theo dõi chính xác các chỉ số hiệu quả chuẩn hóa như Hệ số Hiệu suất (Performance Ratio -- PR), Hệ số Công suất (Capacity Factor -- CF), và Năng suất Riêng (Specific Yield); bóc tách các tổn thất năng lượng do điều kiện môi trường hoặc sự cố thiết bị, đồng thời phát hiện sớm các điểm dữ liệu dị thường để phục vụ công tác bảo trì.
+    \item \textbf{Dự báo Sản lượng Điện Mặt trời:} Dự báo chính xác sản lượng điện năng theo chu kỳ ngắn hạn dựa trên chuỗi thời gian lịch sử và thông số khí tượng dự báo, giúp đơn vị quản lý chủ động điều phối phụ tải, tối ưu hóa huy động nguồn điện và nâng cao hiệu quả kinh tế.
+\end{enumerate}
+
+Xuất phát từ nhu cầu thực tiễn và tính cấp thiết nêu trên, nhóm tác giả lựa chọn đề tài \textbf{``Phân tích Hiệu suất và Dự báo Sản lượng Hệ thống Điện Mặt Trời''} làm đồ án tốt nghiệp chuyên ngành Xử lý Dữ liệu tại Trường Cao đẳng FPT Polytechnic.
+
+\section{Thực trạng và Thách thức trong Xử lý Dữ liệu Năng lượng Mặt trời}
+\label{sec:thuctrang_thachthuc}
+
+Dự án tiếp cận và khai thác nguồn dữ liệu vận hành thực tế quy mô lớn từ bộ dữ liệu mở UNISOLAR của Đại học La Trobe, Úc~\cite{wimalaratne2022unisolar}, kết hợp cùng dữ liệu khí tượng viễn thám ERA5-Land từ Open-Meteo API~\cite{openmeteo2023}. Qua quá trình khảo sát ban đầu, nhóm nghiên cứu đã xác định 4 thách thức kỹ thuật dữ liệu trọng yếu:
+
+\begin{itemize}[noitemsep]
+    \item \textbf{Quy mô dữ liệu lớn và Lệch pha độ phân giải thời gian:} Dữ liệu sản lượng gồm hơn $2{,}73$ triệu bản ghi với chu kỳ ghi nhận 15 phút từ 42 trạm phát, trong khi dữ liệu khí tượng viễn thám có chu kỳ 1 giờ. Sự khác biệt về độ chi tiết thời gian đòi hỏi một quy trình xử lý dữ liệu chuẩn hóa và kiến trúc kho dữ liệu đa chiều để tích hợp dữ liệu nhất quán mà không làm phình to dung lượng lưu trữ.
+    \item \textbf{Hiện tượng gián đoạn chuỗi thời gian:} Dữ liệu thực tế phát sinh từ cảm biến IoT thường xuất hiện các điểm đứt gãy gián đoạn chu kỳ do lỗi đường truyền mạng. Nếu không được tái lấy mẫu và điền khuyết thời gian một cách khoa học, các tính toán về độ trễ và cửa sổ trượt trong mô hình dự báo chuỗi thời gian sẽ bị sai lệch nghiêm trọng.
+    \item \textbf{Nhiễu cảm biến và Dữ liệu dị thường phức tạp:} Sự xuất hiện của các giá trị dòng rò ban đêm khi không có ánh sáng mặt trời do trôi điểm 0 cảm biến, các giá trị phát đột biến vượt công suất thiết kế, hoặc hiện tượng mất phát điện giữa trưa do biến tần ngắt mạch khiến các phương pháp lọc thống kê đơn giản dễ bị sai lệch hoặc loại bỏ nhầm dữ liệu hợp lệ trong những ngày nhiều mây.
+    \item \textbf{Nhu cầu Trực quan hóa Quản trị Đa chiều và Dự báo Đáng tin cậy:} Các nhà quản lý vận hành cần một hệ thống bảng điều khiển trực quan tương tác (Dashboard) để theo dõi các chỉ số KPI vận hành và chẩn đoán nguyên nhân sự cố kỹ thuật, song song với một mô hình học máy dự báo sản lượng có độ chính xác cao và khả năng giải thích rõ ràng.
+\end{itemize}
+
+\section{Mục tiêu và Nhiệm vụ của Dự án}
+\label{sec:muctieu_nhiemvu}
+
+\subsection{Mục tiêu Tổng quát}
+Xây dựng một nền tảng kỹ thuật xử lý dữ liệu hoàn chỉnh từ đầu đến cuối nhằm phục vụ công tác giám sát, phân tích hiệu suất vận hành và dự báo sản lượng cho hệ thống điện mặt trời đa trạm phát.
+
+\subsection{Mục tiêu và Nhiệm vụ Cụ thể}
+Để hoàn thành mục tiêu tổng quát, dự án tập trung giải quyết 4 nhóm nhiệm vụ chuyên môn:
+\begin{enumerate}[label=\arabic*., leftmargin=*]
+    \item \textbf{Thu thập, Tiền xử lý và Mô hình hóa Kho Dữ liệu (Kỹ thuật Dữ liệu):}
+    \begin{itemize}[noitemsep]
+        \item Xây dựng quy trình xử lý dữ liệu tự động (ETL Pipeline) bằng ngôn ngữ Python theo kiến trúc mô-đun độc lập.
+        \item Xử lý các điểm gián đoạn thời gian bằng kỹ thuật tái lấy mẫu và điền khuyết chuỗi thời gian liên tục.
+        \item Thiết kế và triển khai Kho dữ liệu trung tâm (Data Warehouse) trên nền tảng Supabase theo mô hình Lược đồ Thiên hà (Galaxy Schema) gồm các bảng sự kiện (Fact) và các bảng chiều dữ liệu dùng chung (Dimension).
+        \item Thiết lập các cơ chế kiểm tra toàn vẹn dữ liệu và phân quyền bảo mật cấp dòng (RLS).
+    \end{itemize}
+    \item \textbf{Phát hiện Dị thường và Làm sạch Dữ liệu Nâng cao:}
+    \begin{itemize}[noitemsep]
+        \item Kết hợp các rào chắn giới hạn vật lý quang điện và mô hình phân lớp lai GMM--IF (Gaussian Mixture Model -- Isolation Forest) để nhận diện chính xác dữ liệu ngoại lai.
+        \item Phân loại và gán nhãn các mã lý do kỹ thuật chuẩn hóa phục vụ công tác chẩn đoán và lập kế hoạch bảo trì thiết bị vận hành.
+    \end{itemize}
+    \item \textbf{Phân tích Khám phá Dữ liệu và Xây dựng Bảng điều khiển Quản trị:}
+    \begin{itemize}[noitemsep]
+        \item Xây dựng các bảng siêu thị dữ liệu (Data Marts) tính toán trước các chỉ số KPI theo ngày, tháng, trạm phát nhằm tối ưu hóa hiệu năng truy vấn.
+        \item Thiết kế hệ thống bảng điều khiển trực quan tương tác trên Tableau Dashboard phục vụ nhu cầu quản lý từ Ban Giám đốc đến Kỹ sư vận hành hiện trường.
+    \end{itemize}
+    \item \textbf{Mô hình hóa và Dự báo Sản lượng Chuỗi Thời gian:}
+    \begin{itemize}[noitemsep]
+        \item Xây dựng luồng huấn luyện chuỗi thời gian với kỹ thuật cửa sổ trượt (TimeSeriesSplit), trích xuất đặc trưng chu kỳ tuần hoàn và ngữ cảnh dữ liệu lịch sử.
+        \item Thử nghiệm, so sánh các mô hình đường cơ sở (Baseline) và các mô hình học máy tăng cường độ dốc (Gradient Boosting).
+        \item Đánh giá mô hình theo các thang đo chuẩn quốc tế và phân tích tầm quan trọng của các yếu tố khí tượng ảnh hưởng đến sản lượng thông qua SHAP.
+    \end{itemize}
+\end{enumerate}
+
+\section{Đối tượng và Phạm vi Nghiên cứu}
+\label{sec:phamvi}
+
+\begin{itemize}[noitemsep]
+    \item \textbf{Đối tượng Nghiên cứu:} Dữ liệu sản lượng điện năng từ các trạm quang điện áp mái và các biến số khí tượng viễn thám có ảnh hưởng trực tiếp đến hiệu suất quang điện (bức xạ mặt trời, nhiệt độ môi trường, độ che phủ mây, tốc độ gió, lượng mưa và thời lượng nắng).
+    \item \textbf{Phạm vi Không gian:} 42 trạm phát quang điện áp mái với tổng công suất danh định $2.428\,\text{kWp}$ phân bổ tại 4 khuôn viên của Đại học La Trobe, Bang Victoria, Úc (Bundoora, Bendigo, Albury-Wodonga, Shepparton) thuộc bộ dữ liệu mở UNISOLAR~\cite{wimalaratne2022unisolar}.
+    \item \textbf{Phạm vi Thời gian:} Chuỗi dữ liệu lịch sử liên tục trong 28 tháng, từ ngày 01/01/2020 đến ngày 30/04/2022.
+\end{itemize}
+
+\begin{table}[H]
+\centering
+\small
+\renewcommand{\arraystretch}{1.25}
+\begin{tabularx}{\textwidth}{@{} l l X @{}}
+\toprule
+\textbf{Thông số Khảo sát} & \textbf{Giá trị Thực tế} & \textbf{Ý nghĩa Nghiệp vụ} \\
+\midrule
+\textbf{Quy mô bản ghi sản lượng} & 2.731.946 dòng & Dữ liệu chuỗi thời gian sản lượng chu kỳ 15 phút từ 42 trạm PV. \\
+\textbf{Thời gian thu thập} & 01/01/2020 -- 30/04/2022 & 28 tháng liên tục (bao gồm đủ các mùa khí hậu trong năm). \\
+\textbf{Số lượng trạm phát PV} & 42 trạm quang điện áp mái & Quy mô công suất từ trạm nhỏ 10 kWp đến trạm lớn 500 kWp. \\
+\textbf{Tổng công suất thiết kế} & 2.428 kWp & Đa dạng các dòng biến tần và cấu hình lắp đặt tấm pin. \\
+\textbf{Địa điểm khảo sát} & 4 khuôn viên (Victoria, Úc) & Bundoora, Bendigo, Albury-Wodonga, Shepparton. \\
+\textbf{Số biến khí tượng tích hợp} & 8 biến đo lường chuẩn WMO & Bức xạ, nhiệt độ không khí, độ che phủ mây, gió, mưa, nắng. \\
+\bottomrule
+\end{tabularx}
+\caption{Bảng tổng quan thông số dữ liệu thực nghiệm sử dụng trong dự án.}
+\label{tab:dataset_summary}
+\end{table}
+
+\section{Ý nghĩa Khoa học và Giá trị Ứng dụng Thực tiễn}
+\label{sec:ynghia}
+
+\begin{itemize}[noitemsep]
+    \item \textbf{Giá trị Kỹ thuật và Học thuật:} Cung cấp một quy trình thực tiễn chuẩn hóa về kỹ thuật xử lý dữ liệu năng lượng tái tạo, giải quyết bài toán tích hợp dữ liệu lệch pha thời gian bằng mô hình Lược đồ Thiên hà và ứng dụng học máy phân lớp lai để phát hiện dữ liệu bất thường.
+    \item \textbf{Giá trị Quản trị và Vận hành Doanh nghiệp:} Hệ thống bảng điều khiển trực quan giúp các nhà quản lý nắm bắt toàn diện hiệu suất hệ thống, so sánh hiệu quả giữa các trạm phát, và cung cấp thông tin kịp thời để kỹ sư lên kế hoạch bảo trì.
+    \item \textbf{Giá trị Điều độ và Lập kế hoạch Năng lượng:} Các mô hình dự báo chuỗi thời gian hỗ trợ dự đoán chính xác sản lượng phát điện trong ngắn hạn, hỗ trợ việc lập kế hoạch huy động nguồn điện và tối ưu hóa chi phí vận hành.
+\end{itemize}
+
+\section{Kế hoạch Thực hiện Dự án (14 Tuần Agile/Scrum)}
+\label{sec:kehoach}
+
+Dự án được thực hiện trong thời gian 14 tuần theo phương pháp luận Agile/Scrum với 7 giai đoạn (Sprint) cụ thể:
+
+\begin{table}[H]
+\centering
+\small
+\renewcommand{\arraystretch}{1.25}
+\begin{tabularx}{\textwidth}{@{} l l X c @{}}
+\toprule
+\textbf{Giai đoạn (Sprint)} & \textbf{Thời gian} & \textbf{Hạng mục Công việc Trọng tâm} & \textbf{Trạng thái} \\
+\midrule
+Sprint 1: Khảo sát \& Phân tích & Tuần 1--2 & Khảo sát dữ liệu 42 trạm UNISOLAR và phân tích khám phá ban đầu. & Hoàn thành \\
+Sprint 2: ETL \& Tiền xử lý & Tuần 3--5 & Xây dựng pipeline xử lý dữ liệu tự động, tái lấy mẫu và điền khuyết. & Hoàn thành \\
+Sprint 3: Mô hình hóa Kho Dữ liệu & Tuần 6--8 & Thiết kế mô hình Lược đồ Thiên hà và nạp dữ liệu vào Supabase DWH. & Hoàn thành \\
+Sprint 4: Lọc Dị thường Nâng cao & Tuần 8--10 & Triển khai rào chắn vật lý và mô hình phân lớp lai GMM--IF gán mã lý do. & Hoàn thành \\
+Sprint 5: Xây dựng Dashboard & Tuần 10--12 & Xây dựng các siêu thị dữ liệu và hoàn thiện hệ thống Dashboard Tableau. & Hoàn thành \\
+Sprint 6: Mô hình Hóa Dự báo & Tuần 12--13 & Huấn luyện, đánh giá và so sánh các mô hình học máy dự báo chuỗi thời gian. & Hoàn thành \\
+Sprint 7: Nghiệm thu \& Đóng gói & Tuần 14 & Hoàn thiện báo cáo đồ án, đóng gói mã nguồn và nghiệm thu toàn diện. & Hoàn thành \\
+\bottomrule
+\end{tabularx}
+\caption{Bảng tổng hợp tiến độ thực hiện và kết quả đạt được của dự án qua 14 tuần.}
+\label{tab:project_timeline}
+\end{table}
+
+\section{Bố cục Báo cáo Đồ án Tốt nghiệp}
+\label{sec:bocuc}
+
+Báo cáo dự án tốt nghiệp được cấu trúc thành 7 chương liền mạch theo đúng quy trình phân tích và xử lý dữ liệu chuẩn:
+\begin{itemize}[noitemsep]
+    \item \textbf{Chương 1: Tổng quan Đề tài và Bài toán Dự án} -- Trình bày bối cảnh thực tế, lý do chọn đề tài, thách thức dữ liệu, mục tiêu nghiên cứu, phạm vi, ý nghĩa và kế hoạch thực hiện dự án.
+    \item \textbf{Chương 2: Cơ sở Lý thuyết và Kiến trúc Hệ thống} -- Trình bày các kiến thức nền tảng về năng lượng mặt trời, bộ chỉ số đo lường hiệu suất (KPI), lý thuyết Kho dữ liệu đa chiều, kiến trúc luồng xử lý dữ liệu và nguyên tắc trực quan hóa.
+    \item \textbf{Chương 3: Thu thập, Tiền xử lý và Mô hình hóa Kho Dữ liệu} -- Trình bày chi tiết kiến trúc mô-đun xử lý dữ liệu, kết quả kiểm định chất lượng ban đầu, kỹ thuật trích xuất đặc trưng, và thiết kế mô hình Lược đồ Thiên hà (Galaxy Schema) trên Supabase.
+    \item \textbf{Chương 4: Phát hiện Dị thường và Làm sạch Dữ liệu Nâng cao} -- Trình bày thuật toán phân lớp lai GMM--IF kết hợp rào chắn giới hạn vật lý, phân loại các mã lý do dị thường kỹ thuật, và cơ chế đảm bảo tính toàn vẹn dữ liệu.
+    \item \textbf{Chương 5: Phân tích Khám phá Dữ liệu và Trực quan hóa Dashboard} -- Trình bày kết quả phân tích khám phá dữ liệu chuyên sâu và thiết kế hệ thống bảng điều khiển trực quan quản trị trên Tableau.
+    \item \textbf{Chương 6: Khai phá Dữ liệu và Dự báo Sản lượng} -- Trình bày quy trình tiền xử lý chuỗi thời gian, huấn luyện và đánh giá các mô hình học máy dự báo sản lượng, phân tích tầm quan trọng của đặc trưng bằng SHAP và các phát hiện thực tiễn.
+    \item \textbf{Chương 7: Kết luận và Hướng phát triển} -- Tổng kết các kết quả đạt được của đề tài, nêu rõ những hạn chế và đề xuất các giải pháp nâng cấp trong tương lai.
+\end{itemize}
+
+\begin{thebibliography}{99}
+\addcontentsline{toc}{chapter}{Tài liệu Tham khảo}
+
+% --- I. Nguồn Dữ liệu Dự án và Công trình Nghiên cứu Gốc ---
+\bibitem{wimalaratne2022unisolar}
+S.~Wimalaratne, D.~Haputhanthri, S.~Kahawala, G.~Gamage, D.~Alahakoon, và A.~Jennings,
+\newblock ``UNISOLAR: An Open Dataset of Photovoltaic Solar Energy Generation in a Large Multi-Campus University Setting,''
+\newblock \textit{15th International Conference on Human System Interaction (HSI)}, IEEE, 2022.
+\newblock DOI: \href{https://doi.org/10.1109/HSI55341.2022.9869474}{10.1109/HSI55341.2022.9869474}.
+
+\bibitem{openmeteo2023}
+Open-Meteo,
+\newblock ``Historical Weather API \& ERA5/ERA5-Land Reanalysis Climate Dataset,''
+\newblock \textit{Open-Meteo Documentation}, 2023. [Online]. Available: \url{https://open-meteo.com/}.
+
+\bibitem{iea2023pvps}
+IEA-PVPS Task 13,
+\newblock ``Performance, Operation and Reliability of Photovoltaic Systems: Review of Failures and Degradation Mechanisms,''
+\newblock \textit{International Energy Agency Technical Report}, IEA-PVPS T13-15:2023, 2023.
+
+% --- II. Thuật toán Phát hiện Bất thường và Xử lý Dữ liệu ---
+\bibitem{li2025gmmif}
+X.~Li, G.~Du, Y.~Li, Z.~Ma, L.~Liu, M.~Jiang, F.~Liu, và T.~Mu,
+\newblock ``Outlier Detection of Photovoltaic Power Generation System Data Based on GMM-IF Algorithm,''
+\newblock \textit{IEEE Access}, vol.~13, pp.~108823--108837, 2025.
+\newblock DOI: \href{https://doi.org/10.1109/ACCESS.2025.3581641}{10.1109/ACCESS.2025.3581641}.
+
+\bibitem{liu2008isolation}
+F.~T.~Liu, K.~M.~Ting, và Z.-H.~Zhou,
+\newblock ``Isolation Forest,''
+\newblock trong \textit{Proceedings of the IEEE International Conference on Data Mining (ICDM)}, 2008, pp.~413--422.
+
+\bibitem{bishop2006pattern}
+C.~M.~Bishop,
+\newblock \textit{Pattern Recognition and Machine Learning},
+\newblock Springer, New York, 2006.
+
+\bibitem{tukey1977eda}
+J.~W.~Tukey,
+\newblock \textit{Exploratory Data Analysis},
+\newblock Addison-Wesley, Reading, MA, 1977.
+
+\bibitem{chandola2009anomaly}
+V.~Chandola, A.~Banerjee, và V.~Kumar,
+\newblock ``Anomaly Detection: A Survey,''
+\newblock \textit{ACM Computing Surveys}, vol.~41, no.~3, pp.~1--58, 2009.
+
+\bibitem{kim2019missing}
+T.~Kim, W.~Ko, và J.~Kim,
+\newblock ``Analysis and Impact Evaluation of Missing Data Imputation in Day-ahead PV Generation Forecasting,''
+\newblock \textit{Applied Sciences}, vol.~9, no.~1, p.~204, 2019.
+\newblock DOI: \href{https://doi.org/10.3390/app9010204}{10.3390/app9010204}.
+
+% --- III. Mô hình Dự báo Chuỗi Thời gian và Học máy ---
+\bibitem{roy2025hourly}
+M.~Roy, V.~Pyltsov, và Y.~Hu,
+\newblock ``IISE PG\&E Energy Analytics Challenge 2025: Hourly-Binned Regression Models Beat Transformers in Load Forecasting,''
+\newblock Columbia University, arXiv:2505.11390, 2025. [Online]. Available: \url{https://arxiv.org/abs/2505.11390}.
+
+\bibitem{haurwitz1945}
+B.~Haurwitz,
+\newblock ``Insolation in Relation to Cloudiness and Cloud Density,''
+\newblock \textit{Journal of Meteorology}, vol.~2, no.~3, pp.~154--166, 1945.
+
+\bibitem{bailey2024}
+M.~D.~Bailey và cộng sự,
+\newblock ``Temporal and Spatial Downscaling for Solar Radiation,''
+\newblock arXiv:2405.11046, 2024. [Online]. Available: \url{https://arxiv.org/abs/2405.11046}.
+
+\bibitem{engerer2014kpv}
+N.~A.~Engerer và F.~P.~Mills,
+\newblock ``KPV: A clear-sky index for photovoltaics,''
+\newblock \textit{Solar Energy}, vol.~105, pp.~679--693, 2014.
+\newblock DOI: \href{https://doi.org/10.1016/j.solener.2014.04.019}{10.1016/j.solener.2014.04.019}.
+
+\bibitem{dev2018tes}
+S.~Dev, T.~AlSkaif, M.~Hossari, R.~Godina, A.~Louwen, và W.~van Sark,
+\newblock ``Solar Irradiance Forecasting Using Triple Exponential Smoothing,''
+\newblock trong \textit{IEEE International Conference on Smart Energy Systems and Technologies (SEST)}, 2018.
+\newblock arXiv:1807.05872.
+
+\bibitem{pin2025wape}
+A.~Temporal-Neto và cộng sự,
+\newblock ``PIN: A new metric to evaluate solar irradiance forecast models,''
+\newblock \textit{Energy Reports}, vol.~13, pp.~1--12, 2025.
+\newblock DOI: \href{https://doi.org/10.1016/j.egyr.2025.01.076}{10.1016/j.egyr.2025.01.076}.
+
+\bibitem{lundberg2017shap}
+S.~M.~Lundberg và S.-I.~Lee,
+\newblock ``A Unified Approach to Interpreting Model Predictions,''
+\newblock trong \textit{Advances in Neural Information Processing Systems (NeurIPS)}, vol.~30, 2017.
+\newblock arXiv:1705.07874.
+
+\bibitem{zhang2015metrics}
+J.~Zhang, A.~Florita, B.-M.~Hodge, S.~Lu, H.~F.~Hamann, V.~Banunarayanan, và A.~M.~Brockway,
+\newblock ``A suite of metrics for assessing the performance of solar power forecasting,''
+\newblock \textit{Solar Energy}, vol.~111, pp.~157--175, 2015.
+\newblock DOI: \href{https://doi.org/10.1016/j.solener.2014.10.016}{10.1016/j.solener.2014.10.016}.
+
+\bibitem{zhang2013metrics}
+J.~Zhang, B.-M.~Hodge, và A.~Florita,
+\newblock ``Comprehensive Evaluation of Solar Irradiance and Power Forecasting Metrics,''
+\newblock NREL/CP-5500-60142, \textit{3rd International Workshop on Integration of Solar Power into Power Systems}, 2013.
+
+\bibitem{lonij2012tucson}
+V.~P.~Lonij, A.~E.~Brooks, K.~Koch, và A.~D.~Cronin,
+\newblock ``Analysis of 80 Rooftop PV Systems in the Tucson, AZ Area,''
+\newblock trong \textit{38th IEEE Photovoltaic Specialists Conference (PVSC)}, 2012, pp.~549--553.
+\newblock DOI: \href{https://doi.org/10.1109/PVSC.2012.6317674}{10.1109/PVSC.2012.6317674}.
+
+\bibitem{taylor2018prophet}
+S.~J.~Taylor và B.~Letham,
+\newblock ``Forecasting at Scale,''
+\newblock \textit{The American Statistician}, vol.~72, no.~1, pp.~37--45, 2018.
+
+\bibitem{box2015time}
+G.~E.~P.~Box, G.~M.~Jenkins, G.~C.~Reinsel, và G.~M.~Ljung,
+\newblock \textit{Time Series Analysis: Forecasting and Control}, 5th ed.,
+\newblock John Wiley \& Sons, Hoboken, NJ, 2015.
+
+\bibitem{ke2017lightgbm}
+G.~Ke, Q.~Meng, T.~Finley, T.~Wang, W.~Chen, W.~Ma, Q.~Ye, và T.-Y.~Liu,
+\newblock ``LightGBM: A Highly Efficient Gradient Boosting Decision Tree,''
+\newblock trong \textit{Advances in Neural Information Processing Systems (NeurIPS)}, vol.~30, 2017, pp.~3146--3154.
+
+\bibitem{chen2016xgboost}
+T.~Chen và C.~Guestrin,
+\newblock ``XGBoost: A Scalable Tree Boosting System,''
+\newblock trong \textit{Proceedings of the ACM SIGKDD International Conference on Knowledge Discovery and Data Mining}, 2016, pp.~785--794.
+
+\bibitem{aivietnam2025dvc}
+Đặng Nhã và Anh Dương,
+\newblock ``Data Version Control,''
+\newblock tài liệu bài giảng \textit{AI VIET NAM --- All-in-One 2025}, slide~9 (\textit{Theory Perspective --- ML Life Cycle}), 2025.
+
+\bibitem{kolassa2007mad}
+S.~Kolassa và W.~Schütz,
+\newblock ``Advantages of the MAD/Mean ratio over the MAPE,''
+\newblock \textit{Foresight: The International Journal of Applied Forecasting}, no.~6, pp.~40--43, 2007.
+
+\bibitem{nguyen2026meta}
+T.~N.~Nguyen và F.~Müsgens,
+\newblock ``A meta-analysis of solar forecasting based on skill score,''
+\newblock \textit{Journal of Renewable and Sustainable Energy}, vol.~18, no.~2, p.~026102, 2026.
+\newblock DOI: \href{https://doi.org/10.1063/5.0300682}{10.1063/5.0300682}.
+
+\bibitem{marquez2013skill}
+R.~Marquez và C.~F.~M.~Coimbra,
+\newblock ``Proposed Metric for Evaluation of Solar Forecasting Models,''
+\newblock \textit{Journal of Solar Energy Engineering} (ASME), vol.~135, no.~1, p.~011016, 2013.
+\newblock DOI: \href{https://doi.org/10.1115/1.4007496}{10.1115/1.4007496}.
+
+\bibitem{wwrp2009verif}
+WWRP/WGNE Joint Working Group on Forecast Verification Research,
+\newblock ``Forecast Verification: Issues, Methods and FAQ,''
+\newblock Bureau of Meteorology, Australia, 2009. [Online]. Available: \url{https://www.cawcr.gov.au/projects/verification/verif_web_page.html}.
+
+% --- IV. Kiến trúc Kho Dữ liệu, API và Công cụ Trực quan hóa ---
+\bibitem{kimball2013dwh}
+R.~Kimball và M.~Ross,
+\newblock \textit{The Data Warehouse Toolkit: The Definitive Guide to Dimensional Modeling}, 3rd ed.,
+\newblock John Wiley \& Sons, Indianapolis, IN, 2013.
+
+\bibitem{wmo2021guide}
+World Meteorological Organization (WMO),
+\newblock \textit{Guide to Instruments and Methods of Observation: Volume I -- Measurement of Meteorological Variables},
+\newblock WMO-No. 8, Geneva, Switzerland, 2021.
+
+\bibitem{supabase2024}
+Supabase Inc.,
+\newblock ``PostgreSQL Database \& Row-Level Security for Modern Analytics Architecture,''
+\newblock \textit{Supabase Technical Architecture Documentation}, 2024. [Online]. Available: \url{https://supabase.com/docs}.
+
+\bibitem{pedregosa2011sklearn}
+F.~Pedregosa et~al.,
+\newblock ``Scikit-learn: Machine Learning in Python,''
+\newblock \textit{Journal of Machine Learning Research}, vol.~12, pp.~2825--2830, 2011.
+
+\bibitem{tableau2023guidelines}
+Tableau Software (Salesforce),
+\newblock \textit{Visual Analysis Best Practices: A Guide to Creating Meaningful Dashboards},
+\newblock Seattle, WA, 2023.
+
+\end{thebibliography}
+
+
+\end{document}

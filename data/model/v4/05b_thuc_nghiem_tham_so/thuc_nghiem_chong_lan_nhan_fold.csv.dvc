@@ -1,0 +1,5 @@
+outs:
+- md5: bff571f3d521032421991591c03a39e1
+  size: 321
+  hash: md5
+  path: thuc_nghiem_chong_lan_nhan_fold.csv

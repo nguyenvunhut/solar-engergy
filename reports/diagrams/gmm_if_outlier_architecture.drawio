@@ -1,0 +1,100 @@
+<mxfile host="Electron" agent="Mozilla/5.0">
+  <diagram id="gmm_if_architecture" name="GMM-IF &amp; Physical Barriers Architecture">
+    <mxGraphModel dx="1471" dy="943" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="g1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=left;spacingLeft=12;spacingRight=12;spacingTop=6;spacingBottom=6;fillColor=#f0f7ff;strokeColor=#2563eb;strokeWidth=2;fontFamily=Times New Roman;" value="&lt;font style=&quot;font-size: 16px;&quot;&gt;&lt;b style=&quot;color: rgb(29, 78, 216);&quot;&gt;1. NGUỒN DỮ LIỆU ĐẦU VÀO VÀ TIỀN XỬ LÝ (Data Ingestion &amp;amp; Context)&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;color: rgb(15, 23, 42);&quot;&gt;• &lt;b style=&quot;&quot;&gt;Chuỗi thời gian PV 15p:&lt;/b&gt; 42 trạm phát quang điện thực nghiệm tại ĐH La Trobe, Úc (2.731.946 dòng dữ liệu).&lt;br&gt;• &lt;b style=&quot;&quot;&gt;Khí tượng Open-Meteo 1h:&lt;/b&gt; Bức xạ sóng ngắn (GHI), Nhiệt độ không khí 2m, Thời lượng nắng, Mốc giờ trong ngày.&lt;br&gt;• &lt;b style=&quot;&quot;&gt;Siêu dữ liệu hệ thống:&lt;/b&gt; Công suất danh định P_stc (kWp), Giới hạn biến tần Inverter, Vị trí địa lý trạm.&lt;/span&gt;&lt;/font&gt;" vertex="1">
+          <mxGeometry height="95" width="1060" x="50" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="badge1" parent="g1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dbeafe;strokeColor=#2563eb;strokeWidth=1;fontSize=9;fontStyle=1;fontColor=#1e40af;align=center;" value="&lt;font style=&quot;font-size: 12px;&quot;&gt;2.73M DÒNG&lt;/font&gt;" vertex="1">
+          <mxGeometry height="22" width="100" x="945" y="8" as="geometry" />
+        </mxCell>
+        <mxCell id="g2a" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=left;spacingLeft=12;spacingRight=12;spacingTop=6;spacingBottom=6;fillColor=#fff7ed;strokeColor=#ea580c;strokeWidth=2;fontFamily=Times New Roman;" value="&lt;font style=&quot;font-size: 16px;&quot;&gt;&lt;b style=&quot;color: rgb(194, 65, 12);&quot;&gt;2A. RÀO CHẮN VẬT LÝ (Physical Boundary Rules)&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;color: rgb(15, 23, 42);&quot;&gt;&lt;b style=&quot;&quot;&gt;R1. Vượt trần công suất:&lt;/b&gt; E &amp;gt; P_stc × 0.25 → &lt;b style=&quot;color: rgb(194, 65, 12);&quot;&gt;PHYSICAL_OVER_CAPACITY&lt;/b&gt;&lt;br&gt;&lt;b style=&quot;&quot;&gt;R2. Phát điện ban đêm:&lt;/b&gt; GHI ≤ 25 W/m², Sun ≤ 60s, E &amp;gt; 0 → &lt;b style=&quot;color: rgb(194, 65, 12);&quot;&gt;PHYSICAL_HIGH_ENERGY_NO_SUN&lt;/b&gt;&lt;br&gt;&lt;b style=&quot;&quot;&gt;R3. Bức xạ yếu sản lượng cao:&lt;/b&gt; GHI ≤ 50 W/m², E &amp;gt; Q3 + 4·IQR → &lt;b style=&quot;color: rgb(194, 65, 12);&quot;&gt;PHYSICAL_HIGH_ENERGY_LOW_RAD&lt;/b&gt;&lt;br&gt;&lt;b style=&quot;&quot;&gt;R4. Nắng gắt mất phát (Inverter):&lt;/b&gt; GHI ≥ 700 W/m², E ≤ 0.05·P95 → &lt;b style=&quot;color: rgb(194, 65, 12);&quot;&gt;PHYSICAL_LOW_ENERGY_STRONG_SUN&lt;/b&gt;&lt;br&gt;&lt;b style=&quot;&quot;&gt;R5. Bước nhảy phân bố cục bộ:&lt;/b&gt; |ΔE_2h| ≥ 0.15·P95 → &lt;b style=&quot;color: rgb(194, 65, 12);&quot;&gt;PHYSICAL_DISTRIBUTION_JUMP&lt;/b&gt;&lt;/span&gt;&lt;/font&gt;" vertex="1">
+          <mxGeometry height="278" width="480" x="44" y="199" as="geometry" />
+        </mxCell>
+        <mxCell id="badge2a" parent="g2a" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffedd5;strokeColor=#ea580c;strokeWidth=1;fontSize=9;fontStyle=1;fontColor=#9a3412;align=center;" value="&lt;font style=&quot;font-size: 12px;&quot;&gt;5 QUY TẮC VẬT LÝ&lt;/font&gt;" vertex="1">
+          <mxGeometry height="23.52307692307692" width="130" x="335" y="8.553846153846154" as="geometry" />
+        </mxCell>
+        <mxCell id="g2b_tree" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=left;spacingLeft=12;spacingRight=12;spacingTop=6;spacingBottom=6;fillColor=#f0fdfa;strokeColor=#0d9488;strokeWidth=2;fontFamily=Times New Roman;" value="&lt;font style=&quot;font-size: 16px;&quot;&gt;&lt;b style=&quot;color: rgb(15, 118, 110);&quot;&gt;2B. PHÂN ĐOẠN CÂY QUYẾT ĐỊNH (Decision Tree Segmentation)&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;color: rgb(15, 23, 42);&quot;&gt;• &lt;b style=&quot;&quot;&gt;Thuật toán Decision Tree:&lt;/b&gt; Phân rã dữ liệu từng trạm thành 19–29 vùng lá cục bộ theo (GHI, Temp, Hour).&lt;br&gt;• &lt;b style=&quot;&quot;&gt;Hệ số giải thích biến thiên:&lt;/b&gt; R² ≈ 0.758 (0.606 – 0.826) | &lt;b style=&quot;&quot;&gt;Mục tiêu:&lt;/b&gt; Đạt phân phối Quasi-Gaussian đồng nhất.&lt;/span&gt;&lt;/font&gt;" vertex="1">
+          <mxGeometry height="115" width="550" x="560" y="191" as="geometry" />
+        </mxCell>
+        <mxCell id="badge2b" parent="g2b_tree" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ccfbf1;strokeColor=#0d9488;strokeWidth=1;fontSize=9;fontStyle=1;fontColor=#115e59;align=center;" value="&lt;font style=&quot;font-size: 12px;&quot;&gt;R² ≈ 0.758&lt;/font&gt;" vertex="1">
+          <mxGeometry height="22" width="85" x="450" y="8" as="geometry" />
+        </mxCell>
+        <mxCell id="g2b_gmm" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=left;spacingLeft=10;spacingRight=10;spacingTop=6;spacingBottom=6;fillColor=#faf5ff;strokeColor=#7c3aed;strokeWidth=1.5;fontFamily=Times New Roman;" value="&lt;font style=&quot;font-size: 16px;&quot;&gt;&lt;b style=&quot;color: rgb(109, 40, 217);&quot;&gt;GMM (Mật độ Cục bộ)&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;color: rgb(15, 23, 42);&quot;&gt;• Mô hình hỗn hợp Gauss (M=2)&lt;br&gt;• Tỷ lệ hội tụ: 100% (42 trạm)&lt;br&gt;• Ngưỡng: P_GMM(x) &amp;lt; 0.02&lt;/span&gt;&lt;/font&gt;" vertex="1">
+          <mxGeometry height="125" width="265" x="560" y="352" as="geometry" />
+        </mxCell>
+        <mxCell id="badge_gmm" parent="g2b_gmm" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ede9fe;strokeColor=#7c3aed;strokeWidth=1;fontSize=8.5;fontStyle=1;fontColor=#5b21b6;align=center;" value="&lt;font style=&quot;font-size: 12px;&quot;&gt;P &amp;lt; 0.02&lt;/font&gt;" vertex="1">
+          <mxGeometry height="20" width="65" x="190" y="6" as="geometry" />
+        </mxCell>
+        <mxCell id="g2b_if" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=left;spacingLeft=10;spacingRight=10;spacingTop=6;spacingBottom=6;fillColor=#faf5ff;strokeColor=#7c3aed;strokeWidth=1.5;fontFamily=Times New Roman;" value="&lt;font style=&quot;font-size: 16px;&quot;&gt;&lt;b style=&quot;color: rgb(109, 40, 217);&quot;&gt;IF (Cô lập Toàn cục)&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;color: rgb(15, 23, 42);&quot;&gt;• 100 cây cô lập ngẫu nhiên (iTrees)&lt;br&gt;• Tham số Contamination: 3.0%&lt;br&gt;• Đo độ sâu phân tách không gian&lt;/span&gt;&lt;/font&gt;" vertex="1">
+          <mxGeometry height="125" width="265" x="845" y="352" as="geometry" />
+        </mxCell>
+        <mxCell id="badge_if" parent="g2b_if" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ede9fe;strokeColor=#7c3aed;strokeWidth=1;fontSize=8.5;fontStyle=1;fontColor=#5b21b6;align=center;" value="&lt;font style=&quot;font-size: 12px;&quot;&gt;Contam 3%&lt;/font&gt;" vertex="1">
+          <mxGeometry height="20" width="75" x="180" y="6" as="geometry" />
+        </mxCell>
+        <mxCell id="g3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=left;spacingLeft=12;spacingRight=12;spacingTop=6;spacingBottom=6;fillColor=#fef2f2;strokeColor=#dc2626;strokeWidth=2;fontFamily=Times New Roman;" value="&lt;font style=&quot;font-size: 16px;&quot;&gt;&lt;b style=&quot;color: rgb(185, 28, 28);&quot;&gt;3. HỢP NHẤT ĐỒNG THUẬN &amp;amp; GÁN MÃ NGUYÊN NHÂN (Fusion Consensus &amp;amp; Reasoning)&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;color: rgb(15, 23, 42);&quot;&gt;• &lt;b style=&quot;&quot;&gt;Đồng thuận Máy học (Phép Giao AND):&lt;/b&gt; Flag_ML = Flag_GMM ∧ Flag_IF (Jaccard 6.4%–16.7%, triệt tiêu 90% cảnh báo giả) → &lt;b style=&quot;color: rgb(185, 28, 28);&quot;&gt;GMM_IF_CONSENSUS&lt;/b&gt;&lt;br&gt;• &lt;b style=&quot;&quot;&gt;Quyết định Cờ Cuối (Phép Hợp OR):&lt;/b&gt; Flag_Final = Flag_ML ∨ Flag_Physical | Hỗ trợ ghép chuỗi nguyên nhân: &lt;i style=&quot;&quot;&gt;VD: GMM_IF_CONSENSUS+PHYSICAL_DISTRIBUTION_JUMP&lt;/i&gt;&lt;/span&gt;&lt;/font&gt;" vertex="1">
+          <mxGeometry height="95" width="1060" x="50" y="533" as="geometry" />
+        </mxCell>
+        <mxCell id="badge3" parent="g3" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fee2e2;strokeColor=#dc2626;strokeWidth=1;fontSize=9;fontStyle=1;fontColor=#991b1b;align=center;" value="&lt;font style=&quot;font-size: 12px;&quot;&gt;TRIỆT TIÊU 90% BÁO GIẢ&lt;/font&gt;" vertex="1">
+          <mxGeometry height="22" width="170" x="875" y="8" as="geometry" />
+        </mxCell>
+        <mxCell id="g4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=left;spacingLeft=12;spacingRight=12;spacingTop=6;spacingBottom=6;fillColor=#f8fafc;strokeColor=#475569;strokeWidth=2;fontFamily=Times New Roman;" value="&lt;font style=&quot;font-size: 16px;&quot;&gt;&lt;b style=&quot;color: rgb(30, 41, 59);&quot;&gt;4. QUY TRÌNH NẠP CSDL SUPABASE AN TOÀN (4-Step Safe Transaction Pipeline)&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;color: rgb(15, 23, 42);&quot;&gt;&lt;b style=&quot;&quot;&gt;1. MD5 Checksum:&lt;/b&gt; Hàm fingerprint_supabase() kiểm tra khớp MD5, tổng energy_sum và 2.731.946 dòng dữ liệu gốc.&lt;br&gt;&lt;b style=&quot;&quot;&gt;2. Sparse Upload:&lt;/b&gt; Nạp 33.280 dòng gắn cờ (1.22%) vào bảng tạm → &lt;b style=&quot;&quot;&gt;3. Anti-Join:&lt;/b&gt; Xác thực toàn vẹn 1:1 → &lt;b style=&quot;&quot;&gt;4. Bulk Join Update:&lt;/b&gt; Gán cờ và mã lý do.&lt;/span&gt;&lt;/font&gt;" vertex="1">
+          <mxGeometry height="95" width="1060" x="50" y="682" as="geometry" />
+        </mxCell>
+        <mxCell id="badge4" parent="g4" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e2e8f0;strokeColor=#475569;strokeWidth=1;fontSize=9;fontStyle=1;fontColor:#0f172a;align=center;" value="&lt;font style=&quot;font-size: 12px;&quot;&gt;33.280 DÒNG (1.22%)&lt;/font&gt;" vertex="1">
+          <mxGeometry height="22" width="150" x="895" y="8" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" edge="1" parent="1" source="g1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#ea580c;strokeWidth=2;fontSize=9;fontStyle=1;fontColor=#ea580c;labelBackgroundColor=#ffffff;" target="g2a" value="&lt;font style=&quot;font-size: 13px;&quot;&gt;1. Kiểm tra giới hạn vật lý&lt;/font&gt;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="290" y="155" />
+              <mxPoint x="290" y="155" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="g1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0d9488;strokeWidth=2;fontSize=9;fontStyle=1;fontColor=#0d9488;labelBackgroundColor=#ffffff;" target="g2b_tree" value="&lt;font style=&quot;font-size: 13px;&quot;&gt;2. Phân đoạn Quasi-Gaussian&lt;/font&gt;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="835" y="155" />
+              <mxPoint x="835" y="155" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e3_gmm" edge="1" parent="1" source="g2b_tree" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#7c3aed;strokeWidth=1.5;" target="g2b_gmm">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3_if" edge="1" parent="1" source="g2b_tree" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#7c3aed;strokeWidth=1.5;" target="g2b_if">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4_phys" edge="1" parent="1" source="g2a" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#ea580c;strokeWidth=2;" target="g3">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="290" y="455" />
+              <mxPoint x="290" y="455" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e4_ml" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#7c3aed;strokeWidth=2;" target="g3">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="835" y="455" />
+              <mxPoint x="835" y="455" />
+            </Array>
+            <mxPoint x="835" y="414.71" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="g3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#dc2626;strokeWidth=2;fontSize=9;fontStyle=1;fontColor=#dc2626;labelBackgroundColor=#ffffff;" target="g4" value="&lt;font style=&quot;font-size: 12px;&quot;&gt;3. Nạp cờ an toàn vào DWH&lt;/font&gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="H7jvvolxDv21E33_fuTS-3" edge="1" parent="1" source="g2b_gmm" style="endArrow=none;html=1;rounded=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;fillColor=#e1d5e7;strokeColor=#9673a6;" target="g2b_if" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="583" y="353" as="sourcePoint" />
+            <mxPoint x="633" y="303" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

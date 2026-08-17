@@ -1,0 +1,173 @@
+<mxfile host="Electron" agent="Mozilla/5.0">
+  <diagram id="code_execution_pipeline" name="Code Execution Pipeline - THE OUTLIERS">
+    <mxGraphModel dx="1471" dy="943" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="720" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="orch_box" parent="1" style="swimlane;whiteSpace=wrap;html=1;startSize=30;fillColor=#1B2631;strokeColor=#0D1117;fontColor=#ffffff;fontStyle=1;fontSize=14;" value="&lt;font style=&quot;font-size: 15px;&quot;&gt;MAIN ORCHESTRATOR &amp;amp; UTILS (srcs/06_run_pipeline/main.py &amp;amp; srcs/00_utils/)&lt;/font&gt;" vertex="1">
+          <mxGeometry height="100" width="1520" x="40" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="orch_main" parent="orch_box" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2C3E50;strokeColor=#1B2631;fontColor=#ffffff;fontStyle=1;fontSize=12;" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;main.py CLI Orchestrator&lt;br&gt;(--stage all / staging / transform / imputation / generate_outliers / outlier / load / bimarts / mlmarts)&lt;/font&gt;" vertex="1">
+          <mxGeometry height="46" width="680" x="30" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="orch_db" parent="orch_box" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#16A085;strokeColor=#0E6251;fontColor=#ffffff;fontSize=12;" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;01_database.py&lt;br&gt;(SQLAlchemy Engine + psycopg2 Pooler)&lt;/font&gt;" vertex="1">
+          <mxGeometry height="46" width="360" x="740" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="orch_storage" parent="orch_box" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#27AE60;strokeColor=#145A32;fontColor=#ffffff;fontSize=12;" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;02_storage.py&lt;br&gt;(S3 Object Storage Client)&lt;/font&gt;" vertex="1">
+          <mxGeometry height="46" width="360" x="1130" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="sw_ingestion" parent="1" style="swimlane;whiteSpace=wrap;html=1;startSize=42;fillColor=#D35400;strokeColor=#A04000;fontColor=#ffffff;fontStyle=1;fontSize=12;" value="DATA INGESTION (srcs/01_extract)" vertex="1">
+          <mxGeometry height="540" width="224" x="40" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="scr_kaggle" parent="sw_ingestion" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#F39C12;strokeColor=#B9770E;fontColor=#ffffff;fontSize=11;fontStyle=1;" value="&lt;font style=&quot;font-size: 12px;&quot;&gt;01_download_kaggle_raw.py&lt;br&gt;in: Kaggle API&lt;br&gt;out: Solar PV CSVs&lt;/font&gt;" vertex="1">
+          <mxGeometry height="84" width="190" x="15" y="91" as="geometry" />
+        </mxCell>
+        <mxCell id="scr_meteo" parent="sw_ingestion" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#F39C12;strokeColor=#B9770E;fontColor=#ffffff;fontSize=11;fontStyle=1;size=6.3011246744791976;" value="&lt;font style=&quot;font-size: 12px;&quot;&gt;02_download_open_meteo_raw.py&lt;br&gt;in: Open-Meteo REST API&lt;br&gt;out: Weather JSON/CSV&lt;/font&gt;" vertex="1">
+          <mxGeometry height="80" width="208.19" x="5.9" y="371" as="geometry" />
+        </mxCell>
+        <mxCell id="db_s3" parent="sw_ingestion" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#E59866;strokeColor=#D35400;fontColor=#ffffff;fontStyle=1;fontSize=12;" value="Supabase S3 Storage&#xa;(Raw Data Buckets)" vertex="1">
+          <mxGeometry height="90" width="170" x="25" y="213" as="geometry" />
+        </mxCell>
+        <mxCell id="lbl_raw_files" parent="sw_ingestion" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontColor=#000000;fontSize=10;fontStyle=2;" value="&lt;font style=&quot;font-size: 11px;&quot;&gt;[Input: Raw Solar &amp;amp; Weather Files]&lt;/font&gt;" vertex="1">
+          <mxGeometry height="20" width="180" x="19.999999999999996" y="477" as="geometry" />
+        </mxCell>
+        <mxCell id="e_s01" edge="1" parent="sw_ingestion" source="scr_kaggle" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#D35400;strokeWidth=2;" target="db_s3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_s02" edge="1" parent="sw_ingestion" source="scr_meteo" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#D35400;strokeWidth=2;" target="db_s3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="sw_staging" parent="1" style="swimlane;whiteSpace=wrap;html=1;startSize=43;fillColor=#1F618D;strokeColor=#154360;fontColor=#ffffff;fontStyle=1;fontSize=12;" value="STAGING &amp; BUFFER (srcs/03_load &amp; 02_transform)" vertex="1">
+          <mxGeometry height="540" width="240" x="280" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="scr_stg_load" parent="sw_staging" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#2980B9;strokeColor=#1B4F72;fontColor=#ffffff;fontSize=11;fontStyle=1;" value="&lt;font style=&quot;font-size: 12px;&quot;&gt;[Stage 1] 01_run_load_staging.py&lt;br&gt;in: S3 Buckets&lt;br&gt;out: staging.stg_*&lt;/font&gt;" vertex="1">
+          <mxGeometry height="84" width="210" x="15" y="84" as="geometry" />
+        </mxCell>
+        <mxCell id="scr_buf_transform" parent="sw_staging" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#2980B9;strokeColor=#1B4F72;fontColor=#ffffff;fontSize=11;fontStyle=1;size=8.111104329426894;" value="&lt;font style=&quot;font-size: 12px;&quot;&gt;[Stage 2] 01_run_transform_buffers.py&lt;br&gt;in: staging.stg_*&lt;br&gt;out: staging buffer tables&lt;/font&gt;" vertex="1">
+          <mxGeometry height="80" width="217" x="11.5" y="269" as="geometry" />
+        </mxCell>
+        <mxCell id="db_staging" parent="sw_staging" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#5DADE2;strokeColor=#1F618D;fontColor=#ffffff;fontStyle=1;fontSize=12;" value="PostgreSQL Staging DB&#xa;(staging.fact_* &amp; stg_*)" vertex="1">
+          <mxGeometry height="90" width="190" x="25" y="405" as="geometry" />
+        </mxCell>
+        <mxCell id="e_s2" edge="1" parent="sw_staging" source="scr_stg_load" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2980B9;strokeWidth=2;" target="scr_buf_transform">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_s2_db" edge="1" parent="sw_staging" source="scr_buf_transform" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2980B9;strokeWidth=2;" target="db_staging">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="sw_imputation" parent="1" style="swimlane;whiteSpace=wrap;html=1;startSize=45;fillColor=#512E5B;strokeColor=#4A235A;fontColor=#ffffff;fontStyle=1;fontSize=12;" value="IMPUTATION &amp; OUTLIERS (srcs/02_transform)" vertex="1">
+          <mxGeometry height="540" width="260" x="540" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="qzmSq1sYzSIpaT9jbDSx-2" edge="1" parent="sw_imputation" source="proc_s3_impute" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="proc_s4_generate" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="proc_s3_impute" parent="sw_imputation" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#8E44AD;strokeColor=#512E5B;fontColor=#ffffff;fontSize=11;fontStyle=1;" value="&lt;font style=&quot;font-size: 12px;&quot;&gt;[Stage 3] 02_run_hybrid_imputation.py&lt;br&gt;in: raw staging buffer&lt;br&gt;out: imputed generation data&lt;/font&gt;" vertex="1">
+          <mxGeometry height="90" width="230" x="15" y="85" as="geometry" />
+        </mxCell>
+        <mxCell id="proc_s4_generate" parent="sw_imputation" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#8E44AD;strokeColor=#512E5B;fontColor=#ffffff;fontSize=11;fontStyle=1;" value="&lt;font style=&quot;font-size: 12px;&quot;&gt;[Stage 4] 02_generate_outliers/&lt;br&gt;in: imputed buffer Parquet&lt;br&gt;out: GMM+IF+Rolling CSV flags&lt;/font&gt;" vertex="1">
+          <mxGeometry height="100" width="230" x="15" y="243" as="geometry" />
+        </mxCell>
+        <mxCell id="proc_s5_apply" parent="sw_imputation" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#8E44AD;strokeColor=#512E5B;fontColor=#ffffff;fontSize=11;fontStyle=1;" value="&lt;font style=&quot;font-size: 12px;&quot;&gt;[Stage 5] 02_run_apply_outlier_flags.py&lt;br&gt;in: verified outlier CSVs&lt;br&gt;out: flagged staging buffer&lt;/font&gt;" vertex="1">
+          <mxGeometry height="86" width="230" x="15" y="411" as="geometry" />
+        </mxCell>
+        <mxCell id="e_s4" edge="1" parent="sw_imputation" source="proc_s3_impute" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#8E44AD;strokeWidth=2;" target="proc_s4_generate">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_s5" edge="1" parent="sw_imputation" source="proc_s4_generate" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#8E44AD;strokeWidth=2;" target="proc_s5_apply">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="sw_dwh" parent="1" style="swimlane;whiteSpace=wrap;html=1;startSize=45;fillColor=#0E6251;strokeColor=#0B5345;fontColor=#ffffff;fontStyle=1;fontSize=12;" value="DATA WAREHOUSE (srcs/03_load)" vertex="1">
+          <mxGeometry height="540" width="230" x="820" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="scr_s6_load" parent="sw_dwh" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#16A085;strokeColor=#0E6251;fontColor=#ffffff;fontSize=11;fontStyle=1;" value="&lt;font style=&quot;font-size: 12px;&quot;&gt;[Stage 6] 01_run_load_datawarehouse.py&lt;br&gt;in: flagged staging buffer&lt;br&gt;out: DWH Dim &amp;amp; Fact tables&lt;/font&gt;" vertex="1">
+          <mxGeometry height="111" width="200" x="15" y="83" as="geometry" />
+        </mxCell>
+        <mxCell id="db_dwh" parent="sw_dwh" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#48C9B0;strokeColor=#117A65;fontColor=#ffffff;fontStyle=1;fontSize=12;" value="Supabase PostgreSQL DWH&#xa;Galaxy Schema:&#xa;5 Dims + 2 Facts" vertex="1">
+          <mxGeometry height="162" width="190" x="20" y="276" as="geometry" />
+        </mxCell>
+        <mxCell id="e_s6_dwh" edge="1" parent="sw_dwh" source="scr_s6_load" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#16A085;strokeWidth=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" target="db_dwh">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="197.96" y="97" as="sourcePoint" />
+            <mxPoint x="110" y="361" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="sw_marts" parent="1" style="swimlane;whiteSpace=wrap;html=1;startSize=47;fillColor=#145A32;strokeColor=#0E4B25;fontColor=#ffffff;fontStyle=1;fontSize=12;" value="DATA MARTS (srcs/04_build_data_marts)" vertex="1">
+          <mxGeometry height="540" width="240" x="1070" y="140" as="geometry">
+            <mxRectangle height="26" width="258" x="1070" y="140" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="proc_s7_bi" parent="sw_marts" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#27AE60;strokeColor=#145A32;fontColor=#ffffff;fontSize=11;fontStyle=1;" value="&lt;font style=&quot;font-size: 12px;&quot;&gt;[Stage 7] 01_build_bi_mart.py &amp;amp;&lt;br&gt;03_build_bi_view.py&lt;br&gt;in: DWH Facts &amp;amp; Dims&lt;br&gt;out: BI views &amp;amp; BI mart (KPIs)&lt;/font&gt;" vertex="1">
+          <mxGeometry height="111" width="210" x="15" y="87" as="geometry" />
+        </mxCell>
+        <mxCell id="proc_s8_ml" parent="sw_marts" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#27AE60;strokeColor=#145A32;fontColor=#ffffff;fontSize=11;fontStyle=1;" value="&lt;font style=&quot;font-size: 12px;&quot;&gt;[Stage 8] 02_build_ml_mart.py&lt;br&gt;in: DWH Facts &amp;amp; Dims&lt;br&gt;out: Denormalized ML Dataset&lt;/font&gt;" vertex="1">
+          <mxGeometry height="127" width="210" x="15" y="349" as="geometry" />
+        </mxCell>
+        <mxCell id="sw_apps" parent="1" style="swimlane;whiteSpace=wrap;html=1;startSize=47;fillColor=#641E16;strokeColor=#4A148C;fontColor=#ffffff;fontStyle=1;fontSize=12;" value="DOWNSTREAM APPLICATIONS" vertex="1">
+          <mxGeometry height="540" width="230" x="1330" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="app_tableau" parent="sw_apps" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E74C3C;strokeColor=#78281F;fontColor=#ffffff;fontStyle=1;fontSize=12;" value="Tableau Dashboards&#xa;(Executive &amp; Operational Views)" vertex="1">
+          <mxGeometry height="107" width="190" x="26" y="87" as="geometry" />
+        </mxCell>
+        <mxCell id="app_ml" parent="sw_apps" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E74C3C;strokeColor=#78281F;fontColor=#ffffff;fontStyle=1;fontSize=12;" value="ML Forecasting Pipeline&#xa;(Forcasting_v3)&#xa;LightGBM / Prophet / SHAP" vertex="1">
+          <mxGeometry height="127" width="190" x="20" y="349" as="geometry" />
+        </mxCell>
+        <mxCell id="e_s1" edge="1" parent="1" source="db_s3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2980B9;strokeWidth=2;" target="scr_stg_load">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="340" y="360" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_s3" edge="1" parent="1" source="db_staging" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#8E44AD;strokeWidth=2;entryX=0.25;entryY=1;entryDx=0;entryDy=0;" target="proc_s3_impute">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="548" y="572" />
+              <mxPoint x="548" y="343" />
+              <mxPoint x="613" y="343" />
+            </Array>
+            <mxPoint x="617" y="299" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_s6" edge="1" parent="1" source="proc_s5_apply" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#16A085;strokeWidth=2;entryX=0.25;entryY=1;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" target="scr_s6_load">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="829" y="594" />
+              <mxPoint x="829" y="398.71" />
+              <mxPoint x="885" y="398.71" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_s7" edge="1" parent="1" source="db_dwh" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#27AE60;strokeWidth=2;endArrow=classic;endFill=1;" target="proc_s7_bi">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1190" y="457" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_s8" edge="1" parent="1" source="db_dwh" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#27AE60;strokeWidth=2;exitX=1;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;" target="proc_s8_ml">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1030" y="471.86" />
+              <mxPoint x="1190" y="471.86" />
+            </Array>
+            <mxPoint x="1260" y="419" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_app_tab" edge="1" parent="1" source="proc_s7_bi" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#C0392B;strokeWidth=2;" target="app_tableau">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_app_ml" edge="1" parent="1" source="proc_s8_ml" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#C0392B;strokeWidth=2;" target="app_ml">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="byGiOMfpQTcBXLto7Qcw-1" edge="1" parent="1" source="scr_kaggle" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;" target="orch_main" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="150" y="186.14" />
+              <mxPoint x="410" y="186.14" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

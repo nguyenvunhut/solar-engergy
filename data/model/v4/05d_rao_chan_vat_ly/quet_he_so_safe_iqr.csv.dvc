@@ -1,0 +1,5 @@
+outs:
+- md5: 0f992e4bcac310425e8d37b0511946f0
+  size: 240
+  hash: md5
+  path: quet_he_so_safe_iqr.csv

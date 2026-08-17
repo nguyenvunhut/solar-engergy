@@ -1,0 +1,163 @@
+% ====================================================================
+%  CHƯƠNG 2: CƠ SỞ LÝ THUYẾT VÀ KIẾN TRÚC HỆ THỐNG
+% ====================================================================
+\chapter{Cơ sở Lý thuyết và Kiến trúc Hệ thống}
+\label{chap:lythuyet}
+
+\section{Cơ sở Lý thuyết}
+\label{sec:co_so_ly_thuyet}
+
+\subsection{Khái quát về Phân tích Dữ liệu trong Ngành Năng lượng Tái tạo}
+Phân tích dữ liệu trong ngành năng lượng mặt trời là quá trình thu thập, làm sạch, mô hình hóa và khai phá thông tin chuyên sâu từ khối lượng lớn chuỗi thời gian sản lượng điện và dữ liệu khí tượng. Trong bối cảnh vận hành các trạm điện mặt trời hiện đại, dữ liệu đóng vai trò là tài sản chiến lược giúp tối ưu hóa hiệu suất phát điện, giảm thiểu chi phí bảo trì và bảo vệ dòng tiền đầu tư.
+
+Theo chuẩn mực phân tích dữ liệu doanh nghiệp, các cấp độ phân tích trong đề tài được phân chia rõ ràng:
+\begin{itemize}[noitemsep]
+    \item \textbf{Phân tích Mô tả (Phân tích Mô tả):} Trả lời câu hỏi \textit{``Chuyện gì đã xảy ra?''} thông qua việc tổng hợp sản lượng thực tế, tính toán hệ số hiệu suất (PR), hệ số công suất (CF) và năng suất riêng (Specific Yield) của 42 trạm phát qua từng tháng và từng năm.
+    \item \textbf{Phân tích Chẩn đoán (Phân tích Chẩn đoán):} Trả lời câu hỏi \textit{``Tại sao hiệu suất trạm lại suy giảm?''} bằng cách bóc tách mối tương quan giữa sản lượng và các yếu tố khí tượng (nhiệt độ quá cao, mây che phủ) hoặc lỗi phần cứng (Inverter ngắt mạch, hỏng diode, trôi cảm biến đo ban đêm).
+    \item \textbf{Phân tích Dự báo (Phân tích Dự báo):} Trả lời câu hỏi \textit{``Sản lượng điện trong chu kỳ tiếp theo là bao nhiêu?''} để hỗ trợ đơn vị vận hành lập kế hoạch điều phối phụ tải và huy động nguồn điện dự phòng.
+    \item \textbf{Phân tích Đề xuất (Phân tích Đề xuất):} Đưa ra các khuyến nghị bảo trì cụ thể (vệ sinh bề mặt pin, thay thế biến tần quá nhiệt, hiệu chuẩn cảm biến CT).
+\end{itemize}
+
+\subsection{Các Chỉ số Hiệu năng Cốt lõi (KPIs) và Bài toán Tổn thất Vận hành}
+Trong quản trị vận hành trạm quang điện, tổng sản lượng (kWh) chỉ phản ánh quy mô phát điện thô, trong khi các chỉ số hiệu chuẩn hóa mới là thước đo chính xác về chất lượng vận hành:
+\begin{enumerate}[label=\arabic*., leftmargin=*]
+    \item \textbf{Hệ số Hiệu suất (Performance Ratio -- PR):} Tỷ số giữa sản lượng điện thực tế tạo ra ($E_{\text{actual}}$) và sản lượng lý thuyết trong điều kiện bức xạ thu nhận được:
+    \begin{equation}
+        \text{PR} = \frac{E_{\text{actual}}}{P_{\text{stc}} \cdot \left(\frac{GHI}{1000\,\text{W/m}^2}\right) \cdot \Delta t} \times 100\%
+    \end{equation}
+    Chỉ số PR tiêu chuẩn của hệ thống tốt thường đạt từ $75\%$ đến $85\%$. Khi $\text{PR} < 70\%$, hệ thống đang gặp tổn thất vận hành nghiêm trọng.
+    
+    \item \textbf{Hệ số Công suất (Capacity Factor -- CF):} Tỷ lệ giữa năng lượng thực tế thu được trong một khoảng thời gian so với năng lượng tối đa nếu trạm phát liên tục ở công suất danh định $24/24\text{h}$:
+    \begin{equation}
+        \text{CF} = \frac{\sum E_{\text{actual}}}{P_{\text{stc}} \cdot 8760\,\text{h}} \times 100\%
+    \end{equation}
+    
+    \item \textbf{Năng suất Riêng (Specific Yield -- $\text{kWh/kWp}$):} Lượng điện năng tạo ra trên mỗi kWp công suất lắp đặt, là thước đo công bằng nhất để so sánh hiệu quả giữa các trạm có quy mô công suất khác nhau.
+
+    \item \textbf{Hệ số Tổn thất Nhiệt độ (Tổn thất Suy hao do Nhiệt độ):} Khi nhiệt độ môi trường vượt quá $25^\circ\text{C}$ (nhiệt độ cell pin đạt $50-65^\circ\text{C}$), công suất phát bị suy giảm tuyến tính theo hệ số nhiệt độ $\gamma \approx -0{,}35\%/^\circ\text{C}$ đến $-0{,}50\%/^\circ\text{C}$:
+    \begin{equation}
+        P_{\text{loss, temp}} = P_{\text{stc}} \cdot |\gamma| \cdot (T_{\text{cell}} - 25^\circ\text{C})
+    \end{equation}
+    
+    \item \textbf{Tổn thất Biến tần (Tổn thất Biến tần) theo IEA-PVPS Task 13~\cite{iea2023pvps}:} Biến tần có thời gian trung bình giữa các sự cố (MTBF) ngắn hơn tấm pin $300-500$ lần, gây ra 36\% tổng tổn thất phần cứng của hệ thống.
+\end{enumerate}
+
+\subsection{Hệ thống Kho Dữ liệu (Data Warehouse) và Quy trình ETL}
+Kho dữ liệu (Data Warehouse -- DWH) là hệ thống cơ sở dữ liệu được thiết kế chuyên biệt để hỗ trợ các hoạt động phân tích thông minh (BI) và báo cáo quản trị (OLAP), phân tách hoàn toàn khỏi các hệ thống xử lý giao dịch vận hành (OLTP).
+
+Để chuyển hóa dữ liệu thô thành thông tin quản trị, quy trình ETL được thực thi theo 3 giai đoạn:
+\begin{itemize}[noitemsep]
+    \item \textbf{Trích xuất Dữ liệu (Extract):} Thu thập dữ liệu chuỗi thời gian sản lượng từ tệp tin cục bộ và gọi API khí tượng Open-Meteo.
+    \item \textbf{Transform (Biến đổi \& Làm sạch):} Chuẩn hóa kiểu dữ liệu, xử lý giá trị khuyết thiếu (Imputation), xử lý đứt gãy thời gian (điểm gián đoạn thời gian), gắn nhãn ngoại lai bằng rào chắn vật lý và trích xuất đặc trưng nghiệp vụ.
+    \item \textbf{Nạp Dữ liệu vào Kho (Load):} Nạp dữ liệu có cấu trúc vào kho lưu trữ tập trung Supabase DWH theo mô hình đa chiều.
+\end{itemize}
+
+\subsection{Mô hình Dữ liệu Đa chiều và Lược đồ Thiên hà (Galaxy Schema)}
+Mô hình đa chiều do Ralph Kimball~\cite{kimball2013dwh} đề xuất phân tách dữ liệu thành:
+\begin{itemize}[noitemsep]
+    \item \textbf{Bảng sự kiện (Fact Table):} Chứa các chỉ số đo lường định lượng theo chuỗi thời gian như \texttt{fact\_solar\_energy\_gen} (sản lượng điện 15 phút) và \texttt{fact\_weather} (thông số khí tượng 1 giờ).
+    \item \textbf{Bảng chiều (Dimension Table):} Chứa các thuộc tính ngữ cảnh mô tả như \texttt{dim\_solar\_plant} (trạm phát), \texttt{dim\_date} (ngày), \texttt{dim\_time} (giờ), \texttt{dim\_weather\_type} (mã thời tiết).
+\end{itemize}
+
+Trong dự án này, do dữ liệu sản lượng và dữ liệu thời tiết có tần suất ghi nhận lệch nhau (15 phút vs 1 giờ), nhóm sử dụng \textbf{Lược đồ Thiên hà (Mô hình Lược đồ Thiên hà -- Galaxy Schema)}. Hai bảng Fact độc lập liên kết chặt chẽ với nhau thông qua 4 bảng Dimension dùng chung (chiều dữ liệu dùng chung), đảm bảo không làm phình to dữ liệu và tối ưu hóa hiệu năng truy vấn liên thông (Drill-through).
+
+\subsection{Phương pháp Phát hiện Dị thường và Lọc Nhiễu Nghiệp vụ}
+Để đảm bảo nguyên tắc ``Dữ liệu sạch = Insight đúng'', quy trình xử lý dữ liệu tích hợp các phương pháp phát hiện dị thường nhằm phục vụ công tác làm sạch:
+\begin{itemize}[noitemsep]
+    \item \textbf{Khoảng Tứ phân vị IQR (Tukey 1977~\cite{tukey1977eda}):} Xác định ngưỡng phân vị $\text{IQR} = Q_3 - Q_1$ để loại trừ các giá trị đo đột biến cục bộ.
+    \item \textbf{Rào chắn Vật lý (Physical Boundaries):} Thiết lập 5 giới hạn vật lý năng lượng mặt trời (cắt trần công suất danh định, loại bỏ phát điện ban đêm $GHI=0$, phát hiện nắng gắt mất điện).
+    \item \textbf{Phân lớp Lai GMM--IF (Li et al., 2025~\cite{li2025gmmif}):} Đóng vai trò như một bộ lọc thông minh trong tầng Transform, phân đoạn dữ liệu thành các vùng lá thời tiết đồng nhất để nhận diện chính xác các điểm dữ liệu dị thường do lỗi thiết bị và gán 6 mã lý do kỹ thuật phục vụ bảo trì.
+\end{itemize}
+
+\subsection{Trực quan hóa Dữ liệu trong Business Intelligence (BI)}
+Trực quan hóa dữ liệu không đơn thuần là vẽ biểu đồ làm đẹp, mà là công cụ khám phá tri thức kinh doanh (Business Storytelling). Các nguyên tắc thiết kế được tuân thủ nghiêm ngặt:
+\begin{itemize}[noitemsep]
+    \item \textbf{Quy luật Gestalt:} Sắp xếp các chỉ số quan trọng (KPI Cards) ở vị trí trên cùng bên trái theo hướng đọc tự nhiên của mắt.
+    \item \textbf{Màu sắc Ngữ nghĩa (Semantic Colors):} Màu Xanh Navy (\texttt{\#4E79A7}) cho Tổng sản lượng, Màu Xanh Lá (\texttt{\#59A14F}) cho Hiệu suất đạt chuẩn, Màu Cam (\texttt{\#F28E2B}) cho Cảnh báo tổn thất nhiệt độ, và Màu Đỏ (\texttt{\#E15759}) cho Sự cố dừng máy/Dị thường.
+    \item \textbf{Tương tác Đào sâu (Interactive Actions):} Thiết lập bộ lọc chéo (Cross-filtering) và Highlight Actions giúp các nhà quản lý nhanh chóng đào sâu từ tổng quan vùng đến từng trạm phát cụ thể.
+\end{itemize}
+
+\section{Phân tích Yêu cầu Nghiệp vụ (Business Requirements)}
+\label{sec:yeucau_nghiepvu}
+
+\subsection{Phân tích Các Bên Liên quan (Stakeholders)}
+Hệ thống phân tích dữ liệu được thiết kế để giải quyết bài toán thông tin cho 4 nhóm đối tượng chính:
+
+\begin{table}[H]
+\centering
+\small
+\renewcommand{\arraystretch}{1.25}
+\begin{tabularx}{\textwidth}{@{} l p{4.5cm} X @{}}
+\toprule
+\textbf{Nhóm Đối tượng} & \textbf{Vai trò Nghiệp vụ} & \textbf{Nhu cầu Thông tin Chính} \\
+\midrule
+\textbf{Ban Giám đốc (C-Level)} & 
+Quản trị chiến lược tài sản và hiệu quả đầu tư toàn diện. & 
+Tổng sản lượng phát điện, tăng trưởng theo năm (YoY), tỷ lệ tổn thất tài chính toàn hệ thống. \\
+\midrule
+\textbf{Quản lý O\&M (O\&M Manager)} & 
+Tối ưu hóa hiệu suất vận hành và giám sát kỹ thuật các trạm. & 
+Hệ số PR, CF, so sánh Specific Yield giữa các trạm, xác định các trạm có hiệu suất suy giảm. \\
+\midrule
+\textbf{Kỹ sư Hiện trường (Field Engineer)} & 
+Khắc phục sự cố và bảo dưỡng thiết bị trực tiếp tại trạm pin. & 
+Vị trí trạm có dị thường, mã lý do sự cố kỹ thuật (\texttt{outlier\_reason}), thời điểm xảy ra lỗi. \\
+\midrule
+\textbf{Chuyên viên Phân tích (Energy Analyst)} & 
+Đánh giá chuyên sâu và lập báo cáo phân tích năng lượng. & 
+Dữ liệu sạch trên DWH, phân tích tương quan bức xạ -- nhiệt độ, báo cáo tổn thất chi tiết. \\
+\bottomrule
+\end{tabularx}
+\caption{Bảng phân tích nhu cầu thông tin của các bên liên quan (Stakeholder Matrix).}
+\label{tab:stakeholder_matrix}
+\end{table}
+
+\subsection{Hệ thống Chỉ số Đo lường (KPI Framework)}
+Dựa trên yêu cầu nghiệp vụ, dự án xây dựng bộ khung đo lường gồm 3 nhóm chỉ số cốt lõi:
+\begin{enumerate}[label=\arabic*., leftmargin=*]
+    \item \textbf{Nhóm KPI Vận hành Kỹ thuật (Operational KPIs):}
+    \begin{itemize}[noitemsep]
+        \item $\text{Total Energy Generation} = \sum \text{energy\_generated\_kwh}$ (Tổng sản lượng phát điện).
+        \item $\text{Average PR (\%)} = \text{Trung bình hệ số hiệu suất quang điện}$.
+        \item $\text{Capacity Factor (\%)} = \text{Hệ số huy động công suất trạm}$.
+        \item $\text{Specific Yield} = \frac{\text{Sản lượng (kWh)}}{\text{Công suất danh định (kWp)}}$.
+    \end{itemize}
+    \item \textbf{Nhóm KPI Tổn thất và Tài chính (Loss \& Financial KPIs):}
+    \begin{itemize}[noitemsep]
+        \item $\text{Thermal Loss (kWh)} = \text{Sản lượng thất thoát do nhiệt độ tế bào quang điện vượt quá } 25^\circ\text{C}$.
+        \item $\text{Inverter Clipping Loss (kWh)} = \text{Sản lượng bị cắt giảm do công suất DC vượt quá ngưỡng biến tần}$.
+        \item $\text{Estimated Financial Loss (\$) } = \text{Tổn thất sản lượng} \times \text{Đơn giá điện FiT}$.
+    \end{itemize}
+    \item \textbf{Nhóm KPI Cảnh báo Dị thường và Bảo trì (Anomaly \& Maintenance KPIs):}
+    \begin{itemize}[noitemsep]
+        \item $\text{Anomaly Rate (\%)} = \frac{\text{Số bản ghi dị thường}}{\text{Tổng số bản ghi}} \times 100\%$ (Mục tiêu phát hiện: $1{,}22\%$).
+        \item $\text{Inverter Zero Output Count} = \text{Số sự cố biến tần mất phát giữa trưa nắng gắt } (GHI \ge 700\,\text{W/m}^2)$.
+        \item $\text{Dòng rò ban đêm Records} = \text{Số bản ghi trôi điểm 0 ban đêm cần hiệu chuẩn cảm biến}$.
+    \end{itemize}
+\end{enumerate}
+
+\section{Kiến trúc Hệ thống Đề xuất (6-Layer Data Pipeline)}
+\label{sec:kientruc_dexuat}
+
+Nhằm đảm bảo tính toàn vẹn, độ tin cậy và khả năng mở rộng của dữ liệu, dự án đề xuất kiến trúc xử lý dữ liệu 6 lớp (6-Layer Data Pipeline):
+
+\begin{enumerate}[label=\textbf{Layer \arabic* --}, leftmargin=*]
+    \item \textbf{Data Source (Nguồn dữ liệu):} Tiếp nhận $2.731.946$ dòng dữ liệu sản lượng PV 15 phút từ UNISOLAR và chuỗi dữ liệu khí tượng 1 giờ từ Open-Meteo API.
+    \item \textbf{Exploration \& Audit (Khám phá \& Kiểm định chất lượng):} Quét toàn diện dữ liệu thô, phát hiện 561 điểm đứt gãy thời gian (điểm gián đoạn thời gian) và kiểm tra phân phối dữ liệu.
+    \item \textbf{Transformation \& Cleansing (Biến đổi \& Làm sạch dữ liệu):} Lớp xử lý lõi bằng Python: Resampling lưới 15 phút, nội suy dữ liệu khuyết thiếu, áp dụng rào chắn vật lý và mô hình phân lớp GMM--IF để lọc sạch nhiễu cảm biến, gán 6 mã lý do sự cố.
+    \item \textbf{Data Modeling (Mô hình hóa Kho dữ liệu):} Tổ chức cơ sở dữ liệu trên Supabase PostgreSQL theo Lược đồ Thiên hà (Galaxy Schema) gồm 2 bảng Fact và 4 bảng Dimension.
+    \item \textbf{Aggregation \& Data Marts (Tổng hợp \& Siêu thị dữ liệu):} Tính toán trước (Pre-calculate) các bảng tổng hợp nghiệp vụ theo ngày, tháng, trạm phát để tối ưu hóa truy vấn cho BI.
+    \item \textbf{Visualization (Trực quan hóa Quản trị):} Xây dựng hệ thống 3 Dashboard tương tác trên nền tảng Tableau Desktop phục vụ các quyết định vận hành.
+\end{enumerate}
+
+\section{Từ điển Dữ liệu Nghiệp vụ (Data Dictionary)}
+\label{sec:tudien_dulieu}
+
+Dữ liệu sau khi làm sạch và mô hình hóa được phân chia thành 5 nhóm logic:
+\begin{itemize}[noitemsep]
+    \item \textbf{Nhóm 1 -- Dữ liệu Định danh và Vận hành Trạm (\texttt{dim\_solar\_plant}):} Mã trạm (\texttt{sitekey}), Tên trạm, Khuôn viên (\texttt{campus\_name}), Công suất danh định (\texttt{capacity\_kw}), Model biến tần, Tọa độ địa lý.
+    \item \textbf{Nhóm 2 -- Dữ liệu Thời gian Lịch biểu (\texttt{dim\_date}, \texttt{dim\_time}):} Ngày, Tháng, Năm, Quý, Thứ trong tuần, Cờ ngày nghỉ (\texttt{is\_holiday}), Giờ, Phút, Cờ ban ngày (\texttt{is\_day}).
+    \item \textbf{Nhóm 3 -- Dữ liệu Khí tượng Viễn thám (\texttt{fact\_weather}):} Bức xạ sóng ngắn ($GHI$), Bức xạ trực xạ ($DNI$), Bức xạ tán xạ ($DHI$), Nhiệt độ không khí 2m, Tốc độ gió, Độ che phủ mây, Thời lượng nắng.
+    \item \textbf{Nhóm 4 -- Dữ liệu Sản lượng \& Đo lường Hiệu năng (\texttt{fact\_solar\_energy\_gen}):} Sản lượng điện phát ra (\texttt{energy\_generated\_kwh}), Tỷ lệ hiệu suất (\texttt{PR}), Năng suất riêng (\texttt{Specific\_Yield}).
+    \item \textbf{Nhóm 5 -- Dữ liệu Chẩn đoán Dị thường (\texttt{gmm\_if\_outlier}):} Cờ dị thường (\texttt{gmm\_if\_outlier\_flag}), Mã lý do chẩn đoán kỹ thuật (\texttt{gmm\_if\_outlier\_reason}).
+\end{itemize}

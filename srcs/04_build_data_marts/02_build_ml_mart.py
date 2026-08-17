@@ -48,10 +48,7 @@ def build_ml_mart(engine):
                     d.month,
                     d.day,
                     EXTRACT(DOW FROM d.full_date)::smallint AS day_of_week,
-                    CASE
-                        WHEN t.minute = 0 THEN t.hour - 1
-                        ELSE t.hour
-                    END AS hour,
+                    t.hour AS hour,
                     t.minute,
 
                     -- Endogenous target source.
@@ -84,8 +81,7 @@ def build_ml_mart(engine):
                             )
                     END AS weather_timestamp,
                     CASE
-                        WHEN w.weather_id IS NOT NULL THEN 'bucket_shift_join'
-                        WHEN wf.weather_id IS NOT NULL THEN 'raw_hour_fallback'
+                        WHEN wf.weather_id IS NOT NULL THEN 'raw_hour_causal_join'
                         ELSE 'missing_weather'
                     END AS weather_join_method,
 
@@ -146,6 +142,7 @@ def build_ml_mart(engine):
                 ) w
                   ON w.geo_id = f.geo_id
                  AND w.date_id = f.date_id
+                 AND FALSE
                  AND w.weather_hour = CASE
                      WHEN t.minute = 0 THEN t.hour - 1
                      ELSE t.hour

@@ -1,0 +1,5 @@
+outs:
+- md5: 9fbd3e3fe3e1affdfebc845e5f0a11b4
+  size: 2175
+  hash: md5
+  path: thuc_nghiem_tham_so_hardcode.csv

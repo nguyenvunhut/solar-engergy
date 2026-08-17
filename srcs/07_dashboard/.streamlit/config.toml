@@ -1,0 +1,62 @@
+[server]
+enableStaticServing = true
+
+[[theme.fontFaces]]
+family = "Inter"
+url = "app/static/Inter_18pt-Regular.ttf"
+style = "normal"
+weight = 400
+
+[[theme.fontFaces]]
+family = "Inter"
+url = "app/static/Inter_18pt-Medium.ttf"
+style = "normal"
+weight = 500
+
+[[theme.fontFaces]]
+family = "Inter"
+url = "app/static/Inter_18pt-SemiBold.ttf"
+style = "normal"
+weight = 600
+
+[[theme.fontFaces]]
+family = "Inter"
+url = "app/static/Inter_18pt-Bold.ttf"
+style = "normal"
+weight = 700
+
+[[theme.fontFaces]]
+family = "SourceCodePro"
+url = "app/static/SourceCodePro-Regular.ttf"
+style = "normal"
+weight = 400
+
+[[theme.fontFaces]]
+family = "SourceCodePro"
+url = "app/static/SourceCodePro-SemiBold.ttf"
+style = "normal"
+weight = 600
+
+[theme]
+# Bang mau "SaaS Dashboard" hien dai (indigo accent) - ban LIGHT mode, chuyen tu ban
+# dark mode chuan (background #101012, primary #6366f1) sang sang de hop voi noi dung
+# nhieu chart/bang can doc lau. Indigo la mau duoc khuyen dung rieng cho dashboard phan
+# tich du lieu vi can bang giua "chuyen nghiep" va "ro rang truc quan" (khong nhat nhoa
+# nhu xam Power BI mac dinh, khong loe loet nhu mau tuy chon truoc).
+primaryColor = "#6366F1"             # Indigo - accent color chinh, dung cho nut/highlight
+backgroundColor = "#FFFFFF"          # Card/surface trang
+secondaryBackgroundColor = "#F4F5FA" # Nen trang - xam-tim rat nhat, khong phai xam thuan
+textColor = "#111827"                # Text dam, gan den nhung khong phai #000 tuyet doi
+linkColor = "#6366F1"
+borderColor = "#E4E4F0"
+showWidgetBorder = true
+baseRadius = "0.5rem"
+font = "Inter"
+headingFont = "Inter"
+codeFont = "SourceCodePro"
+codeBackgroundColor = "#F4F5FA"
+showSidebarBorder = true
+
+[theme.sidebar]
+backgroundColor = "#FAFAFD"
+secondaryBackgroundColor = "#F0F0FA"

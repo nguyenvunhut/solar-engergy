@@ -1,0 +1,144 @@
+<mxfile host="Electron" agent="Mozilla/5.0">
+  <diagram id="system_architecture" name="System Architecture - The Outliers">
+    <mxGraphModel dx="1600" dy="950" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1650" pageHeight="950" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- HEADER TITLE -->
+        <mxCell id="header_box" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#1E293B;strokeWidth=2;fontColor=#F8FAFC;" vertex="1">
+          <mxGeometry x="40" y="20" width="1570" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="header_text" parent="header_box" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontColor=#FFFFFF;" vertex="1">
+          <mxGeometry x="25" y="10" width="1200" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="header_txt_val" parent="header_text" style="text;html=1;align=left;verticalAlign=middle;" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;&lt;b&gt;KIẾN TRÚC HỆ THỐNG DỮ LIỆU TẬP TRUNG (END-TO-END DATA ARCHITECTURE)&lt;/b&gt;&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size: 12px; color: #94A3B8;&quot;&gt;Dự án Tốt nghiệp Chuyên ngành Xử lý Dữ liệu — The Outliers | Supabase PostgreSQL &amp;amp; Python Pipeline&lt;/font&gt;" vertex="1">
+          <mxGeometry x="0" y="0" width="1100" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="badge_top" parent="header_box" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#38BDF8;strokeWidth=1.5;fontColor=#38BDF8;fontSize=11;fontStyle=1;align=center;" value="GALAXY SCHEMA &amp;amp; DUAL MARTS" vertex="1">
+          <mxGeometry x="1330" y="22" width="210" height="26" as="geometry" />
+        </mxCell>
+
+        <!-- LAYER 1: RAW DATA -->
+        <mxCell id="layer1" parent="1" style="swimlane;whiteSpace=wrap;html=1;startSize=32;fillColor=#F8FAFC;strokeColor=#64748B;strokeWidth=2;fontColor=#0F172A;fontStyle=1;fontSize=13;" value="1. RAW DATA (Nguồn Dữ Liệu Thô)" vertex="1">
+          <mxGeometry x="40" y="110" width="270" height="780" as="geometry" />
+        </mxCell>
+        <mxCell id="raw_csv" parent="layer1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#94A3B8;strokeWidth=1.5;align=left;spacingLeft=10;fontColor=#0F172A;" value="&lt;b style=&quot;color: #0369A1;&quot;&gt;📁 IoT PV Sensors (CSV)&lt;/b&gt;&lt;br&gt;• Solar_Energy_Generation (15m)&lt;br&gt;• Solar_Site_Details (42 trạm)&lt;br&gt;• campus_meta.csv (5 campuses)&lt;br&gt;• calender.csv (Lịch học/thi)" vertex="1">
+          <mxGeometry x="15" y="50" width="240" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="raw_api" parent="layer1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#94A3B8;strokeWidth=1.5;align=left;spacingLeft=10;fontColor=#0F172A;" value="&lt;b style=&quot;color: #0284C7;&quot;&gt;🌐 Open-Meteo Archive API&lt;/b&gt;&lt;br&gt;• Bức xạ sóng ngắn (GHI)&lt;br&gt;• Nhiệt độ 2m, Tốc độ gió&lt;br&gt;• Mây che phủ, Lượng mưa&lt;br&gt;• Chu kỳ 1 giờ (Hourly Grid)" vertex="1">
+          <mxGeometry x="15" y="180" width="240" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="raw_dvc" parent="layer1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=12;fillColor=#EFF6FF;strokeColor=#3B82F6;strokeWidth=1.5;fontColor=#1E3A8A;fontStyle=1;align=center;" value="📦 DVC &amp;amp; Supabase S3 Storage&#xa;(Quản lý phiên bản tệp lớn&#xa;Parquet / CSV)" vertex="1">
+          <mxGeometry x="30" y="320" width="210" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="raw_card_info" parent="layer1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F1F5F9;strokeColor=#CBD5E1;align=left;spacingLeft=8;fontSize=11;fontColor=#475569;" value="&lt;b&gt;Quy mô dữ liệu thô:&lt;/b&gt;&lt;br&gt;• 2.731.947 bản ghi sản lượng PV&lt;br&gt;• 367.920 bản ghi khí tượng viễn thám&lt;br&gt;• 42 trạm phát tại 5 campuses Úc" vertex="1">
+          <mxGeometry x="15" y="440" width="240" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- LAYER 2: STAGING & BUFFER -->
+        <mxCell id="layer2" parent="1" style="swimlane;whiteSpace=wrap;html=1;startSize=32;fillColor=#FFFBEB;strokeColor=#D97706;strokeWidth=2;fontColor=#78350F;fontStyle=1;fontSize=13;" value="2. STAGING &amp; BUFFER (Schema: staging)" vertex="1">
+          <mxGeometry x="340" y="110" width="290" height="780" as="geometry" />
+        </mxCell>
+        <mxCell id="stg_raw_box" parent="layer2" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEF3C7;strokeColor=#F59E0B;strokeWidth=1.5;align=left;spacingLeft=8;fontColor=#78350F;" value="&lt;b style=&quot;color: #92400E;&quot;&gt;📥 Raw String Tables (VARCHAR)&lt;/b&gt;&lt;br&gt;• stg_solar_energy_generation&lt;br&gt;• stg_open_meteo_weather_raw&lt;br&gt;• stg_solar_site_details&lt;br&gt;• stg_campus_meta / stg_calender" vertex="1">
+          <mxGeometry x="15" y="50" width="260" height="95" as="geometry" />
+        </mxCell>
+        <mxCell id="stg_pipeline" parent="layer2" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#D97706;strokeWidth=1.5;strokeDasharray=3 3;align=left;spacingLeft=8;fontColor=#0F172A;" value="&lt;b style=&quot;color: #B45309;&quot;&gt;⚙️ Python Pipeline (Transform)&lt;/b&gt;&lt;br&gt;• Ép kiểu dữ liệu (Type Casting)&lt;br&gt;• Điền khuyết (Hybrid Imputation)&lt;br&gt;• Lọc rò rỉ ban đêm (Night-time noise)&lt;br&gt;• Gán cờ Outlier (Rolling IQR / GMM-IF)" vertex="1">
+          <mxGeometry x="15" y="170" width="260" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="stg_buf_box" parent="layer2" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEF3C7;strokeColor=#F59E0B;strokeWidth=1.5;align=left;spacingLeft=8;fontColor=#78350F;" value="&lt;b style=&quot;color: #92400E;&quot;&gt;📋 Mirror Buffer Tables (Đã làm sạch)&lt;/b&gt;&lt;br&gt;• staging.dim_solar_site&lt;br&gt;• staging.dim_geography&lt;br&gt;• staging.dim_date / dim_time&lt;br&gt;• staging.dim_weather_type&lt;br&gt;• staging.fact_solar_energy_gen&lt;br&gt;• staging.fact_weather" vertex="1">
+          <mxGeometry x="15" y="295" width="260" height="135" as="geometry" />
+        </mxCell>
+        <mxCell id="stg_badge_qc" parent="layer2" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FDE68A;strokeColor=#D97706;fontSize=11;fontStyle=1;fontColor=#92400E;align=center;" value="QA/QC &amp;amp; Safe Transaction" vertex="1">
+          <mxGeometry x="50" y="455" width="190" height="26" as="geometry" />
+        </mxCell>
+
+        <!-- LAYER 3: DATA WAREHOUSE -->
+        <mxCell id="layer3" parent="1" style="swimlane;whiteSpace=wrap;html=1;startSize=32;fillColor=#EEF2FF;strokeColor=#4338CA;strokeWidth=2;fontColor=#1E1B4B;fontStyle=1;fontSize=13;" value="3. DATA WAREHOUSE (Schema: datawarehouse)" vertex="1">
+          <mxGeometry x="660" y="110" width="320" height="780" as="geometry" />
+        </mxCell>
+        <mxCell id="dw_dims" parent="layer3" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E0E7FF;strokeColor=#6366F1;strokeWidth=1.5;align=left;spacingLeft=10;fontColor=#1E1B4B;" value="&lt;b style=&quot;color: #3730A3;&quot;&gt;🏛️ Conformed Dimensions (Bảng Chiều)&lt;/b&gt;&lt;br&gt;• &lt;b&gt;dim_solar_site&lt;/b&gt; (site_id PK, công suất, tấm pin)&lt;br&gt;• &lt;b&gt;dim_geography&lt;/b&gt; (geo_id PK, lat, lon)&lt;br&gt;• &lt;b&gt;dim_date&lt;/b&gt; (date_id PK, ngày, tháng, năm, lễ)&lt;br&gt;• &lt;b&gt;dim_time&lt;/b&gt; (time_id PK, hour, minute 15p)&lt;br&gt;• &lt;b&gt;dim_weather_type&lt;/b&gt; (weather_type_id PK)" vertex="1">
+          <mxGeometry x="15" y="50" width="290" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="dw_fact_gen" parent="layer3" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#4F46E5;strokeWidth=2;align=left;spacingLeft=10;fontColor=#1E1B4B;" value="&lt;b style=&quot;color: #4338CA;&quot;&gt;⚡ fact_solar_energy_gen&lt;/b&gt;&lt;br&gt;• Khóa chính: gen_id&lt;br&gt;• Khóa ngoại: site_id, geo_id, date_id, time_id&lt;br&gt;• Đo lường: &lt;b&gt;energy_generated_kwh&lt;/b&gt;&lt;br&gt;• Cờ: gmm_if_outlier_flag&lt;br&gt;• Tần suất: &lt;b&gt;15 phút / bản ghi&lt;/b&gt;" vertex="1">
+          <mxGeometry x="15" y="205" width="290" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="dw_fact_wea" parent="layer3" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#4F46E5;strokeWidth=2;align=left;spacingLeft=10;fontColor=#1E1B4B;" value="&lt;b style=&quot;color: #4338CA;&quot;&gt;⛅ fact_weather&lt;/b&gt;&lt;br&gt;• Khóa chính: weather_id&lt;br&gt;• Khóa ngoại: geo_id, date_id, time_id, type_id&lt;br&gt;• Đo lường: &lt;b&gt;shortwave_rad, temp_c, wind...&lt;/b&gt;&lt;br&gt;• Tần suất: &lt;b&gt;1 giờ / bản ghi&lt;/b&gt;" vertex="1">
+          <mxGeometry x="15" y="335" width="290" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="dw_badge_galaxy" parent="layer3" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C7D2FE;strokeColor=#4338CA;fontSize=11;fontStyle=1;fontColor=#312E81;align=center;" value="Galaxy Schema (Khắc phục Granularity Mismatch)" vertex="1">
+          <mxGeometry x="15" y="470" width="290" height="26" as="geometry" />
+        </mxCell>
+
+        <!-- LAYER 4: DATA MART -->
+        <mxCell id="layer4" parent="1" style="swimlane;whiteSpace=wrap;html=1;startSize=32;fillColor=#F0FDF4;strokeColor=#16A34A;strokeWidth=2;fontColor=#14532D;fontStyle=1;fontSize=13;" value="4. DATA MART LAYER (Schema: bi_mart &amp; ml_mart)" vertex="1">
+          <mxGeometry x="1010" y="110" width="310" height="780" as="geometry" />
+        </mxCell>
+        <mxCell id="mart_bi_box" parent="layer4" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCFCE7;strokeColor=#22C55E;strokeWidth=1.5;align=left;spacingLeft=10;fontColor=#14532D;" value="&lt;b style=&quot;color: #15803D;&quot;&gt;📊 BI Data Mart (Schema: bi_mart)&lt;/b&gt;&lt;br&gt;• &lt;b&gt;fact_solar_performance_hourly&lt;/b&gt; (1h aggregate)&lt;br&gt;• &lt;b&gt;mv_bi_mart_hourly_measures&lt;/b&gt; (PR, CF)&lt;br&gt;• &lt;b&gt;mv_bi_mart_daily_kpis&lt;/b&gt; (YTD, MTD)&lt;br&gt;• &lt;b&gt;vw_bi_mart_hourly_measures_replace&lt;/b&gt;&lt;br&gt;• Chỉ số: Tiền FIT (VNĐ), CO2 Giảm phát thải" vertex="1">
+          <mxGeometry x="15" y="50" width="280" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="mart_ml_box" parent="layer4" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCFCE7;strokeColor=#22C55E;strokeWidth=1.5;align=left;spacingLeft=10;fontColor=#14532D;" value="&lt;b style=&quot;color: #15803D;&quot;&gt;🤖 ML Data Mart (Schema: ml_mart / Parquet)&lt;/b&gt;&lt;br&gt;• &lt;b&gt;base_build&lt;/b&gt; (Bảng cơ sở hợp nhất)&lt;br&gt;• &lt;b&gt;v3_final_cleaned.parquet&lt;/b&gt; (Vá ghép nhân quả)&lt;br&gt;• Feature Engineering Store:&lt;br&gt;  + Bức xạ mặt trời lý thuyết (Solar Geo)&lt;br&gt;  + Biến trễ (Lags) &amp;amp; Trung bình trượt (Rolling)&lt;br&gt;  + 40 đặc trưng tối ưu (VIF &amp;amp; Mutual Info)" vertex="1">
+          <mxGeometry x="15" y="205" width="280" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="mart_badge" parent="layer4" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBF7D0;strokeColor=#16A34A;fontSize=11;fontStyle=1;fontColor=#14532D;align=center;" value="Phục vụ Đa mục tiêu: BI + AI/ML" vertex="1">
+          <mxGeometry x="40" y="380" width="230" height="26" as="geometry" />
+        </mxCell>
+
+        <!-- LAYER 5: APPLICATION & CONSUMPTION -->
+        <mxCell id="layer5" parent="1" style="swimlane;whiteSpace=wrap;html=1;startSize=32;fillColor=#FDF2F8;strokeColor=#DB2777;strokeWidth=2;fontColor=#831843;fontStyle=1;fontSize=13;" value="5. APPLICATION &amp; CONSUMPTION" vertex="1">
+          <mxGeometry x="1350" y="110" width="260" height="780" as="geometry" />
+        </mxCell>
+        <mxCell id="app_bi_box" parent="layer5" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FCE7F3;strokeColor=#EC4899;strokeWidth=1.5;align=left;spacingLeft=10;fontColor=#831843;" value="&lt;b style=&quot;color: #BE185D;&quot;&gt;📈 Tableau BI Dashboards&lt;/b&gt;&lt;br&gt;• &lt;b&gt;Dashboard 1:&lt;/b&gt; Executive Overview (Sản lượng tổng, Capacity Factor)&lt;br&gt;• &lt;b&gt;Dashboard 2:&lt;/b&gt; Hiệu suất &amp;amp; Khí hậu (Suy hao nhiệt, Bức xạ GHI)&lt;br&gt;• &lt;b&gt;Dashboard 3:&lt;/b&gt; Bất thường &amp;amp; Bảo trì (Cảnh báo lỗi Inverter, Bám bụi)" vertex="1">
+          <mxGeometry x="15" y="50" width="230" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="app_ml_box" parent="layer5" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FCE7F3;strokeColor=#EC4899;strokeWidth=1.5;align=left;spacingLeft=10;fontColor=#831843;" value="&lt;b style=&quot;color: #BE185D;&quot;&gt;🧠 Machine Learning Serving&lt;/b&gt;&lt;br&gt;• &lt;b&gt;LightGBM Regressor&lt;/b&gt; (Dự báo 1h &amp;amp; 2h, Loss Huber/MAE)&lt;br&gt;• &lt;b&gt;Baseline Models:&lt;/b&gt; Prophet &amp;amp; ARIMA&lt;br&gt;• &lt;b&gt;SHAP Values:&lt;/b&gt; Giải thích tính đóng góp của từng thuộc tính thời tiết" vertex="1">
+          <mxGeometry x="15" y="205" width="230" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="app_badge" parent="layer5" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBCFE8;strokeColor=#DB2777;fontSize=11;fontStyle=1;fontColor=#831843;align=center;" value="Giám sát &amp;amp; Bảo trì dự đoán" vertex="1">
+          <mxGeometry x="30" y="380" width="200" height="26" as="geometry" />
+        </mxCell>
+
+        <!-- CONNECTING EDGES -->
+        <!-- Raw to Staging -->
+        <mxCell id="e_r1" edge="1" parent="1" source="raw_csv" target="stg_raw_box" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#64748B;strokeWidth=2;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_r2" edge="1" parent="1" source="raw_api" target="stg_raw_box" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#64748B;strokeWidth=2;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Staging internal -->
+        <mxCell id="e_s1" edge="1" parent="1" source="stg_raw_box" target="stg_pipeline" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#D97706;strokeWidth=2;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_s2" edge="1" parent="1" source="stg_pipeline" target="stg_buf_box" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#D97706;strokeWidth=2;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Staging to DW -->
+        <mxCell id="e_stg_to_dw" edge="1" parent="1" source="stg_buf_box" target="dw_dims" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#4338CA;strokeWidth=2.5;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- DW to BI Mart -->
+        <mxCell id="e_dw_to_bi" edge="1" parent="1" source="dw_fact_gen" target="mart_bi_box" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#16A34A;strokeWidth=2;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- DW to ML Mart -->
+        <mxCell id="e_dw_to_ml" edge="1" parent="1" source="dw_fact_wea" target="mart_ml_box" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#16A34A;strokeWidth=2;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Mart to Apps -->
+        <mxCell id="e_bi_to_app" edge="1" parent="1" source="mart_bi_box" target="app_bi_box" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#DB2777;strokeWidth=2.5;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_ml_to_app" edge="1" parent="1" source="mart_ml_box" target="app_ml_box" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#DB2777;strokeWidth=2.5;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

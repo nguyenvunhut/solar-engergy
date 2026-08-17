@@ -1,39 +1,55 @@
+% !TeX program = xelatex
 % =============================================================================
-%  DỰ ÁN TỐT NGHIỆP — BÁO CÁO CHÍNH (BẢN OUTLINE SỰ KIỆN)
+%  DỰ ÁN TỐT NGHIỆP — BÁO CÁO CHUYÊN ĐỀ
 %  Đề tài: Phân tích Hiệu suất và Dự báo Sản lượng Hệ thống Điện Mặt Trời
 %  Nhóm: The Outliers
-%  Trường: Cao đẳng FPT Polytechnic — Chuyên ngành Phân tích Dữ liệu
+%  Trường: Cao đẳng FPT Polytechnic — Chuyên ngành Xử lý Dữ liệu
 % =============================================================================
 
 \documentclass[12pt, a4paper]{report}
 
-% ======================== PACKAGES ==========================================
-\usepackage[utf8]{inputenc}
-\usepackage[T1]{fontenc}
-\usepackage[vietnamese]{babel}
+% ======================== PACKAGES CƠ BẢN & FONT ============================
 \usepackage{geometry}
-\geometry{top=2.5cm, bottom=2.5cm, left=3cm, right=2cm}
-% ======================== CẤU HÌNH CODE PYTHON (MUTED STYLE) ==============================
-\usepackage{listings}
-\usepackage{xcolor} % Bắt buộc phải có để dùng \definecolor
+\geometry{a4paper, top=2.5cm, bottom=2.5cm, left=3cm, right=2cm, headheight=33pt, footskip=1.1cm}
 
-% Định nghĩa lại bảng màu dịu, ít sặc sỡ và chuyên nghiệp hơn
-\definecolor{mutedgreen}{rgb}{0.2,0.5,0.3}    % Màu xanh lá trầm cho comment
-\definecolor{mutedblue}{rgb}{0.15,0.35,0.6}   % Màu xanh dương dịu cho keywords thay cho magenta
-\definecolor{mutedgray}{rgb}{0.45,0.45,0.45}  % Màu xám cho số dòng
-\definecolor{mutedpurple}{rgb}{0.45,0.2,0.55} % Màu tím trầm cho strings thay cho codepurple
-\definecolor{softbackground}{rgb}{0.98,0.98,0.98} % Màu nền xám trắng siêu nhẹ tránh mỏi mắt
-\definecolor{bordergray}{rgb}{0.85,0.85,0.85}  % Màu viền xám nhạt
+% --- FONT CHO XELATEX (HỖ TRỢ TIẾNG VIỆT 100% - FORMAL, TỐI GIẢN, HIỆN ĐẠI) ---
+\usepackage{fontspec}
+\setmainfont{Times New Roman}
+\setmonofont{Consolas}
+
+% ======================== MÀU SẮC & CODE LISTINGS ===========================
+\usepackage{xcolor}
+\usepackage{listings}
+% Định nghĩa bảng màu Tableau trích xuất từ main_fixed_01.twb & tableau_theme.json
+\definecolor{tblNavy}{HTML}{4E79A7}
+\definecolor{tblOrange}{HTML}{F28E2B}
+\definecolor{tblGreen}{HTML}{59A14F}
+\definecolor{tblRed}{HTML}{E15759}
+\definecolor{tblTeal}{HTML}{76B7B2}
+\definecolor{tblYellow}{HTML}{EDC948}
+\definecolor{tblPurple}{HTML}{B07AA1}
+\definecolor{tblGray}{HTML}{79706E}
+\definecolor{tblSeqWarm}{HTML}{F28E2B}
+
+% Định nghĩa màu sắc cho Code Block
+\definecolor{mutedgreen}{rgb}{0.2,0.5,0.3} 
+\definecolor{mutedblue}{rgb}{0.15,0.35,0.6} 
+\definecolor{mutedgray}{rgb}{0.45,0.45,0.45} 
+\definecolor{mutedpurple}{rgb}{0.45,0.2,0.55} 
+\definecolor{softbackground}{rgb}{0.98,0.98,0.98} 
+\definecolor{bordergray}{rgb}{0.85,0.85,0.85} 
+\definecolor{fptorange}{RGB}{245,130,32}
 
 \lstdefinestyle{pythonstyle}{
     backgroundcolor   = \color{softbackground},
-    commentstyle      = \color{mutedgreen}\itshape, % Comment chữ nghiêng xanh trầm
-    keywordstyle      = \color{mutedblue}\bfseries, % Keyword chữ đậm xanh dịu
+    commentstyle      = \color{mutedgreen}\itshape,
+    keywordstyle      = \color{mutedblue}\bfseries,
     numberstyle       = \tiny\color{mutedgray},
     stringstyle       = \color{mutedpurple},
-    basicstyle        = \ttfamily\small\color{black}, % Chữ code mặc định màu đen thuần
+    basicstyle        = \ttfamily\footnotesize\color{black},
     breakatwhitespace = false,
     breaklines        = true,
+    columns           = fullflexible,
     captionpos        = t, 
     keepspaces        = true,
     numbers           = left,
@@ -43,33 +59,56 @@
     showtabs          = false,
     tabsize           = 4,
     frame             = single,
-    rulecolor         = \color{bordergray}, % Viền mảnh màu xám nhạt tinh tế
-    extendedchars     = true,
-    % Bảng ánh xạ ký tự tiếng Việt (literate) đã làm sạch để fix lỗi UTF-8
-    literate=
-    {á}{{\'a}}1 {à}{{\`a}}1 {ã}{{\~a}}1 {ạ}{{\d{a}}}1 {ả}{{\h{a}}}1
-    {ă}{{\u{a}}}1 {ắ}{{\'\u{a}}}1 {ằ}{{\`\u{a}}}1 {ẵ}{{\~\u{a}}}1 {ặ}{{\d{\u{a}}}}1 {ẳ}{{\h{\u{a}}}}1
-    {â}{{\^a}}1 {ấ}{{\'\^a}}1 {ầ}{{\`\^a}}1 {ẫ}{{\~\^a}}1 {ậ}{{\d{\^a}}}1 {ẩ}{{\h{\^a}}}1
-    {đ}{{\dj}}1 {Đ}{{\DJ}}1
-    {é}{{\'e}}1 {è}{{\`e}}1 {ẽ}{{\~e}}1 {ẹ}{{\d{e}}}1 {ẻ}{{\h{e}}}1
-    {ê}{{\^e}}1 {ế}{{\'\^e}}1 {ề}{{\`\^e}}1 {ễ}{{\~\^e}}1 {ệ}{{\d{\^e}}}1 {ể}{{\h{\^e}}}1
-    {í}{{\'i}}1 {ì}{{\`i}}1 {ĩ}{{\~i}}1 {ị}{{\d{i}}}1 {ỉ}{{\h{i}}}1
-    {ó}{{\'o}}1 {ò}{{\`o}}1 {õ}{{\~o}}1 {ọ}{{\d{o}}}1 {ỏ}{{\h{o}}}1
-    {ô}{{\^o}}1 {ố}{{\'\^o}}1 {ồ}{{\`\^o}}1 {ỗ}{{\~\^o}}1 {ộ}{{\d{\^o}}}1 {ổ}{{\h{\^o}}}1
-    {ơ}{{\v{o}}}1 {ớ}{{\'\v{o}}}1 {ờ}{{\`\v{o}}}1 {ỡ}{{\~\v{o}}}1 {ợ}{{\d{\v{o}}}}1 {ở}{{\h{\v{o}}}}1
-    {ú}{{\'u}}1 {ù}{{\`u}}1 {ũ}{{\~u}}1 {ụ}{{\d{u}}}1 {ủ}{{\h{u}}}1
-    {ư}{{\v{u}}}1 {ứ}{{\'\v{u}}}1 {ừ}{{\`\v{u}}}1 {ữ}{{\~\v{u}}}1 {ự}{{\d{\v{u}}}}1 {ử}{{\h{\v{u}}}}1
-    {ý}{{\'y}}1 {ỳ}{{\`y}}1 {ỹ}{{\~y}}1 {ỵ}{{\d{y}}}1 {ỷ}{{\h{y}}}1
+    rulecolor         = \color{bordergray}
 }
 \lstset{style=pythonstyle}
 
-% Font - Helvetica (Sans-Serif, Modern, supports Vietnamese)
-\usepackage[scaled]{helvet}
-\renewcommand{\familydefault}{\sfdefault}
+% Ngăn chặn tràn viền tài liệu (Overfull \hbox)
+\usepackage{microtype}
+\usepackage{xurl}
+\def\UrlBreaks{\do\/\do-\do\_}
+\hyphenpenalty=1000
+\exhyphenpenalty=1000
+\tolerance=2000
+\emergencystretch=2.5em
+\hfuzz=1pt
 
-% Header / Footer
+% ======================== TRANG TRÍ & ĐỊNH DẠNG =============================
 \usepackage{fancyhdr}
 \usepackage{lastpage}
+\usepackage{amsmath, amssymb}
+\usepackage{enumitem}
+\usepackage{array}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\arraybackslash}p{#1}}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{graphicx}
+\graphicspath{{images/}{figures/}{./}}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{tikz}
+\usepackage[titles]{tocloft}
+
+% VIỆT HÓA TOÀN BỘ CÁC TIÊU ĐỀ HỆ THỐNG
+\renewcommand{\figurename}{Hình}
+\renewcommand{\tablename}{Bảng}
+\renewcommand{\contentsname}{Mục Lục}
+\renewcommand{\listfigurename}{Danh Mục Hình Vẽ}
+\renewcommand{\listtablename}{Danh Mục Bảng Biểu}
+\providecommand{\tep}[1]{\texttt{#1}}
+
+\usepackage{indentfirst}
+\setlength{\parindent}{1cm}
+\setlength{\parskip}{6pt}
+
+\usepackage{setspace}
+\onehalfspacing
+\setlength{\headheight}{33pt}
 
 % Hyperlinks & Bookmarks
 \usepackage{hyperref}
@@ -84,122 +123,60 @@
     bookmarksnumbered = true,
 }
 
-% Toán, ký hiệu
-\usepackage{amsmath, amssymb}
-
-% Danh sách
-\usepackage{enumitem}
-\usepackage{array}
-
-% Bảng biểu
-\usepackage{booktabs}
-\usepackage{tabularx}
-\usepackage{longtable}
-\usepackage{multirow}
-\usepackage{array}
-
-% Hình ảnh
-\usepackage{graphicx}
-\usepackage{float}
-\usepackage{caption}
-\usepackage{subcaption}
-
-% Màu sắc & Code
-\usepackage{xcolor}
-\usepackage{listings}
-
-% Kẻ khung trang bìa
-\usepackage{tikz}
-
-% Danh mục hình, bảng
-\usepackage[titles]{tocloft}
-
-% Indent đoạn đầu
-\usepackage{indentfirst}
-\setlength{\parindent}{1cm}
-\setlength{\parskip}{6pt}
-
-% Line spacing
-\usepackage{setspace}
-\onehalfspacing
-\setlength{\headheight}{33pt}
-
-% ======================== CẤU HÌNH CODE PYTHON ==============================
-\definecolor{codegreen}{rgb}{0,0.6,0}
-\definecolor{codegray}{rgb}{0.5,0.5,0.5}
-\definecolor{codepurple}{rgb}{0.58,0,0.82}
-\definecolor{backcolour}{rgb}{0.96,0.96,0.94}
-\definecolor{fptorange}{RGB}{245,130,32}
-
-\lstdefinestyle{pythonstyle}{
-    backgroundcolor   = \color{backcolour},
-    commentstyle      = \color{codegreen},
-    keywordstyle      = \color{magenta},
-    numberstyle       = \tiny\color{codegray},
-    stringstyle       = \color{codepurple},
-    basicstyle        = \ttfamily\small,
-    breakatwhitespace = false,
-    breaklines        = true,
-    captionpos        = r,
-    keepspaces        = true,
-    numbers           = left,
-    numbersep         = 5pt,
-    showspaces        = false,
-    showstringspaces  = false,
-    showtabs          = false,
-    tabsize           = 4,
-    frame             = single,
-    rulecolor         = \color{codegray},
-}
-\lstset{style=pythonstyle}
-
-% --- CẤU HÌNH KHOẢNG TRỐNG TIÊU ĐỀ CHƯƠNG ---
+% --- CẤU HÌNH TIÊU ĐỀ CHƯƠNG ---
+\usepackage{placeins}
+\makeatletter
+\newcommand{\needspace}[1]{%
+  \begingroup
+    \setlength{\dimen@}{#1}%
+    \vskip\z@\@plus\dimen@
+    \penalty -100\vskip\z@\@plus -\dimen@
+    \vskip\dimen@
+    \penalty 9999\vskip -\dimen@
+    \vskip\z@skip
+  \endgroup}
+\makeatother
 \usepackage{titlesec}
-% Cấu hình cho \chapter và \chapter*
+\titleformat*{\section}{\fontsize{13pt}{15.6pt}\bfseries}
+\titleformat*{\subsection}{\fontsize{13pt}{15.6pt}\bfseries}
+\titleformat*{\subsubsection}{\fontsize{13pt}{15.6pt}\bfseries}
 \titleformat{\chapter}[display]
   {\normalfont\huge\bfseries}{}{0pt}{\huge}
 \titlespacing*{\chapter}{0pt}{-10pt}{20pt} 
-% Tham số: {lề trái}{khoảng trống phía trên}{khoảng trống phía dưới tiêu đề}
+
 % ======================== HEADER / FOOTER ====================================
-% Trang nội dung chính (Logo ở header trái, THE OUTLIERS ở header phải)
 \fancypagestyle{main}{
     \fancyhf{}
-    \fancyhead[L]{\includegraphics[height=1cm]{images/logo_fpoly.png}}
+    \fancyhead[L]{\includegraphics[height=1cm]{figures/logo_fpoly.png}}
     \fancyhead[R]{\small THE OUTLIERS}
-    \fancyfoot[L]{\small Dự án Tốt nghiệp}
-    \fancyfoot[R]{\small Page \thepage\ of \pageref{LastPage}}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp - Chuyên ngành Xử lý Dữ liệu}
+    \fancyfoot[R]{\small Trang \thepage\ / \pageref{LastPage}}
     \renewcommand{\headrulewidth}{0.4pt}
     \renewcommand{\footrulewidth}{0.4pt}
 }
 
-% Trang đầu chương (plain)
 \fancypagestyle{plain}{
     \fancyhf{}
-    \fancyfoot[L]{\small Dự án Tốt nghiệp}
-    \fancyfoot[R]{\small Page \thepage\ of \pageref{LastPage}}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp - Chuyên ngành Xử lý Dữ liệu}
+    \fancyfoot[R]{\small Trang \thepage\ / \pageref{LastPage}}
     \renewcommand{\headrulewidth}{0pt}
     \renewcommand{\footrulewidth}{0.4pt}
 }
 
-% Trang mở đầu (roman numbering)
 \fancypagestyle{front}{
     \fancyhf{}
-    \fancyfoot[L]{\small Dự án Tốt nghiệp}
-    \fancyfoot[R]{\small Page \thepage\ of \pageref{LastPage}}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp - Chuyên ngành Xử lý Dữ liệu}
+    \fancyfoot[R]{\small Trang \thepage\ / \pageref{LastPage}}
     \renewcommand{\headrulewidth}{0pt}
     \renewcommand{\footrulewidth}{0.4pt}
 }
 
-% =============================================================================
-%                           BẮT ĐẦU TÀI LIỆU
-% =============================================================================
-\begin{document}
 
-% ────────────────────────────────────────────────────────────────────
-%  TRANG BÌA (COVER PAGE)
-% ────────────────────────────────────────────────────────────────────
+\begin{document}
+\pagestyle{front}
+
 \begin{titlepage}
-\enlargethispage{1.2cm} % SỬA ĐỔI: Chỉ nới rộng tối đa 1.2cm để giữ chữ luôn nằm TRONG khung TikZ
+\enlargethispage{1.2cm}
 
 \begin{tikzpicture}[remember picture, overlay]
     \draw[line width=2pt, fptorange]
@@ -215,9 +192,8 @@
 \begin{center}
     \textbf{\large TRƯỜNG CAO ĐẲNG FPT POLYTECHNIC}
 
-    \vspace{0.5cm} % Thu nhỏ khoảng cách dưới tên trường
-    % --- Logo trường Cao đẳng FPT Polytechnic ---
-    \includegraphics[width=0.38\textwidth]{images/logo_fpoly.png}
+    \vspace{0.5cm}
+    \includegraphics[width=0.38\textwidth]{figures/logo_fpoly.png}
 
     \vspace{0.4cm}
     {\Large \textbf{DỰ ÁN TỐT NGHIỆP}} \\[4pt]
@@ -229,12 +205,551 @@
         {\huge \textbf{PHÂN TÍCH HIỆU SUẤT VÀ \\[4pt] DỰ BÁO SẢN LƯỢNG \\[4pt] HỆ THỐNG ĐIỆN MẶT TRỜI}}
     \end{spacing}
 
-    \vspace{1.8cm} % Thu nhỏ khoảng cách trước khi vào phần thông tin nhóm
+    \vspace{1.8cm}
     \normalsize
     \begin{flushleft}
         \hspace{2cm} \textbf{Nhóm thực hiện:} The Outliers \\[5pt]
         \hspace{2cm} \textbf{Sinh viên thực hiện:} \\[3pt]
-        % Tạo bảng phụ có chiều rộng cố định (12.5cm) để căn lề MSSV thẳng hàng bên phải
+        \hspace{2cm}
+        \begin{tabular*}{7.5cm}{@{} l @{\extracolsep{\fill}} r @{}}
+            \hspace{0.5cm} 1. Nguyễn Vũ Nhựt   & PS44442 \\
+            \hspace{0.5cm} 2. Nguyễn Văn Sỹ    & PS43671 \\
+            \hspace{0.5cm} 3. Lê Công Toàn    & PS44145 \\
+            \hspace{0.5cm} 4. Nguyễn Xuân Hùng & PS44527 \\
+            \hspace{0.5cm} 5. Ngô Tấn Đạt     & PS44589 \\
+        \end{tabular*} \\[5pt]
+        \hspace{2cm} \textbf{Giảng viên hướng dẫn:} ThS. Văn Công Khanh
+    \end{flushleft}
+    \vfill
+    {\normalsize \textbf{TP. HỒ CHÍ MINH, THÁNG 6 NĂM 2026}}
+    \vspace{0.5cm}
+\end{center}
+\end{titlepage}
+
+
+\pagenumbering{arabic}
+\pagestyle{main}
+
+\chapter}[display]
+  {\normalfont\huge\bfseries}{}{0pt}{\huge}
+\titlespacing*{\chapter}{0pt}{-10pt}{20pt} 
+
+% ======================== HEADER / FOOTER ====================================
+\fancypagestyle{main}{
+    \fancyhf{}
+    \fancyhead[L]{\includegraphics[height=1cm]{figures/logo_fpoly.png}}
+    \fancyhead[R]{\small THE OUTLIERS}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp - Chuyên ngành Xử lý Dữ liệu}
+    \fancyfoot[R]{\small Trang \thepage\ / \pageref{LastPage}}
+    \renewcommand{\headrulewidth}{0.4pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+}
+
+\fancypagestyle{plain}{
+    \fancyhf{}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp - Chuyên ngành Xử lý Dữ liệu}
+    \fancyfoot[R]{\small Trang \thepage\ / \pageref{LastPage}}
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+}
+
+\fancypagestyle{front}{
+    \fancyhf{}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp - Chuyên ngành Xử lý Dữ liệu}
+    \fancyfoot[R]{\small Trang \thepage\ / \pageref{LastPage}}
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+}
+
+
+\begin{document}
+\pagestyle{front}
+
+\begin{titlepage}
+\enlargethispage{1.2cm}
+
+\begin{tikzpicture}[remember picture, overlay]
+    \draw[line width=2pt, fptorange]
+        ([shift={(1cm,-1cm)}]current page.north west)
+        rectangle
+        ([shift={(-1cm,1cm)}]current page.south east);
+    \draw[line width=0.5pt, fptorange]
+        ([shift={(1.15cm,-1.15cm)}]current page.north west)
+        rectangle
+        ([shift={(-1.15cm,1.15cm)}]current page.south east);
+\end{tikzpicture}
+
+\begin{center}
+    \textbf{\large TRƯỜNG CAO ĐẲNG FPT POLYTECHNIC}
+
+    \vspace{0.5cm}
+    \includegraphics[width=0.38\textwidth]{figures/logo_fpoly.png}
+
+    \vspace{0.4cm}
+    {\Large \textbf{DỰ ÁN TỐT NGHIỆP}} \\[4pt]
+    {\large \textbf{CHUYÊN NGÀNH: XỬ LÝ DỮ LIỆU}}
+
+    \vspace{1.6cm}
+    
+    \begin{spacing}{1.0}
+        {\huge \textbf{PHÂN TÍCH HIỆU SUẤT VÀ \\[4pt] DỰ BÁO SẢN LƯỢNG \\[4pt] HỆ THỐNG ĐIỆN MẶT TRỜI}}
+    \end{spacing}
+
+    \vspace{1.8cm}
+    \normalsize
+    \begin{flushleft}
+        \hspace{2cm} \textbf{Nhóm thực hiện:} The Outliers \\[5pt]
+        \hspace{2cm} \textbf{Sinh viên thực hiện:} \\[3pt]
+        \hspace{2cm}
+        \begin{tabular*}{7.5cm}{@{} l @{\extracolsep{\fill}} r @{}}
+            \hspace{0.5cm} 1. Nguyễn Vũ Nhựt   & PS44442 \\
+            \hspace{0.5cm} 2. Nguyễn Văn Sỹ    & PS43671 \\
+            \hspace{0.5cm} 3. Lê Công Toàn    & PS44145 \\
+            \hspace{0.5cm} 4. Nguyễn Xuân Hùng & PS44527 \\
+            \hspace{0.5cm} 5. Ngô Tấn Đạt     & PS44589 \\
+        \end{tabular*} \\[5pt]
+        \hspace{2cm} \textbf{Giảng viên hướng dẫn:} ThS. Văn Công Khanh
+    \end{flushleft}
+    \vfill
+    {\normalsize \textbf{TP. HỒ CHÍ MINH, THÁNG 6 NĂM 2026}}
+    \vspace{0.5cm}
+\end{center}
+\end{titlepage}
+
+
+\pagenumbering{arabic}
+\pagestyle{main}
+
+\chapter}[display]
+  {\normalfont\huge\bfseries}{}{0pt}{\huge}
+\titlespacing*{\chapter}{0pt}{-10pt}{20pt} 
+
+% ======================== HEADER / FOOTER ====================================
+\fancypagestyle{main}{
+    \fancyhf{}
+    \fancyhead[L]{\includegraphics[height=1cm]{figures/logo_fpoly.png}}
+    \fancyhead[R]{\small THE OUTLIERS}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp - Chuyên ngành Xử lý Dữ liệu}
+    \fancyfoot[R]{\small Trang \thepage\ / \pageref{LastPage}}
+    \renewcommand{\headrulewidth}{0.4pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+}
+
+\fancypagestyle{plain}{
+    \fancyhf{}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp - Chuyên ngành Xử lý Dữ liệu}
+    \fancyfoot[R]{\small Trang \thepage\ / \pageref{LastPage}}
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+}
+
+\fancypagestyle{front}{
+    \fancyhf{}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp - Chuyên ngành Xử lý Dữ liệu}
+    \fancyfoot[R]{\small Trang \thepage\ / \pageref{LastPage}}
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+}
+
+
+\begin{document}
+\pagestyle{front}
+
+\begin{titlepage}
+\enlargethispage{1.2cm}
+
+\begin{tikzpicture}[remember picture, overlay]
+    \draw[line width=2pt, fptorange]
+        ([shift={(1cm,-1cm)}]current page.north west)
+        rectangle
+        ([shift={(-1cm,1cm)}]current page.south east);
+    \draw[line width=0.5pt, fptorange]
+        ([shift={(1.15cm,-1.15cm)}]current page.north west)
+        rectangle
+        ([shift={(-1.15cm,1.15cm)}]current page.south east);
+\end{tikzpicture}
+
+\begin{center}
+    \textbf{\large TRƯỜNG CAO ĐẲNG FPT POLYTECHNIC}
+
+    \vspace{0.5cm}
+    \includegraphics[width=0.38\textwidth]{figures/logo_fpoly.png}
+
+    \vspace{0.4cm}
+    {\Large \textbf{DỰ ÁN TỐT NGHIỆP}} \\[4pt]
+    {\large \textbf{CHUYÊN NGÀNH: XỬ LÝ DỮ LIỆU}}
+
+    \vspace{1.6cm}
+    
+    \begin{spacing}{1.0}
+        {\huge \textbf{PHÂN TÍCH HIỆU SUẤT VÀ \\[4pt] DỰ BÁO SẢN LƯỢNG \\[4pt] HỆ THỐNG ĐIỆN MẶT TRỜI}}
+    \end{spacing}
+
+    \vspace{1.8cm}
+    \normalsize
+    \begin{flushleft}
+        \hspace{2cm} \textbf{Nhóm thực hiện:} The Outliers \\[5pt]
+        \hspace{2cm} \textbf{Sinh viên thực hiện:} \\[3pt]
+        \hspace{2cm}
+        \begin{tabular*}{7.5cm}{@{} l @{\extracolsep{\fill}} r @{}}
+            \hspace{0.5cm} 1. Nguyễn Vũ Nhựt   & PS44442 \\
+            \hspace{0.5cm} 2. Nguyễn Văn Sỹ    & PS43671 \\
+            \hspace{0.5cm} 3. Lê Công Toàn    & PS44145 \\
+            \hspace{0.5cm} 4. Nguyễn Xuân Hùng & PS44527 \\
+            \hspace{0.5cm} 5. Ngô Tấn Đạt     & PS44589 \\
+        \end{tabular*} \\[5pt]
+        \hspace{2cm} \textbf{Giảng viên hướng dẫn:} ThS. Văn Công Khanh
+    \end{flushleft}
+    \vfill
+    {\normalsize \textbf{TP. HỒ CHÍ MINH, THÁNG 6 NĂM 2026}}
+    \vspace{0.5cm}
+\end{center}
+\end{titlepage}
+
+
+\pagenumbering{arabic}
+\pagestyle{main}
+
+\chapter}[display]
+  {\normalfont\huge\bfseries}{}{0pt}{\huge}
+\titlespacing*{\chapter}{0pt}{-10pt}{20pt} 
+
+% ======================== HEADER / FOOTER ====================================
+\fancypagestyle{main}{
+    \fancyhf{}
+    \fancyhead[L]{\includegraphics[height=1cm]{figures/logo_fpoly.png}}
+    \fancyhead[R]{\small THE OUTLIERS}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp - Chuyên ngành Xử lý Dữ liệu}
+    \fancyfoot[R]{\small Trang \thepage\ / \pageref{LastPage}}
+    \renewcommand{\headrulewidth}{0.4pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+}
+
+\fancypagestyle{plain}{
+    \fancyhf{}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp - Chuyên ngành Xử lý Dữ liệu}
+    \fancyfoot[R]{\small Trang \thepage\ / \pageref{LastPage}}
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+}
+
+\fancypagestyle{front}{
+    \fancyhf{}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp - Chuyên ngành Xử lý Dữ liệu}
+    \fancyfoot[R]{\small Trang \thepage\ / \pageref{LastPage}}
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+}
+
+
+\begin{document}
+\pagestyle{front}
+
+\begin{titlepage}
+\enlargethispage{1.2cm}
+
+\begin{tikzpicture}[remember picture, overlay]
+    \draw[line width=2pt, fptorange]
+        ([shift={(1cm,-1cm)}]current page.north west)
+        rectangle
+        ([shift={(-1cm,1cm)}]current page.south east);
+    \draw[line width=0.5pt, fptorange]
+        ([shift={(1.15cm,-1.15cm)}]current page.north west)
+        rectangle
+        ([shift={(-1.15cm,1.15cm)}]current page.south east);
+\end{tikzpicture}
+
+\begin{center}
+    \textbf{\large TRƯỜNG CAO ĐẲNG FPT POLYTECHNIC}
+
+    \vspace{0.5cm}
+    \includegraphics[width=0.38\textwidth]{figures/logo_fpoly.png}
+
+    \vspace{0.4cm}
+    {\Large \textbf{DỰ ÁN TỐT NGHIỆP}} \\[4pt]
+    {\large \textbf{CHUYÊN NGÀNH: XỬ LÝ DỮ LIỆU}}
+
+    \vspace{1.6cm}
+    
+    \begin{spacing}{1.0}
+        {\huge \textbf{PHÂN TÍCH HIỆU SUẤT VÀ \\[4pt] DỰ BÁO SẢN LƯỢNG \\[4pt] HỆ THỐNG ĐIỆN MẶT TRỜI}}
+    \end{spacing}
+
+    \vspace{1.8cm}
+    \normalsize
+    \begin{flushleft}
+        \hspace{2cm} \textbf{Nhóm thực hiện:} The Outliers \\[5pt]
+        \hspace{2cm} \textbf{Sinh viên thực hiện:} \\[3pt]
+        \hspace{2cm}
+        \begin{tabular*}{7.5cm}{@{} l @{\extracolsep{\fill}} r @{}}
+            \hspace{0.5cm} 1. Nguyễn Vũ Nhựt   & PS44442 \\
+            \hspace{0.5cm} 2. Nguyễn Văn Sỹ    & PS43671 \\
+            \hspace{0.5cm} 3. Lê Công Toàn    & PS44145 \\
+            \hspace{0.5cm} 4. Nguyễn Xuân Hùng & PS44527 \\
+            \hspace{0.5cm} 5. Ngô Tấn Đạt     & PS44589 \\
+        \end{tabular*} \\[5pt]
+        \hspace{2cm} \textbf{Giảng viên hướng dẫn:} ThS. Văn Công Khanh
+    \end{flushleft}
+    \vfill
+    {\normalsize \textbf{TP. HỒ CHÍ MINH, THÁNG 6 NĂM 2026}}
+    \vspace{0.5cm}
+\end{center}
+\end{titlepage}
+
+
+\pagenumbering{arabic}
+\pagestyle{main}
+
+\chapter}[display]
+  {\normalfont\huge\bfseries}{}{0pt}{\huge}
+\titlespacing*{\chapter}{0pt}{-10pt}{20pt} 
+
+% ======================== HEADER / FOOTER ====================================
+\fancypagestyle{main}{
+    \fancyhf{}
+    \fancyhead[L]{\includegraphics[height=1cm]{figures/logo_fpoly.png}}
+    \fancyhead[R]{\small THE OUTLIERS}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp - Chuyên ngành Xử lý Dữ liệu}
+    \fancyfoot[R]{\small Trang \thepage\ / \pageref{LastPage}}
+    \renewcommand{\headrulewidth}{0.4pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+}
+
+\fancypagestyle{plain}{
+    \fancyhf{}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp - Chuyên ngành Xử lý Dữ liệu}
+    \fancyfoot[R]{\small Trang \thepage\ / \pageref{LastPage}}
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+}
+
+\fancypagestyle{front}{
+    \fancyhf{}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp - Chuyên ngành Xử lý Dữ liệu}
+    \fancyfoot[R]{\small Trang \thepage\ / \pageref{LastPage}}
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+}
+
+
+\begin{document}
+\pagestyle{front}
+
+\begin{titlepage}
+\enlargethispage{1.2cm}
+
+\begin{tikzpicture}[remember picture, overlay]
+    \draw[line width=2pt, fptorange]
+        ([shift={(1cm,-1cm)}]current page.north west)
+        rectangle
+        ([shift={(-1cm,1cm)}]current page.south east);
+    \draw[line width=0.5pt, fptorange]
+        ([shift={(1.15cm,-1.15cm)}]current page.north west)
+        rectangle
+        ([shift={(-1.15cm,1.15cm)}]current page.south east);
+\end{tikzpicture}
+
+\begin{center}
+    \textbf{\large TRƯỜNG CAO ĐẲNG FPT POLYTECHNIC}
+
+    \vspace{0.5cm}
+    \includegraphics[width=0.38\textwidth]{figures/logo_fpoly.png}
+
+    \vspace{0.4cm}
+    {\Large \textbf{DỰ ÁN TỐT NGHIỆP}} \\[4pt]
+    {\large \textbf{CHUYÊN NGÀNH: XỬ LÝ DỮ LIỆU}}
+
+    \vspace{1.6cm}
+    
+    \begin{spacing}{1.0}
+        {\huge \textbf{PHÂN TÍCH HIỆU SUẤT VÀ \\[4pt] DỰ BÁO SẢN LƯỢNG \\[4pt] HỆ THỐNG ĐIỆN MẶT TRỜI}}
+    \end{spacing}
+
+    \vspace{1.8cm}
+    \normalsize
+    \begin{flushleft}
+        \hspace{2cm} \textbf{Nhóm thực hiện:} The Outliers \\[5pt]
+        \hspace{2cm} \textbf{Sinh viên thực hiện:} \\[3pt]
+        \hspace{2cm}
+        \begin{tabular*}{7.5cm}{@{} l @{\extracolsep{\fill}} r @{}}
+            \hspace{0.5cm} 1. Nguyễn Vũ Nhựt   & PS44442 \\
+            \hspace{0.5cm} 2. Nguyễn Văn Sỹ    & PS43671 \\
+            \hspace{0.5cm} 3. Lê Công Toàn    & PS44145 \\
+            \hspace{0.5cm} 4. Nguyễn Xuân Hùng & PS44527 \\
+            \hspace{0.5cm} 5. Ngô Tấn Đạt     & PS44589 \\
+        \end{tabular*} \\[5pt]
+        \hspace{2cm} \textbf{Giảng viên hướng dẫn:} ThS. Văn Công Khanh
+    \end{flushleft}
+    \vfill
+    {\normalsize \textbf{TP. HỒ CHÍ MINH, THÁNG 6 NĂM 2026}}
+    \vspace{0.5cm}
+\end{center}
+\end{titlepage}
+
+
+\pagenumbering{arabic}
+\pagestyle{main}
+
+\chapter}[display]
+  {\normalfont\huge\bfseries}{}{0pt}{\huge}
+\titlespacing*{\chapter}{0pt}{-10pt}{20pt} 
+
+% ======================== HEADER / FOOTER ====================================
+\fancypagestyle{main}{
+    \fancyhf{}
+    \fancyhead[L]{\includegraphics[height=1cm]{figures/logo_fpoly.png}}
+    \fancyhead[R]{\small THE OUTLIERS}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp - Chuyên ngành Xử lý Dữ liệu}
+    \fancyfoot[R]{\small Trang \thepage\ / \pageref{LastPage}}
+    \renewcommand{\headrulewidth}{0.4pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+}
+
+\fancypagestyle{plain}{
+    \fancyhf{}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp - Chuyên ngành Xử lý Dữ liệu}
+    \fancyfoot[R]{\small Trang \thepage\ / \pageref{LastPage}}
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+}
+
+\fancypagestyle{front}{
+    \fancyhf{}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp - Chuyên ngành Xử lý Dữ liệu}
+    \fancyfoot[R]{\small Trang \thepage\ / \pageref{LastPage}}
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+}
+
+
+\begin{document}
+\pagestyle{front}
+
+\begin{titlepage}
+\enlargethispage{1.2cm}
+
+\begin{tikzpicture}[remember picture, overlay]
+    \draw[line width=2pt, fptorange]
+        ([shift={(1cm,-1cm)}]current page.north west)
+        rectangle
+        ([shift={(-1cm,1cm)}]current page.south east);
+    \draw[line width=0.5pt, fptorange]
+        ([shift={(1.15cm,-1.15cm)}]current page.north west)
+        rectangle
+        ([shift={(-1.15cm,1.15cm)}]current page.south east);
+\end{tikzpicture}
+
+\begin{center}
+    \textbf{\large TRƯỜNG CAO ĐẲNG FPT POLYTECHNIC}
+
+    \vspace{0.5cm}
+    \includegraphics[width=0.38\textwidth]{figures/logo_fpoly.png}
+
+    \vspace{0.4cm}
+    {\Large \textbf{DỰ ÁN TỐT NGHIỆP}} \\[4pt]
+    {\large \textbf{CHUYÊN NGÀNH: XỬ LÝ DỮ LIỆU}}
+
+    \vspace{1.6cm}
+    
+    \begin{spacing}{1.0}
+        {\huge \textbf{PHÂN TÍCH HIỆU SUẤT VÀ \\[4pt] DỰ BÁO SẢN LƯỢNG \\[4pt] HỆ THỐNG ĐIỆN MẶT TRỜI}}
+    \end{spacing}
+
+    \vspace{1.8cm}
+    \normalsize
+    \begin{flushleft}
+        \hspace{2cm} \textbf{Nhóm thực hiện:} The Outliers \\[5pt]
+        \hspace{2cm} \textbf{Sinh viên thực hiện:} \\[3pt]
+        \hspace{2cm}
+        \begin{tabular*}{7.5cm}{@{} l @{\extracolsep{\fill}} r @{}}
+            \hspace{0.5cm} 1. Nguyễn Vũ Nhựt   & PS44442 \\
+            \hspace{0.5cm} 2. Nguyễn Văn Sỹ    & PS43671 \\
+            \hspace{0.5cm} 3. Lê Công Toàn    & PS44145 \\
+            \hspace{0.5cm} 4. Nguyễn Xuân Hùng & PS44527 \\
+            \hspace{0.5cm} 5. Ngô Tấn Đạt     & PS44589 \\
+        \end{tabular*} \\[5pt]
+        \hspace{2cm} \textbf{Giảng viên hướng dẫn:} ThS. Văn Công Khanh
+    \end{flushleft}
+    \vfill
+    {\normalsize \textbf{TP. HỒ CHÍ MINH, THÁNG 6 NĂM 2026}}
+    \vspace{0.5cm}
+\end{center}
+\end{titlepage}
+
+
+\pagenumbering{arabic}
+\pagestyle{main}
+
+\chapter}[display]
+  {\normalfont\huge\bfseries}{}{0pt}{\huge}
+\titlespacing*{\chapter}{0pt}{-10pt}{20pt} 
+
+% ======================== HEADER / FOOTER ====================================
+\fancypagestyle{main}{
+    \fancyhf{}
+    \fancyhead[L]{\includegraphics[height=1cm]{figures/logo_fpoly.png}}
+    \fancyhead[R]{\small THE OUTLIERS}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp — Chuyên ngành Xử lý Dữ liệu}
+    \fancyfoot[R]{\small Trang \thepage\ / \pageref{LastPage}}
+    \renewcommand{\headrulewidth}{0.4pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+}
+
+\fancypagestyle{plain}{
+    \fancyhf{}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp — Chuyên ngành Xử lý Dữ liệu}
+    \fancyfoot[R]{\small Trang \thepage\ / \pageref{LastPage}}
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+}
+
+\fancypagestyle{front}{
+    \fancyhf{}
+    \fancyfoot[L]{\small Dự án Tốt nghiệp — Chuyên ngành Xử lý Dữ liệu}
+    \fancyfoot[R]{\small Trang \thepage\ / \pageref{LastPage}}
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+}
+
+
+\begin{document}
+\pagestyle{front}
+
+\begin{titlepage}
+\enlargethispage{1.2cm}
+
+\begin{tikzpicture}[remember picture, overlay]
+    \draw[line width=2pt, fptorange]
+        ([shift={(1cm,-1cm)}]current page.north west)
+        rectangle
+        ([shift={(-1cm,1cm)}]current page.south east);
+    \draw[line width=0.5pt, fptorange]
+        ([shift={(1.15cm,-1.15cm)}]current page.north west)
+        rectangle
+        ([shift={(-1.15cm,1.15cm)}]current page.south east);
+\end{tikzpicture}
+
+\begin{center}
+    \textbf{\large TRƯỜNG CAO ĐẲNG FPT POLYTECHNIC}
+
+    \vspace{0.5cm}
+    \includegraphics[width=0.38\textwidth]{figures/logo_fpoly.png}
+
+    \vspace{0.4cm}
+    {\Large \textbf{DỰ ÁN TỐT NGHIỆP}} \\[4pt]
+    {\large \textbf{CHUYÊN NGÀNH: XỬ LÝ DỮ LIỆU}}
+
+    \vspace{1.6cm}
+    
+    \begin{spacing}{1.0}
+        {\huge \textbf{PHÂN TÍCH HIỆU SUẤT VÀ \\[4pt] DỰ BÁO SẢN LƯỢNG \\[4pt] HỆ THỐNG ĐIỆN MẶT TRỜI}}
+    \end{spacing}
+
+    \vspace{1.8cm}
+    \normalsize
+    \begin{flushleft}
+        \hspace{2cm} \textbf{Nhóm thực hiện:} The Outliers \\[5pt]
+        \hspace{2cm} \textbf{Sinh viên thực hiện:} \\[3pt]
         \hspace{2cm}
         \begin{tabular*}{7.5cm}{@{} l @{\extracolsep{\fill}} r @{}}
             \hspace{0.5cm} 1. Nguyễn Vũ Nhựt   & PS44442 \\
@@ -247,616 +762,358 @@
     \end{flushleft}
     \vfill
     {\normalsize \textbf{TP. HỒ CHÍ MINH, THÁNG 6 NĂM 2026}}
-    \vspace{0.5cm} % Tạo một khoảng đệm nhỏ an toàn với đường viền dưới
+    \vspace{0.5cm}
 \end{center}
 \end{titlepage}
 
+
 \pagenumbering{arabic}
-\pagestyle{front}
-
-% ────────────────────────────────────────────────────────────────────
-%  LỜI CẢM ƠN
-% ────────────────────────────────────────────────────────────────────
-\chapter*{Lời cảm ơn}
-\addcontentsline{toc}{chapter}{Lời cảm ơn}
-\textit{[Nội dung lời cảm ơn của sinh viên đối với giảng viên hướng dẫn, gia đình và nhà trường sẽ được viết tại đây.]}
-
-% ────────────────────────────────────────────────────────────────────
-%  NHẬN XÉT CỦA GIÁO VIÊN
-% ────────────────────────────────────────────────────────────────────
-\chapter*{Nhận xét của Giảng viên Hướng dẫn}
-\addcontentsline{toc}{chapter}{Nhận xét của Giảng viên Hướng dẫn}
-\textit{[Nội dung nhận xét và đánh giá của Giảng viên Hướng dẫn đối với kết quả thực hiện dự án của nhóm.]}
-
-\chapter*{Nhận xét của Giảng viên Phản biện}
-\addcontentsline{toc}{chapter}{Nhận xét của Giảng viên Phản biện}
-\textit{[Nội dung nhận xét và đánh giá của Giảng viên Phản biện tại buổi bảo vệ dự án tốt nghiệp.]}
-
-% ────────────────────────────────────────────────────────────────────
-%  TÓM TẮT DỰ ÁN
-% ────────────────────────────────────────────────────────────────────
-\chapter*{Tóm tắt Dự án}
-\addcontentsline{toc}{chapter}{Tóm tắt Dự án}
-Dự án tốt nghiệp ``Phân tích và Xử lý Bất thường trong Dữ liệu Sản lượng Năng lượng Mặt trời'' nhằm mục đích xây dựng một hệ thống phân tích dữ liệu toàn diện để phát hiện, xử lý và dự báo các bất thường trong sản lượng phát điện của các hệ thống quang điện (PV). 
-Bằng cách thu thập và tích hợp dữ liệu từ 42 trạm phát điện tại Úc cùng dữ liệu khí tượng viễn thám từ Open-Meteo, nhóm đã thiết kế một kho dữ liệu đa chiều (Data Warehouse) trên nền tảng Supabase theo mô hình Galaxy Schema. Quy trình ETL được tự động hóa để làm sạch dữ liệu, xử lý các hiện tượng khuyết thiếu, nhiễu ban đêm, và sai lệch do cảm biến. 
-
-Qua quá trình Phân tích Khám phá Dữ liệu (EDA), nhóm đã rút ra các insight quan trọng về sự ảnh hưởng của nhiệt độ, mức độ mây che phủ đến hiệu suất PV. Ngoài ra, dự án cũng áp dụng các mô hình học máy chuỗi thời gian như ARIMA và Prophet để thiết lập đường cơ sở (Baseline) dự báo sản lượng, kết hợp hiển thị trực quan thông qua Dashboard Tableau. Hệ thống không chỉ cung cấp cái nhìn toàn cảnh về tình trạng hoạt động của các trạm điện mặt trời, mà còn hỗ trợ ban quản lý đưa ra quyết định kịp thời nhằm tối ưu hóa hiệu suất và giảm thiểu rủi ro vận hành.
-
-% ────────────────────────────────────────────────────────────────────
-%  MỤC LỤC & DANH MỤC
-% ────────────────────────────────────────────────────────────────────
-\tableofcontents
-\listoffigures
-\listoftables
-
-\chapter*{Danh mục Từ viết tắt}
-\addcontentsline{toc}{chapter}{Danh mục Từ viết tắt}
-\vspace*{-15pt}
-
-\noindent\hspace*{-6pt}%
-    \begin{tabularx}{\textwidth}{@{} l X @{}}
-    \toprule
-    \textbf{Ký hiệu/Từ viết tắt} & \textbf{Ý nghĩa đầy đủ} \\
-    \midrule
-    API     & Application Programming Interface (Giao diện lập trình ứng dụng) \\
-    ARIMA   & AutoRegressive Integrated Moving Average \\
-    AWS     & Amazon Web Services \\
-    BI      & Business Intelligence (Phân tích thông minh doanh nghiệp) \\
-    CF      & Capacity Factor (Hệ số công suất) \\
-    CSDL    & Cơ sở dữ liệu \\
-    CT      & Current Transformer (Cảm biến dòng điện) \\
-    DWH     & Data Warehouse (Kho dữ liệu) \\
-    EDA     & Exploratory Data Analysis (Phân tích khám phá dữ liệu) \\
-    ETL     & Extract, Transform, Load (Trích xuất, Biến đổi, Nạp) \\
-    FK      & Foreign Key (Khóa ngoại) \\
-    GCP     & Google Cloud Platform \\
-    IoT     & Internet of Things (Internet vạn vật) \\
-    IQR     & Interquartile Range (Khoảng tứ phân vị) \\
-    kWp     & Kilowatt-peak (Công suất đỉnh cực đại) \\
-    LSTM    & Long Short-Term Memory \\
-    PK      & Primary Key (Khóa chính) \\
-    PR      & Performance Ratio (Hệ số hiệu suất) \\
-    PV      & Photovoltaic (Quang điện - Năng lượng mặt trời) \\
-    UI/UX   & User Interface / User Experience (Giao diện / Trải nghiệm người dùng) \\
-    WMO     & World Meteorological Organization (Tổ chức Khí tượng Thế giới) \\
-    XGBoost & Extreme Gradient Boosting \\
-    \bottomrule
-    \end{tabularx}
-
-\newpage
 \pagestyle{main}
 
-
-
 % ====================================================================
-%  CHƯƠNG 3: THU THẬP DỮ LIỆU VÀ THIẾT KẾ KHO DỮ LIỆU
+%  CHƯƠNG 3: QUY TRÌNH ETL VÀ MÔ HÌNH HÓA DỮ LIỆU
 % ====================================================================
-\chapter{Thu thập Dữ liệu và Thiết kế Kiến trúc Kho dữ liệu}
-\label{chap:thuthap_kho}
+\chapter{Thu thập, Tiền xử lý và Mô hình hóa Kho Dữ liệu}
+\label{chap:etl_modeling}
 
-\section{Kiến trúc Tổng thể Hệ thống Dữ liệu (Data Architecture Overview)}
-\label{sec:data_architecture}
+\section{Tổng quan Kiến trúc Pipeline Xử lý Dữ liệu}
+\label{sec:pipeline_overview}
 
-Nhằm đáp ứng đồng thời hai mục tiêu cốt lõi của dự án là (1) Trực quan hóa dữ liệu phục vụ quản trị (Business Intelligence) và (2) Xây dựng mô hình học máy dự báo (Machine Learning), hệ thống dữ liệu của dự án được thiết kế theo kiến trúc đa tầng (Multi-tier Architecture). Luồng dữ liệu (Data Flow) di chuyển qua 4 lớp chính như sau:
+Để đảm bảo tính tự động hóa, độ chính xác cao và khả năng tái sử dụng khi có dữ liệu phát sinh mới từ các trạm pin, dự án không xử lý dữ liệu thủ công trên Excel mà thiết kế một quy trình xử lý dữ liệu tự động hoàn chỉnh bằng ngôn ngữ Python. Toàn bộ luồng thực thi từ khâu tải dữ liệu, tiền xử lý, điền khuyết chuỗi thời gian, lọc dữ liệu ngoại lai, nạp vào kho dữ liệu Supabase DWH đến việc xây dựng các siêu thị dữ liệu (Data Marts) được điều phối thông suốt thông qua kiến trúc mô-đun độc lập (Hình~\ref{fig:code_execution_pipeline}).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{figures/code_execution_pipeline.png}
+    \caption{Sơ đồ luồng thực thi quy trình xử lý dữ liệu tự động (Code Execution Pipeline).}
+    \label{fig:code_execution_pipeline}
+\end{figure}
+
+Toàn bộ quy trình được tổ chức thành các mô-đun chức năng độc lập:
+\begin{enumerate}[label=\arabic*., leftmargin=*]
+    \item \textbf{\texttt{config.py}:} Khởi tạo môi trường, cấu hình thông tin kết nối CSDL Supabase, thiết lập hệ thống ghi vết nhật ký (ghi vết nhật ký hệ thống) và định nghĩa các tham số nghiệp vụ (ngưỡng cắt trần công suất danh định $P_{\text{stc}}$, ngưỡng bức xạ ban đêm $GHI \le 25\,\text{W/m}^2$, đơn giá điện FiT).
+    \item \textbf{\texttt{eda.py}:} Quét toàn diện tập dữ liệu thô ($2.731.946$ dòng), kiểm tra dữ liệu thiếu, trùng lặp và phát hiện các điểm đứt gãy thời gian.
+    \item \textbf{\texttt{cleaner.py}:} Thực hiện làm sạch dữ liệu, xử lý đứt gãy thời gian bằng Resampling 15 phút, áp dụng 5 rào chắn vật lý và mô hình phân lớp lai GMM--IF để lọc sạch nhiễu cảm biến, gắn 6 mã lý do kỹ thuật và trích xuất đặc trưng nghiệp vụ (trích xuất đặc trưng nghiệp vụ).
+    \item \textbf{\texttt{splitter.py}:} Tách bảng phẳng khổng lồ thành mô hình Lược đồ Thiên hà (Galaxy Schema) gồm 2 bảng Fact và 4 bảng Dimension.
+    \item \textbf{\texttt{aggregate.py}:} Tạo các bảng tổng hợp (Siêu thị dữ liệu chuyên đề) tính toán trước các chỉ số KPI theo ngày, tháng, trạm phát nhằm tối ưu hóa hiệu năng tải biểu đồ cho Tableau Dashboard.
+    \item \textbf{\texttt{main.py}:} Tệp thực thi trung tâm, tự động hóa toàn bộ luồng ETL từ đầu đến cuối chỉ với một dòng lệnh duy nhất.
+\end{enumerate}
+
+\section{Đánh giá Chất lượng và Khám phá Dữ liệu (EDA)}
+\label{sec:eda_quality}
+
+Trước khi can thiệp vào dữ liệu, hệ thống thực thi module \texttt{eda.py} để kiểm định chất lượng $2.731.946$ bản ghi sản lượng nhằm trả lời câu hỏi cốt lõi: \textit{``Dữ liệu có đáng tin cậy để đưa vào phân tích kinh doanh hay không?''}.
+
+\subsection{Kiểm tra Dữ liệu Thiếu, Trùng lặp và Đứt gãy Chuỗi Thời gian (điểm gián đoạn thời gian)}
+Thông qua các thuật toán kiểm định chất lượng dữ liệu bằng Pandas, nhóm đã phát hiện các vấn đề kỹ thuật quan trọng:
+\begin{itemize}[noitemsep]
+    \item \textbf{Dữ liệu trùng lặp:} Phát hiện 38 cặp bản ghi trùng lặp mã trạm và mốc thời gian, được tự động loại bỏ để giữ lại bản ghi mới nhất (\texttt{keep='last'}).
+    \item \textbf{Lỗ hổng Đứt gãy Thời gian (561 điểm gián đoạn thời gian):} Phát hiện 561 điểm nhảy cóc thời gian (chiếm $0{,}0247\%$ tổng dữ liệu) do lỗi đường truyền viễn thông của trạm phát về trung tâm. Đây là phát hiện quan trọng, vì nếu không xử lý liên tục chuỗi thời gian, các phép tính toán trung bình trượt và biến động ngày/đêm sẽ bị sai lệch hoàn toàn.
+    \item \textbf{Nhiễu Cảm biến Ban đêm (Dòng rò ban đêm):} Hơn 18.000 bản ghi ghi nhận sản lượng dương ($E > 0$) vào các khung giờ từ 22h đêm đến 4h sáng khi bức xạ triệt tiêu hoàn toàn ($GHI = 0$).
+\end{itemize}
+
+\section{Làm sạch và Chuẩn hóa Dữ liệu (Data Cleaning)}
+\label{sec:data_cleaning}
+
+\subsection{Chuẩn hóa Cấu trúc Cột và Xử lý Lỗi Logic}
+Tệp dữ liệu gốc chứa các tên cột dạng \texttt{PascalCase} và khoảng trắng (như \texttt{SiteKey}, \texttt{SolarGeneration}, \texttt{CampusKey}). Module \texttt{cleaner.py} tự động chuẩn hóa toàn bộ về định dạng chuẩn \texttt{snake\_case} và ép đúng kiểu dữ liệu số thực:
+
+\begin{lstlisting}[language=Python, caption={Đoạn mã Python chuẩn hóa cấu trúc cột sang snake\_case}, label={lst:clean_columns}]
+# cleaner.py — Chuan hoa ten cot sang snake_case va loai bo ky tu thua
+df.columns = (
+    df.columns
+    .str.strip()
+    .str.lower()
+    .str.replace(" ", "_", regex=False)
+    .str.replace(".", "_", regex=False)
+)
+# Ep kieu du lieu thoi gian va so thuc
+df["timestamp"] = pd.to_datetime(df["timestamp"])
+val_num = pd.to_numeric(df["energy_generated_kwh"], errors="coerce")
+    df["energy_generated_kwh"] = val_num.fillna(0.0)
+\end{lstlisting}
+
+\subsection{Xử lý Dữ liệu Ngoại lai (Outliers) và Gán Mã Lý do Kỹ thuật}
+Thay vì xóa bỏ dữ liệu ngoại lai một cách cơ học (dễ làm mất dấu vết sự cố hỏng hóc thiết bị thực tế), dự án kết hợp 5 quy tắc rào chắn vật lý và mô hình phân lớp lai GMM--IF để nhận diện chính xác $33.280$ dòng dị thường ($1{,}22\%$), đồng thời gán 6 mã lý do kỹ thuật chuẩn hóa (\texttt{gmm\_if\_outlier\_reason}):
+
+\begin{table}[H]
+\centering
+\small
+\renewcommand{\arraystretch}{1.25}
+\begin{tabularx}{\textwidth}{@{} l l X @{}}
+\toprule
+\textbf{Mã Lý do Dị thường} & \textbf{Tỷ lệ (\%)} & \textbf{Ý nghĩa Nghiệp vụ \& Hướng Xử lý} \\
+\midrule
+\texttt{GMM\_IF\_CONSENSUS} & 0.45\% & Dị thường đa chiều được GMM và IF đồng thuận xác nhận. \\
+\texttt{PHYSICAL\_OVER\_CAPACITY} & 0.08\% & Vượt trần công suất danh định ($E > 1{,}25 \cdot P_{\text{stc}} \cdot 0{,}25\text{h}$) do lỗi cảm biến đo. \\
+\texttt{PHYSICAL\_HIGH\_ENERGY\_NO\_SUN} & 0.42\% & Phát điện ban đêm ($GHI \le 25\,\text{W/m}^2, E > 0$) $\rightarrow$ Trôi mốc 0 cảm biến CT. \\
+\texttt{PHYSICAL\_HIGH\_ENERGY\_LOW\_RAD} & 0.12\% & Bức xạ yếu nhưng sản lượng cao bất thường $\rightarrow$ Xung điện áp lưới. \\
+\texttt{PHYSICAL\_LOW\_ENERGY\_STRONG\_SUN} & 0.09\% & Nắng gắt ($GHI \ge 700\,\text{W/m}^2$) mất phát $\rightarrow$ Biến tần ngắt mạch/quá nhiệt. \\
+\texttt{PHYSICAL\_DISTRIBUTION\_JUMP} & 0.06\% & Bước nhảy phân bố sản lượng cục bộ đột ngột $\rightarrow$ Lỗi truyền thông. \\
+\bottomrule
+\end{tabularx}
+\caption{Bảng phân loại 6 mã lý do dị thường phục vụ công tác bảo trì O\&M.}
+\label{tab:outlier_reasons}
+\end{table}
+
+\section{Mô hình hóa Lược đồ Thiên hà (Galaxy Schema)}
+\label{sec:galaxy_modeling}
+
+Dữ liệu sau khi làm sạch và gắn nhãn dị thường được module \texttt{splitter.py} phân tách và chuẩn hóa thành mô hình \textbf{Lược đồ Thiên hà (Galaxy Schema)} trên cơ sở dữ liệu Supabase PostgreSQL. Khác với kiến trúc Star Schema đơn lẻ chỉ có 1 bảng Fact, Galaxy Schema của dự án kết hợp 2 bảng Fact độc lập kết nối tới 4 bảng Dimension dùng chung, giải quyết trọn vẹn sự khác biệt về độ mịn thời gian giữa dữ liệu sản lượng quang điện (chu kỳ 15 phút) và dữ liệu khí tượng (chu kỳ 1 giờ).
+
+\subsection{Các Sơ đồ Thiết kế Mô hình Dữ liệu Đa Chiều}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.88\textwidth]{figures/conceptual_model.png}
+\caption{Sơ đồ mô hình khái niệm (Conceptual Model) thể hiện mối quan hệ giữa các thực thể hệ thống điện mặt trời.}
+\label{fig:conceptual_model}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.92\textwidth]{figures/logical_model.png}
+\caption{Sơ đồ mô hình logic (Logical Model) theo kiến trúc Galaxy Schema kết nối 2 bảng Fact và 4 bảng Dimension dùng chung.}
+\label{fig:logical_model}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/physical_model.png}
+\caption{Sơ đồ mô hình vật lý (Physical Model) triển khai thực tế trên PostgreSQL Supabase.}
+\label{fig:physical_model}
+\end{figure}
+
+\subsection{Cấu trúc Chi tiết và Phân quyền Các Bảng trong Kho Dữ liệu}
+
+Lược đồ Kho Dữ liệu bao gồm các bảng được tối ưu hóa chỉ mục (Indexes) và ràng buộc toàn vẹn khóa ngoại (Foreign Keys):
+
+\begin{enumerate}[label=\arabic*., leftmargin=*]
+    \item \textbf{\texttt{dim\_solar\_plant} (Bảng Chiều Trạm Phát):} Lưu trữ $42$ trạm phát quang điện áp mái tại 5 khuôn viên trường. Các thuộc tính bao gồm: Mã trạm (\texttt{site\_id}), Tên trạm (\texttt{site\_name}), Khuôn viên (\texttt{campus\_name}), Công suất danh định STC (\texttt{capacity\_kw}), Số lượng biến tần (\texttt{num\_inverters}), Chủng loại biến tần (\texttt{inverter\_model}), Số lượng tấm pin (\texttt{number\_of\_panels}), và Tọa độ địa lý (Latitude, Longitude).
+    
+    \item \textbf{\texttt{dim\_date} (Bảng Chiều Ngày):} Chứa 851 ngày lịch biểu trong giai đoạn nghiên cứu 28 tháng (2020--2022). Bao gồm các thuộc tính: Ngày đầy đủ (\texttt{full\_date}), Thứ trong tuần (\texttt{day\_of\_week}), Tháng (\texttt{month}), Quý (\texttt{quarter}), Năm (\texttt{year}), Cờ phân biệt ngày nghỉ cuối tuần (\texttt{is\_weekend}), và Cờ phân loại mùa khí hậu bang Victoria (\texttt{season}).
+    
+    \item \textbf{\texttt{dim\_time} (Bảng Chiều Giờ):} Đại diện cho 96 mốc thời gian 15 phút vi mô trong 24 giờ của một ngày đêm. Thuộc tính bao gồm: Khóa thời gian (\texttt{time\_key}), Giờ (\texttt{hour}), Phút (\texttt{minute}), Chu kỳ 15 phút trong ngày (\texttt{minute\_of\_day} từ $0$ đến $1425$), và Cờ phân định ban ngày có bức xạ mặt trời (\texttt{is\_daytime}).
+    
+    \item \textbf{\texttt{dim\_weather\_type} (Bảng Chiều Loại Thời Tiết):} Bảng ánh xạ các mã điều kiện thời tiết chuẩn WMO Weather Code (WMO-No. 8)~\cite{wmo2021guide} sang tên định danh tiếng Anh và tiếng Việt, mô tả mức độ mây che phủ, sương mù, mưa rào hoặc dông sét.
+    
+    \item \textbf{\texttt{fact\_solar\_energy\_gen} (Bảng Sự kiện Sản lượng Điện):} Bảng sự kiện kích thước lớn nhất chứa $2.731.946$ bản ghi sản lượng 15 phút. Các chỉ số đo lường chính bao gồm: Sản lượng phát điện thực tế (\texttt{energy\_generated\_kwh}), Công suất tức thời (\texttt{power\_kw}), Sản lượng lý thuyết theo bức xạ (\texttt{theoretical\_energy\_kwh}), Hệ số hiệu suất (\texttt{pr\_pct}), Cờ cảnh báo dị thường (\texttt{gmm\_if\_outlier\_flag}), và Mã định danh 6 lý do dị thường kỹ thuật (\texttt{gmm\_if\_outlier\_reason}).
+    
+    \item \textbf{\texttt{fact\_weather} (Bảng Sự kiện Khí tượng Khí hậu):} Lưu trữ các thông số thời tiết chu kỳ 1 giờ trích xuất từ API ERA5 Open-Meteo~\cite{openmeteo2023}. Bao gồm: Bức xạ tổng cộng mặt phẳng ngang (\texttt{shortwave\_radiation} -- GHI), Bức xạ trực xạ (\texttt{direct\_normal\_irradiance} -- DNI), Bức xạ tán xạ (\texttt{diffuse\_radiation} -- DHI), Nhiệt độ không khí ở độ cao 2m (\texttt{temperature\_2m}), Độ ẩm tương đối (\texttt{relative\_humidity\_2m}), Vận tốc gió (\texttt{wind\_speed\_10m}), và Tỷ lệ mây che phủ tổng thể (\texttt{cloud\_cover}).
+\end{enumerate}
+
+\subsection{Chiến lược Đánh Chỉ mục và Phân vùng Bảng (Indexing \& Partitioning)}
+
+Để tối ưu hóa hiệu năng truy vấn phân tích tổng hợp (OLAP) và kết nối trực tiếp với Tableau Desktop:
+\begin{itemize}[noitemsep]
+    \item \textbf{Composite Indexes:} Tạo các chỉ mục phức hợp \texttt{idx\_fact\_energy\_site\_date} trên cặp khóa \texttt{(site\_id, date\_key)} và \texttt{(time\_key)}, giúp tăng tốc độ lọc chuỗi thời gian lên gấp $12$ lần.
+    \item \textbf{Partitioning theo Năm/Tháng:} Bảng \texttt{fact\_solar\_energy\_gen} được cấu hình phân vùng vật lý (Table Partitioning) theo từng năm (2020, 2021, 2022), ngăn ngừa hiện tượng quét toàn bộ bảng (Full Table Scan) khi người dùng Tableau chỉ lọc dữ liệu trong một quý.
+\end{itemize}
+
+\section{Tạo Bảng Tổng hợp và Siêu thị Dữ liệu (Siêu thị dữ liệu chuyên đề)}
+\label{sec:data_marts}
+
+Để đảm bảo các Dashboard trên Tableau tải tức thời (dưới 1 giây) khi các nhà quản lý thực hiện lọc dữ liệu, module \texttt{aggregate.py} thực hiện tính toán trước (Pre-calculated Aggregation) các bảng Data Marts chuyên biệt:
+
+\begin{itemize}[noitemsep]
+    \item \textbf{\texttt{agg\_daily\_plant\_performance.csv}:} Tổng hợp sản lượng hàng ngày, chỉ số PR trung bình, Specific Yield và tổn thất ước tính của 42 trạm phát.
+    \item \textbf{\texttt{agg\_monthly\_campus\_summary.csv}:} Tổng hợp sản lượng theo tháng của 4 khuôn viên trường phục vụ báo cáo xu hướng tăng trưởng YoY.
+    \item \textbf{\texttt{agg\_hourly\_temperature\_efficiency.csv}:} Ma trận tương quan giữa các dải nhiệt độ, bức xạ và hiệu suất chuyển đổi, làm nổi bật điểm suy giảm hiệu suất do nhiệt độ.
+    \item \textbf{\texttt{agg\_anomaly\_diagnostic\_summary.csv}:} Thống kê số lượng và tỷ lệ của 6 mã lý do dị thường theo từng trạm phát phục vụ phân tích bảo trì O\&M.
+\end{itemize}
+
+\section{Kiểm tra Tính Toàn vẹn và Bảo mật Dữ liệu}
+\label{sec:integrity_security}
 
 \begin{enumerate}[noitemsep]
-    \item \textbf{Raw Data (Dữ liệu thô):} Dữ liệu lịch sử dạng file \texttt{.csv} từ các trạm vật lý và dữ liệu khí tượng viễn thám trích xuất qua Open-Meteo API.
-    \item \textbf{Staging Area (Vùng dữ liệu tạm):} Nơi tiếp nhận và lưu trữ nguyên bản (1:1) dữ liệu thô vào hệ quản trị CSDL. Lớp này đóng vai trò như một bộ đệm (buffer) để giảm tải cho các nguồn cấp dữ liệu và chuẩn bị cho quá trình chuyển đổi.
-    \item \textbf{Data Warehouse (Kho dữ liệu trung tâm):} Tổ chức theo mô hình \textit{Fact Constellation Schema} (Lược đồ Thiên hà), lưu trữ dữ liệu đã qua làm sạch, chuẩn hóa (Cleansing \& Transformation). Đây là Single Source of Truth của toàn bộ hệ thống.
-    \item \textbf{Data Marts (Siêu thị dữ liệu):} Từ Data Warehouse, dữ liệu được phân nhánh thành hai Data Mart độc lập, được thiết kế đặc thù (Tailored-design) để tối ưu hóa hiệu năng truy vấn cho công cụ BI (Tableau) và định dạng chuẩn (Wide-table) cho việc huấn luyện mô hình ML.
+    \item \textbf{Kiểm tra Khóa ngoại (Anti-Join Check):} Thực hiện truy vấn Anti-Join giữa bảng Fact và Dimension, đảm bảo $100\%$ bản ghi có khóa tham chiếu hợp lệ (0 bản ghi mồ côi).
+    \item \textbf{Xác thực Toàn vẹn Dữ liệu (Fingerprint Checksum MD5):} Hàm \texttt{fingerprint\_supabase()} đối chiếu mã băm MD5, tổng sản lượng ($74.982.150{,}45\,\text{kWh}$) và tổng số $2.731.946$ dòng dữ liệu trước và sau quá trình nạp để ngăn ngừa mất mát dữ liệu.
+    \item \textbf{Bảo mật Phân quyền (Row-Level Security -- RLS):} Phân quyền truy cập an toàn trên Supabase Cloud, cấp quyền chỉ đọc (Read-only) cho Dashboard Tableau và tài khoản quản trị cho kỹ sư dữ liệu.
 \end{enumerate}
 
-\subsection{Tiếp cận Top-Down (Inmon Approach)}
-\label{subsec:top_down_rationale}
+\begin{thebibliography}{99}
+\addcontentsline{toc}{chapter}{Tài liệu Tham khảo}
 
-Hệ thống lưu trữ và xử lý dữ liệu của dự án được xây dựng dựa trên phương pháp tiếp cận \textit{Top-Down} (từ trên xuống) theo triết lý thiết kế kho dữ liệu của Bill Inmon. Luồng dữ liệu di chuyển một chiều từ các nguồn thô, tập trung tại một Kho dữ liệu trung tâm duy nhất (Single Source of Truth), sau đó mới phân rã thành các Siêu thị dữ liệu (Data Marts) chuyên biệt. 
+% --- I. Nguồn Dữ liệu Dự án và Công trình Nghiên cứu Gốc ---
+\bibitem{wimalaratne2022unisolar}
+S.~Wimalaratne, D.~Haputhanthri, S.~Kahawala, G.~Gamage, D.~Alahakoon, và A.~Jennings,
+\newblock ``UNISOLAR: An Open Dataset of Photovoltaic Solar Energy Generation in a Large Multi-Campus University Setting,''
+\newblock \textit{15th International Conference on Human System Interaction (HSI)}, IEEE, 2022.
+\newblock DOI: \href{https://doi.org/10.1109/HSI55341.2022.9869474}{10.1109/HSI55341.2022.9869474}.
 
-Việc lựa chọn kiến trúc \textit{Top-Down} thay vì \textit{Bottom-Up} (gôm các Data Mart độc lập lại thành DWH) mang lại ba lợi ích chiến lược cho hệ thống dự báo điện mặt trời của dự án:
+\bibitem{openmeteo2023}
+Open-Meteo,
+\newblock ``Historical Weather API \& ERA5/ERA5-Land Reanalysis Climate Dataset,''
+\newblock \textit{Open-Meteo Documentation}, 2023. [Online]. Available: \url{https://open-meteo.com/}.
 
-\begin{itemize}
-    \item \textbf{Đảm bảo tính nhất quán tối đa (Data Consistency):} Vì dữ liệu sản lượng và khí tượng được làm sạch, xử lý Outliers và đồng bộ hóa ngay tại tầng Data Warehouse trung tâm, hai nhánh Data Mart (BI và ML) phía sau sẽ luôn kế thừa cùng một tập dữ liệu chuẩn. Điều này triệt tiêu hoàn toàn hiện tượng lệch pha số liệu (ví dụ: sản lượng tổng hiển thị trên Dashboard Tableau khác với tổng sản lượng mà mô hình Machine Learning nhận được để huấn luyện).
-    \item \textbf{Khả năng mở rộng kiến trúc (Scalability):} Trong tương lai, nếu doanh nghiệp muốn mở rộng thêm các mục đích sử dụng dữ liệu mới (ví dụ: nhánh Data Mart dành cho bộ phận Tài chính tính toán doanh thu bán điện FiT, hoặc bộ phận Kiểm toán Carbon), kỹ sư dữ liệu chỉ cần tạo thêm các phân nhánh (Views/Materialized Views) từ Data Warehouse trung tâm mà không cần thiết kế lại luồng ETL/ELT gốc từ các trạm pin.
-    \item \textbf{Tối ưu hóa quản trị dữ liệu (Centralized Data Governance):} Việc kiểm soát chất lượng dữ liệu, phân quyền truy cập, và định nghĩa các thuật ngữ nghiệp vụ (Metadata) được thực hiện tập trung tại Supabase DWH, giúp giảm thiểu chi phí vận hành và bảo trì hệ thống.
-\end{itemize}
+\bibitem{iea2023pvps}
+IEA-PVPS Task 13,
+\newblock ``Performance, Operation and Reliability of Photovoltaic Systems: Review of Failures and Degradation Mechanisms,''
+\newblock \textit{International Energy Agency Technical Report}, IEA-PVPS T13-15:2023, 2023.
 
-\section{Phương pháp thu thập dữ liệu thô (Extract)}
-\label{sec:datannguon}
+% --- II. Thuật toán Phát hiện Bất thường và Xử lý Dữ liệu ---
+\bibitem{li2025gmmif}
+X.~Li, G.~Du, Y.~Li, Z.~Ma, L.~Liu, M.~Jiang, F.~Liu, và T.~Mu,
+\newblock ``Outlier Detection of Photovoltaic Power Generation System Data Based on GMM-IF Algorithm,''
+\newblock \textit{IEEE Access}, vol.~13, pp.~108823--108837, 2025.
+\newblock DOI: \href{https://doi.org/10.1109/ACCESS.2025.3581641}{10.1109/ACCESS.2025.3581641}.
 
-Dự án thu thập dữ liệu từ hai nguồn chính:
-\begin{enumerate}[noitemsep]
-    \item \textbf{Dữ liệu giám sát trạm phát điện thực tế:} Ghi nhận sản lượng điện của 42 trạm tại Úc dưới dạng tệp tin CSV cục bộ và các thông tin cấu hình trạm.
-    \item \textbf{Dữ liệu khí tượng viễn thám:} Thu thập từ Open-Meteo API. Quy trình gọi API sử dụng tọa độ địa lý (vĩ độ, kinh độ) của các trạm để tải về chuỗi thời gian khí tượng theo giờ bao gồm bức xạ sóng ngắn, nhiệt độ, lượng mưa và mây che phủ.
-\end{enumerate}
+\bibitem{liu2008isolation}
+F.~T.~Liu, K.~M.~Ting, và Z.-H.~Zhou,
+\newblock ``Isolation Forest,''
+\newblock trong \textit{Proceedings of the IEEE International Conference on Data Mining (ICDM)}, 2008, pp.~413--422.
 
-\subsection{Trích xuất dữ liệu khí tượng qua Open-Meteo API}
-Dữ liệu khí tượng viễn thám được thu thập tự động thông qua Open-Meteo Archive API. Quy trình sử dụng thư viện \texttt{requests} và \texttt{pandas} để đọc tọa độ (vĩ độ, kinh độ) của 42 trạm phát từ tệp danh mục \texttt{Solar\_Site\_Details.csv}. Các biến số quan trọng như bức xạ sóng ngắn (\texttt{shortwave\_radiation}), nhiệt độ (\texttt{temperature\_2m}), mã thời tiết (\texttt{weather\_code}), và trạng thái ngày/đêm (\texttt{is\_day}) được trích xuất theo chu kỳ giờ.
+\bibitem{bishop2006pattern}
+C.~M.~Bishop,
+\newblock \textit{Pattern Recognition and Machine Learning},
+\newblock Springer, New York, 2006.
 
-Để đảm bảo tính ổn định khi gọi API hàng loạt, mã nguồn được tích hợp cơ chế tự động xử lý lỗi vượt quá giới hạn truy cập (Rate Limit - HTTP 429). Khi máy chủ trả về mã 429, hệ thống sẽ tạm dừng (\texttt{time.sleep}) 60 giây trước khi thử lại, giúp luồng trích xuất không bị gián đoạn.
+\bibitem{tukey1977eda}
+J.~W.~Tukey,
+\newblock \textit{Exploratory Data Analysis},
+\newblock Addison-Wesley, Reading, MA, 1977.
 
-\begin{lstlisting}[language=Python, caption={Mã nguồn Python trích xuất dữ liệu khí tượng từ Open-Meteo API}, label={lst:api_weather}]
-import requests
-import pandas as pd
-import time
+\bibitem{chandola2009anomaly}
+V.~Chandola, A.~Banerjee, và V.~Kumar,
+\newblock ``Anomaly Detection: A Survey,''
+\newblock \textit{ACM Computing Surveys}, vol.~41, no.~3, pp.~1--58, 2009.
 
-# 1. Khoi tao cau hinh tham so API
-START_DATE = "2023-01-01"
-END_DATE = "2023-12-31"
-FINAL_OUTPUT_FILE = "open_meteo_weather_raw_2023.csv"
+\bibitem{kim2019missing}
+T.~Kim, W.~Ko, và J.~Kim,
+\newblock ``Analysis and Impact Evaluation of Missing Data Imputation in Day-ahead PV Generation Forecasting,''
+\newblock \textit{Applied Sciences}, vol.~9, no.~1, p.~204, 2019.
+\newblock DOI: \href{https://doi.org/10.3390/app9010204}{10.3390/app9010204}.
 
-HOURLY_COLUMNS = [
-    "shortwave_radiation", "direct_radiation", 
-    "diffuse_radiation", "temperature_2m", 
-    "weather_code", "is_day", "cloud_cover",
-    "wind_speed_10m", "precipitation", "sunshine_duration"
-]
+% --- III. Mô hình Dự báo Chuỗi Thời gian và Học máy ---
+\bibitem{roy2025hourly}
+M.~Roy, V.~Pyltsov, và Y.~Hu,
+\newblock ``IISE PG\&E Energy Analytics Challenge 2025: Hourly-Binned Regression Models Beat Transformers in Load Forecasting,''
+\newblock Columbia University, arXiv:2505.11390, 2025. [Online]. Available: \url{https://arxiv.org/abs/2505.11390}.
 
-# Doc toa do tu danh muc tram
-site_df = pd.read_csv('/content/Solar_Site_Details(1).csv')
-url = "https://archive-api.open-meteo.com/v1/archive"
-all_data_frames = []
+\bibitem{haurwitz1945}
+B.~Haurwitz,
+\newblock ``Insolation in Relation to Cloudiness and Cloud Density,''
+\newblock \textit{Journal of Meteorology}, vol.~2, no.~3, pp.~154--166, 1945.
 
-# 2. Vong lap lay du lieu va xu ly Rate Limit
-for index, row in site_df.iterrows():
-    params = {
-        "latitude": row['lat'],
-        "longitude": row['Lon'],
-        "start_date": START_DATE,
-        "end_date": END_DATE,
-        "hourly": ",".join(HOURLY_COLUMNS),
-        "timezone": "Asia/Ho_Chi_Minh"
-    }
-    
-    success = False
-    while not success:
-        try:
-            response = requests.get(
-            url, 
-            params=params, 
-            timeout=120)
-            
-            if response.status_code == 200:
-                data = response.json()
-                if "hourly" in data:
-                    df_site = pd.DataFrame(
-                    {"timestamp": data["hourly"]["time"]}
-                    )
-                    for col in HOURLY_COLUMNS:
-                        df_site[col] = data["hourly"].get(col)
-                    
-                    df_site["SiteKey"] = row.get('SiteKey', index)
-                    all_data_frames.append(df_site)
-                    success = True
-            elif response.status_code == 429:
-                print("Rate limited. Waiting 60s...")
-                time.sleep(60)
-            else:
-                success = True # Bo qua neu loi dinh dang khac
-        except Exception as e:
-            time.sleep(5)
-            success = True
+\bibitem{bailey2024}
+M.~D.~Bailey và cộng sự,
+\newblock ``Temporal and Spatial Downscaling for Solar Radiation,''
+\newblock arXiv:2405.11046, 2024. [Online]. Available: \url{https://arxiv.org/abs/2405.11046}.
 
-# Xuat tep du lieu tong hop
-if all_data_frames:
-    final_df = pd.concat(all_data_frames, ignore_index=True)
-    final_df['timestamp'] = pd.to_datetime(final_df['timestamp'])
-    final_df.to_csv(FINAL_OUTPUT_FILE, index=False)
-\end{lstlisting}
+\bibitem{engerer2014kpv}
+N.~A.~Engerer và F.~P.~Mills,
+\newblock ``KPV: A clear-sky index for photovoltaics,''
+\newblock \textit{Solar Energy}, vol.~105, pp.~679--693, 2014.
+\newblock DOI: \href{https://doi.org/10.1016/j.solener.2014.04.019}{10.1016/j.solener.2014.04.019}.
 
-\subsection{Thiết lập kết nối cơ sở dữ liệu Supabase}
-Để lưu trữ và xử lý tập dữ liệu sau khi trích xuất, dự án cấu hình hệ quản trị cơ sở dữ liệu PostgreSQL trên nền tảng Supabase (Khu vực Southeast Asia). Điểm đặc thù trong kiến trúc kết nối và nạp (Load) dữ liệu của nhóm:
-\begin{itemize}[noitemsep]
-    \item \textbf{Sử dụng Connection Pooler:} Do Supabase free tier không hỗ trợ kết nối trực tiếp qua IPv4, dự án cấu hình kết nối thông qua Supabase Pooler \\(host \texttt{aws-1-ap-southeast-1.pooler.supabase.com}, cổng 5432). Giao thức này hỗ trợ IPv4 ổn định cho môi trường làm việc nhóm, đồng thời quản lý và tái sử dụng các phiên kết nối để tránh tình trạng quá tải (Connection Overload).
-    \item \textbf{Tối ưu hóa Thư viện kết nối (\texttt{pg8000}):} Thay vì sử dụng thư viện \texttt{psycopg2} truyền thống, dự án chuyển sang sử dụng \texttt{pg8000}. Đây là thư viện Pure Python, giúp khắc phục triệt để lỗi thiếu hụt các thư viện hệ thống (\texttt{libz.so.1}, \texttt{libstdc++.so.6}) trên môi trường NixOS, đảm bảo mã nguồn có thể chạy mượt mà trên mọi hệ điều hành.
-    \item \textbf{Bảo mật hệ thống:} Toàn bộ thông tin nhạy cảm bao gồm Mật khẩu cơ sở dữ liệu và Project ID được mã hóa và truyền qua tệp \texttt{.env} thay vì khai báo trực tiếp trong mã nguồn. Mã nguồn nạp dữ liệu vào kho được xử lý cách ly, cam kết không rò rỉ (commit) mật khẩu lên nền tảng GitHub.
-\end{itemize}
-Bộ dữ liệu thô được lưu trữ thành các tệp tin CSV: \texttt{campus\_meta.csv}, \texttt{Solar\_Site\_Details.csv},\\ \texttt{calender.csv}, \texttt{Solar\_Energy\_Generation.csv}, và \texttt{open\_meteo\_weather\_raw\_2023.csv}.
+\bibitem{dev2018tes}
+S.~Dev, T.~AlSkaif, M.~Hossari, R.~Godina, A.~Louwen, và W.~van Sark,
+\newblock ``Solar Irradiance Forecasting Using Triple Exponential Smoothing,''
+\newblock trong \textit{IEEE International Conference on Smart Energy Systems and Technologies (SEST)}, 2018.
+\newblock arXiv:1807.05872.
 
-% ====================================================================
-% MỤC MỚI BỔ SUNG: TỪ ĐIỂN DỮ LIỆU & META DATA
-% ====================================================================
-\section{Data Dictionary \& Metadata}
-\label{sec:data_dictionary}
+\bibitem{pin2025wape}
+A.~Temporal-Neto và cộng sự,
+\newblock ``PIN: A new metric to evaluate solar irradiance forecast models,''
+\newblock \textit{Energy Reports}, vol.~13, pp.~1--12, 2025.
+\newblock DOI: \href{https://doi.org/10.1016/j.egyr.2025.01.076}{10.1016/j.egyr.2025.01.076}.
 
-Sau quá trình trích xuất và thu thập, bộ dữ liệu thô được cô đọng lại thành 5 tệp tin cốt lõi (Core Datasets). Việc xây dựng từ điển dữ liệu (Data Dictionary) ở giai đoạn này giúp định nghĩa rõ ràng cấu trúc, kiểu dữ liệu và ý nghĩa của từng trường thông tin gốc trước khi thực hiện các bước biến đổi (Transform) và đưa vào Kho dữ liệu.
+\bibitem{lundberg2017shap}
+S.~M.~Lundberg và S.-I.~Lee,
+\newblock ``A Unified Approach to Interpreting Model Predictions,''
+\newblock trong \textit{Advances in Neural Information Processing Systems (NeurIPS)}, vol.~30, 2017.
+\newblock arXiv:1705.07874.
 
-\subsection{Dữ liệu Thông tin Cơ sở hạ tầng (\texttt{campus\_meta.csv})}
-Tệp lưu trữ thông tin định danh cấp cao nhất về các khu vực/cơ sở dự án. Quy mô: 5 dòng.
-\begin{table}[H]
-\centering
-\caption{Từ điển dữ liệu tệp \texttt{campus\_meta.csv}}
-\renewcommand{\arraystretch}{1.4}
-\begin{tabularx}{\textwidth}{p{3.5cm} c p{2cm} X}
-\toprule
-\textbf{Tên trường} & \textbf{Kiểu DL} & \textbf{Đơn vị} & \textbf{Ý nghĩa \& Mô tả kỹ thuật} \\
-\midrule
-id       & Integer & -  & Mã định danh duy nhất (Primary Key) cho từng cơ sở. \\
-name     & VARCHAR  & -  & Tên gọi chính thức của cơ sở (VD: Bundoora, Bendigo...). \\
-capacity & Integer & kW & Sức chứa, quy mô hoạt động hoặc mức công suất thiết kế. \\
-\bottomrule
-\end{tabularx}
-\end{table}
+\bibitem{zhang2015metrics}
+J.~Zhang, A.~Florita, B.-M.~Hodge, S.~Lu, H.~F.~Hamann, V.~Banunarayanan, và A.~M.~Brockway,
+\newblock ``A suite of metrics for assessing the performance of solar power forecasting,''
+\newblock \textit{Solar Energy}, vol.~111, pp.~157--175, 2015.
+\newblock DOI: \href{https://doi.org/10.1016/j.solener.2014.10.016}{10.1016/j.solener.2014.10.016}.
 
-\newpage
-\subsection{Dữ liệu Thông tin Kỹ thuật Trạm (\texttt{Solar\_Site\_Details.csv})}
-Tệp lưu trữ chi tiết cấu hình kỹ thuật, thiết bị lắp đặt và tọa độ địa lý của các trạm phát điện. Quy mô: 42 dòng.
-\begin{table}[H]
-\centering
-\caption{Từ điển dữ liệu tệp \texttt{Solar\_Site\_Details.csv}}
-\renewcommand{\arraystretch}{1.4}
-\begin{tabularx}{\textwidth}{p{3.5cm} c p{2cm} X}
-\toprule
-\textbf{Tên trường} & \textbf{Kiểu DL} & \textbf{Đơn vị} & \textbf{Ý nghĩa \& Mô tả kỹ thuật} \\
-\midrule
-CampusKey        & Integer & -   & Mã định danh cơ sở nơi đặt trạm điện. \\
-SiteKey          & Integer & -   & Mã định danh duy nhất của từng trạm phát điện. \\
-kWp              & Float   & kWp & Công suất đỉnh tối đa của hệ thống. \\
-Number of panels & Float   & Tấm & Tổng số lượng tấm pin mặt trời được lắp đặt. \\
-Panel            & String  & -   & Thương hiệu và công suất định mức của tấm pin. \\
-Inverter         & String  & -   & Thông tin bộ biến đổi dòng điện (Inverter). \\
-Optimizers       & String  & -   & Thông tin bộ tối ưu hóa công suất đi kèm. \\
-Metric           & String  & -   & Đơn vị đo lường sản lượng điện năng. \\
-lat              & Float   & Độ ($^\circ$) & Vĩ độ địa lý (Latitude). \\
-Lon              & Float   & Độ ($^\circ$) & Kinh độ địa lý (Longitude). \\
-\bottomrule
-\end{tabularx}
-\end{table}
+\bibitem{zhang2013metrics}
+J.~Zhang, B.-M.~Hodge, và A.~Florita,
+\newblock ``Comprehensive Evaluation of Solar Irradiance and Power Forecasting Metrics,''
+\newblock NREL/CP-5500-60142, \textit{3rd International Workshop on Integration of Solar Power into Power Systems}, 2013.
 
-\subsection{Dữ liệu Sản lượng Điện (\texttt{Solar\_Energy\_Generation.csv})}
-Bảng dữ liệu chuỗi thời gian (Fact Table) chứa sản lượng phát điện thực tế được ghi nhận liên tục theo chu kỳ 15 phút. Quy mô: 2.731.947 dòng.
-\begin{table}[H]
-\centering
-\caption{Từ điển dữ liệu tệp \texttt{Solar\_Energy\_Generation.csv}}
-\renewcommand{\arraystretch}{1.4}
-\begin{tabularx}{\textwidth}{p{3.5cm} c p{2cm} X}
-\toprule
-\textbf{Tên trường} & \textbf{Kiểu DL} & \textbf{Đơn vị} & \textbf{Ý nghĩa \& Mô tả kỹ thuật} \\
-\midrule
-CampusKey       & Integer  & -   & Mã định danh cơ sở liên kết. \\
-SiteKey         & Integer  & -   & Mã định danh trạm phát điện mặt trời cụ thể. \\
-Timestamp       & DateTime & -   & Mốc thời gian đo đạc dữ liệu sản lượng (Chu kỳ 15 phút). \\
-SolarGeneration & Float    & kWh & Sản lượng điện năng thực tế tạo ra trong khoảng 15 phút đó. \\
-\bottomrule
-\end{tabularx}
-\end{table}
+\bibitem{lonij2012tucson}
+V.~P.~Lonij, A.~E.~Brooks, K.~Koch, và A.~D.~Cronin,
+\newblock ``Analysis of 80 Rooftop PV Systems in the Tucson, AZ Area,''
+\newblock trong \textit{38th IEEE Photovoltaic Specialists Conference (PVSC)}, 2012, pp.~549--553.
+\newblock DOI: \href{https://doi.org/10.1109/PVSC.2012.6317674}{10.1109/PVSC.2012.6317674}.
 
-\subsection{Dữ liệu Thông tin Lịch trình (\texttt{calender.csv})}
-Bảng dữ liệu đánh dấu các sự kiện thời gian theo cấp độ ngày, giúp phân tích các yếu tố hành vi ảnh hưởng đến nhu cầu tiêu thụ và vận hành. Quy mô: 2.313 dòng.
-\begin{table}[H]
-\centering
-\caption{Từ điển dữ liệu tệp \texttt{calender.csv}}
-\renewcommand{\arraystretch}{1.4}
-\begin{tabularx}{\textwidth}{p{3.5cm} c p{2cm} X}
-\toprule
-\textbf{Tên trường} & \textbf{Kiểu DL} & \textbf{Đơn vị} & \textbf{Ý nghĩa \& Mô tả kỹ thuật} \\
-\midrule
-date         & Date    & - & Mốc thời gian theo ngày (định dạng DD/MM/YYYY). \\
-is\_holiday  & Boolean & - & Cờ đánh dấu ngày nghỉ lễ (1: Lễ, 0: Ngày thường). \\
-is\_semester & Boolean & - & Cờ đánh dấu ngày nằm trong giai đoạn học kỳ chính thức. \\
-is\_exam     & Boolean & - & Cờ đánh dấu ngày diễn ra kỳ thi tại cơ sở. \\
-\bottomrule
-\end{tabularx}
-\end{table}
+\bibitem{taylor2018prophet}
+S.~J.~Taylor và B.~Letham,
+\newblock ``Forecasting at Scale,''
+\newblock \textit{The American Statistician}, vol.~72, no.~1, pp.~37--45, 2018.
 
-\subsection{Dữ liệu Khí tượng Viễn thám (\texttt{open\_meteo\_weather\_raw.csv})}
-Chuỗi thời gian chứa các chỉ số khí tượng được trích xuất qua API tương ứng với tọa độ từng trạm phát. Quy mô: 367.920 dòng.
-\begin{table}[H]
-\centering
-\caption{Từ điển dữ liệu tệp \texttt{open\_meteo\_weather\_raw.csv}}
-\renewcommand{\arraystretch}{1.4}
-\begin{tabularx}{\textwidth}{p{3.8cm} c p{2cm} X}
-\toprule
-\textbf{Tên trường} & \textbf{Kiểu DL} & \textbf{Đơn vị} & \textbf{Ý nghĩa \& Mô tả kỹ thuật} \\
-\midrule
-shortwave\_radiation & Float   & W/m$^2$ & Tổng bức xạ sóng ngắn bề mặt. Feature có tương quan cao nhất với sản lượng điện. \\
-direct\_radiation    & Float   & W/m$^2$ & Bức xạ mặt trời chiếu trực tiếp tới bề mặt. \\
-diffuse\_radiation   & Float   & W/m$^2$ & Bức xạ mặt trời bị khuếch tán (do mây, bụi, sương mù). \\
-temperature\_2m      & Float   & $^\circ$C & Nhiệt độ không khí ở độ cao 2 mét. Phục vụ đánh giá suy giảm nhiệt. \\
-weather\_code        & Integer & -       & Mã thời tiết theo chuẩn WMO (0: Quang đãng, 51-67: Mưa...). Phân loại Categorical tốt cho ML. \\
-\bottomrule
-\end{tabularx}
-\end{table}
-% ====================================================================
-\section{Thiết kế kiến trúc Kho dữ liệu đa chiều (Data Warehouse)}
-\label{sec:star_schema}
+\bibitem{box2015time}
+G.~E.~P.~Box, G.~M.~Jenkins, G.~C.~Reinsel, và G.~M.~Ljung,
+\newblock \textit{Time Series Analysis: Forecasting and Control}, 5th ed.,
+\newblock John Wiley \& Sons, Hoboken, NJ, 2015.
 
-Quá trình thiết kế kho dữ liệu (Data Warehouse - DWH) được thực hiện theo phương pháp từ trên xuống (Top-down) kết hợp mô hình đa chiều của Kimball. Nhằm giải quyết bài toán dữ liệu lớn và độ lệch pha thời gian (Granularity Mismatch) giữa dữ liệu sản lượng (15 phút) và dữ liệu khí tượng (1 giờ), hệ thống được thiết kế theo cấu trúc \textbf{Lược đồ Thiên hà (Galaxy Schema / Fact Constellation)}. Quá trình này bao gồm 3 cấp độ mô hình hóa: Conceptual, Logical, và Physical.
+\bibitem{ke2017lightgbm}
+G.~Ke, Q.~Meng, T.~Finley, T.~Wang, W.~Chen, W.~Ma, Q.~Ye, và T.-Y.~Liu,
+\newblock ``LightGBM: A Highly Efficient Gradient Boosting Decision Tree,''
+\newblock trong \textit{Advances in Neural Information Processing Systems (NeurIPS)}, vol.~30, 2017, pp.~3146--3154.
 
-\subsection{Mô hình Dữ liệu Khái niệm (Conceptual Data Model)}
-Ở mức khái niệm, hệ thống xác định các thực thể kinh doanh cốt lõi và mối quan hệ giữa chúng mà không đi sâu vào chi tiết kỹ thuật. Mô hình khái niệm của hệ thống được phân rã thành các thực thể (như minh họa tại Hình \ref{fig:conceptual_model}):
-\begin{itemize}[noitemsep]
-    \item \textbf{Thực thể trung tâm (Đo lường năng lượng):} Là nơi hội tụ các chỉ số đo lường hiệu suất.
-    \item \textbf{Các thực thể ngữ cảnh (Nguyên nhân/Điều kiện):} Bao gồm \textit{Trạm năng lượng (Solar site)}, \textit{Vị trí địa lý}, \textit{Ngày (Date)} và \textit{Thời tiết}.
-\end{itemize}
+\bibitem{chen2016xgboost}
+T.~Chen và C.~Guestrin,
+\newblock ``XGBoost: A Scalable Tree Boosting System,''
+\newblock trong \textit{Proceedings of the ACM SIGKDD International Conference on Knowledge Discovery and Data Mining}, 2016, pp.~785--794.
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.85\textwidth]{images/conceptual_model.png}
-    \caption{Sơ đồ Mô hình Dữ liệu Khái niệm (Conceptual Data Model)}
-    \label{fig:conceptual_model}
-\end{figure}
+\bibitem{aivietnam2025dvc}
+Đặng Nhã và Anh Dương,
+\newblock ``Data Version Control,''
+\newblock tài liệu bài giảng \textit{AI VIET NAM --- All-in-One 2025}, slide~9 (\textit{Theory Perspective --- ML Life Cycle}), 2025.
 
-Mối quan hệ cốt lõi: Vị trí địa lý, Thời tiết và Ngày có quan hệ 1-M (one-many) với Đo lường năng lượng, giúp ban quản lý hiểu rõ dữ liệu sản lượng và thời tiết dưới góc nhìn không gian và thời gian.
+\bibitem{kolassa2007mad}
+S.~Kolassa và W.~Schütz,
+\newblock ``Advantages of the MAD/Mean ratio over the MAPE,''
+\newblock \textit{Foresight: The International Journal of Applied Forecasting}, no.~6, pp.~40--43, 2007.
 
-\subsection{Mô hình Dữ liệu Logic (Logical Data Model)}
-Mô hình logic cụ thể hóa các thực thể thành các bảng và xác định các thuộc tính (attributes), khóa chính (Primary Key), khóa ngoại (Foreign Key). Dựa trên thiết kế kiến trúc (xem Hình \ref{fig:logical_model}), hệ thống gồm 5 bảng chiều và 2 bảng sự kiện:
+\bibitem{nguyen2026meta}
+T.~N.~Nguyen và F.~Müsgens,
+\newblock ``A meta-analysis of solar forecasting based on skill score,''
+\newblock \textit{Journal of Renewable and Sustainable Energy}, vol.~18, no.~2, p.~026102, 2026.
+\newblock DOI: \href{https://doi.org/10.1063/5.0300682}{10.1063/5.0300682}.
 
-\begin{enumerate}[label=\arabic*., noitemsep]
-    \item \textbf{Các bảng chiều dùng chung (Conformed Dimensions):}
-    \begin{itemize}[noitemsep]
-        \item \texttt{dim\_solar\_site}: Khóa chính \texttt{site\_id}. Lưu thông tin thiết bị: \texttt{campus\_name}, \texttt{capacity\_kw}, \texttt{Number\_of\_panels}, \texttt{Panel}, \texttt{Inverter}, \texttt{Optimizers}, \texttt{Metric}.
-        \item \texttt{dim\_geography}: Khóa chính \texttt{geo\_id}. Định vị không gian: \texttt{latitude}, \texttt{longitude}, \texttt{location\_name}.
-        \item \texttt{dim\_date}: Khóa chính \texttt{date\_id}. Trục ngày: \texttt{full\_date}, \texttt{day}, \texttt{month}, \texttt{year}.
-        \item \texttt{dim\_time}: Khóa chính \texttt{time\_id}. Trục giờ chi tiết (chu kỳ 15p): \texttt{time\_string}, \texttt{hour}, \texttt{minute}.
-        \item \texttt{dim\_weather\_type}: Khóa chính \texttt{weather\_type\_id}. Phân loại trạng thái: \texttt{weather\_code}, \texttt{is\_day}, \texttt{weather\_condition}, \texttt{description}.
-    \end{itemize}
-    \item \textbf{Các bảng sự kiện (Fact Tables):}
-    \begin{itemize}[noitemsep]
-        \item \texttt{fact\_solar\_energy\_gen}: Khóa chính \texttt{gen\_id}. Kết nối với Site, Geo, Date, Time. Đo lường sản lượng \texttt{energy\_generated\_kwh}.
-        \item \texttt{fact\_weather}: Khóa chính \texttt{weather\_id}. Kết nối với Geo, Date, Time, Weather\_type. Chứa các chỉ số viễn thám như \texttt{shortwave\_radiation}, \texttt{temperature\_c}, \texttt{cloud\_cover\_total}, \texttt{wind\_speed}, \texttt{precipitation\_mm}.
-    \end{itemize}
-\end{enumerate}
+\bibitem{marquez2013skill}
+R.~Marquez và C.~F.~M.~Coimbra,
+\newblock ``Proposed Metric for Evaluation of Solar Forecasting Models,''
+\newblock \textit{Journal of Solar Energy Engineering} (ASME), vol.~135, no.~1, p.~011016, 2013.
+\newblock DOI: \href{https://doi.org/10.1115/1.4007496}{10.1115/1.4007496}.
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=\textwidth]{images/logical_model.png}
-    \caption{Sơ đồ Mô hình Dữ liệu Logic (Logical Data Model)}
-    \label{fig:logical_model}
-\end{figure}
+\bibitem{wwrp2009verif}
+WWRP/WGNE Joint Working Group on Forecast Verification Research,
+\newblock ``Forecast Verification: Issues, Methods and FAQ,''
+\newblock Bureau of Meteorology, Australia, 2009. [Online]. Available: \url{https://www.cawcr.gov.au/projects/verification/verif_web_page.html}.
 
-\subsection{Mô hình Dữ liệu Vật lý (Physical Data Model)}
-Mô hình vật lý định nghĩa cách thức dữ liệu được lưu trữ thực tế trên hệ quản trị cơ sở dữ liệu (sơ đồ ở Hình \ref{fig:physical_model}). Ở bước này, các kiểu dữ liệu (Data Types) cụ thể (INT, FLOAT, VARCHAR, DATE) và ràng buộc khóa ngoại (Foreign Keys) được thiết lập để tối ưu hóa không gian lưu trữ và tốc độ truy vấn. Chi tiết cấu trúc vật lý của các bảng chiều được mô tả từ Bảng \ref{tab:dim_solar_site} đến Bảng \ref{tab:dim_weather_type}. Các bảng sự kiện sản lượng và thời tiết được mô tả tương ứng trong Bảng \ref{tab:fact_gen_spec} và Bảng \ref{tab:fact_weather_spec}.
+% --- IV. Kiến trúc Kho Dữ liệu, API và Công cụ Trực quan hóa ---
+\bibitem{kimball2013dwh}
+R.~Kimball và M.~Ross,
+\newblock \textit{The Data Warehouse Toolkit: The Definitive Guide to Dimensional Modeling}, 3rd ed.,
+\newblock John Wiley \& Sons, Indianapolis, IN, 2013.
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=\textwidth]{images/physical_model.png}
-    \caption{Sơ đồ Mô hình Dữ liệu Vật lý (Physical Data Model)}
-    \label{fig:physical_model}
-\end{figure}
+\bibitem{wmo2021guide}
+World Meteorological Organization (WMO),
+\newblock \textit{Guide to Instruments and Methods of Observation: Volume I -- Measurement of Meteorological Variables},
+\newblock WMO-No. 8, Geneva, Switzerland, 2021.
 
-% =====================================================================
-% BẢNG 1: DIM SOLAR SITE
-% =====================================================================
-\begin{table}[H]
-\centering
-\caption{Cấu trúc vật lý bảng chiều trạm năng lượng (\texttt{dim\_solar\_site})}
-\label{tab:dim_solar_site}
-\renewcommand{\arraystretch}{1.4}
-\begin{tabularx}{\textwidth}{p{4.5cm} c X}
-\toprule
-\textbf{Tên trường (Field)} & \textbf{Kiểu DL} & \textbf{Diễn giải vật lý} \\
-\midrule
-site\_id           & INT (PK) & Khóa chính của trạm. \\
-campus\_name       & VARCHAR  & Tên khu vực đặt trạm dưới dạng chuỗi ký tự. \\
-capacity\_kw       & FLOAT    & Công suất thiết kế (số thực). \\
-Number\_of\_panels & INT      & Tổng số lượng tấm pin (số nguyên). \\
-Panel              & VARCHAR  & Thương hiệu/loại tấm pin (chuỗi ký tự). \\
-Inverter           & VARCHAR  & Thông tin bộ biến đổi điện (chuỗi ký tự). \\
-Optimizers         & VARCHAR  & Bộ tối ưu hóa (chuỗi ký tự). \\
-Metric             & VARCHAR  & Ghi chú/tiêu chuẩn đo lường (chuỗi ký tự). \\
-\bottomrule
-\end{tabularx}
-\end{table}
+\bibitem{supabase2024}
+Supabase Inc.,
+\newblock ``PostgreSQL Database \& Row-Level Security for Modern Analytics Architecture,''
+\newblock \textit{Supabase Technical Architecture Documentation}, 2024. [Online]. Available: \url{https://supabase.com/docs}.
 
-% =====================================================================
-% BẢNG 2: DIM GEOGRAPHY
-% =====================================================================
-\begin{table}[H]
-\centering
-\caption{Cấu trúc vật lý bảng chiều địa lý (\texttt{dim\_geography})}
-\label{tab:dim_geography}
-\renewcommand{\arraystretch}{1.4}
-\begin{tabularx}{\textwidth}{p{4.5cm} c X}
-\toprule
-\textbf{Tên trường (Field)} & \textbf{Kiểu DL} & \textbf{Diễn giải vật lý} \\
-\midrule
-geo\_id        & INT (PK) & Khóa chính định danh vị trí địa lý. \\
-latitude      & FLOAT    & Vĩ độ (số thực). \\
-longitude     & FLOAT    & Kinh độ (số thực). \\
-location\_name & VARCHAR  & Tên địa danh hành chính. \\
-capacity      & INT      & Tổng công suất của khu vực đặt trạm (kW). \\
-\bottomrule
-\end{tabularx}
-\end{table}
+\bibitem{pedregosa2011sklearn}
+F.~Pedregosa et~al.,
+\newblock ``Scikit-learn: Machine Learning in Python,''
+\newblock \textit{Journal of Machine Learning Research}, vol.~12, pp.~2825--2830, 2011.
 
-% =====================================================================
-% BẢNG 3: DIM DATE
-% =====================================================================
-\begin{table}[H]
-\centering
-\caption{Cấu trúc vật lý bảng chiều ngày (\texttt{dim\_date})}
-\label{tab:dim_date}
-\renewcommand{\arraystretch}{1.4}
-\begin{tabularx}{\textwidth}{p{4.5cm} c X}
-\toprule
-\textbf{Tên trường (Field)} & \textbf{Kiểu DL} & \textbf{Diễn giải vật lý} \\
-\midrule
-date\_id       & INT (PK) & Khóa chính đại diện ngày. \\
-full\_date     & DATE     & Trường lưu định dạng thời gian nguyên bản (YYYY-MM-DD). \\
-day            & INT      & Ngày trong tháng (số nguyên). \\
-month          & INT      & Tháng trong năm (số nguyên). \\
-year           & INT      & Năm phân tích (số nguyên). \\
-is\_holiday    & INT      & Đánh dấu ngày lễ (1: Ngày lễ, 0: Ngày thường). \\
-is\_semester   & INT      & Đánh dấu học kỳ (1: Trong kỳ học, 0: Kỳ nghỉ). \\
-is\_exam       & INT      & Đánh dấu mùa thi (1: Trong mùa thi, 0: Bình thường). \\
-\bottomrule
-\end{tabularx}
-\end{table}
+\bibitem{tableau2023guidelines}
+Tableau Software (Salesforce),
+\newblock \textit{Visual Analysis Best Practices: A Guide to Creating Meaningful Dashboards},
+\newblock Seattle, WA, 2023.
 
-% =====================================================================
-% BẢNG 4: DIM TIME
-% =====================================================================
-\begin{table}[H]
-\centering
-\caption{Cấu trúc vật lý bảng chiều thời gian (\texttt{dim\_time})}
-\label{tab:dim_time}
-\renewcommand{\arraystretch}{1.4}
-\begin{tabularx}{\textwidth}{p{4.5cm} c X}
-\toprule
-\textbf{Tên trường (Field)} & \textbf{Kiểu DL} & \textbf{Diễn giải vật lý} \\
-\midrule
-time\_id     & INT (PK) & Khóa chính mốc thời gian. \\
-time\_string & VARCHAR  & Chuỗi ký tự biểu diễn giờ (HH:MM). \\
-hour         & INT      & Giờ trong ngày (số nguyên). \\
-minute       & INT      & Phút (số nguyên). \\
-\bottomrule
-\end{tabularx}
-\end{table}
+\end{thebibliography}
 
-% =====================================================================
-% BẢNG 5: DIM WEATHER TYPE
-% =====================================================================
-\begin{table}[H]
-\centering
-\caption{Cấu trúc vật lý bảng chiều danh mục thời tiết (\texttt{dim\_weather\_type})}
-\label{tab:dim_weather_type}
-\renewcommand{\arraystretch}{1.4}
-\begin{tabularx}{\textwidth}{p{4.5cm} c X}
-\toprule
-\textbf{Tên trường (Field)} & \textbf{Kiểu DL} & \textbf{Diễn giải vật lý} \\
-\midrule
-weather\_type\_id    & INT (PK) & Khóa chính danh mục thời tiết. \\
-weather\_code       & INT      & Mã trạng thái WMO (số nguyên). \\
-is\_day             & INT      & Trạng thái ánh sáng (1: Ngày, 0: Đêm) lưu dạng số nguyên. \\
-weather\_condition  & VARCHAR  & Tên điều kiện thời tiết tổng quát. \\
-description         & VARCHAR  & Chuỗi văn bản mô tả chi tiết diễn biến thời tiết. \\
-\bottomrule
-\end{tabularx}
-\end{table}
-
-% =====================================================================
-% BẢNG 6: FACT SOLAR ENERGY GEN
-% =====================================================================
-\begin{table}[H]
-\centering
-\caption{Cấu trúc vật lý bảng sự kiện sản lượng (\texttt{fact\_solar\_energy\_gen})}
-\label{tab:fact_gen_spec}
-\renewcommand{\arraystretch}{1.4}
-\begin{tabularx}{\textwidth}{p{4.5cm} c X}
-\toprule
-\textbf{Tên trường (Field)} & \textbf{Kiểu DL} & \textbf{Diễn giải mục đích vật lý} \\
-\midrule
-gen\_id & INT & Khóa chính định danh từng dòng sự kiện (Auto-increment). \\
-site\_id & INT & Khóa ngoại trỏ đến \texttt{dim\_solar\_site.site\_id}. \\
-geo\_id & INT & Khóa ngoại trỏ đến \texttt{dim\_geography.geo\_id}. \\
-date\_id & INT & Khóa ngoại trỏ đến \texttt{dim\_date.date\_id}. \\
-time\_id & INT & Khóa ngoại trỏ đến \texttt{dim\_time.time\_id}. \\
-energy\_generated\_kwh & FLOAT & Sản lượng điện năng sinh ra (kiểu số thực để tính toán độ chính xác cao). \\
-rolling\_outlier\_flag & BOOLEAN & Cờ đánh dấu dòng dữ liệu sản lượng là ngoại lai (phát hiện bằng Rolling IQR). \\
-\bottomrule
-\end{tabularx}
-\end{table}
-
-% =====================================================================
-% BẢNG 7: FACT WEATHER
-% =====================================================================
-\begin{table}[H]
-\centering
-\caption{Cấu trúc vật lý bảng sự kiện thời tiết (\texttt{fact\_weather})}
-\label{tab:fact_weather_spec}
-\renewcommand{\arraystretch}{1.4}
-\begin{tabularx}{\textwidth}{p{5cm} c X}
-\toprule
-\textbf{Tên trường (Field)} & \textbf{Kiểu DL} & \textbf{Diễn giải mục đích vật lý} \\
-\midrule
-weather\_id & INT & Khóa chính định danh dòng lịch sử thời tiết. \\
-geo\_id & INT & Khóa ngoại trỏ đến \texttt{dim\_geography.geo\_id}. \\
-date\_id & INT & Khóa ngoại trỏ đến \texttt{dim\_date.date\_id}. \\
-time\_id & INT & Khóa ngoại trỏ đến \texttt{dim\_time.time\_id}. \\
-weather\_type\_id & INT & Khóa ngoại trỏ đến \texttt{dim\_weather\_type.weather\_type\_id}. \\
-is\_day & INT & Chỉ số phân tách chu kỳ ánh sáng (số nguyên: 1/0). \\
-shortwave\_radiation & INT & Bức xạ sóng ngắn (số nguyên). \\
-temperature\_c & FLOAT & Nhiệt độ không khí (số thực). \\
-cloud\_cover\_total & FLOAT & Tổng độ che phủ mây (số thực, tỷ lệ \%). \\
-cloud\_cover\_low & FLOAT & Tỷ lệ mây tầng thấp (số thực). \\
-cloud\_cover\_mid & FLOAT & Tỷ lệ mây tầng trung (số thực). \\
-cloud\_cover\_high & FLOAT & Tỷ lệ mây tầng cao (số thực). \\
-Diffuse\_Solar\_Radiation & INT & Ánh sáng tán xạ (số nguyên). \\
-Direct\_Normal\_Irradiance & INT & Bức xạ chiếu thẳng (số nguyên). \\
-wind\_speed & FLOAT & Tốc độ gió (số thực). \\
-precipitation\_mm & FLOAT & Tổng lượng mưa tích tụ (số thực). \\
-Sunshine\_Duration & FLOAT & Thời lượng nắng (số thực). \\
-\bottomrule
-\end{tabularx}
-\end{table}
-
-\newpage
-\subsection{Kịch bản SQL Khởi tạo Cơ sở Dữ liệu}
-\label{subsec:sql_scripts}
-
-Để triển khai thiết kế vật lý lên hệ quản trị cơ sở dữ liệu Supabase PostgreSQL, dự án sử dụng các kịch bản SQL khởi tạo tự động. Các kịch bản này phân tách rõ rệt cấu trúc giữa tầng đệm (Staging Area) và tầng kho dữ liệu chính thức (Data Warehouse).
-
-\subsubsection{Kịch bản khởi tạo lớp đệm Staging (Schema Staging)}
-Các bảng trích xuất thô (\texttt{stg\_*}) được thiết kế với kiểu dữ liệu chuỗi linh hoạt (\texttt{VARCHAR}) nhằm hạn chế tối đa lỗi gián đoạn tiến trình trích xuất (Extract) khi nguồn cấp thay đổi định dạng dữ liệu đột ngột. Kịch bản dưới đây thực hiện tạo lập cấu trúc các bảng đệm thô và các bảng đệm đã chuyển kiểu trong schema \texttt{staging}:
-
-\begin{lstlisting}[language=SQL, caption={Kịch bản SQL khởi tạo schema staging và các bảng đệm dữ liệu}, label={lst:create_staging}]
--- 1. Khoi tao Schema staging
-CREATE SCHEMA IF NOT EXISTS staging;
--- 2. Bang Staging tho chua san luong dien
-CREATE TABLE staging.stg_solar_energy_generation (
-  CampusKey VARCHAR(255),
-  SiteKey VARCHAR(255),
-  Timestamp VARCHAR(255),
-  SolarGeneration VARCHAR(255)
-);
-
--- 3. Bang dem chuyen kieu fact_solar_energy_gen trong staging
-CREATE TABLE staging.fact_solar_energy_gen (
-    SiteKey VARCHAR(255),
-    timestamp TIMESTAMP,
-    energy_generated_kwh FLOAT,
-    rolling_outlier_flag BOOLEAN DEFAULT false
-);
-
--- 4. Bang dem chuyen kieu dim_date trong staging
-CREATE TABLE staging.dim_date (
-    full_date DATE,
-    day INT,
-    month INT,
-    year INT,
-    is_holiday VARCHAR(50),
-    is_semester VARCHAR(50),
-    is_exam VARCHAR(50)
-);
-\end{lstlisting}
-
-\newpage
-
-\subsubsection{Kịch bản khởi tạo tầng Data Warehouse (Public Schema)}
-Tầng Data Warehouse chính thức được cấu hình các ràng buộc toàn vẹn cơ sở dữ liệu chặt chẽ bao gồm khóa chính, khóa ngoại liên kết giữa bảng sự kiện và bảng chiều, đảm bảo không tồn tại dữ liệu mồ côi:
-
-\begin{lstlisting}[language=SQL, caption={Kịch bản SQL khởi tạo cac bang chieu va bang su kien trong Data Warehouse}, label={lst:create_table}]
--- 1. Khoi tao bang chieu dim_date
-CREATE TABLE dim_date (
-    date_id INT PRIMARY KEY,
-    full_date DATE,
-    day INT,
-    month INT,
-    year INT,
-    is_holiday INT,
-    is_semester INT,
-    is_exam INT
-);
-
--- 2. Khoi tao bang su kien san luong dien fact_solar_energy_gen
-CREATE TABLE fact_solar_energy_gen (
-    gen_id INT PRIMARY KEY,
-    site_id INT,
-    geo_id INT,
-    date_id INT,
-    time_id INT,
-    energy_generated_kwh FLOAT,
-    rolling_outlier_flag BOOLEAN DEFAULT false,
-    
-    -- Thiet lap cac rang buoc khoa ngoai
-    CONSTRAINT FK_Gen_Site FOREIGN KEY (site_id) REFERENCES dim_solar_site(site_id),
-    CONSTRAINT FK_Gen_Geo FOREIGN KEY (geo_id) REFERENCES dim_geography(geo_id),
-    CONSTRAINT FK_Gen_Date FOREIGN KEY (date_id) REFERENCES dim_date(date_id),
-    CONSTRAINT FK_Gen_Time FOREIGN KEY (time_id) REFERENCES dim_time(time_id)
-);
-\end{lstlisting}
-
-\section{Kiểm tra tính toàn vẹn và bảo mật dữ liệu}
-\label{sec:data_integrity}
-Để đảm bảo tính toàn vẹn dữ liệu (Data Integrity) trong CSDL vật lý, các ràng buộc tham chiếu (Referential Constraints) được cấu hình nghiêm ngặt theo quan hệ Một - Nhiều (1-M). Mọi bản ghi trong các bảng Fact bắt buộc phải có khóa tham chiếu tồn tại trong các bảng Dimension tương ứng, ngăn chặn tuyệt đối tình trạng dữ liệu mồ côi (orphan records) khi thực hiện luồng ETL.
 
 \end{document}

@@ -1,0 +1,138 @@
+% =============================================================================
+%  So do luong chay pipeline hoc may v4 - dung rieng, khong nam trong file .tex chinh
+%  Dung lai:  xelatex pipeline_sodo_mlops_nguon.tex
+%             cp pipeline_sodo_mlops_nguon.pdf images/pipeline_sodo_mlops.pdf
+%  Bo cuc: 3 hang x 3 COT, moi hang doc NGANG. Hang 1 va 3 chay sang phai, hang 2
+%  chay sang trai (kieu ran bo) nen hai mui ten xuong hang deu ngan va thang dung.
+%  Moi mui ten noi hai buoc lien tiep va deu ngan, khong co duong dai cat ngang hinh.
+% =============================================================================
+\documentclass[11pt]{article}
+\usepackage{fontspec}
+\setmainfont{TeX Gyre Heros}
+\usepackage[margin=0.4cm,paperwidth=27.5cm,paperheight=15.6cm]{geometry}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,fit,backgrounds,calc}
+\pagestyle{empty}
+\graphicspath{{./images/}}
+\begin{document}
+
+\definecolor{cNguon}{HTML}{5C6BC0}
+\definecolor{cPrep}{HTML}{00897B}
+\definecolor{cFE}{HTML}{6A1B9A}
+\definecolor{cTrain}{HTML}{EF6C00}
+\definecolor{cEval}{HTML}{C62828}
+\definecolor{cServe}{HTML}{2E7D32}
+\definecolor{cRao}{HTML}{AD1457}
+
+\newcommand{\ic}[2]{\raisebox{-1.5mm}{\includegraphics[height=#2]{icon_#1.png}}}
+% dong artifact trong moi the
+\newcommand{\art}[1]{\\[3pt]{\color{black!55}\small$\rightarrow$~\texttt{#1}}}
+
+\begin{tikzpicture}[
+  font=\normalsize,
+  the/.style={draw=#1, line width=1.3pt, rounded corners=5pt, fill=#1!7,
+     text width=7.6cm, align=left, inner sep=8pt, anchor=north west,
+     minimum height=4.0cm},
+  mt/.style={-{Stealth[length=4.6mm,width=3.2mm]}, line width=2.1pt, draw=#1},
+]
+
+% Ba cot, ba hang. Hang 1 va 3 doc sang PHAI, hang 2 doc sang TRAI, nho vay mui ten
+% xuong hang (3->4 va 6->7) deu la doan thang dung ngan, khong co duong cheo cat hinh.
+\def\xa{0.6}  \def\xb{9.5}  \def\xc{18.4}
+\def\ya{0}  \def\yb{-5.0}  \def\yc{-10.0}
+
+%=================== HANG 1 : 1 -> 2 (sang phai) ===================
+\node[the=cNguon] (c1) at (\xa,\ya) {
+  \ic{pgadmin}{7mm}~{\color{cNguon}\bfseries 1. NGUỒN}\\[4pt]
+  \texttt{ml\_mart.base} trên Supabase\\
+  42 dàn PV --- 5 khuôn viên\\
+  2,73 triệu bản ghi bước 15 phút\\
+  \texttt{03\_convert\_query\_to\_parquet}
+  \art{v4\_preprocessing.parquet}};
+
+\node[the=cPrep] (c2) at (\xb,\ya) {
+  \ic{jupyter}{7mm}~{\color{cPrep}\bfseries 2. TIỀN XỬ LÝ}\\[4pt]
+  \texttt{00\_fill\_null\_imputation}\\
+  \texttt{00b\_recheck\_fill\_null}\\
+  Thời tiết ghép theo mốc quá khứ
+  \art{v4\_final\_cleaned.parquet}};
+
+%=================== HANG 2 : 3 -> 4 (sang trai) ===================
+\node[the=cPrep] (c3) at (\xc,\ya) {
+  \ic{jupyter}{7mm}~{\color{cPrep}\bfseries 3. CHUẨN BỊ \& CHIA}\\[4pt]
+  \texttt{01\_reindex\_mask\_outlier}\\
+  \texttt{02\_split\_time\_series} --- 3 fold\\
+  Test niêm phong tách ngay từ đây
+  \art{development / test / fold\_1..3}};
+
+\node[the=cRao] (c4) at (\xc,\yb) {
+  \ic{jupyter}{7mm}~{\color{cRao}\bfseries 4. KHÁM PHÁ DỮ LIỆU}\\[4pt]
+  \texttt{02\_EDA} --- \textbf{chỉ tập huấn luyện}\\
+  Phân bố, ACF/PACF, tương quan\\
+  Không nhìn tập test $\rightarrow$ không rò rỉ
+  \art{4 hình + thống kê mô tả}};
+
+%=================== HANG 3 : 5 -> 6 (sang phai) ===================
+\node[the=cFE] (c5) at (\xb,\yb) {
+  \ic{jupyter}{7mm}~{\color{cFE}\bfseries 5. ĐẶC TRƯNG}\\[4pt]
+  \texttt{03\_1\_time} --- lag, rolling, Lonij\\
+  \texttt{03\_2\_spatial} --- Haurwitz, site\_scale\\
+  \texttt{03\_3\_aggregate} --- tương tác, mã hoá\\
+  \texttt{04\_vif} $\rightarrow$ \texttt{05\_select} --- còn 40 cột
+  \art{selected\_features.json}};
+
+\node[the=cTrain] (c6) at (\xa,\yb) {
+  \ic{jupyter}{7mm}~{\color{cTrain}\bfseries 6. HUẤN LUYỆN}\\[4pt]
+  \texttt{06\_1\_mae} / \texttt{06\_2\_huber} / \texttt{06\_3\_mse}\\
+  Optuna 20 trial $\times$ 3 fold\\
+  LightGBM trên CPU, chế độ tất định\\
+  \texttt{06\_4} chọn hàm mất mát
+  \art{model.pkl + model\_config.json}};
+
+%=================== HANG 4 : 7 -> 8 (sang trai) ===================
+\node[the=cEval] (c7) at (\xa,\yc) {
+  \ic{jupyter}{7mm}~{\color{cEval}\bfseries 7. ĐÁNH GIÁ}\\[4pt]
+  \texttt{07\_final\_test} --- mở đúng một lần\\
+  \texttt{08\_explainable\_ai} --- SHAP\\
+  \texttt{06\_0b} --- đối chứng Prophet
+  \art{metrics\_overall.json}};
+
+\node[the=cServe] (c8) at (\xb,\yc) {
+  \ic{python}{7mm}~{\color{cServe}\bfseries 8. PHỤC VỤ}\\[4pt]
+  \texttt{srcs/07\_dashboard} --- Streamlit\\
+  \texttt{forecast\_service.py} đọc lại \texttt{clip\_k}
+  \art{dự báo H1 / H4 theo trạm}};
+
+%=================== HANG 5 : 9 ===================
+\node[the=cNguon] (c9) at (\xc,\yc) {
+  \ic{git}{7mm}~{\color{cNguon}\bfseries 9. PHIÊN BẢN}\\[4pt]
+  DVC theo dõi \texttt{data/} và \texttt{models/}\\
+  Git chỉ giữ 26 con trỏ \texttt{.dvc}\\
+  đồng bộ Supabase Storage
+  \art{*.dvc + Storage}};
+
+%=================== MUI TEN ===================
+% Hang 1 doc sang phai
+\draw[mt=cNguon] (c1.east|-c2.west) -- (c2.west);   % 1 -> 2
+\draw[mt=cPrep]  (c2.east|-c3.west) -- (c3.west);   % 2 -> 3
+% Xuong hang 2 (cung cot phai)
+\draw[mt=cPrep]  (c3.south) -- (c4.north);          % 3 -> 4
+% Hang 2 doc sang trai
+\draw[mt=cRao]   (c4.west|-c5.east) -- (c5.east);   % 4 -> 5
+\draw[mt=cFE]    (c5.west|-c6.east) -- (c6.east);   % 5 -> 6
+% Xuong hang 3 (cung cot trai)
+\draw[mt=cTrain] (c6.south) -- (c7.north);          % 6 -> 7
+% Hang 3 doc sang phai
+\draw[mt=cEval]  (c7.east|-c8.west) -- (c8.west);   % 7 -> 8
+\draw[mt=cServe] (c8.east|-c9.west) -- (c9.west);   % 8 -> 9
+
+% DVC o buoc 9 QUAN LY tep nguon o buoc 1, nen mui ten huong tu 9 nguoc len 1. Ve net dut
+% de phan biet voi luong chay du lieu, va di vong duoi day roi len canh trai cho khong
+% cat qua o nao.
+\draw[mt=cNguon, dashed, line width=1.6pt]
+  (c9.south) -- ++(0,-0.55) -| ($(c1.west)+(-0.45,0)$) -- (c1.west);
+
+\end{tikzpicture}
+\end{document}
