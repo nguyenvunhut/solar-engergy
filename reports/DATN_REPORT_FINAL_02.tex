@@ -2396,7 +2396,7 @@ mục tiêu: không để thông tin của tương lai, hoặc thông tin không
 \begingroup
 \par\penalty-150\vspace{8pt}
 \small\renewcommand{\baselinestretch}{1.0}\selectfont
-\begin{lstlisting}[basicstyle=\footnotesize\ttfamily, backgroundcolor=\color{gray!10}, frame=single, rulecolor=\color{gray!40}]
+\begin{verbatim}
 Đã reindex lưới 15 phút cho 42 site.
 Tổng số dòng sau reindex: 2784438
 - Dòng gốc: 2731946
@@ -2425,7 +2425,7 @@ causal_week_persistence        215
 - Target null: 0
 - Energy_source rỗng: 0
 PASS - Không còn target null hoặc energy_source rỗng.
-\end{lstlisting}
+\end{verbatim}
 \par\vspace{8pt}
 \endgroup
 
@@ -2493,14 +2493,14 @@ Ba phạm vi con được tách riêng để mọi con số phía sau đều nó
 \begingroup
 \par\penalty-150\vspace{8pt}
 \small\renewcommand{\baselinestretch}{1.0}\selectfont
-\begin{lstlisting}[basicstyle=\footnotesize\ttfamily, backgroundcolor=\color{gray!10}, frame=single, rulecolor=\color{gray!40}]
+\begin{verbatim}
 Doc vao          : 1,550,856 dong x 12 cot | 42 tram
 Sau khi bo tram [19, 24]: 1,480,000 dong | 40 tram
 
    toan bo               1,480,000 dong  (100.00%)
    ban ngay                742,116 dong  (50.14%)
    do that ban ngay        606,112 dong  (40.95%)
-\end{lstlisting}
+\end{verbatim}
 \par\vspace{8pt}
 \endgroup
 \subsubsection{Phân bố đơn biến của sản lượng}
@@ -2552,11 +2552,11 @@ mốc trong ngày, để hình không rơi vào ngày do tầng ETL điền khuy
 \begingroup
 \par\penalty-150\vspace{8pt}
 \small\renewcommand{\baselinestretch}{1.0}\selectfont
-\begin{lstlisting}[basicstyle=\footnotesize\ttfamily, backgroundcolor=\color{gray!10}, frame=single, rulecolor=\color{gray!40}]
+\begin{verbatim}
 Tram 27 | 283 ngay dat dieu kien | 71 ngay nhieu nang
    Ngay troi quang: 2020-10-02 | do gap 0.0031
    Ngay nhieu may : 2020-12-23 | do gap 0.0926
-\end{lstlisting}
+\end{verbatim}
 \par\vspace{8pt}
 \endgroup
 Hai ngày này không được chọn bằng mắt mà bằng một đại lượng đo trực tiếp trên chuỗi sản
@@ -2975,7 +2975,7 @@ ngưỡng. Kết quả in ra ở notebook \texttt{06\_1\_train\_mae}:
 \begingroup
 \par\vspace{6pt}\hrule\vspace{4pt}
 \small\renewcommand{\baselinestretch}{1.0}\selectfont
-\begin{lstlisting}[basicstyle=\footnotesize\ttfamily, backgroundcolor=\color{gray!10}, frame=single, rulecolor=\color{gray!40}]
+\begin{verbatim}
 TRAIN THU NHANH DE DO TRE (truoc khi tune)
 Train thu 300,000 dong x 54 dac trung trong 9.3 giay
 
@@ -2989,7 +2989,7 @@ Tre theo site: trung vi +2.79 phut | nho nhat +1.64 | lon nhat +3.71
 
 CONG DO TRE: DAT - tre +2.46 phut, khong site nao vuot nguong.
 Cho phep chay Optuna va train that.
-\end{lstlisting}
+\end{verbatim}
 \vspace{2pt}\hrule\par\vspace{6pt}
 \endgroup
 
@@ -3052,7 +3052,7 @@ mỗi fold dùng phần huấn luyện của chính fold đó. Nhờ vậy dòng
 \begingroup
 \par\vspace{6pt}\hrule\vspace{4pt}
 \footnotesize\renewcommand{\baselinestretch}{1.0}\selectfont
-\begin{lstlisting}[basicstyle=\footnotesize\ttfamily, backgroundcolor=\color{gray!10}, frame=single, rulecolor=\color{gray!40}]
+\begin{verbatim}
 So dac trung target se tao: 2 lag + 8 rolling = 10 cot
 
 Da sinh dac trung thoi gian cho development va test
@@ -3075,7 +3075,7 @@ Số lượng NaN trong các tập:
 
 0 điểm đứt gãy - lưới thời gian liên tục 100% nhờ Reindex Notebook 01.
 (Tổng số dòng: 1550856)
-\end{lstlisting}
+\end{verbatim}
 \vspace{2pt}\hrule\par\vspace{6pt}
 \endgroup
 
@@ -3218,14 +3218,14 @@ trước, tính riêng trên các dòng ban ngày. Khối kết quả của note
 % co \small no tran ra ngoai le phai. Ha co chu la cach duy nhat giu duoc NGUYEN VAN
 % tung ky tu output cua notebook - ngat dong hay bo bot chu deu lam sai ban trich.
 \footnotesize\renewcommand{\baselinestretch}{1.0}\selectfont
-\begin{lstlisting}[basicstyle=\footnotesize\ttfamily, backgroundcolor=\color{gray!10}, frame=single, rulecolor=\color{gray!40}]
+\begin{verbatim}
 --- TY LE BUOC CO GIA TRI BUC XA THAY DOI, TOAN TAP TRAIN (CHI BAN NGAY) ---
    So dong ban ngay: 751,408 / 1,550,856 (48.5%)
    Truoc downscale :  26.7%
    Sau  downscale  :  76.7%
 Muc tieu la tren 90 phan tram.
    [CANH BAO] Chua dat 90 phan tram, kiem lai buoc downscale.
-\end{lstlisting}
+\end{verbatim}
 \par\vspace{8pt}
 \endgroup
 Tỷ lệ tăng gần ba lần, từ $26{,}7\%$ lên $76{,}7\%$. Hình~\ref{fig:downscale} cho thấy hiệu
@@ -3312,7 +3312,7 @@ cho phía kiểm định; notebook khớp được $8$ bảng mã, và số ô g
 \begingroup
 \par\penalty-150\vspace{8pt}
 \small\renewcommand{\baselinestretch}{1.0}\selectfont
-\begin{lstlisting}[basicstyle=\footnotesize\ttfamily, backgroundcolor=\color{gray!10}, frame=single, rulecolor=\color{gray!40}]
+\begin{verbatim}
 --- KIEM TRA 1: dac trung target deu duoc shift ---
 Cot lag con lai sau khi khu tre pha: ['lag_4', 'lag_96']
 lag_96(t) == target(t-96) tren mau: DAT
@@ -3321,7 +3321,7 @@ lag_96(t) == target(t-96) tren mau: DAT
 - val         : 100.00% dong co du lich su lien tuc
 --- KIEM TRA 3: hang muc la (unseen category) ---
 Tong so o gap hang muc la trong val: 0
-\end{lstlisting}
+\end{verbatim}
 \par\vspace{8pt}
 \endgroup
 Sau ba notebook sinh đặc trưng, tập huấn luyện đi từ $50$ cột lên $114$ cột, trong đó $46$
@@ -3889,11 +3889,11 @@ suất.
 \begingroup
 \par\vspace{6pt}\hrule\vspace{4pt}
 \small\renewcommand{\baselinestretch}{1.0}\selectfont
-\begin{lstlisting}[basicstyle=\footnotesize\ttfamily, backgroundcolor=\color{gray!10}, frame=single, rulecolor=\color{gray!40}]
+\begin{verbatim}
 Tổng số dòng ban đầu: 1550856
 Số dòng hợp lệ (exclude_from_training == False): 1514314 (97.64%)
 Số dòng bị loại trừ khỏi chấm điểm: 36542
-\end{lstlisting}
+\end{verbatim}
 \vspace{2pt}\hrule\par\vspace{6pt}
 \endgroup
 
@@ -3940,13 +3940,13 @@ một danh sách bảo vệ gồm $21$ đặc trưng, cả $21$ đều có mặt
 \begingroup
 \par\vspace{6pt}\hrule\vspace{4pt}
 \footnotesize\renewcommand{\baselinestretch}{1.0}\selectfont
-\begin{lstlisting}[basicstyle=\footnotesize\ttfamily, backgroundcolor=\color{gray!10}, frame=single, rulecolor=\color{gray!40}]
+\begin{verbatim}
 --- DANH SACH BAO VE ---
 Co trong du lieu   : 21/21
 Bi Top K cat, da bo sung lai (4): ['azimuth_sin', 'temperature_c',
                                    'doy_sin', 'doy_cos']
 Tong dac trung duoc chon: 36 (Top K) + 4 (bao ve) = 40
-\end{lstlisting}
+\end{verbatim}
 \vspace{2pt}\hrule\par\vspace{6pt}
 \endgroup
 
@@ -3966,7 +3966,7 @@ của ba fold:
 \begingroup
 \par\vspace{6pt}\hrule\vspace{4pt}
 \small\renewcommand{\baselinestretch}{1.0}\selectfont
-\begin{lstlisting}[basicstyle=\footnotesize\ttfamily, backgroundcolor=\color{gray!10}, frame=single, rulecolor=\color{gray!40}]
+\begin{verbatim}
 --- DA LOC 10 TAP THEO 40 DAC TRUNG DA CHON ---
               tap     dong  cot_truoc  cot_sau  feature  cot_phu  \
 0        v4_train  1550856        114       50       40       10   
@@ -3991,7 +3991,7 @@ của ba fold:
 7              0  
 8              0  
 9              0  
-\end{lstlisting}
+\end{verbatim}
 \vspace{2pt}\hrule\par\vspace{6pt}
 \endgroup
 
@@ -4051,7 +4051,7 @@ và nhãn lịch đúng theo ranh giới hợp lệ đã nêu ở Mục~$3.4$:
 \begingroup
 \par\penalty-150\vspace{8pt}
 \small\renewcommand{\baselinestretch}{1.0}\selectfont
-\begin{lstlisting}[basicstyle=\footnotesize\ttfamily, backgroundcolor=\color{gray!10}, frame=single, rulecolor=\color{gray!40}]
+\begin{verbatim}
 Them 14 dac trung tat dinh tai T+15 phut:
    ['solar_elevation_mt', 'solar_azimuth_mt', 'azimuth_sin_mt',
     'azimuth_cos_mt', 'sin_elevation_mt', 'ghi_cs_mt', 'ky_vong_mt',
@@ -4059,7 +4059,7 @@ Them 14 dac trung tat dinh tai T+15 phut:
     'hour_cos_mt', 'doy_sin_mt', 'doy_cos_mt']
 Ma tran train : 599,174 dong x 54 dac trung
 Muc tieu chuan hoa k: min 0.0028  trung vi 0.6423  max 1.3764
-\end{lstlisting}
+\end{verbatim}
 \par\vspace{8pt}
 \endgroup
 Không cột khí tượng nào có mặt trong danh sách này. Giá trị lớn nhất của mục tiêu chuẩn hoá
@@ -4084,13 +4084,13 @@ Các dòng mang nhãn ngoại lai không bị xoá khỏi lưới. Chúng nhận
 \begingroup
 \par\penalty-150\vspace{8pt}
 \footnotesize\renewcommand{\baselinestretch}{1.0}\selectfont
-\begin{lstlisting}[basicstyle=\footnotesize\ttfamily, backgroundcolor=\color{gray!10}, frame=single, rulecolor=\color{gray!40}]
+\begin{verbatim}
 --- CHINH SACH OUTLIER, experiment = measured_only_headline ---
 Dong co weight = 0 khong tham gia ham muc tieu nhung van giu de bao cao.
 Tong dong bi loai khoi ham muc tieu: 82,362 / 681,536 (12.08%)
    trong do physical_over_capacity: 0 dong (luon bi loai o moi experiment)
 Khoang thoi gian train: 2020-01-02 06:30:00 -> 2021-06-21 17:00:00
-\end{lstlisting}
+\end{verbatim}
 \par\vspace{8pt}
 \endgroup
 Cách gán trọng số $0$ được chọn thay vì xoá dòng, vì xoá sẽ làm đứt lưới thời gian và mọi đặc
@@ -4528,7 +4528,7 @@ $475.599$ dòng dự báo H1 của tập test, bằng cách so mốc đạt đ�
 % chu toi 70pt. \footnotesize van chua du, phai xuong \scriptsize. Ha co chu de giu
 % NGUYEN VAN output cua notebook, khong ngat dong va khong bo bot ky tu nao.
 \scriptsize\renewcommand{\baselinestretch}{1.0}\selectfont
-\begin{lstlisting}[basicstyle=\footnotesize\ttfamily, backgroundcolor=\color{gray!10}, frame=single, rulecolor=\color{gray!40}]
+\begin{verbatim}
 --- LECH DINH LOCAL: 40 site x 5,080 ngay ---
 lech_phut duong = du bao den SAU thuc te (dich phai / tre). am = du bao den SOM.
 
@@ -4544,7 +4544,7 @@ max       270.00
 So ngay du bao dich PHAI (tre)  : 2,791 / 5,080 (54.9%)
 So ngay dung khop (lech = 0)    : 384 / 5,080 (7.6%)
 So ngay du bao dich TRAI (som)  : 1,905 / 5,080 (37.5%)
-\end{lstlisting}
+\end{verbatim}
 \par\vspace{8pt}
 \endgroup
 Trung bình lệch $-1{,}05$ phút, tức gần như không thiên về bên nào; trung vị $+15$ phút, đúng
