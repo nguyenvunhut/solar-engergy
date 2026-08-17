@@ -448,7 +448,7 @@ Do đó, hai bài toán nghiệp vụ cốt lõi đặt ra cho các đơn vị q
     \item \textbf{Dự báo Sản lượng Điện Mặt trời:} Dự báo chính xác sản lượng điện năng theo chu kỳ ngắn hạn dựa trên chuỗi thời gian lịch sử và thông số khí tượng dự báo, giúp đơn vị quản lý chủ động điều phối phụ tải, tối ưu hóa huy động nguồn điện và nâng cao hiệu quả kinh tế.
 \end{enumerate}
 
-Xuất phát từ nhu cầu thực tiễn và tính cấp thiết nêu trên, nhóm tác giả lựa chọn đề tài \textbf{``Phân tích Hiệu suất và Dự báo Sản lượng Hệ thống Điện Mặt Trời''} làm đồ án tốt nghiệp chuyên ngành Xử lý Dữ liệu tại Trường Cao đẳng FPT Polytechnic.
+Xuất phát từ nhu cầu thực tiễn và tính cấp thiết nêu trên, nhóm tác giả lựa chọn đề tài ``Phân tích Hiệu suất và Dự báo Sản lượng Hệ thống Điện Mặt Trời'' làm đồ án tốt nghiệp chuyên ngành Xử lý Dữ liệu tại Trường Cao đẳng FPT Polytechnic.
 
 \section{Thực trạng và Thách thức trong Xử lý Dữ liệu Năng lượng Mặt trời}
 \label{sec:thuctrang_thachthuc}
@@ -635,7 +635,7 @@ Mô hình đa chiều do Ralph Kimball~\cite{kimball2013dwh} đề xuất phân 
     \item \textbf{Bảng chiều (Dimension Table):} Chứa các thuộc tính ngữ cảnh mô tả như \texttt{dim\_solar\_plant} (trạm phát), \texttt{dim\_date} (ngày), \texttt{dim\_time} (giờ), \texttt{dim\_weather\_type} (mã thời tiết).
 \end{itemize}
 
-Trong dự án này, do dữ liệu sản lượng và dữ liệu thời tiết có tần suất ghi nhận lệch nhau (15 phút vs 1 giờ), nhóm sử dụng \textbf{Lược đồ Thiên hà (Galaxy Schema)}. Hai bảng Fact độc lập liên kết chặt chẽ với nhau thông qua 4 bảng Dimension dùng chung (chiều dữ liệu dùng chung), đảm bảo không làm phình to dữ liệu và tối ưu hóa hiệu năng truy vấn liên thông (Drill-through).
+Trong dự án này, do dữ liệu sản lượng và dữ liệu thời tiết có tần suất ghi nhận lệch nhau (15 phút vs 1 giờ), nhóm sử dụng Lược đồ Thiên hà (Galaxy Schema). Hai bảng Fact độc lập liên kết chặt chẽ với nhau thông qua 4 bảng Dimension dùng chung (chiều dữ liệu dùng chung), đảm bảo không làm phình to dữ liệu và tối ưu hóa hiệu năng truy vấn liên thông (Drill-through).
 
 \subsection{Phương pháp Phát hiện Dị thường và Lọc Nhiễu Nghiệp vụ}
 Để đảm bảo nguyên tắc ``Dữ liệu sạch = Insight đúng'', quy trình xử lý dữ liệu tích hợp các phương pháp phát hiện dị thường nhằm phục vụ công tác làm sạch:
@@ -749,7 +749,7 @@ Dữ liệu sau khi làm sạch và mô hình hóa được phân chia thành 5 
 Dự án tiếp cận và khai thác nguồn dữ liệu vận hành thực tế quy mô lớn của hệ thống điện mặt trời quang điện (PV) áp mái tại Đại học La Trobe, Úc~\cite{wimalaratne2022unisolar}, tích hợp cùng dữ liệu khí tượng tái phân tích ERA5-Land thu thập qua Open-Meteo API~\cite{openmeteo2023}. Dữ liệu đầu vào bao gồm 5 tập dữ liệu thành phần:
 
 \begin{enumerate}[label=\arabic*., leftmargin=*]
-    \item \textbf{Dữ liệu Sản lượng Điện Mặt trời (\texttt{Solar\_Energy\_Generation.csv}):} Gồm \textbf{2.731.946} bản ghi đo đạc chuỗi thời gian ở độ phân giải $15$ phút, thu thập liên tục trong chu kỳ 28 tháng (từ tháng 06/2020 đến tháng 10/2022) từ $42$ dàn pin quang điện đặt tại 5 khuôn viên trường (Bundoora, Bendigo, Albury-Wodonga, Shepparton và Mildura). Dung lượng tệp thô xấp xỉ $80\,\text{MB}$.
+    \item \textbf{Dữ liệu Sản lượng Điện Mặt trời (\texttt{Solar\_Energy\_Generation.csv}):} Gồm 2.731.946 bản ghi đo đạc chuỗi thời gian ở độ phân giải $15$ phút, thu thập liên tục trong chu kỳ 28 tháng (từ tháng 06/2020 đến tháng 10/2022) từ $42$ dàn pin quang điện đặt tại 5 khuôn viên trường (Bundoora, Bendigo, Albury-Wodonga, Shepparton và Mildura). Dung lượng tệp thô xấp xỉ $80\,\text{MB}$.
     
     \item \textbf{Dữ liệu Khí tượng Khí hậu (\texttt{open\_meteo\_weather\_raw.csv}):} Gồm \textbf{850.752} bản ghi chu kỳ 1 giờ trích xuất từ Open-Meteo theo tọa độ địa lý của 5 khuôn viên trường. Dữ liệu bao gồm các biến khí tượng quan yếu: Bức xạ tổng cộng mặt phẳng ngang (\texttt{shortwave\_radiation} -- GHI), Bức xạ trực xạ pháp tuyến (\texttt{direct\_radiation} -- DNI), Bức xạ tán xạ (\texttt{diffuse\_radiation} -- DHI), Nhiệt độ không khí ở độ cao 2m (\texttt{temperature\_2m}), Tỷ lệ mây che phủ tổng thể (\texttt{cloud\_cover}), Mây tầng thấp/trung/cao, Vận tốc gió (\texttt{wind\_speed\_10m}), Lượng mưa (\texttt{precipitation}) và Thời lượng nắng (\texttt{sunshine\_duration}). Dung lượng tệp thô xấp xỉ $78\,\text{MB}$.
     
@@ -1016,7 +1016,7 @@ Khác với BI Mart vốn tập trung vào tổng hợp cấp giờ và ngày, \
     Dữ liệu được xuất bản dưới tệp Parquet dạng cột (\texttt{data/mlmart\_base/v4\_final\_cleaned.parquet}). Nhờ thuật toán nén Snappy và cấu trúc lưu trữ theo cột, dung lượng tệp giảm mạnh từ $158\,\text{MB}$ CSV xuống còn xấp xỉ $35\,\text{MB}$ ($78\%$ compression ratio), giúp tăng tốc độ đọc dữ liệu (IO throughput) khi huấn luyện mô hình lên gấp 10 lần.
     
     \item \textbf{Căn chỉnh Khí tượng Nhân quả (Causal Weather Alignment):}
-    Để loại bỏ hoàn toàn hiện tượng rò rỉ dữ liệu tương lai (Data Leakage) khi ghép nối dữ liệu khí tượng $1$ giờ với sản lượng $15$ phút, hệ thống sử dụng thuật toán làm tròn sàn (\texttt{Floor-Hour Lookup}): mốc thời tiết được gán ngược cho 4 dòng $15$ phút trong giờ đó. Nhờ vậy, mốc thời tiết luôn xảy ra \textbf{trước hoặc bằng} mốc sản lượng ($\Delta t \in \{-45, -30, -15, 0\}$ phút), đảm bảo $100\%$ tính nhân quả trong dự báo.
+    Để loại bỏ hoàn toàn hiện tượng rò rỉ dữ liệu tương lai (Data Leakage) khi ghép nối dữ liệu khí tượng $1$ giờ với sản lượng $15$ phút, hệ thống sử dụng thuật toán làm tròn sàn (\texttt{Floor-Hour Lookup}): mốc thời tiết được gán ngược cho 4 dòng $15$ phút trong giờ đó. Nhờ vậy, mốc thời tiết luôn xảy ra trước hoặc bằng mốc sản lượng ($\Delta t \in \{-45, -30, -15, 0\}$ phút), đảm bảo $100\%$ tính nhân quả trong dự báo.
     
     \item \textbf{Tích hợp Đặc trưng Cơ sở Đa chiều:}
     ML Mart tích hợp sẵn các nhóm đặc trưng quan yếu: (1) Lưới $15$ phút liên tục $2.731.946$ dòng, (2) Đặc trưng lịch biểu và mùa vụ, (3) Thông số kỹ thuật trạm pin ($P_{\text{stc}}$, chủng loại biến tần), (4) Dữ liệu bức xạ quang học và nhiệt độ đã căn chỉnh nhân quả, và (5) Cờ dị thường kỹ thuật GMM--IF phục vụ lọc mẫu huấn luyện an toàn.
@@ -1048,7 +1048,7 @@ def realign_causal_weather(df: pd.DataFrame) -> pd.DataFrame:
 
 \subsection{Cấu hình Kết nối Tableau qua Connection Pooler (Port 6543)}
 
-Tableau Desktop kết nối trực tiếp tới Supabase Data Warehouse thông qua cơ chế \textbf{Supavisor Connection Pooling} (Port 6543 ở chế độ Transaction Mode). Cơ chế này duy trì một nhóm các kết nối mở sẵn, giúp hàng chục phiên làm việc đồng thời của người dùng Tableau không làm cạn kiệt tài nguyên kết nối của máy chủ PostgreSQL.
+Tableau Desktop kết nối trực tiếp tới Supabase Data Warehouse thông qua cơ chế Supavisor Connection Pooling (Port 6543 ở chế độ Transaction Mode). Cơ chế này duy trì một nhóm các kết nối mở sẵn, giúp hàng chục phiên làm việc đồng thời của người dùng Tableau không làm cạn kiệt tài nguyên kết nối của máy chủ PostgreSQL.
 
 \section{Kiểm soát Chất lượng, Tính Toàn vẹn và Bảo mật Dữ liệu}
 \label{sec:qa_qc_security}
@@ -1425,7 +1425,7 @@ Dựa trên các nghiên cứu kỹ thuật chuyên sâu về độ tin cậy qu
 
 \begin{enumerate}[label=\arabic*., leftmargin=*]
     \item \textbf{Sự cố Biến tần và Thiết bị Chuyển đổi (Inverter / Optimizer Failures):}
-    Theo báo cáo độ tin cậy quang điện quốc tế của IEA-PVPS Task 13~\cite{iea2023pvps}, bộ biến tần (Inverter) là mắt xích có độ tin cậy thấp nhất trong toàn bộ vòng đời hệ thống quang điện. Thời gian trung bình giữa hai lần hỏng (MTBF) của Inverter ngắn hơn tấm pin quang điện từ 300 đến 500 lần. Lỗi Inverter chiếm tới \textbf{36\%} tổng sản lượng tổn thất do thiết bị vật lý gây ra, với tỷ lệ hư hỏng hàng năm dao động từ 1\% đến 15\%/năm~\cite{iea2023pvps}. Khi Inverter bị ngắt mạch bảo vệ quá nhiệt (Thermal trip) hoặc quá áp lưới theo chuẩn AS/NZS 4777.2, sản lượng trạm sụt giảm đột ngột về 0 giữa ban ngày dù bức xạ mặt trời đang đạt đỉnh cực đại ($> 700 \, \text{W/m}^2$)~\cite{wimalaratne2022unisolar}.
+    Theo báo cáo độ tin cậy quang điện quốc tế của IEA-PVPS Task 13~\cite{iea2023pvps}, bộ biến tần (Inverter) là mắt xích có độ tin cậy thấp nhất trong toàn bộ vòng đời hệ thống quang điện. Thời gian trung bình giữa hai lần hỏng (MTBF) của Inverter ngắn hơn tấm pin quang điện từ 300 đến 500 lần. Lỗi Inverter chiếm tới 36\% tổng sản lượng tổn thất do thiết bị vật lý gây ra, với tỷ lệ hư hỏng hàng năm dao động từ 1\% đến 15\%/năm~\cite{iea2023pvps}. Khi Inverter bị ngắt mạch bảo vệ quá nhiệt (Thermal trip) hoặc quá áp lưới theo chuẩn AS/NZS 4777.2, sản lượng trạm sụt giảm đột ngột về 0 giữa ban ngày dù bức xạ mặt trời đang đạt đỉnh cực đại ($> 700 \, \text{W/m}^2$)~\cite{wimalaratne2022unisolar}.
 
     \item \textbf{Hỏng Diode Bypass và Che bóng Cục bộ (Bypass Diode Faults \& Shading):}
     Theo nghiên cứu suy thoái quang điện IEA-PVPS Task 13~\cite{iea2023pvps} và khảo sát thực nghiệm tại 42 trạm UNISOLAR~\cite{wimalaratne2022unisolar}, khi một tấm pin trong chuỗi (String) bị che bóng bởi cây cối, bụi bẩn bám dính dày đặc (Soiling) hoặc hỏng diode bypass, dòng điện của toàn bộ chuỗi bị bóp nghẹt theo tấm pin yếu nhất. Sự cố ngắn mạch hoặc hở mạch diode bypass có thể làm triệt tiêu tới \textbf{33\%} sản lượng điện của riêng tấm pin đó (do cấu trúc 3 diode bảo vệ 3 nhóm cell), tạo nên các vết sụt giảm sản lượng cục bộ dạng bậc thang cố định $33\%$ hoặc $50\%$ đã được mô hình GMM--IF nhận diện~\cite{li2025gmmif}.
@@ -1444,7 +1444,7 @@ Dữ liệu chuỗi thời gian quang điện có tính phi tuyến và phân ph
     \item \textbf{Tầng 1 -- Phân đoạn Cây quyết định (Decision Tree Segmentation):} Sử dụng cây hồi quy quyết định để chia dữ liệu của từng trạm phát thành 19 đến 29 vùng vận hành lá (Leaf segments) dựa trên bức xạ sóng ngắn, nhiệt độ và mốc thời gian. Mỗi phân đoạn tạo thành một vùng dữ liệu cục bộ tương đối đồng nhất có phân phối xấp xỉ Gauss (hệ số $R^2$ trung bình đạt $0{,}758$).
     \item \textbf{Tầng 2 -- Ước lượng Mật độ Hỗn hợp Gauss (GMM)~\cite{bishop2006pattern}:} Trong từng phân đoạn lá, huấn luyện mô hình GMM 2 thành phần ($M = 2$) để đo lường mật độ xác suất $p(x)$. Các điểm dữ liệu nằm ở vùng mật độ cực thấp ($P_{\text{GMM}} < 0{,}02$) bị gắn nhãn ứng viên ngoại lai theo góc nhìn phân phối xác suất.
     \item \textbf{Tầng 3 -- Rừng cô lập (Isolation Forest -- IF)~\cite{liu2008isolation}:} Khởi tạo 100 cây ngẫu nhiên để đo lường số nhát cắt cần thiết nhằm cô lập điểm dữ liệu khỏi đám đông với tham số \texttt{contamination} $= 3\%$.
-    \item \textbf{Cơ chế Hợp nhất Đồng thuận (Fusion Consensus $GMM \wedge IF$):} Một điểm dữ liệu chỉ được gắn cờ dị thường máy học khi \textbf{cả GMM và IF cùng đồng thuận}:
+    \item \textbf{Cơ chế Hợp nhất Đồng thuận (Fusion Consensus $GMM \wedge IF$):} Một điểm dữ liệu chỉ được gắn cờ dị thường máy học khi cả GMM và IF cùng đồng thuận:
     \begin{equation}
         \text{Flag}_{\text{ML}} = \text{Flag}_{\text{GMM}} \wedge \text{Flag}_{\text{IF}}
     \end{equation}
@@ -2655,7 +2655,7 @@ quan của \texttt{shortwave\_radiation} với sản lượng vọt từ $+0{,}6
 nửa số điểm nằm chồng tại gốc toạ độ và tự động đẩy hệ số tương quan lên.
 Ma trận đầy đủ ở Hình~\ref{fig:eda_corr}.
 
-Cột \texttt{cloud\_cover\_total} cho thấy rõ nhất: ban ngày nó mang dấu \textbf{âm} $-0{,}1591$ --- đúng ý nghĩa vật lý là mây che thì sản lượng giảm nhưng gộp cả đêm thì đổi thành dấu
+Cột \texttt{cloud\_cover\_total} cho thấy rõ nhất: ban ngày nó mang dấu âm $-0{,}1591$ --- đúng ý nghĩa vật lý là mây che thì sản lượng giảm nhưng gộp cả đêm thì đổi thành dấu
 dương $+0{,}0330$, tức đảo ngược hoàn toàn ý nghĩa. Vì vậy mọi tương quan trong tài liệu này
 đều tính trên phạm vi đo thật ban ngày.
 
@@ -3088,7 +3088,7 @@ Số lượng NaN trong các tập:
 
 Notebook \texttt{03\_2\_features\_spatial} sinh nhóm đặc trưng suy từ vị trí Mặt Trời, còn
 \texttt{03\_3\_features\_aggregate} sinh nhóm tương tác khí tượng và mã hoá biến phân loại. Cả hai
-nhóm đều là \textbf{hàm xác định của thời gian và vị trí} hoặc là tổ hợp của các biến đã có,
+nhóm đều là hàm xác định của thời gian và vị trí hoặc là tổ hợp của các biến đã có,
 nên không mang rủi ro rò rỉ.
 
 \subsubsection{Vị trí Mặt Trời theo thuật toán NOAA}
@@ -3167,7 +3167,7 @@ nguồn phát biểu dạng công thức như sau:
 
 Mô hình trời quang thuần thiên văn ước lượng thiếu so với bức xạ đo tại các trạm, nên
 $GHI_{cs}$ được nhân thêm hệ số hiệu chỉnh riêng từng trạm, đặt tên \texttt{cs\_factor}. Hệ số
-này \textbf{tính riêng trên phần huấn luyện của từng fold}, xem Bảng~\ref{tab:cs_factor}.
+này tính riêng trên phần huấn luyện của từng fold, xem Bảng~\ref{tab:cs_factor}.
 
 \begin{table}[htbp]
 \centering
@@ -3241,7 +3241,7 @@ quả trên một cửa sổ sáu giờ.
 \subsubsection{Chuẩn hoá quy mô theo trạm}
 
 Bốn mươi hai dàn quang điện có quy mô rất khác nhau, nên quy mô được ước lượng từ chính dữ
-liệu và \textbf{chỉ từ phần huấn luyện}: \texttt{site\_scale} là phân vị $99$ của sản lượng ban
+liệu và chỉ từ phần huấn luyện: \texttt{site\_scale} là phân vị $99$ của sản lượng ban
 ngày, \texttt{tran\_cong\_suat} là phân vị $99{,}9$. Bảng~\ref{tab:quy_mo} trích tám trạm đầu
 trong bảng notebook in ra.
 
@@ -4634,7 +4634,7 @@ $10$ & \texttt{weather\_condition\_enc}    & $0{,}0218$ & Khí tượng phân lo
 Bảng này cho một kết quả đáng chú ý khi đặt cạnh bảng thông tin tương hỗ ở Mục~\ref{subsec:chan_doan_dac_trung}. Ở bước
 chọn đặc trưng, bốn vị trí đầu đều là thống kê cửa sổ trượt một giờ. Ở đây, đứng đầu lại là
 \texttt{direct\_normal\_irradiance} --- một biến khí tượng đo được --- và vị trí thứ tư thuộc về
-\texttt{ghi\_cs\_mt}, tức bức xạ trời quang \textbf{tại thời điểm mục tiêu}.
+\texttt{ghi\_cs\_mt}, tức bức xạ trời quang tại thời điểm mục tiêu.
 
 Hai điểm rút ra. Thứ nhất, thông tin tương hỗ đo quan hệ của một đặc trưng với mục tiêu khi
 đứng riêng, còn SHAP đo phần đóng góp của nó trong mô hình đã huấn luyện, nơi các đặc
