@@ -1,0 +1,19 @@
+# Ignore temporary scripts and output text files
+*.js
+*.txt
+
+# Ignore specific draft PDFs
+khanhvc3_Phan-tich-Hieu-suat-va-Du-bao-San-luong-He-thong-dien-Mat-Troi.pdf
+
+# LaTeX build artifacts
+*.aux
+*.log
+*.toc
+*.out
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.bbl
+*.blg
+*.lot
+*.lof
