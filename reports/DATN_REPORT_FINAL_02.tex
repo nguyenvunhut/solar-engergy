@@ -588,10 +588,10 @@ Phân tích dữ liệu trong ngành năng lượng mặt trời là quá trình
 
 Theo chuẩn mực phân tích dữ liệu doanh nghiệp, các cấp độ phân tích trong đề tài được phân chia rõ ràng:
 \begin{itemize}[noitemsep]
-    \item \textbf{Phân tích Mô tả (Phân tích Mô tả):} Trả lời câu hỏi \textit{``Chuyện gì đã xảy ra?''} thông qua việc tổng hợp sản lượng thực tế, tính toán hệ số hiệu suất (PR), hệ số công suất (CF) và năng suất riêng (Specific Yield) của 42 trạm phát qua từng tháng và từng năm.
-    \item \textbf{Phân tích Chẩn đoán (Phân tích Chẩn đoán):} Trả lời câu hỏi \textit{``Tại sao hiệu suất trạm lại suy giảm?''} bằng cách bóc tách mối tương quan giữa sản lượng và các yếu tố khí tượng (nhiệt độ quá cao, mây che phủ) hoặc lỗi phần cứng (Inverter ngắt mạch, hỏng diode, trôi cảm biến đo ban đêm).
-    \item \textbf{Phân tích Dự báo (Phân tích Dự báo):} Trả lời câu hỏi \textit{``Sản lượng điện trong chu kỳ tiếp theo là bao nhiêu?''} để hỗ trợ đơn vị vận hành lập kế hoạch điều phối phụ tải và huy động nguồn điện dự phòng.
-    \item \textbf{Phân tích Đề xuất (Phân tích Đề xuất):} Đưa ra các khuyến nghị bảo trì cụ thể (vệ sinh bề mặt pin, thay thế biến tần quá nhiệt, hiệu chuẩn cảm biến CT).
+    \item \textbf{Phân tích Mô tả (Descriptive Analytics):} Trả lời câu hỏi \textit{``Chuyện gì đã xảy ra?''} thông qua việc tổng hợp sản lượng thực tế, tính toán hệ số hiệu suất (PR), hệ số công suất (CF) và năng suất riêng (Specific Yield) của 42 trạm phát qua từng tháng và từng năm.
+    \item \textbf{Phân tích Chẩn đoán (Diagnostic Analytics):} Trả lời câu hỏi \textit{``Tại sao hiệu suất trạm lại suy giảm?''} bằng cách bóc tách mối tương quan giữa sản lượng và các yếu tố khí tượng (nhiệt độ quá cao, mây che phủ) hoặc lỗi phần cứng (Inverter ngắt mạch, hỏng diode, trôi cảm biến đo ban đêm).
+    \item \textbf{Phân tích Dự báo (Predictive Analytics):} Trả lời câu hỏi \textit{``Sản lượng điện trong chu kỳ tiếp theo là bao nhiêu?''} để hỗ trợ đơn vị vận hành lập kế hoạch điều phối phụ tải và huy động nguồn điện dự phòng.
+    \item \textbf{Phân tích Đề xuất (Prescriptive Analytics):} Đưa ra các khuyến nghị bảo trì cụ thể (vệ sinh bề mặt pin, thay thế biến tần quá nhiệt, hiệu chuẩn cảm biến CT).
 \end{itemize}
 
 \subsection{Các Chỉ số Hiệu năng Cốt lõi (KPIs) và Bài toán Tổn thất Vận hành}
@@ -707,7 +707,7 @@ Dựa trên yêu cầu nghiệp vụ, dự án xây dựng bộ khung đo lườ
     \begin{itemize}[noitemsep]
         \item $\text{Anomaly Rate (\%)} = \frac{\text{Số bản ghi dị thường}}{\text{Tổng số bản ghi}} \times 100\%$ (Mục tiêu phát hiện: $1{,}22\%$).
         \item \textbf{Inverter Zero Output Count}: Số sự cố biến tần mất phát giữa trưa nắng gắt ($GHI \ge 700\,\text{W/m}^2$).
-        \item \textbf{Dòng rò ban đêm Records}: Số bản ghi trôi điểm 0 ban đêm cần hiệu chuẩn cảm biến.
+        \item \textbf{Night Leakage Records}: Số bản ghi trôi điểm 0 ban đêm cần hiệu chuẩn cảm biến.
     \end{itemize}
 \end{enumerate}
 
@@ -767,7 +767,7 @@ Qua khảo sát và kiểm định chất lượng dữ liệu thô ban đầu, 
 \begin{itemize}[leftmargin=*]
     \item \textbf{Lệch pha Tần số Đo đạc (Multi-frequency Resolution Mismatch):} Dữ liệu sản lượng phát điện được đo ở độ hạt $15$ phút ($t \in \{00, 15, 30, 45\}$), trong khi dữ liệu khí tượng chỉ có độ hạt $1$ giờ ($t \in \{00\}$). Việc ghép nối dữ liệu nếu không tuân thủ nguyên lý nhân quả (causality) sẽ dẫn đến rủi ro nghiêm trọng: bản ghi sản lượng lúc $09:15$ vô tình nhận dữ liệu thời tiết đo lúc $10:00$ (rò rỉ dữ liệu tương lai -- data leakage).
     
-    \item \textbf{Tỷ lệ Dữ liệu Khuyết thiếu Cao ($56{,}2\%$):} Chuỗi đo đạc sản lượng ghi nhận $1.536.000$ ô dữ liệu mang giá trị \texttt{NULL} (chiếm $56{,}2\%$). Phần lớn giá trị rỗng xuất hiện vào ban đêm do Inverter ngắt mạch để tiết kiệm năng lượng, song có tới 561 đoạn đứt gãy gián đoạn ban ngày do sự cố viễn thông telemetry truyền dữ liệu.
+    \item \textbf{Tỷ lệ Dữ liệu Khuyết thiếu Cao ($56{,}2\%$):} Chuỗi đo đạc sản lượng ghi nhận $1.536.000$ điểm dữ liệu mang giá trị \texttt{NULL} (chiếm $56{,}2\%$) sau khi dựng lại toàn bộ lưới thời gian 15 phút liên tục 24/7 (bao gồm tất cả các khung giờ ban đêm). Phần lớn các giá trị rỗng này xuất hiện vào ban đêm do Inverter ngắt mạch để tiết kiệm năng lượng, song có tới 561 đoạn đứt gãy gián đoạn ban ngày do sự cố viễn thông telemetry truyền dữ liệu.
     
     \item \textbf{Dị thường Đo đạc và Nhiễu Tín hiệu (Sensor Artifacts):} Ghi nhận hiện tượng trôi mốc 0 cảm biến biến dòng CT (phát hiện sản lượng dương $E > 0$ vào nửa đêm khi $GHI = 0$), sự cố mất tín hiệu phát điện khi trời nắng gắt (biến tần ngắt quá nhiệt), và hiện tượng xén công suất (Inverter Clipping) khi công suất DC vượt giới hạn định mức AC.
     
@@ -1106,7 +1106,7 @@ def run_qa_qc_check(engine: Engine) -> None:
 Để khắc phục các hạn chế về môi trường triển khai thực tế, mã nguồn ETL của dự án tích hợp hai giải pháp hệ thống quan trọng:
 \begin{itemize}
     \item \textbf{Sử dụng Thư viện kết nối thuần Python (\texttt{pg8000}):} Khác với thư viện \texttt{psycopg2} vốn yêu cầu biên dịch các thư viện hệ thống nhị phân C (dễ gây lỗi thiếu \texttt{libz.so.1} hoặc \texttt{libstdc++.so.6} trên môi trường ảo hóa NixOS), thư viện \texttt{pg8000} hoạt động hoàn toàn độc lập, đảm bảo tính di động cao của mã nguồn.
-    \item \textbf{Cấu hình Connection Pooler thông qua IPv4:} Do Supabase chỉ hỗ trợ truy cập IPv6 trực tiếp cho gói tài khoản miễn phí, dự án cấu hình Pooler trung gian của Supabase tại cổng \texttt{5432} để duy trì kết nối IPv4 ổn định cho toàn bộ thành viên nhóm, đồng thời giảm tải luồng kết nối đồng thời lên máy chủ.
+    \item \textbf{Cấu hình Connection Pooler thông qua IPv4:} Do Supabase chỉ hỗ trợ truy cập IPv6 trực tiếp cho gói tài khoản miễn phí, dự án cấu hình Pooler trung gian của Supabase tại cổng \texttt{5432} (chế độ Session Mode dành riêng cho tiến trình Python ETL backend chạy lô lớn), trong khi kết nối phân tích BI Tableau được cấu hình qua cổng \texttt{6543} (Transaction Mode Pooler) nhằm phục vụ hàng chục phiên truy vấn đồng thời mà không làm cạn kiệt tài nguyên máy chủ.
 \end{itemize}
 \newpage
 Dưới đây là mã nguồn cấu hình kết nối tối ưu hóa bằng thư viện \texttt{pg8000}:
@@ -1194,7 +1194,7 @@ Công cụ thực hiện quét toàn bộ các bảng trong schema \texttt{stagi
 \end{tabularx}
 \end{table}
 
-Kết quả phân tích ban đầu cho thấy cấu trúc khung của các bảng chiều và bảng thời tiết rất sạch, không xuất hiện hiện tượng trùng lặp dòng. Tuy nhiên, bảng sự kiện sản lượng thô \texttt{fact\_solar\_energy\_gen} chứa tới 107.452 ô dữ liệu bị khuyết giá trị sản lượng (\texttt{SolarGeneration} mang giá trị \texttt{NaN}), chiếm khoảng 3,93\% tổng số quan trắc đo đạc của cả năm. Đây là đối tượng trọng tâm cần xử lý tại tầng làm sạch dữ liệu.
+Kết quả phân tích ban đầu cho thấy cấu trúc khung của các bảng chiều và bảng thời tiết rất sạch, không xuất hiện hiện tượng trùng lặp dòng. Tuy nhiên, bảng sự kiện sản lượng thô \texttt{fact\_solar\_energy\_gen} chứa 107.452 ô dữ liệu bị khuyết giá trị sản lượng (đây là các ô khuyết thiếu kỹ thuật mang giá trị \texttt{NaN} ngay trong file CSV thô ban đầu cần điền khuyết tại Staging, phân biệt hoàn toàn với 1.536.301 điểm không phát điện ban đêm sinh ra sau khi dựng lại lưới thời gian liên tục), chiếm khoảng 3,93\% tổng số quan trắc thực tế đo đạc. Đây là đối tượng trọng tâm cần xử lý tại tầng làm sạch dữ liệu.
 
 \subsection{Các Cột Thực Tế và Ánh Xạ Dữ Liệu Trong Pipeline}
 Trong giai đoạn nạp dữ liệu từ các tệp thô vào bảng đệm (Staging layer), hệ thống thực hiện chuyển đổi kiểu dữ liệu (casting) và đổi tên trường để phù hợp với định dạng kho dữ liệu. Chi tiết các trường thông tin thực tế được ánh xạ từ tệp thô lên bảng sự kiện được thể hiện qua mã nguồn xử lý trực tiếp dưới đây:
@@ -1433,7 +1433,7 @@ Dựa trên các nghiên cứu kỹ thuật chuyên sâu về độ tin cậy qu
     \item \textbf{Suy giảm do Quá nhiệt và Điểm nóng (Thermal Derating \& Hot-spots):}
     Theo các tiêu chuẩn kiểm định IEC 61215 và báo cáo kỹ thuật IEA-PVPS~\cite{iea2023pvps}, hệ số nhiệt độ công suất (Temperature Coefficient of Power $\gamma$) của pin silicon tinh thể dao động từ $-0{,}30\%$ đến $-0{,}50\%/^\circ\text{C}$ khi nhiệt độ cell vượt mốc STC ($25^\circ\text{C}$). Vào các ngày nắng gắt mùa hè bang Victoria, nhiệt độ bề mặt ô pin ($T_{\text{cell}}$) có thể tăng vọt lên tới $65-72^\circ\text{C}$, làm sụt giảm \textbf{12--20\%} công suất đỉnh chủ yếu do suy giảm điện áp hở mạch ($V_{\text{oc}}$)~\cite{wimalaratne2022unisolar}. Nhiệt độ vượt ngưỡng $85--90^\circ\text{C}$ có thể gây ra hiện tượng điểm nóng (Hot-spots), dẫn đến suy thoái vĩnh viễn mối hàn và lớp bọc EVA.
 
-    \item \textbf{Nhiễu Cảm biến và Dòng điện Rò Ban đêm (Sensor Drift \& Dòng rò ban đêm):}
+    \item \textbf{Nhiễu Cảm biến và Dòng điện Rò Ban đêm (Sensor Drift \& Night Leakage):}
     Theo nghiên cứu thuật toán phát hiện ngoại lai quang điện của Li và cộng sự (2025)~\cite{li2025gmmif}, hiện tượng rò rỉ dòng điện ngược (Reverse Current) từ lưới điện vào ban đêm hoặc cảm biến biến dòng (CT) bị trôi mốc 0 (Zero-drift fault) sinh ra các giá trị sản lượng dương giả mạo ($0 < E \le 0{,}025\,\text{kWh}$) trong khoảng thời gian không có bức xạ mặt trời ($GHI = 0$). Ngoài ra, các xung nhiễu điện áp lưới (Voltage spikes) hoặc gián đoạn đường truyền viễn thông (Telemetry dropouts) tạo nên các đỉnh xung sản lượng vượt trần công suất thiết kế cực đại ($P > 1{,}2 \cdot P_{\text{stc}}$) hoặc các bước nhảy đột biến giữa các chu kỳ 15 phút kế cận~\cite{wimalaratne2022unisolar, li2025gmmif}.
 \end{enumerate}
 
@@ -1480,7 +1480,7 @@ Sản lượng 15 phút vượt trần công suất lắp đặt: $E > \text{cap
 \midrule
 \texttt{PHYSICAL\_HIGH\_ENERGY\_NO\_SUN} & 
 $\text{shortwave\_radiation} \le 25 \, \text{W/m}^2$, $\text{sunshine} \le 60\text{s}$, nhưng $E \ge \max(1.0, 0{,}20 \cdot P_{\text{stc}})$. & 
-Sản lượng điện cao trong điều kiện trời tối hoàn toàn; mâu thuẫn vật lý cảnh báo sự cố rò rỉ điện ban đêm (Dòng rò ban đêm) hoặc dòng rò ngược. \\
+Sản lượng điện cao trong điều kiện trời tối hoàn toàn; mâu thuẫn vật lý cảnh báo sự cố rò rỉ điện ban đêm (Night Leakage) hoặc dòng rò ngược. \\
 \midrule
 \texttt{PHYSICAL\_HIGH\_ENERGY\_LOW\_RAD} & 
 $\text{shortwave\_radiation} \le 50 \, \text{W/m}^2$, $E \ge \max(1.0, 0{,}20 \cdot P_{\text{stc}})$, và $E > Q_3 + 4 \cdot \text{IQR}$. & 
@@ -1638,7 +1638,7 @@ Thông số cấu hình kết nối chi tiết giữa Tableau và hệ cơ sở 
 \midrule
 \textbf{Connector Type} & PostgreSQL & Trình kết nối hiệu năng cao tối ưu hóa riêng cho PostgreSQL/Tableau. \\
 \textbf{Server / Host} & \texttt{aws-1-ap-southeast-1.pooler.supabase.com} & Cổng Supabase Connection Pooler (AWS Singapore) giúp duy trì kết nối ổn định và tái sử dụng connection pool. \\
-\textbf{Port} & \texttt{5432} & Cổng mạng tiêu chuẩn dành cho giao thức PostgreSQL Session Pool. \\
+\textbf{Port} & \texttt{5432} / \texttt{6543} & Cổng \texttt{5432} (Session Mode) dành cho tiến trình Python ETL backend; cổng \texttt{6543} (Transaction Mode Pooler) dành cho Tableau Desktop. \\
 \textbf{Database} & \texttt{postgres} & Cơ sở dữ liệu đích chứa các schema \texttt{bi\_mart}, \texttt{gold}, \texttt{dim}. \\
 \textbf{Authentication} & Username and Password & Xác thực danh tính người dùng bằng phương thức mã hóa định danh. \\
 \textbf{Username} & \texttt{tableau\_user.gocnjdtutobgalyqomwz} & Tài khoản dịch vụ chuyên dụng (Dedicated Service Account) được phân quyền Read-only tối thiểu (Principle of Least Privilege) trên schema \texttt{bi\_mart}. \\
@@ -1861,7 +1861,7 @@ Các tính năng giám sát bất thường trọng tâm bao gồm:
     Quy tắc trực quan hóa áp đặt điều kiện đặc biệt: Nếu trong khung giờ ban đêm từ 18:30 đến 05:30 xuất hiện giá trị sản lượng $E > 0$, ô tương ứng sẽ lập tức bị tô màu Đỏ đậm. Đây là bằng chứng trực quan trực tiếp phát hiện sự cố rò rỉ dòng điện ngược (Reverse Current) hoặc cảm biến đo đạc CT bị sai lệch mốc 0 (Zero-drift fault), giúp kỹ sư khoanh vùng vị trí sự cố ngay lập tức.
 
     \item \textbf{Chi tiết Cảnh báo Phân loại Lỗi (Outlier Type \& Details):}
-    Bảng thống kê chi tiết danh sách trạm và phân loại nhóm nguyên nhân dị thường (\textit{Dòng rò ban đêm}, \textit{Extreme Power Spike}, \textit{Sensor Freeze}, \textit{Daytime Sudden Drop}), hỗ trợ lập danh mục ưu tiên cho các đội kỹ thuật đi kiểm tra hiện trường.
+    Bảng thống kê chi tiết danh sách trạm và phân loại nhóm nguyên nhân dị thường (\textit{Night Leakage}, \textit{Extreme Power Spike}, \textit{Sensor Freeze}, \textit{Daytime Sudden Drop}), hỗ trợ lập danh mục ưu tiên cho các đội kỹ thuật đi kiểm tra hiện trường.
 \end{enumerate}
 
 \newpage
