@@ -2087,7 +2087,7 @@ Bản kiểm toán gốc của tầng ETL nằm trong thư mục kết quả c�
 git, nên người đọc báo cáo không dựng lại được. Để bảng dưới đây kiểm chứng được, nhóm viết
 script \texttt{07\_local\_gmm\_if\_audit.py} trong \path{srcs/02_transform/02_generate_outliers/}.
 Script đọc bản kết xuất ML Mart có sẵn trên máy, tách lại ba tệp đệm mà thuật toán cần, rồi
-gọi chính \texttt{02\_gmm\_if.py} nguyên bản không viết lại thuật toán, và không mở kết nối
+gọi chính \texttt{02\_gmm\_if.py} --- nguyên bản không viết lại thuật toán, và không mở kết nối
 tới cơ sở dữ liệu hay kho lưu trữ đám mây nào.
 
 \begin{table}[htbp]
@@ -2371,7 +2371,7 @@ mục tiêu: không để thông tin của tương lai, hoặc thông tin không
 \begin{enumerate}
     \item \textbf{Thời tiết chỉ được lấp theo chiều tiến.} Chỉ dùng \texttt{ffill()} theo
     từng trạm, tức sử dụng giá trị đã quan sát trong quá khứ sang hiện tại. Quy trình nghiêm cấm
-    dùng \texttt{bfill()}, vì kéo ngược là lấy giá trị của mốc sau đắp cho mốc trước đúng
+    dùng \texttt{bfill()}, vì kéo ngược là lấy giá trị của mốc sau đắp cho mốc trước --- đúng
     định nghĩa của rò rỉ dữ liệu.
     \item \textbf{Siêu dữ liệu tĩnh thiếu thì giữ nguyên khuyết.} Các cột như
     \texttt{capacity\_kw}, \texttt{number\_of\_panels}, vĩ độ và kinh độ nếu thiếu thì để nguyên
@@ -2443,7 +2443,7 @@ loại khỏi huấn luyện:
 
 Bốn phần năm phần chèn thêm vì vậy không mang thông tin mới; chúng chỉ giữ chỗ để
 lưới thời gian không bị đứt. Phần còn lại được điền bằng các bậc suy từ lịch sử thật, gồm
-$6.287 + 2.668 + 984 + 283 + 215 = 10.437$ dòng, trong đó $6.287$ dòng là \texttt{night\_zero}
+$6.287 + 2.668 + 984 + 283 + 215 = 10.437$ dòng, trong đó $6.287$ dòng là \texttt{night\_zero} ---
 các mốc ban đêm vốn phải bằng $0$. Số dòng thực sự được suy từ lịch sử phát điện là
 $10.437 - 6.287 = \mathbf{4.150}$ dòng.
 
@@ -2652,7 +2652,7 @@ quan của \texttt{shortwave\_radiation} với sản lượng vọt từ $+0{,}6
 nửa số điểm nằm chồng tại gốc toạ độ và tự động đẩy hệ số tương quan lên.
 Ma trận đầy đủ ở Hình~\ref{fig:eda_corr}.
 
-Cột \texttt{cloud\_cover\_total} cho thấy rõ nhất: ban ngày nó mang dấu \textbf{âm} $-0{,}1591$ đúng ý nghĩa vật lý là mây che thì sản lượng giảm nhưng gộp cả đêm thì đổi thành dấu
+Cột \texttt{cloud\_cover\_total} cho thấy rõ nhất: ban ngày nó mang dấu \textbf{âm} $-0{,}1591$ --- đúng ý nghĩa vật lý là mây che thì sản lượng giảm nhưng gộp cả đêm thì đổi thành dấu
 dương $+0{,}0330$, tức đảo ngược hoàn toàn ý nghĩa. Vì vậy mọi tương quan trong tài liệu này
 đều tính trên phạm vi đo thật ban ngày.
 
@@ -3379,8 +3379,8 @@ Tương tác mây toàn phần và bức xạ \\
 \end{tabular}
 \end{table}
 
-Hai cột \texttt{con\_cach\_tran} và \texttt{clearsky\_proxy} được sinh ra ở bước đặc trưng nhưng
-\textbf{không lọt vào bộ được chọn}: \texttt{clearsky\_proxy} tương quan $0{,}9973$ với
+\textbf{Về các cột bị loại.} Hai cột \texttt{con\_cach\_tran} và \texttt{clearsky\_proxy} được sinh ra ở bước đặc trưng nhưng
+không lọt vào bộ được chọn. \texttt{clearsky\_proxy} tương quan $0{,}9973$ với
 \texttt{sin\_elevation} nên mang thông tin trùng lặp, còn \texttt{con\_cach\_tran} không đạt ngưỡng
 thông tin tương hỗ.
 
@@ -3723,7 +3723,7 @@ $1{,}5$ cắt $2{,}60\%$, giữ lại phần vượt trần do vật lý và ch�
 Sau ba notebook sinh đặc trưng, tập huấn luyện mang $114$ cột. Hai notebook tiếp theo quyết định
 cột nào thực sự đi vào mô hình, với vai trò tách bạch: \texttt{04\_vif\_diagnostics} \textbf{đo} và
 xuất bằng chứng, \texttt{05\_select\_features} \textbf{quyết định}. Notebook chẩn đoán không tự loại
-cột nào nó ghi bảng chỉ số ra tệp để bước chọn đọc lại.
+cột nào --- nó ghi bảng chỉ số ra tệp để bước chọn đọc lại.
 
 Cách phân vai này có lý do: hệ số phóng đại phương sai chỉ đo mức một đặc trưng bị các đặc trưng
 còn lại giải thích, không đo mức đặc trưng đó giải thích được mục tiêu. Một cột có thể vừa cộng
@@ -3938,19 +3938,19 @@ một danh sách bảo vệ gồm $21$ đặc trưng, cả $21$ đều có mặt
 Co trong du lieu   : 21/21
 Bi Top K cat, da bo sung lai (4): ['azimuth_sin', 'temperature_c',
                                    'doy_sin', 'doy_cos']
-Tong dac trung duoc chon: 35 (Top K) + 4 (bao ve) = 39
+Tong dac trung duoc chon: 36 (Top K) + 4 (bao ve) = 40
 \end{verbatim}
 \vspace{2pt}\hrule\par\vspace{6pt}
 \endgroup
 
-Bốn đặc trưng được bổ sung nằm ở hạng $36$, $40$, $49$ và $54$ theo điểm thông tin tương
+Bốn đặc trưng được bổ sung nằm ở hạng $37$, $40$, $49$ và $54$ theo điểm thông tin tương
 hỗ. Hai cột \texttt{doy\_sin} và \texttt{doy\_cos} mã hoá vị trí trong năm dưới dạng vòng; điểm của
 chúng thấp vì trên một mẫu ngẫu nhiên rải khắp $18$ tháng, mùa gần như không phân biệt được 
 nhưng mô hình cần chúng để không coi ngày $31/12$ và ngày $01/01$ là hai thời điểm xa nhau.
 
 \subsubsection{Kết quả áp cho mười tập}
 
-Ba mươi chín đặc trưng đã chọn được áp đồng loạt cho mười tập dữ liệu bốn tập chính và sáu phần
+Bốn mươi đặc trưng đã chọn được áp đồng loạt cho mười tập dữ liệu bốn tập chính và sáu phần
 của ba fold:
 
 % Khoi ket xuat notebook. Khong boc trong minipage nua: minipage la mot hop lien
@@ -5255,6 +5255,11 @@ F.~Pedregosa et~al.,
 Tableau Software (Salesforce),
 \newblock \textit{Visual Analysis Best Practices: A Guide to Creating Meaningful Dashboards},
 \newblock Seattle, WA, 2023.
+
+\bibitem{noaa_solar}
+National Oceanic and Atmospheric Administration (NOAA),
+\newblock ``Solar Position Calculator,''
+\newblock Earth System Research Laboratories, Global Monitoring Laboratory, [Online]. Available: \url{https://gml.noaa.gov/grad/solcalc/}.
 
 \end{thebibliography}
 
