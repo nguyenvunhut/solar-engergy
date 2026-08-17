@@ -346,7 +346,7 @@ Mặc dù nhóm đã nỗ lực hết mình với tinh thần trách nhiệm cao
 Dự án tốt nghiệp \textit{``Phân tích Hiệu suất và Dự báo Sản lượng Hệ thống Điện Mặt Trời''} có mục tiêu nhằm xây dựng một quy trình phân tích và khai phá dữ liệu toàn diện cho hệ thống điện mặt trời quang điện (PV), bao gồm ba phân hệ cốt lõi: Kỹ thuật Dữ liệu (Data Engineering \& Data Warehouse), Phân tích Trực quan Quản trị (Business Intelligence trên Tableau), và Dự báo Sản lượng bằng Học máy (Machine Learning \& Explainable AI).
 
 \textbf{1. Bối cảnh và Nguồn Dữ liệu Nghiên cứu:}
-Dự án sử dụng bộ dữ liệu thực tế UNISOLAR thu thập từ $42$ trạm phát điện mặt trời áp mái với tổng công suất $2{,}37\,\text{MWp}$ phân bố tại $5$ khuôn viên của Đại học La Trobe (bang Victoria, Úc) trong chu kỳ 28 tháng (2020--2022), bao gồm $2.731.946$ bản ghi sản lượng chu kỳ 15 phút. Dữ liệu sản lượng được tích hợp đồng bộ với dữ liệu khí tượng tái phân tích ERA5-Land (bức xạ GHI, DNI, DHI, nhiệt độ, độ ẩm, sức gió và mây che phủ) thu thập qua Open-Meteo API.
+Dự án sử dụng bộ dữ liệu thực tế UNISOLAR thu thập từ $42$ trạm phát điện mặt trời áp mái với tổng công suất $2.428\,\text{kWp}$ phân bố tại $5$ khuôn viên của Đại học La Trobe (bang Victoria, Úc) trong chu kỳ 28 tháng (2020--2022), bao gồm $2.731.946$ bản ghi sản lượng chu kỳ 15 phút. Dữ liệu sản lượng được tích hợp đồng bộ với dữ liệu khí tượng tái phân tích ERA5-Land (bức xạ GHI, DNI, DHI, nhiệt độ, độ ẩm, sức gió và mây che phủ) thu thập qua Open-Meteo API.
 
 \textbf{2. Kỹ thuật Dữ liệu, Xử lý Dị thường và Kho Dữ liệu (ETL \& DWH):}
 Nhóm đã xây dựng pipeline ETL tự động bằng ngôn ngữ Python:
@@ -2478,6 +2478,7 @@ quát rằng phần khuyết phải được xử lý có chủ đích.
 
 \FloatBarrier
 \subsection{Phân tích khám phá dữ liệu và các quyết định sinh đặc trưng}
+\label{subsec:kham_pha_du_lieu}
 
 Trước khi sinh đặc trưng, dữ liệu được khảo sát ở notebook \texttt{02\_EDA}. Phạm vi khảo sát là
 chỉ tập huấn luyện, sau khi loại hai trạm $19$ và $24$: còn $1.480.000$ dòng của
@@ -3401,7 +3402,7 @@ toàn, mà cây quyết định chỉ dùng thứ tự để tách nhánh.
 \textbf{Về cột \texttt{pv\_clr\_lonij}.} Dự án có cài đặt chỉ số $K$ của Lonij đúng nguyên bản
 phân vị $80$, cửa sổ trượt $15$ ngày theo từng khung giờ, có \texttt{shift(1)} nên chỉ nhìn quá
 khứ thành cột \texttt{pv\_clr\_lonij}. Cột này đạt điểm quan trọng biến $1{,}959$, đứng hạng $6$
-trong bảng chẩn đoán ở Mục~$3.7$, nhưng không lọt Top $35$ theo thông tin tương hỗ và không nằm
+trong bảng chẩn đoán ở Mục~\ref{subsec:chan_doan_dac_trung}, nhưng không lọt Top $35$ theo thông tin tương hỗ và không nằm
 trong danh sách bảo vệ, nên bị loại ở bước chọn theo đúng quy tắc đã đặt trước.
 
 Cột này nối trực tiếp với lập luận về mức phân vị ở Mục~\ref{subsec:chuan_hoa_muc_tieu}: dự án cài cả phương án phân vị
@@ -3552,7 +3553,7 @@ tương ứng với từng mức, nên ngưỡng của nó là phân vị $99$ c
 ($307.342$ giá trị ban ngày đo thật, đọc từ
 \texttt{05e\_kiem\_chung/con\_so\_bao\_cao.json}). Ngưỡng thực sự nạp vào mô hình bắt buộc phải suy từ tập huấn
 luyện, nên nó là phân vị $99$ của $k$ trên tập huấn luyện ($681.536$ giá trị), bằng $1{,}3764$.
-Giá trị dùng để huấn luyện và để chấm điểm ở Mục~$7.5$ là $1{,}3764$.
+Giá trị dùng để huấn luyện và để chấm điểm ở Mục~\ref{sec:danh_gia_tren_tap_test} là $1{,}3764$.
 
 \textbf{Hạn chế: ngưỡng cắt dùng chung cho hai tầm dự báo.} Ngưỡng $1{,}3764$ được tính ở tầm
 H$1$ rồi dùng lại cho tầm H$4$. Tính riêng cho H$4$ thì phân vị $99$ của $k$ là $2{,}0156$.
@@ -3594,7 +3595,7 @@ hình vừa không được học giá trị thật vừa bị áp trần khi d�
 
 Sửa đúng cách là gọi lại \texttt{tinh\_clip\_tu\_train()} trong bước chuẩn bị ma trận của tầm H$4$.
 Việc đó kéo theo huấn luyện lại toàn bộ H$4$ và chạy lại cả dây chuyền đánh giá, nên nằm ngoài
-phạm vi đợt này và được ghi vào hướng phát triển ở Mục~$7.8$. Mọi con số H$4$ trong báo cáo đều
+phạm vi đợt này và được ghi vào hướng phát triển ở Mục~\ref{subsec:huong_phat_trien}. Mọi con số H$4$ trong báo cáo đều
 là số của cấu hình đang dùng ngưỡng $1{,}3764$.
 
 \FloatBarrier
@@ -3923,7 +3924,7 @@ $10$ & \texttt{ghi\_cs}          & $0{,}7939$ \\
 \end{table}
 
 Bốn vị trí đầu đều là đặc trưng cửa sổ trượt một giờ, và sáu vị trí đầu đều suy từ lịch sử của
-chính chuỗi sản lượng. Bảng xếp hạng này khớp với kết quả tự tương quan ở Mục~$2.2$: chuỗi mang
+chính chuỗi sản lượng. Bảng xếp hạng này khớp với kết quả tự tương quan ở Mục~\ref{subsec:kham_pha_du_lieu}: chuỗi mang
 tự tương quan $+0{,}9033$ tại mốc một giờ, nên các thống kê của cửa sổ một giờ gần nhất là nguồn
 thông tin mạnh nhất về giá trị sắp tới.
 
@@ -4034,7 +4035,7 @@ Lịch sử chuỗi thời gian & $9$ &
 Quy mô trạm và mã hoá & $6$ &
 \texttt{ky\_vong}, \texttt{ty\_le\_bao\_hoa}, \texttt{tran\_cong\_suat}, \texttt{site\_id\_enc}, \texttt{weather\_condition\_enc}, \texttt{weather\_description\_enc} \\
 \midrule
-\textbf{Tổng số đặc trưng} & $\mathbf{39}$ & \\
+\textbf{Tổng số đặc trưng} & $\mathbf{40}$ & \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -4235,6 +4236,7 @@ quả đã sinh ra chúng: sáu cấu hình huấn luyện, sáu tệp \texttt{m
 
 \FloatBarrier
 \section{Đánh giá trên tập test niêm phong}
+\label{sec:danh_gia_tren_tap_test}
 
 Tập test tách từ đầu và chỉ mở đúng một lần ở đây, sau khi hàm mất mát và siêu tham số
 (\textit{hyperparameter}) đã khoá. Mục này đi qua sáu bước: thước đo, phạm vi chấm điểm, kết
@@ -4579,6 +4581,7 @@ $45$--$59$ & $1.285$ & $15{,}0$ \\
 
 \FloatBarrier
 \section{Giải thích mô hình bằng SHAP}
+\label{sec:giai_thich_mo_hinh}
 
 Cây tăng cường gradient cho sai số thấp nhưng không tự nói được nó dựa vào đâu. Mục này dùng
 SHAP, đi qua bốn bước: cơ sở phương pháp, tầm quan trọng tổng thể, phân tích chi tiết ba trường hợp dự báo, và
@@ -4727,7 +4730,7 @@ chỉ số theo trạm và biểu đồ đối chiếu với Prophet.
 \FloatBarrier
 \subsection{Trang giải thích dự báo}
 
-Trang này đưa kết quả SHAP ở Mục~$7.6$ lên giao diện: tỷ trọng đóng góp theo nhóm đặc trưng, xếp
+Trang này đưa kết quả SHAP ở Mục~\ref{sec:giai_thich_mo_hinh} lên giao diện: tỷ trọng đóng góp theo nhóm đặc trưng, xếp
 hạng đặc trưng, và giải thích một dự báo cụ thể do người dùng chọn.
 
 \begin{figure}[htbp]
@@ -4772,7 +4775,7 @@ và $+36{,}26\%$.
 chứng bằng số liệu chứ không bằng lập luận: phép ghép thời tiết nhân quả đưa số dòng dùng thời
 tiết tương lai về $0$; thống kê quy mô tính riêng theo từng fold; cận cắt suy từ phân vị của
 tập huấn luyện; tập test mở đúng một lần. Hàm mất mát cho cả hai tầm được chốt trên tập kiểm
-định trước khi tập test được mở, và mọi chỉ số báo cáo ở Mục~$7.5$ đều là kết quả của lần mở
+định trước khi tập test được mở, và mọi chỉ số báo cáo ở Mục~\ref{sec:danh_gia_tren_tap_test} đều là kết quả của lần mở
 duy nhất đó.
 
 \FloatBarrier
