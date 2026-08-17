@@ -29,6 +29,16 @@ statsmodels
 xgboost
 lightgbm
 
+# Machine learning: tinh chinh sieu tham so, giai thich mo hinh, mo hinh doi chung
+optuna
+shap
+prophet
+
+# Dashboard va API
+streamlit
+fastapi
+uvicorn
+
 # Crawl and geocoding
 requests
 geopy

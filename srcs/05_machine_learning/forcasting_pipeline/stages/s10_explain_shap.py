@@ -40,7 +40,14 @@ def _thu_muc_model(cfg: Cfg, paths: Paths, horizon: int) -> tuple[Path, str]:
                 if "thu_muc_model" in d:
                     return Path(d["thu_muc_model"]), d["winning_loss"]
                 loss = d.get("winning_loss") or d.get("folder_name")
-                return paths.stage_goc("s08_train") / loss / h_label, loss
+                # Uu tien model cua chinh dot chay nay; chi lui ve `root_goc` khi
+                # khong co, de SHAP luon giai thich dung model vua train.
+                moi = paths.model_dir(loss, horizon)
+                if (moi / "model.pkl").exists():
+                    return moi, loss
+                cu = paths.stage_goc("s08_train") / loss / h_label
+                print(f"   [CANH BAO] khong co model o {moi}, doc tam nhanh goc {cu}")
+                return cu, loss
     raise FileNotFoundError(
         "Khong tim thay best_loss.json. Chay stage s09 truoc:\n"
         "    python srcs/05_machine_learning/pipeline/run.py --stage s09"

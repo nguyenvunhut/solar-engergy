@@ -109,18 +109,33 @@ def them_tham_so_gpu(params: dict, cfg: Cfg, gpu_san_sang: bool) -> dict:
     return p
 
 
-def fit_an_toan(params: dict, X, y, sample_weight=None, cfg: Cfg | None = None):
+def fit_an_toan(params: dict, X, y, sample_weight=None, cfg: Cfg | None = None,
+                eval_set=None, dung_som: int = 0):
     """Fit LightGBM; GPU loi thi tu dong lui ve CPU (KHONG doi sang sklearn).
 
     Tra ve (model, da_lui_ve_cpu) de stage biet ma ghi vao log/model_config.json -
     can biet model duoc train tren GPU hay CPU khi doi chieu ket qua.
+
+    eval_set/dung_som: bat DUNG SOM giong notebook. Notebook fit mo hinh cuoi voi
+    early_stopping(EARLY_STOPPING_ROUNDS), nen so cay THUC co the it hon n_estimators
+    yeu cau - vi du huber h1 xin 433 cay nhung dung o 386. Khong bat dung som thi .py
+    train du 433 cay va ra mo hinh khac han. De trong hai tham so nay thi fit thang
+    nhu cu.
     """
-    from lightgbm import LGBMRegressor
+    from lightgbm import LGBMRegressor, early_stopping, log_evaluation
+
+    def _fit(model):
+        if eval_set and dung_som:
+            model.fit(X, y, sample_weight=sample_weight, eval_set=eval_set,
+                      callbacks=[early_stopping(dung_som, first_metric_only=True,
+                                                verbose=False),
+                                 log_evaluation(0)])
+        else:
+            model.fit(X, y, sample_weight=sample_weight)
+        return model
 
     try:
-        m = LGBMRegressor(**params)
-        m.fit(X, y, sample_weight=sample_weight)
-        return m, False
+        return _fit(LGBMRegressor(**params)), False
     except Exception as e:  # noqa: BLE001
         if params.get("device") != "gpu":
             raise
@@ -128,9 +143,7 @@ def fit_an_toan(params: dict, X, y, sample_weight=None, cfg: Cfg | None = None):
         if cfg is not None:
             p2["n_jobs"] = cfg.runtime["threads"]["n_jobs"]
         print(f"   [CANH BAO] GPU loi (lightgbm_cpu_after_gpu_retry): {str(e)[:90]}")
-        m = LGBMRegressor(**p2)
-        m.fit(X, y, sample_weight=sample_weight)
-        return m, True
+        return _fit(LGBMRegressor(**p2)), True
 
 
 def chuan_bi_X(df, features: list[str], medians, dtype: str = "float32"):

@@ -41,7 +41,7 @@ GOC_REPO = Path(__file__).resolve().parents[2]
 VERSION = os.environ.get("DASHBOARD_VERSION", "v4")
 MODEL_ROOT = GOC_REPO / "data" / "model" / VERSION
 
-PIPELINE = GOC_REPO / "srcs/05_machine_learning/pipeline"
+PIPELINE = GOC_REPO / "srcs/05_machine_learning/forcasting_pipeline"
 MLMART = GOC_REPO / "data/mlmart_base" / f"{VERSION}_final_cleaned.parquet"
 QUY_MO = MODEL_ROOT / "03_2_features_spatial/quy_mo_tram.json"
 CATEGORY_MAPS = MODEL_ROOT / "03_3_features_aggregate" / f"{VERSION}_category_maps.json"

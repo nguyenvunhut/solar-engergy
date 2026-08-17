@@ -317,7 +317,7 @@ with st.container(border=True):
     if not _pro:
         st.info(
             "Chưa có kết quả Prophet — chạy trước:\n\n"
-            "`python -u srcs/05_machine_learning/pipeline/actions/baseline_prophet_test_set.py`"
+            "`python -u srcs/05_machine_learning/forcasting_pipeline/actions/baseline_prophet_test_set.py`"
         )
     else:
         _bang = pd.DataFrame([
