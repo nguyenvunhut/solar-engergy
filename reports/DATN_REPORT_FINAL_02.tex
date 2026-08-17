@@ -4283,11 +4283,11 @@ Không phải mọi dòng trong tập test đều dùng để tính chỉ số. 
 Phép dịch nhãn lên $T{+}h$ loại thêm một phần nữa. Sau khi lọc, lưới thời gian không còn liên
 tục, nên \texttt{shift(-h)} theo trạm có thể trỏ tới dòng hợp lệ kế tiếp chứ không phải mốc
 $T{+}h$. Bước chấm điểm vì vậy đối chiếu mốc thời gian của dòng bị dịch tới và chỉ giữ dòng
-nào lệch đúng $15h$ phút: H$1$ loại $3.303$ dòng còn $\mathbf{475.599}$, H$4$ loại $12.964$
-dòng còn $\mathbf{465.818}$. Kiểm lại trên tệp \texttt{prediction\_audit.parquet} thì không còn
+nào lệch đúng $15h$ phút: H$1$ loại $3.303$ dòng còn $475.599$, H$4$ loại $12.964$
+dòng còn $465.818$. Kiểm lại trên tệp \texttt{prediction\_audit.parquet} thì không còn
 dòng nào lệch tầm ở cả hai tầm.
 
-Chỉ số được báo ở ba phạm vi lồng nhau. Điều kiện phạm vi xét \textbf{dòng nhãn tại $T{+}h$},
+Chỉ số được báo ở ba phạm vi lồng nhau. Điều kiện phạm vi xét dòng nhãn tại $T{+}h$,
 không phải dòng đặc trưng tại $T$: hai cột \texttt{energy\_source} và \texttt{is\_daylight} được dịch
 sang mốc nhãn thành \texttt{nhan\_energy\_source} và \texttt{nhan\_is\_daylight} rồi mới dùng để lọc.
 
