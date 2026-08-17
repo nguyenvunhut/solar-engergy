@@ -2316,7 +2316,7 @@ nghĩa. Quy trình đặt năm rào chắn, mỗi rào chắn gắn với một 
 \end{enumerate}
 
 Bốn rào chắn đầu được kiểm chứng bằng số liệu ở các phần tương ứng phía sau. Rào chắn
-thứ năm được bảo đảm bằng cấu hình tất định, trình bày ở Mục~$7.4.5$.
+thứ năm được bảo đảm bằng cấu hình tất định, trình bày ở Mục~\ref{subsec:cau_hinh_tat_dinh}.
 
 \FloatBarrier
 \section{Chuẩn bị dữ liệu và chia tập}
@@ -3967,32 +3967,18 @@ của ba fold:
 \par\vspace{6pt}\hrule\vspace{4pt}
 \small\renewcommand{\baselinestretch}{1.0}\selectfont
 \begin{lstlisting}[basicstyle=\footnotesize\ttfamily, backgroundcolor=\color{gray!10}, frame=single, rulecolor=\color{gray!40}]
---- DA LOC 10 TAP THEO 40 DAC TRUNG DA CHON ---
-              tap     dong  cot_truoc  cot_sau  feature  cot_phu  \
-0        v4_train  1550856        114       50       40       10   
-1          v4_val   723114        114       50       40       10   
-2         v4_test   510468        114       50       40       10   
-3  v4_development  2273970        113       50       40       10   
-4    fold_1_train   233244        115       50       40       10   
-5      fold_1_val   606105        115       50       40       10   
-6    fold_2_train   839349        115       50       40       10   
-7      fold_2_val   711507        115       50       40       10   
-8    fold_3_train  1550856        115       50       40       10   
-9      fold_3_val   723114        115       50       40       10   
-
-   feature_thieu  
-0              0  
-1              0  
-2              0  
-3              0  
-4              0  
-5              0  
-6              0  
-7              0  
-8              0  
-9              0  
-
-Moi tap deu co du dac trung da chon.
+--- DA LOC 10 TAP THEO 39 DAC TRUNG DA CHON ---
+tap    dong    cot_truoc    cot_sau    feature    cot_phu    feature_thieu
+0    v4_train    1550856    114    49    39    10    0
+1    v4_val    723114    114    49    39    10    0
+2    v4_test    510468    114    49    39    10    0
+3    v4_development    2273970    113    49    39    10    0
+4    fold_1_train    233244    115    49    39    10    0
+5    fold_1_val    606105    115    49    39    10    0
+6    fold_2_train    839349    115    49    39    10    0
+7    fold_2_val    711507    115    49    39    10    0
+8    fold_3_train    1550856    115    49    39    10    0
+9    fold_3_val    723114    115    49    39    10    0
 \end{lstlisting}
 \vspace{2pt}\hrule\par\vspace{6pt}
 \endgroup
@@ -4175,10 +4161,11 @@ chỗ đó là việc nên làm ở lần huấn luyện sau.
 
 \FloatBarrier
 \subsection{Chọn hàm mất mát}
+\label{subsec:chon_ham_mat_mat}
 
 Ba hàm được chấm trên tập kiểm định, phần dữ liệu mô hình chưa từng nhìn thấy, ở phạm vi
 đo thật ban ngày. Phạm vi này xét dòng nhãn tại $T{+}h$ đúng như ở bước đánh giá cuối
-tại Mục~$7.5.2$, và loại hai trạm $19$, $24$ cho khớp với phạm vi huấn luyện. Kết quả đầy đủ của
+tại Mục~\ref{subsec:pham_vi_cham_diem}, và loại hai trạm $19$, $24$ cho khớp với phạm vi huấn luyện. Kết quả đầy đủ của
 sáu cấu hình ở Bảng~\ref{tab:chon_loss}.
 
 \begin{table}[htbp]
@@ -4220,6 +4207,7 @@ Phép chọn này thực hiện hoàn toàn trên tập kiểm định; tập te
 
 \FloatBarrier
 \subsection{Cấu hình tất định}
+\label{subsec:cau_hinh_tat_dinh}
 
 Toàn bộ sáu lần huấn luyện chạy trên CPU với \texttt{deterministic} $=$ true,
 \texttt{force\_col\_wise} $=$ true, \texttt{max\_bin} $=127$, \texttt{random\_state} $=42$ và
@@ -4231,7 +4219,7 @@ bị bỏ qua. Quy trình đặt tính tái lập lên trước tốc độ nên
 
 Cấu hình tất định này là điều kiện để mọi con số trong tài liệu truy được về đúng tệp kết
 quả đã sinh ra chúng: sáu cấu hình huấn luyện, sáu tệp \texttt{metrics\_val.json} dưới
-\texttt{06\_train/}, và các bảng ở Mục~$7.4.4$ đọc thẳng từ những tệp đó.
+\texttt{06\_train/}, và các bảng ở Mục~\ref{subsec:chon_ham_mat_mat} đọc thẳng từ những tệp đó.
 
 \FloatBarrier
 \section{Đánh giá trên tập test niêm phong}
@@ -4283,6 +4271,7 @@ ngang thang với những mốc lớn.
 
 \FloatBarrier
 \subsection{Phạm vi chấm điểm}
+\label{subsec:pham_vi_cham_diem}
 
 Không phải mọi dòng trong tập test đều dùng để tính chỉ số. Bốn điều kiện lọc được áp đúng như
 ở bước huấn luyện, đưa $510.468$ dòng xuống $478.942$ dòng.
@@ -4332,7 +4321,7 @@ Toàn bộ                   & $17{,}10$ & $21{,}86$ \\
 \end{tabular}
 \end{table}
 
-Cả hai tầm dùng cấu hình MAE, đúng hai cấu hình thắng trên tập kiểm định ở Mục~$7.4.4$.
+Cả hai tầm dùng cấu hình MAE, đúng hai cấu hình thắng trên tập kiểm định ở Mục~\ref{subsec:chon_ham_mat_mat}.
 
 Phạm vi chính thức gồm $229.548$ dòng ở H1 và $229.297$ dòng ở H4.
 
@@ -4503,7 +4492,7 @@ không tách được thành phần đóng góp của riêng nhóm đặc trưng
 mô hình khác nhau đồng thời ở hai điểm: thuật toán (phân rã chuỗi cộng tính so với cây
 tăng cường gradient) và tập đầu vào (không có biến khí tượng so với có). Muốn tách thì phải
 chạy thêm hai cấu hình đối chứng nữa: LightGBM bỏ hết biến khí tượng, và Prophet có biến ngoại
-sinh. Hai cấu hình đó nằm ở Mục~$7.8.3$ như hướng phát triển tiếp theo.
+sinh. Hai cấu hình đó nằm ở Mục~\ref{subsec:huong_phat_trien} như hướng phát triển tiếp theo.
 
 Ngoài ra, chỉ số vượt trội đo mức cải thiện so với một mô hình đối chứng cụ thể, không
 phải so với mọi phương án khả dĩ. Một đường cơ sở yếu hơn sẽ cho chỉ số cao hơn mà không phản
@@ -4796,6 +4785,7 @@ duy nhất đó.
 
 \FloatBarrier
 \subsection{Hướng phát triển}
+\label{subsec:huong_phat_trien}
 
 Ba việc cụ thể, xếp theo mức dễ làm:
 
