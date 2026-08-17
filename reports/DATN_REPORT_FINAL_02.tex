@@ -365,7 +365,7 @@ Thiết lập đường truyền kết nối trực tiếp PostgreSQL bảo mậ
 \end{itemize}
 
 \textbf{4. Khai phá Dữ liệu và Dự báo Sản lượng Học máy (Machine Learning):}
-Xây dựng quy trình học máy tuân thủ nguyên lý nhân quả nghiêm ngặt (chống rò rỉ dữ liệu), trích xuất 40 đặc trưng chọn lọc từ chuỗi thời gian, bức xạ quang học và góc chiếu mặt trời tất định Haurwitz/NOAA:
+Xây dựng quy trình học máy tuân thủ nguyên lý nhân quả nghiêm ngặt (chống rò rỉ dữ liệu), trích xuất 40 đặc trưng chọn lọc (mở rộng thành 53 đặc trưng sau khi thêm các biến trễ mục tiêu $T+h$ cho mô hình dự báo trực tiếp H1) từ chuỗi thời gian, bức xạ quang học và góc chiếu mặt trời tất định Haurwitz/NOAA:
 \begin{itemize}[noitemsep]
     \item Đánh giá trên sơ đồ kiểm tra chéo chuỗi thời gian 3-Fold Expanding Window; tối ưu hóa siêu tham số mô hình LightGBM hồi quy L1/Huber bằng thuật toán Bayesian TPE qua 50 Trials Optuna.
     \item Mô hình đạt sai số phần trăm tuyệt đối gia quyền WAPE $12{,}48\%$ trên tập kiểm thử (Test) niêm phong, cải thiện vượt trội so với mô hình cơ sở Facebook Prophet.
@@ -501,7 +501,7 @@ Xây dựng một nền tảng kỹ thuật xử lý dữ liệu hoàn chỉnh t
 
 \begin{itemize}[noitemsep]
     \item \textbf{Đối tượng Nghiên cứu:} Dữ liệu sản lượng điện năng từ các trạm quang điện áp mái và các biến số khí tượng viễn thám có ảnh hưởng trực tiếp đến hiệu suất quang điện (bức xạ mặt trời, nhiệt độ môi trường, độ che phủ mây, tốc độ gió, lượng mưa và thời lượng nắng).
-    \item \textbf{Phạm vi Không gian:} 42 trạm phát quang điện áp mái với tổng công suất danh định $2.428\,\text{kWp}$ phân bổ tại 4 khuôn viên của Đại học La Trobe, Bang Victoria, Úc (Bundoora, Bendigo, Albury-Wodonga, Shepparton) thuộc bộ dữ liệu mở UNISOLAR~\cite{wimalaratne2022unisolar}.
+    \item \textbf{Phạm vi Không gian:} 42 trạm phát quang điện áp mái với tổng công suất danh định $2.428\,\text{kWp}$ phân bổ tại 5 cơ sở của Đại học La Trobe, Bang Victoria, Úc (Bundoora, Bendigo, Albury-Wodonga, Shepparton, và Mildura, trong đó Mildura đóng vai trò trạm đối chứng khí tượng) thuộc bộ dữ liệu mở UNISOLAR~\cite{wimalaratne2022unisolar}.
     \item \textbf{Phạm vi Thời gian:} Chuỗi dữ liệu lịch sử liên tục trong 28 tháng, từ ngày 01/01/2020 đến ngày 30/04/2022.
 \end{itemize}
 
@@ -2219,6 +2219,7 @@ quyết định nằm trong vùng an toàn, không phải một mức tối ưu 
 % bị đẩy sang sau khi mục 1.5 đã mở.
 \FloatBarrier
 \subsection{Sơ đồ toàn cảnh}
+\label{subsec:so_do_toan_canh}
 
 Trước khi đi vào quy trình cụ thể của đề tài, Hình~\ref{fig:ml_lifecycle} nhắc lại vòng đời
 học máy ở dạng chung nhất. Vòng ngoài màu xanh là phần gắn với bài toán: xuất phát từ yêu cầu
@@ -2285,6 +2286,7 @@ Mô hình đối chứng & \texttt{06\_0b\_baseline\_prophet} & \texttt{prophet\
 
 \FloatBarrier
 \subsection{Năm rào chắn chống rò rỉ dữ liệu}
+\label{subsec:nam_rao_chan}
 
 Rò rỉ dữ liệu là rủi ro lớn nhất của một bài toán dự báo chuỗi thời gian: chỉ cần một
 đặc trưng vô tình mang thông tin của tương lai, mọi chỉ số đánh giá đều trở nên vô
@@ -2325,6 +2327,7 @@ liệu, dựng lại lưới thời gian, khám phá dữ liệu, cắt tập te
 
 \FloatBarrier
 \subsection{Hiện trạng bộ dữ liệu}
+\label{subsec:hien_trang_du_lieu}
 
 Sau khi dựng lại lưới, bộ dữ liệu có $2.784.438$ dòng của $42$ vị trí lắp đặt, trải từ
 $01/01/2020$ đến $23/04/2022$ ở bước $15$ phút, trong đó $52.492$ dòng ($1{,}89\%$) là mốc
@@ -2334,7 +2337,7 @@ Chỉ $1.195.645$ dòng ($42{,}94\%$) là số đo thật. Phần còn lại do 
 dòng điền khuyết ($55{,}17\%$), $42.055$ dòng gán không do sự cố thiết bị và $6.287$ dòng gán
 không vì trời tối. Ngoài ra tầng ETL gắn cờ ngoại lai cho $33.280$ dòng ($1{,}20\%$), gồm
 $26.318$ dòng vượt trần công suất, $5.458$ dòng do hai cơ chế thống kê cùng đồng ý, $791$ dòng
-trúng nhiều luật và $713$ dòng trúng một luật vật lý khác; Mục~$7.3.2$ kiểm chứng lại các cờ này.
+trúng nhiều luật và $713$ dòng trúng một luật vật lý khác; Mục~\ref{subsec:solar_geometry} kiểm chứng lại các cờ này.
 
 Bốn con số trên định hình các bước còn lại. Lưới đứt quãng phải dựng lại trước tiên, vì đặc
 trưng trễ và cửa sổ trượt đếm theo số bước chứ không theo mốc đồng hồ nên một lỗ hổng làm chúng
@@ -2393,7 +2396,7 @@ mục tiêu: không để thông tin của tương lai, hoặc thông tin không
 \begingroup
 \par\penalty-150\vspace{8pt}
 \small\renewcommand{\baselinestretch}{1.0}\selectfont
-\begin{verbatim}
+\begin{lstlisting}[basicstyle=\footnotesize\ttfamily, backgroundcolor=\color{gray!10}, frame=single, rulecolor=\color{gray!40}]
 Đã reindex lưới 15 phút cho 42 site.
 Tổng số dòng sau reindex: 2784438
 - Dòng gốc: 2731946
@@ -2422,7 +2425,7 @@ causal_week_persistence        215
 - Target null: 0
 - Energy_source rỗng: 0
 PASS - Không còn target null hoặc energy_source rỗng.
-\end{verbatim}
+\end{lstlisting}
 \par\vspace{8pt}
 \endgroup
 
@@ -2445,7 +2448,7 @@ Bốn phần năm phần chèn thêm vì vậy không mang thông tin mới; ch�
 lưới thời gian không bị đứt. Phần còn lại được điền bằng các bậc suy từ lịch sử thật, gồm
 $6.287 + 2.668 + 984 + 283 + 215 = 10.437$ dòng, trong đó $6.287$ dòng là \texttt{night\_zero} ---
 các mốc ban đêm vốn phải bằng $0$. Số dòng thực sự được suy từ lịch sử phát điện là
-$10.437 - 6.287 = \mathbf{4.150}$ dòng.
+$10.437 - 6.287 = 4.150$ dòng.
 
 Một hạn chế nữa: sau khi lấp theo chiều tiến vẫn còn $1.890$ ô thời tiết khuyết. Đó là các mốc
 nằm ở đầu chuỗi của từng trạm, nơi chưa có quan sát quá khứ nào để kéo sang. Chỉ có thể lấp
@@ -2477,10 +2480,10 @@ quát rằng phần khuyết phải được xử lý có chủ đích.
 \subsection{Phân tích khám phá dữ liệu và các quyết định sinh đặc trưng}
 
 Trước khi sinh đặc trưng, dữ liệu được khảo sát ở notebook \texttt{02\_EDA}. Phạm vi khảo sát là
-\textbf{chỉ tập huấn luyện}, sau khi loại hai trạm $19$ và $24$: còn $1.480.000$ dòng của
+chỉ tập huấn luyện, sau khi loại hai trạm $19$ và $24$: còn $1.480.000$ dòng của
 $40$ trạm. Đây là điều kiện bắt buộc các quyết định sinh đặc trưng ở Phần~$3$ đều rút ra
 từ bước này, nên nếu khảo sát cả tập test thì tập test đã tham gia vào thiết kế mô hình,
-trái với nguyên tắc niêm phong nêu ở Mục~$7.1.5$.
+trái với nguyên tắc niêm phong nêu ở Mục~\ref{subsec:nam_rao_chan}.
 
 Ba phạm vi con được tách riêng để mọi con số phía sau đều nói rõ nó thuộc phạm vi nào:
 
@@ -2490,14 +2493,14 @@ Ba phạm vi con được tách riêng để mọi con số phía sau đều nó
 \begingroup
 \par\penalty-150\vspace{8pt}
 \small\renewcommand{\baselinestretch}{1.0}\selectfont
-\begin{verbatim}
+\begin{lstlisting}[basicstyle=\footnotesize\ttfamily, backgroundcolor=\color{gray!10}, frame=single, rulecolor=\color{gray!40}]
 Doc vao          : 1,550,856 dong x 12 cot | 42 tram
 Sau khi bo tram [19, 24]: 1,480,000 dong | 40 tram
 
    toan bo               1,480,000 dong  (100.00%)
    ban ngay                742,116 dong  (50.14%)
    do that ban ngay        606,112 dong  (40.95%)
-\end{verbatim}
+\end{lstlisting}
 \par\vspace{8pt}
 \endgroup
 \subsubsection{Phân bố đơn biến của sản lượng}
@@ -2520,7 +2523,7 @@ Ban ngày         & $742.116$   & $2{,}7325$ & $4{,}5148$ & $25{,}3908$ & $6{,}6
 
 Phân bố lệch phải rất mạnh và nhọn: trên toàn bộ tập huấn luyện, độ lệch đạt $6{,}06$ và độ
 nhọn đạt $47{,}37$, trong khi phân phối chuẩn có cả hai bằng $0$. Nguyên nhân trực tiếp là
-$\mathbf{52{,}30\%}$ số quan sát bằng $0$, ban đêm và các khung giờ rìa ngày. Trung vị của
+$52{,}30\%$ số quan sát bằng $0$, ban đêm và các khung giờ rìa ngày. Trung vị của
 toàn bộ tập cũng bằng $0$, tức quá nửa dữ liệu không mang thông tin phát điện.
 
 Hình~\ref{fig:eda_phan_bo} trình bày ba cách nhìn cùng một phân bố.
@@ -2549,11 +2552,11 @@ mốc trong ngày, để hình không rơi vào ngày do tầng ETL điền khuy
 \begingroup
 \par\penalty-150\vspace{8pt}
 \small\renewcommand{\baselinestretch}{1.0}\selectfont
-\begin{verbatim}
+\begin{lstlisting}[basicstyle=\footnotesize\ttfamily, backgroundcolor=\color{gray!10}, frame=single, rulecolor=\color{gray!40}]
 Tram 27 | 283 ngay dat dieu kien | 71 ngay nhieu nang
    Ngay troi quang: 2020-10-02 | do gap 0.0031
    Ngay nhieu may : 2020-12-23 | do gap 0.0926
-\end{verbatim}
+\end{lstlisting}
 \par\vspace{8pt}
 \endgroup
 Hai ngày này không được chọn bằng mắt mà bằng một đại lượng đo trực tiếp trên chuỗi sản
@@ -2614,7 +2617,7 @@ $t$ gần như là bản sao của giá trị tại $t+1$, nên một mô hình 
 tắt hiển nhiên: lặp lại giá trị vừa đo. Mốc $1$ giờ vẫn giữ tương quan cao $+0{,}9033$ nhưng
 đã đủ xa để không còn là bản sao, còn mốc $24$ giờ ở $+0{,}7134$ mang thông tin chu kỳ ngày.
 Hình~\ref{fig:eda_acf} là biểu đồ đầy đủ.
-Ba con số này là căn cứ định lượng cho lựa chọn trình bày ở Mục~$7.3.1$.
+Ba con số này là căn cứ định lượng cho lựa chọn trình bày ở Mục~\ref{subsec:dac_trung_thoi_gian}.
 
 \begin{figure}[htbp]
     \centering
@@ -2784,7 +2787,7 @@ lệch này.
 \subsection{Thực nghiệm: đo phần chồng lấn nhãn ở ranh giới fold}
 
 Ba fold được cắt liên tục, không chèn khoảng đệm giữa phần huấn luyện và phần kiểm
-định. Hai quy tắc chống rò rỉ nêu ở Mục~$7.1.4$ chỉ ràng buộc đặc trưng đầu
+định. Hai quy tắc chống rò rỉ nêu ở Mục~\ref{subsec:so_do_toan_canh} chỉ ràng buộc đặc trưng đầu
 vào; riêng nhãn cần một phép kiểm riêng. Nhãn của một dòng huấn luyện là sản
 lượng tại $T + h$, nên với những dòng nằm sát mốc cắt, thời điểm $T + h$ có thể đã rơi
 sang vùng kiểm định. Nhóm đo trực tiếp phần chồng lấn này.
@@ -2837,6 +2840,7 @@ tuyến, \texttt{05\_select\_features} chốt danh sách chính thức.
 
 \FloatBarrier
 \subsection{Đặc trưng thời gian, trễ và cửa sổ trượt}
+\label{subsec:dac_trung_thoi_gian}
 
 Notebook \texttt{03\_1\_features\_time} sinh ba nhóm đặc trưng, tóm tắt ở
 Bảng~\ref{tab:dac_trung_thoi_gian}.
@@ -2929,7 +2933,7 @@ việc lặp lại giá trị vừa đo \\
 \addlinespace
 \texttt{lag\_4} ($T-60$ phút) & \textbf{giữ} &
 Đủ xa để không lặp lại được giá trị vừa đo, vẫn đủ gần để mang thông tin quán tính; qua được
-cổng lệch pha ở Mục~$7.3.1$ \\
+cổng lệch pha ở Mục~\ref{subsec:dac_trung_thoi_gian} \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2971,7 +2975,7 @@ ngưỡng. Kết quả in ra ở notebook \texttt{06\_1\_train\_mae}:
 \begingroup
 \par\vspace{6pt}\hrule\vspace{4pt}
 \small\renewcommand{\baselinestretch}{1.0}\selectfont
-\begin{verbatim}
+\begin{lstlisting}[basicstyle=\footnotesize\ttfamily, backgroundcolor=\color{gray!10}, frame=single, rulecolor=\color{gray!40}]
 TRAIN THU NHANH DE DO TRE (truoc khi tune)
 Train thu 300,000 dong x 54 dac trung trong 9.3 giay
 
@@ -2985,7 +2989,7 @@ Tre theo site: trung vi +2.79 phut | nho nhat +1.64 | lon nhat +3.71
 
 CONG DO TRE: DAT - tre +2.46 phut, khong site nao vuot nguong.
 Cho phep chay Optuna va train that.
-\end{verbatim}
+\end{lstlisting}
 \vspace{2pt}\hrule\par\vspace{6pt}
 \endgroup
 
@@ -3016,7 +3020,7 @@ Thời gian huấn luyện & $9{,}3$ giây & hàng chục phút \\
 \end{table}
 
 Vì thuật toán, hàm mất mát và danh sách đặc trưng thống nhất với mô hình cuối, cổng kiểm được đúng
-thứ nó cần kiểm: \textbf{bộ đặc trưng có đẩy mô hình vào hành vi bám trụ hay không}. Nếu
+thứ nó cần kiểm: bộ đặc trưng có đẩy mô hình vào hành vi bám trụ hay không. Nếu
 \texttt{lag\_1} có mặt thì mô hình nháp cũng sao chép giá trị gần nhất y như mô hình cuối.
 
 Ngưỡng là $\pm 5$ phút và không trạm nào được vượt. Đo trên $288.735$ điểm ban ngày, độ
@@ -3048,7 +3052,7 @@ mỗi fold dùng phần huấn luyện của chính fold đó. Nhờ vậy dòng
 \begingroup
 \par\vspace{6pt}\hrule\vspace{4pt}
 \footnotesize\renewcommand{\baselinestretch}{1.0}\selectfont
-\begin{verbatim}
+\begin{lstlisting}[basicstyle=\footnotesize\ttfamily, backgroundcolor=\color{gray!10}, frame=single, rulecolor=\color{gray!40}]
 So dac trung target se tao: 2 lag + 8 rolling = 10 cot
 
 Da sinh dac trung thoi gian cho development va test
@@ -3071,7 +3075,7 @@ Số lượng NaN trong các tập:
 
 0 điểm đứt gãy - lưới thời gian liên tục 100% nhờ Reindex Notebook 01.
 (Tổng số dòng: 1550856)
-\end{verbatim}
+\end{lstlisting}
 \vspace{2pt}\hrule\par\vspace{6pt}
 \endgroup
 
@@ -3080,6 +3084,7 @@ Số lượng NaN trong các tập:
 
 \FloatBarrier
 \subsection{Solar geometry, bức xạ trời quang và chuẩn hoá theo trạm}
+\label{subsec:solar_geometry}
 
 Notebook \texttt{03\_2\_features\_spatial} sinh nhóm đặc trưng suy từ vị trí Mặt Trời, còn
 \texttt{03\_3\_features\_aggregate} sinh nhóm tương tác khí tượng và mã hoá biến phân loại. Cả hai
@@ -3213,14 +3218,14 @@ trước, tính riêng trên các dòng ban ngày. Khối kết quả của note
 % co \small no tran ra ngoai le phai. Ha co chu la cach duy nhat giu duoc NGUYEN VAN
 % tung ky tu output cua notebook - ngat dong hay bo bot chu deu lam sai ban trich.
 \footnotesize\renewcommand{\baselinestretch}{1.0}\selectfont
-\begin{verbatim}
+\begin{lstlisting}[basicstyle=\footnotesize\ttfamily, backgroundcolor=\color{gray!10}, frame=single, rulecolor=\color{gray!40}]
 --- TY LE BUOC CO GIA TRI BUC XA THAY DOI, TOAN TAP TRAIN (CHI BAN NGAY) ---
    So dong ban ngay: 751,408 / 1,550,856 (48.5%)
    Truoc downscale :  26.7%
    Sau  downscale  :  76.7%
 Muc tieu la tren 90 phan tram.
    [CANH BAO] Chua dat 90 phan tram, kiem lai buoc downscale.
-\end{verbatim}
+\end{lstlisting}
 \par\vspace{8pt}
 \endgroup
 Tỷ lệ tăng gần ba lần, từ $26{,}7\%$ lên $76{,}7\%$. Hình~\ref{fig:downscale} cho thấy hiệu
@@ -3307,7 +3312,7 @@ cho phía kiểm định; notebook khớp được $8$ bảng mã, và số ô g
 \begingroup
 \par\penalty-150\vspace{8pt}
 \small\renewcommand{\baselinestretch}{1.0}\selectfont
-\begin{verbatim}
+\begin{lstlisting}[basicstyle=\footnotesize\ttfamily, backgroundcolor=\color{gray!10}, frame=single, rulecolor=\color{gray!40}]
 --- KIEM TRA 1: dac trung target deu duoc shift ---
 Cot lag con lai sau khi khu tre pha: ['lag_4', 'lag_96']
 lag_96(t) == target(t-96) tren mau: DAT
@@ -3316,7 +3321,7 @@ lag_96(t) == target(t-96) tren mau: DAT
 - val         : 100.00% dong co du lich su lien tuc
 --- KIEM TRA 3: hang muc la (unseen category) ---
 Tong so o gap hang muc la trong val: 0
-\end{verbatim}
+\end{lstlisting}
 \par\vspace{8pt}
 \endgroup
 Sau ba notebook sinh đặc trưng, tập huấn luyện đi từ $50$ cột lên $114$ cột, trong đó $46$
@@ -3325,7 +3330,7 @@ cột là đặc trưng ứng viên; các fold mang $115$ cột do có thêm c�
 \FloatBarrier
 \subsection{Định nghĩa các đặc trưng dẫn xuất}
 
-Một số cột xuất hiện trong bảng chẩn đoán và bảng chấm điểm ở Mục~$7.3.7$ là đại lượng dẫn xuất,
+Một số cột xuất hiện trong bảng chẩn đoán và bảng chấm điểm ở Mục~\ref{subsec:chan_doan_dac_trung} là đại lượng dẫn xuất,
 không đọc thẳng từ dữ liệu nguồn. Bảng~\ref{tab:dinh_nghia_dan_xuat} ghi công thức của chúng.
 
 \begin{table}[htbp]
@@ -3399,7 +3404,7 @@ khứ thành cột \texttt{pv\_clr\_lonij}. Cột này đạt điểm quan trọ
 trong bảng chẩn đoán ở Mục~$3.7$, nhưng không lọt Top $35$ theo thông tin tương hỗ và không nằm
 trong danh sách bảo vệ, nên bị loại ở bước chọn theo đúng quy tắc đã đặt trước.
 
-Cột này nối trực tiếp với lập luận về mức phân vị ở Mục~$7.3.5$: dự án cài cả phương án phân vị
+Cột này nối trực tiếp với lập luận về mức phân vị ở Mục~\ref{subsec:chuan_hoa_muc_tieu}: dự án cài cả phương án phân vị
 $80$ của Lonij lẫn phương án phân vị $99$ của mình, rồi để bước chấm điểm quyết định bằng số
 liệu thay vì chọn trước bằng lập luận.
 
@@ -3410,11 +3415,11 @@ liệu thay vì chọn trước bằng lập luận.
 và nhãn lịch \texttt{sin\_elevation}, \texttt{ghi\_cs}, \texttt{hour} vẫn là giá trị tại $T$. Mô
 hình do đó dùng vị trí Mặt Trời lúc $T$ để dựng lại sản lượng lúc $T{+}h$, và đường dự báo sinh
 ra chính là đường Mặt Trời bị trễ đúng $h$ bước. Đây là hệ quả cấu trúc của bài toán, và tác
-động của nó lan rộng vì cùng đại lượng đó cũng là mẫu số chuẩn hoá ở Mục~$7.3.5$.
+động của nó lan rộng vì cùng đại lượng đó cũng là mẫu số chuẩn hoá ở Mục~\ref{subsec:chuan_hoa_muc_tieu}.
 
-\textbf{Cách xử lý.} Quy trình khai báo một danh sách $22$ cột \textbf{tất định} hình học
+\textbf{Cách xử lý.} Quy trình khai báo một danh sách $22$ cột tất định hình học
 Mặt Trời cùng các đại lượng suy ra từ nó, và toàn bộ nhãn thời gian theo lịch rồi sinh thêm
-bản của chúng tại $T{+}h$ với hậu tố \texttt{\_mt}, đồng thời \textbf{giữ nguyên} bản tại $T$. Ở
+bản của chúng tại $T{+}h$ với hậu tố \texttt{\_mt}, đồng thời giữ nguyên bản tại $T$. Ở
 tầm H1 sinh được $14$ cột, nâng tổng số đặc trưng vào mô hình từ $39$ lên $53$.
 
 \textbf{Ranh giới hợp lệ của phép dịch.} Vị trí Mặt Trời và nhãn lịch tại
@@ -3454,6 +3459,7 @@ bản và để mô hình tự chọn theo khung giờ, thay vì áp một phư�
 
 \FloatBarrier
 \subsection{Chuẩn hoá mục tiêu theo vật lý}
+\label{subsec:chuan_hoa_muc_tieu}
 
 Bốn mươi trạm có quy mô chênh nhau nhiều lần, và sản lượng trong ngày biến thiên theo góc cao
 Mặt Trời. Nếu huấn luyện thẳng trên sản lượng thô, mô hình phải dành phần lớn sức mô tả để
@@ -3509,7 +3515,7 @@ nghiệm trên chính dữ liệu của dự án.
 \textbf{Cận cắt suy từ dữ liệu, không đặt tay.} Tham số $k_{\max}$ không được gán một hằng số
 trong tệp cấu hình. Notebook huấn luyện đặt \texttt{CLIP\_K = None} rồi gọi hàm
 \texttt{tinh\_clip\_tu\_train()} để tính nó bằng phân vị $99$ của $k$ trên chính tập huấn luyện.
-Giá trị thu được và ghi vào \texttt{model\_config.json} là $\mathbf{1{,}3764}$, tính trên
+Giá trị thu được và ghi vào \texttt{model\_config.json} là $1{,}3764$, tính trên
 $681.536$ giá trị $k$. Mức phân vị $99$ được chọn bằng phép quét ở
 Bảng~\ref{tab:quet_phan_vi}.
 
@@ -3555,7 +3561,7 @@ lượng tại $T+h$. Ở tầm $15$ phút Mặt Trời gần như đứng yên 
 phút, buổi sáng Mặt Trời lên nhanh nên mẫu số nhỏ hơn hẳn tử số và $k$ giàu lên.
 
 Hệ quả đo được: dùng ngưỡng của H$1$ cho H$4$ thì tỷ lệ nhãn bị cắt tăng từ $1{,}00\%$ lên
-$\mathbf{8{,}59\%}$, và phần bị cắt dồn vào sườn lên buổi sáng, xem
+$8{,}59\%$, và phần bị cắt dồn vào sườn lên buổi sáng, xem
 Bảng~\ref{tab:cat_theo_gio}.
 
 \begin{table}[htbp]
@@ -3719,10 +3725,11 @@ $1{,}5$ cắt $2{,}60\%$, giữ lại phần vượt trần do vật lý và ch�
 
 \FloatBarrier
 \subsection{Chẩn đoán và chọn đặc trưng}
+\label{subsec:chan_doan_dac_trung}
 
 Sau ba notebook sinh đặc trưng, tập huấn luyện mang $114$ cột. Hai notebook tiếp theo quyết định
-cột nào thực sự đi vào mô hình, với vai trò tách bạch: \texttt{04\_vif\_diagnostics} \textbf{đo} và
-xuất bằng chứng, \texttt{05\_select\_features} \textbf{quyết định}. Notebook chẩn đoán không tự loại
+cột nào thực sự đi vào mô hình, với vai trò tách bạch: \texttt{04\_vif\_diagnostics} đo và
+xuất bằng chứng, \texttt{05\_select\_features} quyết định. Notebook chẩn đoán không tự loại
 cột nào --- nó ghi bảng chỉ số ra tệp để bước chọn đọc lại.
 
 Cách phân vai này có lý do: hệ số phóng đại phương sai chỉ đo mức một đặc trưng bị các đặc trưng
@@ -3869,7 +3876,7 @@ Danh sách cấm được đặt trước phép chấm điểm chứ không sau,
 
 \subsubsection{Chấm điểm bằng thông tin tương hỗ}
 
-Phép chấm điểm chạy trên \textbf{thông tin tương hỗ} giữa từng đặc trưng và mục tiêu. Thước đo
+Phép chấm điểm chạy trên thông tin tương hỗ giữa từng đặc trưng và mục tiêu. Thước đo
 này bắt được cả quan hệ phi tuyến, khác hệ số tương quan Pearson vốn chỉ đo quan hệ tuyến tính 
 điều cần thiết ở đây vì quan hệ giữa bức xạ và sản lượng bão hoà dần khi tới gần trần công
 suất.
@@ -3882,11 +3889,11 @@ suất.
 \begingroup
 \par\vspace{6pt}\hrule\vspace{4pt}
 \small\renewcommand{\baselinestretch}{1.0}\selectfont
-\begin{verbatim}
+\begin{lstlisting}[basicstyle=\footnotesize\ttfamily, backgroundcolor=\color{gray!10}, frame=single, rulecolor=\color{gray!40}]
 Tổng số dòng ban đầu: 1550856
 Số dòng hợp lệ (exclude_from_training == False): 1514314 (97.64%)
 Số dòng bị loại trừ khỏi chấm điểm: 36542
-\end{verbatim}
+\end{lstlisting}
 \vspace{2pt}\hrule\par\vspace{6pt}
 \endgroup
 
@@ -3933,13 +3940,13 @@ một danh sách bảo vệ gồm $21$ đặc trưng, cả $21$ đều có mặt
 \begingroup
 \par\vspace{6pt}\hrule\vspace{4pt}
 \footnotesize\renewcommand{\baselinestretch}{1.0}\selectfont
-\begin{verbatim}
+\begin{lstlisting}[basicstyle=\footnotesize\ttfamily, backgroundcolor=\color{gray!10}, frame=single, rulecolor=\color{gray!40}]
 --- DANH SACH BAO VE ---
 Co trong du lieu   : 21/21
 Bi Top K cat, da bo sung lai (4): ['azimuth_sin', 'temperature_c',
                                    'doy_sin', 'doy_cos']
 Tong dac trung duoc chon: 36 (Top K) + 4 (bao ve) = 40
-\end{verbatim}
+\end{lstlisting}
 \vspace{2pt}\hrule\par\vspace{6pt}
 \endgroup
 
@@ -3950,7 +3957,7 @@ nhưng mô hình cần chúng để không coi ngày $31/12$ và ngày $01/01$ l
 
 \subsubsection{Kết quả áp cho mười tập}
 
-Bốn mươi đặc trưng đã chọn được áp đồng loạt cho mười tập dữ liệu bốn tập chính và sáu phần
+Bốn mươi đặc trưng cơ bản đã chọn (mở rộng thành $53$ đặc trưng khi thêm các biến trễ mục tiêu $T+h$ cho mô hình H1) được áp đồng loạt cho mười tập dữ liệu bốn tập chính và sáu phần
 của ba fold:
 
 % Khoi ket xuat notebook. Khong boc trong minipage nua: minipage la mot hop lien
@@ -3959,7 +3966,7 @@ của ba fold:
 \begingroup
 \par\vspace{6pt}\hrule\vspace{4pt}
 \small\renewcommand{\baselinestretch}{1.0}\selectfont
-\begin{verbatim}
+\begin{lstlisting}[basicstyle=\footnotesize\ttfamily, backgroundcolor=\color{gray!10}, frame=single, rulecolor=\color{gray!40}]
 --- DA LOC 10 TAP THEO 40 DAC TRUNG DA CHON ---
               tap     dong  cot_truoc  cot_sau  feature  cot_phu  \
 0        v4_train  1550856        114       50       40       10   
@@ -3986,12 +3993,12 @@ của ba fold:
 9              0  
 
 Moi tap deu co du dac trung da chon.
-\end{verbatim}
+\end{lstlisting}
 \vspace{2pt}\hrule\par\vspace{6pt}
 \endgroup
 
 Cột \texttt{feature\_thieu} bằng $0$ ở cả mười dòng, tức không tập nào thiếu đặc trưng đã chọn.
-Mỗi tập giữ $49$ cột: $39$ đặc trưng cùng $10$ cột phụ trợ gồm mục tiêu, mốc thời gian, mã trạm
+Mỗi tập giữ $50$ cột: $40$ đặc trưng cùng $10$ cột phụ trợ gồm mục tiêu, mốc thời gian, mã trạm
 và các cột phục vụ lọc phạm vi chấm điểm. Danh sách $39$ tên cột được ghi ra tệp
 \texttt{selected\_features.json} để các bước huấn luyện và phục vụ đọc lại đúng một danh sách duy
 nhất.
@@ -3999,11 +4006,11 @@ nhất.
 \FloatBarrier
 \subsection{Tổng hợp bộ đặc trưng đưa vào mô hình}
 
-Bảng~\ref{tab:bo_dac_trung} tổng hợp toàn bộ $39$ đặc trưng được lựa chọn đưa vào huấn luyện mô hình, phân loại theo 6 nhóm chức năng.
+Bảng~\ref{tab:bo_dac_trung} tổng hợp toàn bộ $40$ đặc trưng cơ bản được lựa chọn (mở rộng thành $53$ đặc trưng sau khi thêm các biến mục tiêu tương lai $T+h$ cho H1) đưa vào huấn luyện mô hình, phân loại theo 6 nhóm chức năng.
 
 \begin{table}[htbp]
 \centering
-\caption{Danh mục 39 đặc trưng được lựa chọn vào mô hình.}
+\caption{Danh mục 40 đặc trưng cơ bản được lựa chọn vào mô hình.}
 \label{tab:bo_dac_trung}
 \footnotesize
 \renewcommand{\arraystretch}{1.08}
@@ -4046,7 +4053,7 @@ và nhãn lịch đúng theo ranh giới hợp lệ đã nêu ở Mục~$3.4$:
 \begingroup
 \par\penalty-150\vspace{8pt}
 \small\renewcommand{\baselinestretch}{1.0}\selectfont
-\begin{verbatim}
+\begin{lstlisting}[basicstyle=\footnotesize\ttfamily, backgroundcolor=\color{gray!10}, frame=single, rulecolor=\color{gray!40}]
 Them 14 dac trung tat dinh tai T+15 phut:
    ['solar_elevation_mt', 'solar_azimuth_mt', 'azimuth_sin_mt',
     'azimuth_cos_mt', 'sin_elevation_mt', 'ghi_cs_mt', 'ky_vong_mt',
@@ -4054,11 +4061,11 @@ Them 14 dac trung tat dinh tai T+15 phut:
     'hour_cos_mt', 'doy_sin_mt', 'doy_cos_mt']
 Ma tran train : 599,174 dong x 54 dac trung
 Muc tieu chuan hoa k: min 0.0028  trung vi 0.6423  max 1.3764
-\end{verbatim}
+\end{lstlisting}
 \par\vspace{8pt}
 \endgroup
 Không cột khí tượng nào có mặt trong danh sách này. Giá trị lớn nhất của mục tiêu chuẩn hoá
-bằng đúng $1{,}3764$, tức cận cắt suy từ phân vị $99$ ở Mục~$7.3.5$ đang hoạt động.
+bằng đúng $1{,}3764$, tức cận cắt suy từ phân vị $99$ ở Mục~\ref{subsec:chuan_hoa_muc_tieu} đang hoạt động.
 \newpage
 \FloatBarrier
 \section{Huấn luyện và chọn hàm mất mát}
@@ -4079,18 +4086,18 @@ Các dòng mang nhãn ngoại lai không bị xoá khỏi lưới. Chúng nhận
 \begingroup
 \par\penalty-150\vspace{8pt}
 \footnotesize\renewcommand{\baselinestretch}{1.0}\selectfont
-\begin{verbatim}
+\begin{lstlisting}[basicstyle=\footnotesize\ttfamily, backgroundcolor=\color{gray!10}, frame=single, rulecolor=\color{gray!40}]
 --- CHINH SACH OUTLIER, experiment = measured_only_headline ---
 Dong co weight = 0 khong tham gia ham muc tieu nhung van giu de bao cao.
 Tong dong bi loai khoi ham muc tieu: 82,362 / 681,536 (12.08%)
    trong do physical_over_capacity: 0 dong (luon bi loai o moi experiment)
 Khoang thoi gian train: 2020-01-02 06:30:00 -> 2021-06-21 17:00:00
-\end{verbatim}
+\end{lstlisting}
 \par\vspace{8pt}
 \endgroup
 Cách gán trọng số $0$ được chọn thay vì xoá dòng, vì xoá sẽ làm đứt lưới thời gian và mọi đặc
 trưng trễ, cửa sổ trượt tính sau đó đều đếm sai khoảng cách, đúng vấn đề mà bước dựng lưới ở
-Mục~$7.2.1$ đặt ra để tránh.
+Mục~\ref{subsec:hien_trang_du_lieu} đặt ra để tránh.
 
 \FloatBarrier
 \subsection{Tinh chỉnh siêu tham số (\textit{hyperparameter})}
@@ -4520,7 +4527,7 @@ $475.599$ dòng dự báo H1 của tập test, bằng cách so mốc đạt đ�
 % chu toi 70pt. \footnotesize van chua du, phai xuong \scriptsize. Ha co chu de giu
 % NGUYEN VAN output cua notebook, khong ngat dong va khong bo bot ky tu nao.
 \scriptsize\renewcommand{\baselinestretch}{1.0}\selectfont
-\begin{verbatim}
+\begin{lstlisting}[basicstyle=\footnotesize\ttfamily, backgroundcolor=\color{gray!10}, frame=single, rulecolor=\color{gray!40}]
 --- LECH DINH LOCAL: 40 site x 5,080 ngay ---
 lech_phut duong = du bao den SAU thuc te (dich phai / tre). am = du bao den SOM.
 
@@ -4536,7 +4543,7 @@ max       270.00
 So ngay du bao dich PHAI (tre)  : 2,791 / 5,080 (54.9%)
 So ngay dung khop (lech = 0)    : 384 / 5,080 (7.6%)
 So ngay du bao dich TRAI (som)  : 1,905 / 5,080 (37.5%)
-\end{verbatim}
+\end{lstlisting}
 \par\vspace{8pt}
 \endgroup
 Trung bình lệch $-1{,}05$ phút, tức gần như không thiên về bên nào; trung vị $+15$ phút, đúng
@@ -4624,7 +4631,7 @@ $10$ & \texttt{weather\_condition\_enc}    & $0{,}0218$ & Khí tượng phân lo
 \end{tabular}
 \end{table}
 
-Bảng này cho một kết quả đáng chú ý khi đặt cạnh bảng thông tin tương hỗ ở Mục~$7.3.7$. Ở bước
+Bảng này cho một kết quả đáng chú ý khi đặt cạnh bảng thông tin tương hỗ ở Mục~\ref{subsec:chan_doan_dac_trung}. Ở bước
 chọn đặc trưng, bốn vị trí đầu đều là thống kê cửa sổ trượt một giờ. Ở đây, đứng đầu lại là
 \texttt{direct\_normal\_irradiance} --- một biến khí tượng đo được --- và vị trí thứ tư thuộc về
 \texttt{ghi\_cs\_mt}, tức bức xạ trời quang \textbf{tại thời điểm mục tiêu}.
@@ -4689,7 +4696,7 @@ phản trình bày ở Hình~\ref{fig:shap_local}.
 
 SHAP quy phần đóng góp của đặc trưng vào dự báo của mô hình, không phải vào sản lượng
 thật. Nó cho biết mô hình đã dựa vào đâu, không cho biết quan hệ nhân quả vật lý. Khi hai đặc
-trưng tương quan cao, mà Mục~$7.3.7$ cho thấy có nhiều cặp như vậy, phần đóng góp có thể bị
+trưng tương quan cao, mà Mục~\ref{subsec:chan_doan_dac_trung} cho thấy có nhiều cặp như vậy, phần đóng góp có thể bị
 chia giữa chúng theo cách phụ thuộc vào cấu trúc cây đã học, nên không nên đọc thứ hạng như một
 xếp hạng tầm quan trọng vật lý.
 
@@ -4760,7 +4767,7 @@ $17{,}74\%$ ở tầm $15$ phút và $22{,}62\%$ ở tầm một giờ trên t�
 thật ban ngày. So với đối chứng Prophet trên cùng tập dòng, chỉ số vượt trội đạt $+49{,}53\%$
 và $+36{,}26\%$.
 
-Điều đáng nói hơn con số là cách các con số đó được bảo vệ. Năm rào chắn ở Mục~$7.1.5$ được kiểm
+Điều đáng nói hơn con số là cách các con số đó được bảo vệ. Năm rào chắn ở Mục~\ref{subsec:nam_rao_chan} được kiểm
 chứng bằng số liệu chứ không bằng lập luận: phép ghép thời tiết nhân quả đưa số dòng dùng thời
 tiết tương lai về $0$; thống kê quy mô tính riêng theo từng fold; cận cắt suy từ phân vị của
 tập huấn luyện; tập test mở đúng một lần. Hàm mất mát cho cả hai tầm được chốt trên tập kiểm
