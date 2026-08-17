@@ -1108,7 +1108,7 @@ def run_qa_qc_check(engine: Engine) -> None:
     \item \textbf{Sử dụng Thư viện kết nối thuần Python (\texttt{pg8000}):} Khác với thư viện \texttt{psycopg2} vốn yêu cầu biên dịch các thư viện hệ thống nhị phân C (dễ gây lỗi thiếu \texttt{libz.so.1} hoặc \texttt{libstdc++.so.6} trên môi trường ảo hóa NixOS), thư viện \texttt{pg8000} hoạt động hoàn toàn độc lập, đảm bảo tính di động cao của mã nguồn.
     \item \textbf{Cấu hình Connection Pooler thông qua IPv4:} Do Supabase chỉ hỗ trợ truy cập IPv6 trực tiếp cho gói tài khoản miễn phí, dự án cấu hình Pooler trung gian của Supabase tại cổng \texttt{5432} để duy trì kết nối IPv4 ổn định cho toàn bộ thành viên nhóm, đồng thời giảm tải luồng kết nối đồng thời lên máy chủ.
 \end{itemize}
-
+\newpage
 Dưới đây là mã nguồn cấu hình kết nối tối ưu hóa bằng thư viện \texttt{pg8000}:
 
 \begin{lstlisting}[language=Python, caption={Mã nguồn thiết lập kết nối cơ sở dữ liệu qua Pooler bằng pg8000}, label={lst:pg8000_conn}]
@@ -2087,7 +2087,7 @@ Bản kiểm toán gốc của tầng ETL nằm trong thư mục kết quả c�
 git, nên người đọc báo cáo không dựng lại được. Để bảng dưới đây kiểm chứng được, nhóm viết
 script \texttt{07\_local\_gmm\_if\_audit.py} trong \path{srcs/02_transform/02_generate_outliers/}.
 Script đọc bản kết xuất ML Mart có sẵn trên máy, tách lại ba tệp đệm mà thuật toán cần, rồi
-gọi chính \texttt{02\_gmm\_if.py} nguyên bản --- không viết lại thuật toán, và không mở kết nối
+gọi chính \texttt{02\_gmm\_if.py} nguyên bản không viết lại thuật toán, và không mở kết nối
 tới cơ sở dữ liệu hay kho lưu trữ đám mây nào.
 
 \begin{table}[htbp]
@@ -2125,8 +2125,8 @@ nhận độ chính xác.
 
 \textbf{Bốn: độ tái lập của năm luật rào chắn vật lý.} Một quy tắc lọc dữ liệu chỉ đáng
 tin nếu người khác dựng lại được đúng kết quả của nó. Nhóm viết lại toàn bộ năm luật trong
-notebook \texttt{05d\_thuc\_nghiem\_rao\_chan\_vat\_ly}, đọc đúng ba tệp đệm mà tầng ETL đọc --- bảng
-đệm sản lượng, bảng đệm thời tiết và bảng chiều trạm --- rồi đối chiếu từng dòng với cờ mà
+notebook \texttt{05d\_thuc\_nghiem\_rao\_chan\_vat\_ly}, đọc đúng ba tệp đệm mà tầng ETL đọc bảng
+đệm sản lượng, bảng đệm thời tiết và bảng chiều trạm rồi đối chiếu từng dòng với cờ mà
 tầng ETL đã ghi. Kết quả ở Bảng~\ref{tab:tai_lap_luat}.
 
 \begin{table}[htbp]
@@ -2371,7 +2371,7 @@ mục tiêu: không để thông tin của tương lai, hoặc thông tin không
 \begin{enumerate}
     \item \textbf{Thời tiết chỉ được lấp theo chiều tiến.} Chỉ dùng \texttt{ffill()} theo
     từng trạm, tức sử dụng giá trị đã quan sát trong quá khứ sang hiện tại. Quy trình nghiêm cấm
-    dùng \texttt{bfill()}, vì kéo ngược là lấy giá trị của mốc sau đắp cho mốc trước --- đúng
+    dùng \texttt{bfill()}, vì kéo ngược là lấy giá trị của mốc sau đắp cho mốc trước đúng
     định nghĩa của rò rỉ dữ liệu.
     \item \textbf{Siêu dữ liệu tĩnh thiếu thì giữ nguyên khuyết.} Các cột như
     \texttt{capacity\_kw}, \texttt{number\_of\_panels}, vĩ độ và kinh độ nếu thiếu thì để nguyên
@@ -2426,9 +2426,9 @@ PASS - Không còn target null hoặc energy_source rỗng.
 \par\vspace{8pt}
 \endgroup
 
-\textbf{Phân tích kết quả.} Sáu nhãn thuộc bậc thang điền --- \texttt{machine\_failure\_zero},
+\textbf{Phân tích kết quả.} Sáu nhãn thuộc bậc thang điền \texttt{machine\_failure\_zero},
 \texttt{night\_zero}, \texttt{causal\_day\_persistence}, \texttt{fallback\_zero},
-\texttt{causal\_profile\_median} và \texttt{causal\_week\_persistence} --- cộng lại bằng đúng
+\texttt{causal\_profile\_median} và \texttt{causal\_week\_persistence} cộng lại bằng đúng
 $52.492$, tức đúng số dòng đã chèn. Không dòng nào rơi ra ngoài bậc thang, cũng không dòng
 nào bị đếm hai lần. Cổng kiểm ở cuối xác nhận không còn mục tiêu khuyết và không còn
 \texttt{energy\_source} rỗng.
@@ -2444,7 +2444,7 @@ loại khỏi huấn luyện:
 Bốn phần năm phần chèn thêm vì vậy không mang thông tin mới; chúng chỉ giữ chỗ để
 lưới thời gian không bị đứt. Phần còn lại được điền bằng các bậc suy từ lịch sử thật, gồm
 $6.287 + 2.668 + 984 + 283 + 215 = 10.437$ dòng, trong đó $6.287$ dòng là \texttt{night\_zero}
---- các mốc ban đêm vốn phải bằng $0$. Số dòng thực sự được suy từ lịch sử phát điện là
+các mốc ban đêm vốn phải bằng $0$. Số dòng thực sự được suy từ lịch sử phát điện là
 $10.437 - 6.287 = \mathbf{4.150}$ dòng.
 
 Một hạn chế nữa: sau khi lấp theo chiều tiến vẫn còn $1.890$ ô thời tiết khuyết. Đó là các mốc
@@ -2478,7 +2478,7 @@ quát rằng phần khuyết phải được xử lý có chủ đích.
 
 Trước khi sinh đặc trưng, dữ liệu được khảo sát ở notebook \texttt{02\_EDA}. Phạm vi khảo sát là
 \textbf{chỉ tập huấn luyện}, sau khi loại hai trạm $19$ và $24$: còn $1.480.000$ dòng của
-$40$ trạm. Đây là điều kiện bắt buộc --- các quyết định sinh đặc trưng ở Phần~$3$ đều rút ra
+$40$ trạm. Đây là điều kiện bắt buộc các quyết định sinh đặc trưng ở Phần~$3$ đều rút ra
 từ bước này, nên nếu khảo sát cả tập test thì tập test đã tham gia vào thiết kế mô hình,
 trái với nguyên tắc niêm phong nêu ở Mục~$7.1.5$.
 
@@ -2573,8 +2573,8 @@ hai ngày chênh nhau gần $30$ lần: $0{,}0926 / 0{,}0031 = 29{,}9$.
 Cả hai đều thuộc nhóm ngày nhiều nắng, tức lượng bức xạ khả dụng trong ngày tương đương, nhưng
 cho hai chuỗi khác hẳn. Phần chênh lệch đó là do mây, và mô hình không thể suy ra nó từ lịch
 hay từ vị trí Mặt Trời. Đây là căn cứ sinh hai đặc trưng \texttt{chi\_so\_troi\_quang} và
-\texttt{rad\_x\_sinelev}: chúng cấp cho mô hình tín hiệu về mức che phủ \textbf{ngay tại bước hiện
-tại}, thay vì bắt mô hình suy ra gián tiếp từ các mốc trễ.
+\texttt{rad\_x\_sinelev}: chúng cấp cho mô hình tín hiệu về mức che phủ ngay tại bước hiện
+tại, thay vì bắt mô hình suy ra gián tiếp từ các mốc trễ.
 
 \begin{figure}[htbp]
     \centering
@@ -2647,13 +2647,12 @@ Tương quan tính trên $606.112$ dòng đo thật ban ngày, xem Bảng~\ref{t
 
 Cột chênh lệch là kết quả đáng chú ý nhất của cả bước khảo sát. Nếu gộp cả ban đêm, tương
 quan của \texttt{shortwave\_radiation} với sản lượng vọt từ $+0{,}60$ lên $+0{,}90$, và
-\texttt{diffuse\_solar\_radiation} vọt từ $+0{,}38$ lên $+0{,}88$. Mức tăng đó \textbf{không phản
-ánh quan hệ vật lý}: ban đêm mọi biến bức xạ và sản lượng đều bằng $0$ cùng lúc, nên hơn một
+\texttt{diffuse\_solar\_radiation} vọt từ $+0{,}38$ lên $+0{,}88$. Mức tăng đó không phản
+ánh quan hệ vật lý: ban đêm mọi biến bức xạ và sản lượng đều bằng $0$ cùng lúc, nên hơn một
 nửa số điểm nằm chồng tại gốc toạ độ và tự động đẩy hệ số tương quan lên.
 Ma trận đầy đủ ở Hình~\ref{fig:eda_corr}.
 
-Cột \texttt{cloud\_cover\_total} cho thấy rõ nhất: ban ngày nó mang dấu \textbf{âm} $-0{,}1591$
---- đúng ý nghĩa vật lý là mây che thì sản lượng giảm --- nhưng gộp cả đêm thì đổi thành dấu
+Cột \texttt{cloud\_cover\_total} cho thấy rõ nhất: ban ngày nó mang dấu \textbf{âm} $-0{,}1591$ đúng ý nghĩa vật lý là mây che thì sản lượng giảm nhưng gộp cả đêm thì đổi thành dấu
 dương $+0{,}0330$, tức đảo ngược hoàn toàn ý nghĩa. Vì vậy mọi tương quan trong tài liệu này
 đều tính trên phạm vi đo thật ban ngày.
 
@@ -3089,7 +3088,7 @@ nên không mang rủi ro rò rỉ.
 
 \subsubsection{Vị trí Mặt Trời theo thuật toán NOAA}
 
-Góc cao $h$ và góc phương vị được tính theo thuật toán vị trí Mặt Trời chuẩn của NOAA ---
+Góc cao $h$ và góc phương vị được tính theo thuật toán vị trí Mặt Trời chuẩn của NOAA~\cite{noaa_solar}. Nó dựa trên
 chuỗi Fourier cho độ xích vĩ, phương trình thời gian và góc giờ. Đây là công cụ tham chiếu
 chính thức.
 
@@ -3394,9 +3393,9 @@ trực tiếp, mà gọi đúng bản chất là biến tỷ lệ bức xạ đ�
 vẫn hữu ích làm đặc trưng đầu vào vì thứ tự giữa các quan sát trong cùng một trạm được bảo
 toàn, mà cây quyết định chỉ dùng thứ tự để tách nhánh.
 
-\textbf{Về cột \texttt{pv\_clr\_lonij}.} Dự án có cài đặt chỉ số $K$ của Lonij đúng nguyên bản ---
+\textbf{Về cột \texttt{pv\_clr\_lonij}.} Dự án có cài đặt chỉ số $K$ của Lonij đúng nguyên bản
 phân vị $80$, cửa sổ trượt $15$ ngày theo từng khung giờ, có \texttt{shift(1)} nên chỉ nhìn quá
-khứ --- thành cột \texttt{pv\_clr\_lonij}. Cột này đạt điểm quan trọng biến $1{,}959$, đứng hạng $6$
+khứ thành cột \texttt{pv\_clr\_lonij}. Cột này đạt điểm quan trọng biến $1{,}959$, đứng hạng $6$
 trong bảng chẩn đoán ở Mục~$3.7$, nhưng không lọt Top $35$ theo thông tin tương hỗ và không nằm
 trong danh sách bảo vệ, nên bị loại ở bước chọn theo đúng quy tắc đã đặt trước.
 
@@ -3408,13 +3407,13 @@ liệu thay vì chọn trước bằng lập luận.
 \subsection{Thực nghiệm: khử độ trễ cài sẵn bằng đặc trưng tại thời điểm mục tiêu}
 
 \textbf{Vấn đề.} Nhãn cần dự báo nằm ở thời điểm $T{+}h$, nhưng các đặc trưng hình học Mặt Trời
-và nhãn lịch --- \texttt{sin\_elevation}, \texttt{ghi\_cs}, \texttt{hour} --- vẫn là giá trị tại $T$. Mô
+và nhãn lịch \texttt{sin\_elevation}, \texttt{ghi\_cs}, \texttt{hour} vẫn là giá trị tại $T$. Mô
 hình do đó dùng vị trí Mặt Trời lúc $T$ để dựng lại sản lượng lúc $T{+}h$, và đường dự báo sinh
 ra chính là đường Mặt Trời bị trễ đúng $h$ bước. Đây là hệ quả cấu trúc của bài toán, và tác
 động của nó lan rộng vì cùng đại lượng đó cũng là mẫu số chuẩn hoá ở Mục~$7.3.5$.
 
-\textbf{Cách xử lý.} Quy trình khai báo một danh sách $22$ cột \textbf{tất định} --- hình học
-Mặt Trời cùng các đại lượng suy ra từ nó, và toàn bộ nhãn thời gian theo lịch --- rồi sinh thêm
+\textbf{Cách xử lý.} Quy trình khai báo một danh sách $22$ cột \textbf{tất định} hình học
+Mặt Trời cùng các đại lượng suy ra từ nó, và toàn bộ nhãn thời gian theo lịch rồi sinh thêm
 bản của chúng tại $T{+}h$ với hậu tố \texttt{\_mt}, đồng thời \textbf{giữ nguyên} bản tại $T$. Ở
 tầm H1 sinh được $14$ cột, nâng tổng số đặc trưng vào mô hình từ $39$ lên $53$.
 
@@ -3724,7 +3723,7 @@ $1{,}5$ cắt $2{,}60\%$, giữ lại phần vượt trần do vật lý và ch�
 Sau ba notebook sinh đặc trưng, tập huấn luyện mang $114$ cột. Hai notebook tiếp theo quyết định
 cột nào thực sự đi vào mô hình, với vai trò tách bạch: \texttt{04\_vif\_diagnostics} \textbf{đo} và
 xuất bằng chứng, \texttt{05\_select\_features} \textbf{quyết định}. Notebook chẩn đoán không tự loại
-cột nào --- nó ghi bảng chỉ số ra tệp để bước chọn đọc lại.
+cột nào nó ghi bảng chỉ số ra tệp để bước chọn đọc lại.
 
 Cách phân vai này có lý do: hệ số phóng đại phương sai chỉ đo mức một đặc trưng bị các đặc trưng
 còn lại giải thích, không đo mức đặc trưng đó giải thích được mục tiêu. Một cột có thể vừa cộng
@@ -3756,7 +3755,7 @@ phân loại trình bày ở Bảng~\ref{tab:chan_doan_nhan}.
 \end{tabular}
 \end{table}
 
-Cột duy nhất mang nhãn khuyết cao là \texttt{source\_gap\_id} với $97{,}68\%$ ô trống --- đúng bản
+Cột duy nhất mang nhãn khuyết cao là \texttt{source\_gap\_id} với $97{,}68\%$ ô trống đúng bản
 chất của nó, vì nó chỉ nhận giá trị tại các dòng nằm trong một khoảng trống nguồn.
 
 \textbf{Cột trùng lặp.} Ở ngưỡng $|r| \ge 0{,}95$ notebook đếm được $44$ cặp, nhưng chỉ những
@@ -3822,7 +3821,7 @@ và thành phần khuếch tán, nên biết hai cột là suy ra được cột
 một chuỗi sản lượng.
 
 Không cột nào trong Bảng~\ref{tab:vif} bị loại. Cộng tuyến làm hệ số của mô hình tuyến tính mất
-ổn định, nhưng mô hình dùng ở đây là cây quyết định tăng cường gradient --- nó chọn điểm cắt
+ổn định, nhưng mô hình dùng ở đây là cây quyết định tăng cường gradient nó chọn điểm cắt
 theo mức giảm hàm mất mát chứ không giải hệ phương trình chuẩn tắc, nên không chịu ảnh hưởng đó.
 
 \textbf{Đối chiếu bằng một phương pháp độc lập.} Để không quyết định chỉ dựa trên một thước đo,
@@ -3871,8 +3870,8 @@ Danh sách cấm được đặt trước phép chấm điểm chứ không sau,
 \subsubsection{Chấm điểm bằng thông tin tương hỗ}
 
 Phép chấm điểm chạy trên \textbf{thông tin tương hỗ} giữa từng đặc trưng và mục tiêu. Thước đo
-này bắt được cả quan hệ phi tuyến, khác hệ số tương quan Pearson vốn chỉ đo quan hệ tuyến tính
---- điều cần thiết ở đây vì quan hệ giữa bức xạ và sản lượng bão hoà dần khi tới gần trần công
+này bắt được cả quan hệ phi tuyến, khác hệ số tương quan Pearson vốn chỉ đo quan hệ tuyến tính 
+điều cần thiết ở đây vì quan hệ giữa bức xạ và sản lượng bão hoà dần khi tới gần trần công
 suất.
 
 Điểm chỉ tính trên các dòng hợp lệ, tức đã bỏ dòng mang cờ loại trừ huấn luyện:
@@ -3946,12 +3945,12 @@ Tong dac trung duoc chon: 35 (Top K) + 4 (bao ve) = 39
 
 Bốn đặc trưng được bổ sung nằm ở hạng $36$, $40$, $49$ và $54$ theo điểm thông tin tương
 hỗ. Hai cột \texttt{doy\_sin} và \texttt{doy\_cos} mã hoá vị trí trong năm dưới dạng vòng; điểm của
-chúng thấp vì trên một mẫu ngẫu nhiên rải khắp $18$ tháng, mùa gần như không phân biệt được ---
+chúng thấp vì trên một mẫu ngẫu nhiên rải khắp $18$ tháng, mùa gần như không phân biệt được 
 nhưng mô hình cần chúng để không coi ngày $31/12$ và ngày $01/01$ là hai thời điểm xa nhau.
 
 \subsubsection{Kết quả áp cho mười tập}
 
-Ba mươi chín đặc trưng đã chọn được áp đồng loạt cho mười tập dữ liệu --- bốn tập chính và sáu phần
+Ba mươi chín đặc trưng đã chọn được áp đồng loạt cho mười tập dữ liệu bốn tập chính và sáu phần
 của ba fold:
 
 % Khoi ket xuat notebook. Khong boc trong minipage nua: minipage la mot hop lien
@@ -4038,8 +4037,8 @@ Quy mô trạm và mã hoá & $6$ &
 % Khoi verbatim ben duoi cong hai dong ket luan vua qua chieu cao trang, de lai mot
 % trang gan nhu trong. Noi trang nay them ba dong de hai dong do khong bi day sang.
 \enlargethispage{3\baselineskip}
-Mười bốn cột \texttt{\_mt} sinh thêm ở bước huấn luyện đều thuộc hai nhóm đầu --- hình học Mặt Trời
-và nhãn lịch --- đúng theo ranh giới hợp lệ đã nêu ở Mục~$3.4$:
+Mười bốn cột \texttt{\_mt} sinh thêm ở bước huấn luyện đều thuộc hai nhóm đầu hình học Mặt Trời
+và nhãn lịch đúng theo ranh giới hợp lệ đã nêu ở Mục~$3.4$:
 
 % Khoi ket xuat notebook. Khong boc trong minipage nua: minipage la mot hop lien
 % khoi, khong the ngat trang, nen khoi dai bi day nguyen sang trang sau va de lai
@@ -4060,7 +4059,7 @@ Muc tieu chuan hoa k: min 0.0028  trung vi 0.6423  max 1.3764
 \endgroup
 Không cột khí tượng nào có mặt trong danh sách này. Giá trị lớn nhất của mục tiêu chuẩn hoá
 bằng đúng $1{,}3764$, tức cận cắt suy từ phân vị $99$ ở Mục~$7.3.5$ đang hoạt động.
-
+\newpage
 \FloatBarrier
 \section{Huấn luyện và chọn hàm mất mát}
 
@@ -4838,8 +4837,7 @@ Dựa trên kết quả phân tích thực nghiệm từ kho dữ liệu tập t
     Thay vì thực hiện kiểm tra thủ công định kỳ, bộ phận kỹ thuật nên tích hợp trực tiếp 6 mã phân loại lý do ngoại lai từ Pipeline lên hệ thống giám sát thời gian thực. Cụ thể:
     \begin{itemize}
         \item Khi xuất hiện mã \texttt{PHYSICAL\_LOW\_ENERGY\_STRONG\_SUN}: Lập tức phát lệnh kiểm tra sự cố ngắt mạch biến tần (Inverter trip), hỏng diode bypass hoặc hiện tượng che bóng bất thường tại chuỗi pin.
-        \item Khi xuất hiện mã \texttt{PHYSICAL\_HIGH\_ENERGY\_NO\_SUN} hoặc 
-        \texttt{PHYSICAL\_DISTRIBUTION\_JUMP}: Khoanh vùng xử lý lỗi cảm biến dòng điện (CT sensor drift), hiện tượng dòng rò ngược ban đêm hoặc xung nhiễu đường truyền viễn thông (telemetry spike) mà không cần rà soát toàn bộ dàn pin.
+        \item Khi xuất hiện mã \texttt{PHYSICAL\_HIGH\_ENERGY\_NO\_SUN} hoặc \texttt{DISTRIBUTION\_JUMP}: Khoanh vùng xử lý lỗi cảm biến dòng điện (CT sensor drift), hiện tượng dòng rò ngược ban đêm hoặc xung nhiễu đường truyền viễn thông (telemetry spike) mà không cần rà soát toàn bộ dàn pin.
     \end{itemize}
 
     \item \textbf{Tối ưu hóa điều độ năng lượng học xá dựa trên mô hình dự báo và đặc trưng lịch trình (Campus Energy Dispatching):} 
@@ -5052,7 +5050,7 @@ Hệ thống phân lớp lai GMM--IF gán nhãn $33.280$ bản ghi dị thườn
 \centering
 \footnotesize
 \renewcommand{\arraystretch}{1.35}
-\begin{tabularx}{\textwidth}{@{} >{\raggedright\arraybackslash}p{2.6cm} >{\raggedright\arraybackslash}p{3.4cm} >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X @{}}
+\begin{tabularx}{\textwidth}{@{} >{\raggedright\arraybackslash}p{2.9cm} >{\raggedright\arraybackslash}p{3.1cm} >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X @{}}
 \toprule
 \textbf{Mã Kỹ Thuật} & \textbf{Điều Kiện Kích Hoạt} & \textbf{Bản Chất Sự Cố / Vật Lý} & \textbf{Hành Động Khuyến Nghị} \\
 \midrule
