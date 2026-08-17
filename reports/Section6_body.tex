@@ -17,16 +17,88 @@ ngoại lai kế thừa từ tầng ETL, sơ đồ toàn cảnh, và năm rào c
 \FloatBarrier
 \subsection{Phạm vi và dữ liệu đầu vào}
 
-Phần này trình bày toàn bộ quy trình học máy của dự án, bắt đầu từ tệp dữ liệu đã
-làm sạch ở tầng ETL và kết thúc ở ứng dụng dự báo. Các bước trích xuất, biến đổi và
+Phần này trình bày toàn bộ quy trình học máy của dự án, bắt đầu từ bản trích mà tầng ETL
+bàn giao và kết thúc ở ứng dụng dự báo. Các bước trích xuất, biến đổi và
 nạp dữ liệu vào kho không thuộc phạm vi tài liệu này.
 
-Đầu vào duy nhất của quy trình là tệp \path{data/mlmart_base/v4_final_cleaned.parquet},
+Bản trích tầng ETL bàn giao là tệp \path{data/mlmart_base/v4_preprocessing.parquet},
 gồm \textbf{2.731.946} bản ghi ở độ phân giải $15$ phút, thu thập từ \textbf{42} dàn
 quang điện đặt tại \textbf{5} khuôn viên của Đại học La Trobe, Úc. Mỗi bản ghi mang
 giá trị sản lượng của một dàn tại một mốc thời gian, kèm các biến khí tượng tương ứng lấy từ
 Open-Meteo. Không phải mọi giá trị đều là số đo gốc --- cột \texttt{energy\_source} phân biệt dòng
 đo thật với dòng do tầng ETL điền khuyết, và Mục~$2.1$ trình bày tỷ lệ từng loại.
+
+Bản trích này còn $26$ cột mang ô khuyết, nên bước mở đầu của quy trình học máy là điền
+khuyết cho nhóm siêu dữ liệu và nhóm biến khí tượng; $22$ cột được điền, $4$ cột còn lại
+giữ nguyên trạng thái khuyết vì lý do nêu ở cuối mục. Siêu dữ liệu trạm được điền theo
+trung vị của khuôn viên đối với \texttt{capacity\_kw} và \texttt{number\_of\_panels}
+($1.132.078$ dòng, tức $41{,}44\%$), theo giá trị liền kề của chính trạm đối với
+\texttt{panel} và \texttt{inverter}, và theo hằng số quy ước đối với \texttt{optimizers}
+($1.259.007$ dòng, tức $46{,}08\%$) cùng \texttt{site\_metric}. Biến khí tượng được điền
+theo ba nấc nối tiếp: gán $0$ cho các mốc ban đêm, lấp tiến theo chính trạm với hạn mức
+từ một đến ba giờ, rồi mới dùng trung vị theo cặp (trạm, giờ). Hai cột chịu tác động lớn
+nhất là \texttt{cloud\_cover\_low} ($846.973$ dòng, $31{,}00\%$) và \texttt{wind\_speed}
+($217.946$ dòng, $7{,}98\%$); các cột khí tượng còn lại chỉ khuyết $218$ ô. Mỗi cột số
+được điền đều kèm một cột cờ hậu tố \texttt{\_is\_imputed} để các bước sau còn phân biệt
+được ô đo thật với ô suy ra --- tổng cộng $9$ cột cờ.
+
+Kết quả ghi ra \path{data/mlmart_base/v4_final_cleaned.parquet}: giữ nguyên
+$2.731.946$ dòng, số cột tăng từ $47$ lên $56$, và số cột còn ô khuyết giảm từ $26$ xuống
+$4$. Bốn cột còn khuyết gồm \texttt{gmm\_if\_outlier\_reason} --- chỉ có giá trị ở dòng bị
+gắn nhãn ngoại lai nên khuyết là đúng bản chất --- cùng ba cột tham chiếu thời tiết
+\texttt{weather\_id}, \texttt{weather\_timestamp} và \texttt{weather\_type\_is\_day}, mỗi
+cột khuyết $218$ ô và không cột nào tham gia vào bộ đặc trưng của mô hình. Từ đây trở đi,
+\path{v4_final_cleaned.parquet} là đầu vào duy nhất của mọi bước còn lại trong tài liệu này.
+
+\textbf{Kết quả thực thi.} Khối dưới đây trích nguyên văn kết quả kết xuất của notebook
+\texttt{00b\_recheck\_fill\_null}:
+
+% Khoi ket xuat notebook 00b. Dong dai nhat 63 ky tu nen dung footnotesize thay vi
+% small nhu khoi cua notebook 01 (khoi do dong dai nhat chi 41 ky tu).
+\begingroup
+\par\penalty-150\vspace{8pt}
+\footnotesize\renewcommand{\baselinestretch}{1.0}\selectfont
+\begin{verbatim}
+--- TỔNG KẾT SỐ LƯỢNG GIÁ TRỊ ĐÃ FILL ---
+                          Null_Before  Null_After  Filled_Count
+capacity_kw                   1132078           0       1132078
+number_of_panels              1132078           0       1132078
+panel                         1132078           0       1132078
+inverter                      1132078           0       1132078
+optimizers                    1259007           0       1259007
+site_metric                   1132078           0       1132078
+weather_type_id                   218           0           218
+weather_is_day                    218           0           218
+shortwave_radiation               218           0           218
+direct_normal_irradiance          218           0           218
+diffuse_solar_radiation           218           0           218
+temperature_c                     218           0           218
+cloud_cover_total                 218           0           218
+cloud_cover_low                846973           0        846973
+cloud_cover_mid                   218           0           218
+cloud_cover_high                  218           0           218
+wind_speed                     217946           0        217946
+precipitation_mm                  218           0           218
+sunshine_duration                 218           0           218
+weather_code                      218           0           218
+weather_condition                 218           0           218
+weather_description               218           0           218
+
+--- SO SÁNH MEAN (CHỈ CÁC CỘT METRIC) ---
+                          Mean_Before   Mean_After     Diff_%
+shortwave_radiation        185.851745   185.836915   0.007980
+direct_normal_irradiance   122.843856   122.834054   0.007980
+diffuse_solar_radiation     63.007889    63.002861   0.007980
+temperature_c               14.901137    14.900950   0.001254
+cloud_cover_total           56.379385    56.374886   0.007980
+cloud_cover_low             29.793525    22.639245  24.012869
+cloud_cover_mid             24.697917    24.695946   0.007980
+cloud_cover_high            29.660785    29.658419   0.007980
+wind_speed                  11.937033    11.887307   0.416569
+precipitation_mm             0.098342     0.098334   0.007980
+sunshine_duration         1383.611801  1383.501393   0.007980
+\end{verbatim}
+\endgroup
 
 Phần sản lượng bắt nguồn từ bộ dữ liệu mở UNISOLAR do Wimalaratne và cộng
 sự~\cite{wimalaratne2022unisolar} công bố. Bài báo mô tả đúng cấu hình mà dự án đang
@@ -368,6 +440,7 @@ sau đều trích từ những tệp kết quả liệt kê ở Bảng~\ref{tab:
 \toprule
 \textbf{Bước} & \textbf{Notebook} & \textbf{Kết quả ghi ra} \\
 \midrule
+Điền khuyết & \texttt{00\_fill\_null\_imputation} & \texttt{v4\_final\_cleaned.parquet} \\
 Chuẩn bị lưới thời gian & \texttt{01\_reindex\_mask\_outlier} & lưới $15$ phút liên tục \\
 Chia dữ liệu & \texttt{02\_split\_time\_series} & $3$ fold và tập test niêm phong \\
 Khám phá dữ liệu & \texttt{02\_EDA} & thống kê mô tả, ACF/PACF, tương quan \\
@@ -2078,18 +2151,18 @@ của ba fold:
 \par\vspace{6pt}\hrule\vspace{4pt}
 \small\renewcommand{\baselinestretch}{1.0}\selectfont
 \begin{verbatim}
---- DA LOC 10 TAP THEO 40 DAC TRUNG DA CHON ---
+--- DA LOC 10 TAP THEO 39 DAC TRUNG DA CHON ---
               tap     dong  cot_truoc  cot_sau  feature  cot_phu  \
-0        v4_train  1550856        114       50       40       10   
-1          v4_val   723114        114       50       40       10   
-2         v4_test   510468        114       50       40       10   
-3  v4_development  2273970        113       50       40       10   
-4    fold_1_train   233244        115       50       40       10   
-5      fold_1_val   606105        115       50       40       10   
-6    fold_2_train   839349        115       50       40       10   
-7      fold_2_val   711507        115       50       40       10   
-8    fold_3_train  1550856        115       50       40       10   
-9      fold_3_val   723114        115       50       40       10   
+0        v4_train  1550856        114       49       39       10   
+1          v4_val   723114        114       49       39       10   
+2         v4_test   510468        114       49       39       10   
+3  v4_development  2273970        113       49       39       10   
+4    fold_1_train   233244        115       49       39       10   
+5      fold_1_val   606105        115       49       39       10   
+6    fold_2_train   839349        115       49       39       10   
+7      fold_2_val   711507        115       49       39       10   
+8    fold_3_train  1550856        115       49       39       10   
+9      fold_3_val   723114        115       49       39       10   
 
    feature_thieu  
 0              0  
