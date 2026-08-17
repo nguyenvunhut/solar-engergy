@@ -135,8 +135,11 @@ class Cfg:
             #
             # Khong co bien ban (bo du lieu moi, chua tung tune) thi bo qua, roi ve
             # best_params.json / default_params nhu cu.
+            # Bien ban tune nam o `root_goc`, khong phai `root`: `root` cong hau to khi
+            # ghi nen thu muc do khong ton tai, nhanh override se im lang khong chay.
+            goc_root = self.paths.get("root_goc") or self.paths["root"]
             goc = (
-                REPO_ROOT / self.paths["root"] / self.paths["stages"]["s08_train"]
+                REPO_ROOT / goc_root / self.paths["stages"]["s08_train"]
                 / ten_loss / f"h{horizon}" / self.paths["files"]["model_config"]
             )
             if goc.exists():

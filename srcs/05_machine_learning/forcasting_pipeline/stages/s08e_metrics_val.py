@@ -36,53 +36,73 @@ from core.io import read_parquet
 from core.metrics import compute_metrics
 
 
+COT_NHAN = ["energy_source", "is_daylight"]
+
+
 def nap_val_kieu_06_4(ctx: Ctx) -> pd.DataFrame:
-    """Gop cac fold validation theo dung load_val_folds() cua notebook 06_4."""
+    """Nap tap validation theo dung load_val_holdout() cua notebook 06_4 ban v4.
+
+    BON DIEM DOI SO VOI BAN v3 (day la nguon lech WAPE do ngay 17/08):
+      1. Doc MOT tep v4_val_selected.parquet, khong gop cac fold nua.
+      2. LOAI site trong data.exclude_sites (19, 24) - v3 giu lai.
+      3. Dich cot nhan sang T+h thanh nhan_* de loc pham vi cho dung moc nhan.
+      4. (o _du_bao) cat k tai clip_k cua chinh model, khong phai k_target_max.
+    """
     cfg, paths = ctx.cfg, ctx.paths
     h = int(ctx.horizon_steps)
     eps = float(cfg.features["eps_elev"])
     cot_tat_dinh = list(cfg.features["cot_tat_dinh"])
 
-    khung = []
-    n = 1
-    while (duong := paths.fold(n, "val")).exists():
-        # can doc CA cot goc cua cac cot _mt de con dich duoc sang T+h
-        goc = [c[:-3] if c.endswith("_mt") and c[:-3] in cot_tat_dinh else c
-               for c in ctx.features]
-        muon = list(dict.fromkeys(goc + [
-            SITE_COL, TIMESTAMP_COL, TARGET_COL, "site_scale", "sin_elevation",
-            "tran_cong_suat", "energy_source", "is_daylight",
-        ]))
-        d = read_parquet(duong, sap_xep=None)
-        d = d[[c for c in muon if c in d.columns]]
-        d = d.sort_values([SITE_COL, TIMESTAMP_COL]).reset_index(drop=True)
+    duong = paths.selected("val_selected")
+    if not duong.exists():
+        raise FileNotFoundError(f"Khong tim thay {duong}. Chay stage s07 truoc.")
 
-        d["y_true"] = d.groupby(SITE_COL)[TARGET_COL].shift(-h)
-        g = d.groupby(SITE_COL)
-        for c in cot_tat_dinh:
-            if c in d.columns and f"{c}_mt" in ctx.features:
-                d[f"{c}_mt"] = g[c].shift(-h)
-        d = d.dropna(subset=["y_true"])
-        # KHONG bo site 19/24 va KHONG loc weight - dung y notebook 06_4
-        d = d[(d["site_scale"] > 0) & (d["sin_elevation"] > eps)].copy()
-        khung.append(d)
-        n += 1
+    # can doc CA cot goc cua cac cot _mt de con dich duoc sang T+h
+    goc = [c[:-3] if c.endswith("_mt") and c[:-3] in cot_tat_dinh else c
+           for c in ctx.features]
+    muon = list(dict.fromkeys(goc + [
+        SITE_COL, TIMESTAMP_COL, TARGET_COL, "site_scale", "sin_elevation",
+        "tran_cong_suat", *COT_NHAN,
+    ]))
+    d = read_parquet(duong, sap_xep=None)
+    d = d[[c for c in muon if c in d.columns]]
+    d = d.sort_values([SITE_COL, TIMESTAMP_COL]).reset_index(drop=True)
 
-    if not khung:
-        raise FileNotFoundError(
-            f"Khong tim thay fold validation nao trong {paths.stage('s07_selected')}"
-        )
-    return pd.concat(khung, ignore_index=True)
+    bo = list(cfg.data.get("exclude_sites") or [])
+    if bo and SITE_COL in d.columns:
+        n0 = len(d)
+        d = d[~d[SITE_COL].isin(bo)].reset_index(drop=True)
+        print(f"   Loai site {bo}: {n0:,} -> {len(d):,} dong")
+
+    d["y_true"] = d.groupby(SITE_COL)[TARGET_COL].shift(-h)
+    g = d.groupby(SITE_COL)
+    for c in cot_tat_dinh:
+        if c in d.columns and f"{c}_mt" in ctx.features:
+            d[f"{c}_mt"] = g[c].shift(-h)
+    # Nhan la san luong tai T+h, nen pham vi "do that ban ngay" phai xet DONG NHAN
+    # tai T+h chu khong phai dong dac trung tai T.
+    for c in COT_NHAN:
+        if c in d.columns:
+            d[f"nhan_{c}"] = g[c].shift(-h)
+
+    d = d.dropna(subset=["y_true"])
+    return d[(d["site_scale"] > 0) & (d["sin_elevation"] > eps)].copy()
 
 
 def _du_bao(ctx: Ctx, val: pd.DataFrame) -> np.ndarray:
-    """Du bao roi nhan nguoc mau chuan hoa - dung cong thuc cua notebook 06_4."""
+    """Du bao roi nhan nguoc mau chuan hoa - dung cong thuc notebook 06_4.
+
+    Cat k tai clip_k CUA CHINH MODEL (suy tu phan vi 99 cua k tren tap train, ghi
+    trong model_config.json), khong phai k_target_max. Hai nguong khac nhau cho hai
+    bo metric khac nhau tren cung mot model.
+    """
     cfg: Cfg = ctx.cfg
     eps = float(cfg.features["eps_elev"])
     he_so = float(cfg.train["tran_cong_suat_he_so"])
+    tran = float(cfg.train.get("clip_k") or cfg.train["k_target_max"])
     medians = pd.Series({k: float(v) for k, v in ctx.medians.items()})
     X = val[ctx.features].fillna(medians).astype(cfg.runtime["dtype"])
-    k = np.clip(ctx.model.predict(X), cfg.train["k_target_min"], cfg.train["k_target_max"])
+    k = np.clip(ctx.model.predict(X), cfg.train["k_target_min"], tran)
     mau = val["site_scale"].to_numpy() * val["sin_elevation"].to_numpy()
     yp = np.minimum(k * mau, val["tran_cong_suat"].to_numpy() * he_so)
     return np.where(val["sin_elevation"].to_numpy() <= eps, 0.0, yp)
@@ -95,12 +115,12 @@ def tinh_metrics_val_06_4(ctx: Ctx) -> dict:
     y_that = val["y_true"].to_numpy()
     y_du_bao = _du_bao(ctx, val)
 
-    # Pham vi hep: energy_source cua CHINH DONG (khong phai nhan tai T+h) va ban ngay
+    # Pham vi hep: xet NHAN tai T+h (nhan_*), khong phai cot tai T
     mask = np.ones(len(val), dtype=bool)
-    if "energy_source" in val.columns:
-        mask &= (val["energy_source"] == "measured").to_numpy()
-    if "is_daylight" in val.columns:
-        mask &= val["is_daylight"].fillna(False).astype(bool).to_numpy()
+    if "nhan_energy_source" in val.columns:
+        mask &= (val["nhan_energy_source"] == "measured").to_numpy()
+    if "nhan_is_daylight" in val.columns:
+        mask &= val["nhan_is_daylight"].fillna(False).astype(bool).to_numpy()
 
     return {
         "measured_daylight": compute_metrics(y_that[mask], y_du_bao[mask]),

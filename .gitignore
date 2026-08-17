@@ -389,3 +389,7 @@ docs/scrum_8_project_delivery_defense/Phân tích Dữ liệu Năng lượng M�
 # Ban sao luu artifact truoc lan chay lai 16/08/2026 - KHONG dua vao git,
 # ke ca tep .dvc, de tranh lan lon voi ban v4 dang dung.
 data/model/v4_goc_*/
+
+# Da go khoi git: gitlink submodule khong khai bao trong .gitmodules nen khong ai clone
+# duoc. Chan de no khong bi them lai.
+srcs/05_machine_learning/pipeline_v4/

@@ -88,8 +88,10 @@ def run_s04(cfg: Cfg | None = None):
     thong_ke_fold: dict[str, dict] = {}
     for f in sorted(thu_muc_fold.glob("fold_*_train_time.parquet")):
         so = f.name.split("_")[1]
+        # Ghi JSON thong ke ra CAP TREN (`ra`), khong phai thu muc con `ra_fold` -
+        # dung cho notebook de doi chieu duoc tung tep.
         thong_ke_fold[so] = s04c_site_scale.tinh_quy_mo_tu_train(
-            f, cfg, ra_fold, ten_file=f"quy_mo_tram_fold_{so}.json"
+            f, cfg, ra, ten_file=f"quy_mo_tram_fold_{so}.json"
         )
         print(f"      thong ke rieng cho fold {so}: "
               f"{len(thong_ke_fold[so]['site_scale'])} tram")

@@ -4,11 +4,26 @@
 # Moi duong dan TUONG DOI so voi goc repo (Du_An_Tot_Nghiep_v3/), core/paths.py tu
 # resolve thanh duong dan tuyet doi - khong phu thuoc thu muc dang dung.
 
-root: data/model/v4
+# DOT TAI LAP (2026-08-17). HAI GOC TACH ROI, khong duoc gop lai:
+#
+#   root      = NOI GHI. Moi artifact cua dot tai lap deu roi vao day.
+#   root_goc  = NOI DOI CHIEU. Artifact goc cua notebook, CHI DOC, khong lenh ghi nao
+#               duoc tro toi. Day la du lieu da dua vao bao cao tot nghiep - lech mot
+#               con so trong do la hong ca do an.
+#
+# Truoc day chi co mot khoa `root` va stage_goc() dung chung no. Khi doi root sang nhanh
+# tai lap thi stage_goc() cung bi keo theo, lam mat luon duong doi chieu. Tach doi tu day.
+root:     data/model/v4_tai_lap
+root_goc: data/model/v4
 version: v4
 
-# ── Dau vao goc ──
-mlmart_base: data/mlmart_base/v4_final_cleaned.parquet
+# ── Dau vao ──
+# mlmart_raw  = ban trich tang ETL, dau vao cua s00 (dien khuyet). La ban SAO dat trong
+#               thu muc rieng v4_tai_lap/ - ban goc data/mlmart_base/v4_preprocessing.parquet
+#               khong duoc cham toi.
+# mlmart_base = ket qua cua s00, dau vao cua s01 tro di.
+mlmart_raw:  data/mlmart_base/v4_tai_lap/v4_preprocessing.parquet
+mlmart_base: data/mlmart_base/v4_tai_lap/v4_final_cleaned.parquet
 # CSV raw goc (Kaggle) - dung de xac dinh dong nao DO THAT (measured) va dong nao
 # do ETL dien (etl_imputed). Khong co file nay thi khong biet provenance cua target,
 # ma toan bo metric headline deu chi tinh tren energy_source == 'measured'.
@@ -62,6 +77,11 @@ files:
 
 # ── Dau ra cua action (khong nam trong pipeline chuan) ──
 actions:
+  # best_params = bo sieu tham so DA CHOT, trich tu notebook 06_1/06_2/06_3. Bao cao dua
+  # vao day. Pipeline CHI DOC khoa nay, khong lenh nao duoc ghi len.
   best_params:     config/05_machine_learning/pipeline/best_params.json
+  # best_params_thu = noi Optuna ghi ket qua chay THU. Tach han ra khoi tep da chot, de
+  # co lo chay Optuna cung khong lam mat bo tham so cua bao cao.
+  best_params_thu: best_params_optuna_thu.json
   baseline:        06_0_baseline
   val_selection:   07_final_test/val_model_selection_check.json

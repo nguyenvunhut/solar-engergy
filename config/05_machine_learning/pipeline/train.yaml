@@ -33,6 +33,17 @@ default_params:
 # default_params o tren. Sinh file bang: python srcs/pipeline/actions/tune_optuna.py
 use_best_params_if_exists: true
 
+# Dung som khi huan luyen mo hinh cuoi. Notebook 06_x dat EARLY_STOPPING_ROUNDS = 100,
+# nen so cay THUC co the it hon n_estimators yeu cau: huber h1 xin 433 cay nhung dung o
+# 386. Khong bat khoa nay thi .py train du 433 cay -> mo hinh khac notebook.
+# Dat 0 de tat han (fit thang du so cay yeu cau).
+# TAT (0). Da thu bat 100 vong ngay 17/08: dung qua som - huber h1 chi con 119 cay thay
+# vi 386 nhu notebook, va MAE tut tu 800 xuong 201 lam hong ca hai cau hinh von dang
+# trung byte. Nguyen nhan: eval_set o day gom ca (X_dev, y_dev), ma LightGBM dung khi
+# BAT KY tap nao ngung cai thien - tap train bao hoa rat nhanh. Notebook cau hinh khac
+# cho nay. Giu khoa lai de sau nay dung khi da do duoc dung cach notebook lam.
+early_stopping_rounds: 0
+
 # ── Chinh sach trong so mau (sample weight) ──
 # Lay dung tu srcs/05_machine_learning/Forcasting_v3: KHONG xoa dong outlier ma dat
 # weight = 0, va xet nhom cua DONG NHAN y(T+h) chu khong phai dong dac trung.

@@ -31,7 +31,8 @@
 - [3. Quy Trình Vận Hành Dữ Liệu (ETL Pipeline)](#3-quy-trình-vận-hành-dữ-liệu-etl-pipeline)
 - [4. Các Insight & Khám Phá Nổi Bật (EDA)](#4-các-insight--khám-phá-nổi-bật-eda)
 - [5. Bắt Đầu Nhanh & Hướng Dẫn Cài Đặt](#5-bắt-đầu-nhanh--hướng-dẫn-cài-đặt)
-- [6. Tổng Hợp Tài Liệu Dự Án (Documentation Hub)](#6-tổng-hợp-tài-liệu-dự-án-documentation-hub)
+- [6. Hệ Thống Học Máy & Dự Báo (Machine Learning)](#6-hệ-thống-học-máy--dự-báo-machine-learning)
+- [7. Tổng Hợp Tài Liệu Dự Án (Documentation Hub)](#7-tổng-hợp-tài-liệu-dự-án-documentation-hub)
 
 ---
 
@@ -214,11 +215,67 @@ python -u srcs/06_run_pipeline/main.py --stage all 2>&1 | Tee-Object -FilePath (
 
 ---
 
-## 6. TỔNG HỢP TÀI LIỆU DỰ ÁN (DOCUMENTATION HUB)
+## 6. HỆ THỐNG HỌC MÁY & DỰ BÁO (MACHINE LEARNING)
+
+Huấn luyện **LightGBM** dự báo sản lượng ở hai tầm: H1 (T+15 phút) và H4 (T+60 phút),
+kèm **Prophet** làm mô hình đối chứng.
+
+| Tầm | WAPE | RMSE | MAE | R² | So với Prophet |
+|---|---:|---:|---:|---:|---:|
+| H1 | 17,74% | 3,4143 | 1,3791 | 0,9243 | +49,5% |
+| H4 | 22,62% | 4,1828 | 1,7589 | 0,8864 | +36,3% |
+
+### Cách 1: Chạy bằng Notebook
+
+`notebooks/forcasting_v4_energy/`, mở tuần tự theo số:
+
+```
+00_fill_null_imputation  ->  00b_recheck_fill_null
+01_reindex_mask_outlier
+02_split_time_series
+02_EDA
+03_1_features_time  ->  03_2_features_spatial  ->  03_3_features_aggregate
+04_vif_diagnostics  ->  05_select_features
+06_1_train_mae   06_2_train_huber   06_3_train_mse
+06_4_validate_model_selection
+07_final_test
+08_explainable_ai       06_0b_baseline_prophet
+```
+
+Nhớ lưu notebook sau khi chạy.
+
+Bảy notebook `05b` `05c` `05d` `05e` `09` `10` `11` là thực nghiệm, không sinh mô hình:
+
+- `05c`, `05d`, `05e`, `11`: chạy được ngay sau bước chọn đặc trưng.
+- `05b`, `09`, `10`: phải chờ train xong, vì đọc `06_train` và `07_final_test`.
+
+`05b` nặng nhất (huấn luyện lại 18 lần) nên để cuối cùng.
+
+### Cách 2: Chạy bằng Pipeline `.py`
+
+```bash
+# Liet ke 12 giai doan
+python -u srcs/05_machine_learning/forcasting_pipeline/run.py --list
+
+# Chay toan bo
+python -u srcs/05_machine_learning/forcasting_pipeline/run.py --stage all
+
+# Hoac tung giai doan
+python -u srcs/05_machine_learning/forcasting_pipeline/run.py --stage s00
+```
+
+Mười hai giai đoạn `s00` tới `s11` tương ứng với các notebook ở trên. Riêng `s10` (SHAP)
+chạy rất lâu nên chạy nền.
+
+> Chi tiết: [`srcs/05_machine_learning/forcasting_pipeline/README.md`](srcs/05_machine_learning/forcasting_pipeline/README.md)
+
+---
+
+## 7. TỔNG HỢP TÀI LIỆU DỰ ÁN (DOCUMENTATION HUB)
 
 Để tiện cho quá trình bàn giao, tiếp nhận và bảo trì hệ thống, toàn bộ tài liệu dự án được tổng hợp và phân loại logic dưới đây. Bạn có thể bấm vào từng link để đọc tài liệu gốc (Định dạng Word, PDF, Markdown).
 
-### 6.1. DÀNH CHO QUẢN TRỊ VIÊN & KỸ SƯ DỮ LIỆU (ADMIN / DATA ENGINEER)
+### 7.1. DÀNH CHO QUẢN TRỊ VIÊN & KỸ SƯ DỮ LIỆU (ADMIN / DATA ENGINEER)
 *Các tài liệu thiết lập hạ tầng, cài đặt tự động hóa và kiến trúc nền tảng:*
 - **Hướng dẫn Cấu hình & Môi trường:**
   - [Hướng dẫn cấu hình Database Supabase và Galaxy Schema](docs/configurations_and_setups/supabase_connection.md)
@@ -233,7 +290,7 @@ python -u srcs/06_run_pipeline/main.py --stage all 2>&1 | Tee-Object -FilePath (
   - [Báo cáo Cấu trúc Load Data Staging](docs/scrum_5_pipeline_foundation/2026_06_07_Upload_Staging_Data_Document_CongToan.docx)
   - [Kỹ thuật Fill Null (Xử lý Missing Data)](docs/scrum_5_pipeline_foundation/2026_06_11_Bao_Cao_Source_Code_Fill_Null_Energy_Generated_CongToan.docx)
 
-### 6.2. DÀNH CHO KỸ SƯ PHÂN TÍCH & KHOA HỌC DỮ LIỆU (DATA ANALYST / SCIENTIST)
+### 7.2. DÀNH CHO KỸ SƯ PHÂN TÍCH & KHOA HỌC DỮ LIỆU (DATA ANALYST / SCIENTIST)
 *Các báo cáo về logic dữ liệu, phát hiện bất thường và trực quan hóa:*
 - **Mô Hình Dữ Liệu (Data Modeling):**
   - [Từ điển Dữ liệu Toàn diện (Data Dictionary)](docs/scrum_6_business_logic_eda/2026_05_24_Data_Dictionary_VanSy.docx)
@@ -252,7 +309,7 @@ python -u srcs/06_run_pipeline/main.py --stage all 2>&1 | Tee-Object -FilePath (
   - [Đối soát Tính toàn vẹn Dữ liệu (Data Integrity)](docs/scrum_5_pipeline_foundation/2026_06_13_Data_Integrity_and_Reconciliation_Check_CongToan.docx)
   - [Kế hoạch và Thực thi QA/QC Dữ liệu](docs/scrum_6_business_logic_eda/2026_06_23_bao_cao_QA_QC.docx)
 
-### 6.3. DÀNH CHO NGƯỜI DÙNG PHỔ THÔNG & ĐÁNH GIÁ (GENERAL USER)
+### 7.3. DÀNH CHO NGƯỜI DÙNG PHỔ THÔNG & ĐÁNH GIÁ (GENERAL USER)
 - Mời bạn đón đọc **[Báo cáo Luận văn Tốt nghiệp Chính thức (PDF)](reports/)** tại thư mục Reports để xem toàn cảnh đồ án từ A đến Z, kèm theo các file thuyết trình, biểu đồ minh họa.
 - Tham khảo **[Mục lục Sổ tay Scrum (docs/)](docs/README.md)** để theo dõi lịch sử làm việc của nhóm qua từng giai đoạn Sprint.
 

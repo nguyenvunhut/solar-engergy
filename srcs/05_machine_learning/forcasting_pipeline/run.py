@@ -58,6 +58,9 @@ from core.lgbm import dat_env_opencl  # noqa: E402
 
 # Ten stage -> (module, ham). Them stage moi thi khai o day va tao file trong stages/.
 STAGE = {
+    # s00 dien khuyet: doc paths.mlmart_raw -> ghi paths.mlmart_base. Cac stage sau
+    # chi doc mlmart_base nen chay s00 mot lan la du, khong can chay lai moi lan.
+    "s00": ("stages.s00_fill_null", "run_s00"),
     "s01": ("stages.s01_reindex", "run_s01"),
     "s02": ("stages.s02_split", "run_s02"),
     "s03": ("stages.s03_features_time", "run_s03"),

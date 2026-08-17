@@ -115,12 +115,16 @@ def main() -> int:
     # Gop vao file cu thay vi ghi de - de tune tung (loss, horizon) rieng ma khong mat
     # ket qua truoc. Long theo horizon: h1 va h4 la hai phien tune doc lap, bo tham so
     # khac han nhau (huber h1 alpha = 1,0407 con h4 alpha = 13,5687).
-    duong_dan = Paths(cfg).action("best_params")
+    # Ghi ra nhanh rieng, KHONG ghi de best_params.json - tep do chua bo sieu tham so
+    # da chot, nen cua moi con so trong bao cao. Muon dung ket qua tune thi chep tay sang.
+    duong_dan = Paths(cfg).action("best_params_thu")
+    duong_dan.parent.mkdir(parents=True, exist_ok=True)
     hien_co = read_json(duong_dan) if duong_dan.exists() else {}
     hien_co.setdefault(args.loss, {})[f"h{args.horizon}"] = best
     write_json(hien_co, duong_dan)
-    print(f"\nDa ghi sieu tham so vao: {duong_dan}")
-    print("Pipeline chuan se tu doc file nay o lan train sau (khong chay lai Optuna).")
+    print(f"\nDa ghi sieu tham so THU vao: {duong_dan}")
+    print(f"Bo tham so DA CHOT van nguyen: {Paths(cfg).action('best_params')}")
+    print("Pipeline chuan doc bo DA CHOT, khong doc tep thu nay.")
     return 0
 
 

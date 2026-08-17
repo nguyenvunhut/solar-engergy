@@ -29,6 +29,15 @@ class Paths:
         return REPO_ROOT / self._p["mlmart_base"]
 
     @property
+    def mlmart_raw(self) -> Path:
+        """Ban trich tang ETL bàn giao - dau vao cua s00 (dien khuyet).
+
+        s00 doc tep nay va ghi ra mlmart_base. Cac stage tu s01 tro di chi doc
+        mlmart_base, khong bao gio cham toi day.
+        """
+        return REPO_ROOT / self._p["mlmart_raw"]
+
+    @property
     def raw_solar(self) -> Path:
         """CSV raw goc - dung de xac dinh dong nao do that (energy_source)."""
         return REPO_ROOT / self._p["raw_solar"]
@@ -55,9 +64,18 @@ class Paths:
         return self.root / f"{tuong_doi}{self.suffix}"
 
     def stage_goc(self, ten_stage: str) -> Path:
-        """Duong dan KHONG co suffix - dung de doi chieu voi ket qua notebook."""
+        """Duong dan trong nhanh GOC cua notebook - CHI DOC, khong bao gio ghi.
+
+        Dung `root_goc` chu KHONG dung `root`. Hai khoa nay tro toi hai noi khac nhau:
+        `root` la nhanh dang ghi (tai lap), `root_goc` la artifact notebook da dua vao
+        bao cao. Truoc day ham nay dung chung `root`, nen khi doi `root` sang nhanh tai
+        lap thi duong doi chieu bi keo theo va mat luon ban goc de so.
+
+        Chua khai `root_goc` thi lui ve `root` de tuong thich cau hinh cu.
+        """
         tuong_doi = self._p["stages"][ten_stage]
-        return self.root / tuong_doi
+        goc = self._p.get("root_goc")
+        return (REPO_ROOT / goc if goc else self.root) / tuong_doi
 
     def stage_doc(self, ten_stage: str) -> Path:
         """Duong dan de DOC dau vao. Khac stage() la duong dan de GHI.

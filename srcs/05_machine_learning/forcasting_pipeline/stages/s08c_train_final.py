@@ -22,7 +22,7 @@ from core.io import cot_co_san, read_parquet
 from core.lgbm import chuan_bi_X, fit_an_toan, kiem_tra_gpu, them_tham_so_gpu
 from core.metrics import compute_metrics, metrics_3_pham_vi
 from core.phase_lag import do_tre_theo_site, quet_do_tre
-from core.target import du_bao_ve_kwh, them_muc_tieu
+from core.target import nguong_cat, du_bao_ve_kwh, them_muc_tieu
 from core.weights import scope_masks
 
 
@@ -44,12 +44,33 @@ def train(ctx: Ctx) -> Ctx:
     # thi model se khac han - phai thay ngay o log chu khong de doan.
     print(f"Nguon sieu tham so: {nguon}")
 
+    # NGUON: notebook 06_x cell 50. Dung som chay hai pha - pha 1 fit kem early_stopping
+    # chi de lay best_iteration_, pha 2 fit lai khong dung som voi dung so cay do.
+    # Bat/tat bang early_stopping_rounds trong train.yaml.
+    vong = int(cfg.train.get("early_stopping_rounds") or 0)
+    if vong:
+        val_h = doc_val_that(ctx)
+        X_val = chuan_bi_X(val_h, ctx.features, ctx.medians, dtype=cfg.runtime["dtype"])
+        y_val = val_h[TARGET_SHIFTED].to_numpy()
+        m_do, _ = fit_an_toan(
+            params, ctx.X_dev, ctx.y_dev, sample_weight=ctx.w_dev, cfg=cfg,
+            eval_set=[(ctx.X_dev, ctx.y_dev), (X_val, y_val)], dung_som=vong,
+        )
+        so_cay_tot = int(m_do.best_iteration_ or params["n_estimators"])
+        print(f"Dung som {vong} vong tren {len(val_h):,} dong validation "
+              f"-> best_iteration = {so_cay_tot} (yeu cau {params['n_estimators']})")
+        params = {**params, "n_estimators": so_cay_tot}
+        ctx.best_params = params
+        del m_do
+
     t0 = time.time()
     ctx.model, ctx.da_lui_ve_cpu = fit_an_toan(
         params, ctx.X_dev, ctx.y_dev, sample_weight=ctx.w_dev, cfg=cfg
     )
+    so_cay = ctx.model.booster_.num_trees()
     print(f"Train xong sau {(time.time() - t0) / 60:.1f} phut"
-          + (" (da lui ve CPU)" if ctx.da_lui_ve_cpu else ""))
+          + (" (da lui ve CPU)" if ctx.da_lui_ve_cpu else "")
+          + f" | {so_cay} cay thuc / {params['n_estimators']} yeu cau")
     return ctx
 
 
@@ -162,7 +183,11 @@ def tinh_metrics_val(ctx: Ctx) -> Ctx:
     ctx.bat_buoc_co("model")
     val_h = doc_val_that(ctx)
     X_val = chuan_bi_X(val_h, ctx.features, ctx.medians, dtype=ctx.cfg.runtime["dtype"])
-    val_h[PRED_COL] = du_bao_ve_kwh(ctx.model.predict(X_val), val_h, ctx.cfg)
+    # NGUON: notebook 06_4. Cat k tai clip_k cua chinh model (phan vi 99 cua k tren tap
+    # train); de trong thi du_bao_ve_kwh() lui ve k_target_max, ra bo metric khac.
+    val_h[PRED_COL] = du_bao_ve_kwh(
+        ctx.model.predict(X_val), val_h, ctx.cfg, clip_k=nguong_cat(ctx.cfg)
+    )
     ctx.metrics_val = metrics_3_pham_vi(val_h)
 
     print(f"--- METRIC TREN VALIDATION THAT ({len(val_h):,} dong, dung de CHON mo hinh) ---")
