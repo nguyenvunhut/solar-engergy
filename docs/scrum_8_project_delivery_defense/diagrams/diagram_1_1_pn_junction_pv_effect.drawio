@@ -1,0 +1,97 @@
+<mxfile host="app.diagrams.net" modified="2026-08-18T16:32:00.000Z" agent="Mozilla/5.0" version="21.0.0" type="device">
+  <diagram id="diagram-1-1" name="1.1 P-N Junction PV Effect">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        
+        <!-- Header -->
+        <mxCell id="hdr" value="&lt;b&gt;BẢN CHẤT VẬT LÝ VI MÔ TIẾP GIÁP p-n &amp;amp; HIỆU ỨNG QUANG ĐIỆN (PHOTOVOLTAIC EFFECT)&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#0F172A;fontColor=#F8FAFC;fontSize=15;fontFamily=Helvetica;" vertex="1" parent="1">
+          <mxGeometry x="40" y="20" width="920" height="45" as="geometry" />
+        </mxCell>
+
+        <!-- Sun & Photons -->
+        <mxCell id="sun" value="&lt;b&gt;MẶT TRỜI&lt;/b&gt;&lt;br&gt;Photons" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#F59E0B;strokeColor=#D97706;fontColor=#FFFFFF;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="80" y="85" width="60" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="photon_info" value="&lt;b&gt;Hạt Ánh sáng (Photons):&lt;/b&gt; E = h·ν ≥ E_g (1.12 eV đối với Si)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFBEB;strokeColor=#FCD34D;fontColor=#B45309;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="170" y="95" width="460" height="35" as="geometry" />
+        </mxCell>
+
+        <mxCell id="ray1" value="" style="endArrow=classic;html=1;strokeColor=#F59E0B;strokeWidth=2;dashed=1;" edge="1" parent="1" source="photon_info" target="n_layer">
+          <mxGeometry width="50" height="50" relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Front Grid Contact -->
+        <mxCell id="metal_top" value="Lưới điện cực kim loại mặt trước (Front Grid Contacts)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#64748B;strokeColor=#475569;fontColor=#FFFFFF;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="150" y="160" width="660" height="15" as="geometry" />
+        </mxCell>
+
+        <!-- N-Type Layer -->
+        <mxCell id="n_layer" value="&lt;b&gt;LỚP BÁN DẪN LOẠI N (N-Type Silicon Emitter)&lt;/b&gt;&lt;br&gt;Pha tạp Phosphorus (P) ── Dư hạt mang điện tự do: Electron (e⁻)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#E0F2FE;strokeColor=#0284C7;fontColor=#0369A1;fontSize=12;align=left;spacingLeft=15;" vertex="1" parent="1">
+          <mxGeometry x="150" y="175" width="450" height="65" as="geometry" />
+        </mxCell>
+
+        <mxCell id="n_electrons" value="&lt;b&gt;[ e⁻ ]  [ e⁻ ]  [ e⁻ ]  [ e⁻ ]&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#0369A1&quot;&gt;Dư thừa Electron&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#BAE6FD;strokeColor=#0284C7;fontColor=#0284C7;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="600" y="175" width="210" height="65" as="geometry" />
+        </mxCell>
+
+        <!-- Depletion Region -->
+        <mxCell id="depletion_text" value="&lt;b&gt;VÙNG NGHÈO (DEPLETION REGION)&lt;/b&gt;&lt;br&gt;• Photon sinh cặp e⁻ / h⁺&lt;br&gt;• Điện trường E_bi tách hạt" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FEF9C3;strokeColor=#CA8A04;fontColor=#854D0E;fontSize=11;align=left;spacingLeft=15;" vertex="1" parent="1">
+          <mxGeometry x="150" y="240" width="240" height="90" as="geometry" />
+        </mxCell>
+
+        <mxCell id="depletion_field" value="&lt;b&gt;Điện trường nội tại E_bi&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#DC2626&quot;&gt;(Hướng từ N ──► P)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEFCE8;strokeColor=#EAB308;fontColor=#A16207;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="390" y="250" width="210" height="70" as="geometry" />
+        </mxCell>
+
+        <mxCell id="carrier_sep" value="&lt;b&gt;Tách Hạt Quang Sinh:&lt;/b&gt;&lt;br&gt;▲ &lt;font color=&quot;#0284C7&quot;&gt;&lt;b&gt;e⁻&lt;/b&gt; bị đẩy LÊN vùng N&lt;/font&gt;&lt;br&gt;▼ &lt;font color=&quot;#EA580C&quot;&gt;&lt;b&gt;h⁺&lt;/b&gt; bị đẩy XUỐNG vùng P&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#CBD5E1;fontColor=#334155;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="600" y="240" width="210" height="90" as="geometry" />
+        </mxCell>
+
+        <!-- P-Type Layer -->
+        <mxCell id="p_layer" value="&lt;b&gt;LỚP BÁN DẪN LOẠI P (P-Type Silicon Base)&lt;/b&gt;&lt;br&gt;Pha tạp Boron (B) ── Dư hạt mang điện: Lỗ trống (Holes - h⁺)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFEDD5;strokeColor=#EA580C;fontColor=#C2410C;fontSize=12;align=left;spacingLeft=15;" vertex="1" parent="1">
+          <mxGeometry x="150" y="330" width="450" height="65" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p_holes" value="&lt;b&gt;[ h⁺ ]  [ h⁺ ]  [ h⁺ ]  [ h⁺ ]&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#C2410C&quot;&gt;Dư thừa Lỗ trống&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FED7AA;strokeColor=#EA580C;fontColor=#EA580C;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="600" y="330" width="210" height="65" as="geometry" />
+        </mxCell>
+
+        <!-- Back Metal Contact -->
+        <mxCell id="metal_bot" value="Điện cực kim loại mặt sau (Back Contact Plate)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#475569;strokeColor=#334155;fontColor=#FFFFFF;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="150" y="395" width="660" height="15" as="geometry" />
+        </mxCell>
+
+        <!-- Inverter / Load Box -->
+        <mxCell id="inverter_box" value="&lt;b&gt;BIẾN TẦN / TẢI DC NGOÀI&lt;/b&gt;&lt;br&gt;Dòng điện quang sinh I = I_ph - I_diode" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#0F172A;fontColor=#F8FAFC;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="370" y="465" width="220" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- Circuit Wire Negative -->
+        <mxCell id="wire_neg" value="Cực Âm (-)&lt;br&gt;Dòng e⁻ ra tải" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#0284C7;strokeWidth=3;fontColor=#0369A1;fontSize=11;" edge="1" parent="1" source="n_layer" target="inverter_box">
+          <mxGeometry x="-0.3" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="80" y="205" />
+              <mxPoint x="80" y="495" />
+            </Array>
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Circuit Wire Positive -->
+        <mxCell id="wire_pos" value="Cực Dương (+)&lt;br&gt;Thu nhận e⁻ về" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#EA580C;strokeWidth=3;fontColor=#C2410C;fontSize=11;" edge="1" parent="1" source="p_holes" target="inverter_box">
+          <mxGeometry x="-0.3" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="880" y="360" />
+              <mxPoint x="880" y="495" />
+            </Array>
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

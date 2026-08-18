@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 540" width="100%" height="100%">
+  <defs>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="2" dy="3" stdDeviation="3" flood-opacity="0.1" />
+    </filter>
+    <marker id="arrowDark" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto">
+      <polygon points="0 0, 7 2.5, 0 5" fill="#334155" />
+    </marker>
+  </defs>
+
+  <!-- Background Card -->
+  <rect width="920" height="540" rx="16" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="2" />
+
+  <!-- Header -->
+  <rect x="20" y="20" width="880" height="50" rx="8" fill="#0F172A" />
+  <text x="460" y="52" font-family="system-ui, -apple-system, sans-serif" font-size="16" font-weight="700" fill="#F8FAFC" text-anchor="middle">
+    ĐẶC TUYẾN DÒNG - ÁP (I-V) &amp; CÔNG SUẤT - ÁP (P-V): BIẾN THIÊN THEO BỨC XẠ VÀ NHIỆT ĐỘ
+  </text>
+
+  <!-- Panel 1: I-V Curve (Left) -->
+  <g transform="translate(40, 90)">
+    <rect width="400" height="340" rx="10" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.5" />
+    <text x="200" y="30" font-family="system-ui, sans-serif" font-size="13" font-weight="700" fill="#0369A1" text-anchor="middle">
+      ĐẶC TUYẾN I-V THEO BỨC XẠ (GHI)
+    </text>
+
+    <!-- Axes -->
+    <line x1="60" y1="280" x2="360" y2="280" stroke="#334155" stroke-width="2" marker-end="url(#arrowDark)" />
+    <line x1="60" y1="280" x2="60" y2="50" stroke="#334155" stroke-width="2" marker-end="url(#arrowDark)" />
+    <text x="365" y="295" font-family="system-ui, sans-serif" font-size="11" font-weight="600" fill="#475569">Điện áp V (Volt)</text>
+    <text x="35" y="45" font-family="system-ui, sans-serif" font-size="11" font-weight="600" fill="#475569">Dòng I (A)</text>
+
+    <!-- Curve 1: 1000 W/m2 -->
+    <path d="M 60 80 L 250 85 Q 290 95 305 150 L 320 280" fill="none" stroke="#0284C7" stroke-width="3" />
+    <circle cx="280" cy="115" r="5" fill="#EF4444" />
+    <text x="290" y="112" font-family="system-ui, sans-serif" font-size="10.5" font-weight="700" fill="#DC2626">MPP (1000 W/m²)</text>
+    <text x="65" y="75" font-family="system-ui, sans-serif" font-size="10.5" font-weight="700" fill="#0284C7">I_sc (10A)</text>
+
+    <!-- Curve 2: 600 W/m2 -->
+    <path d="M 60 160 L 245 165 Q 280 175 295 220 L 310 280" fill="none" stroke="#38BDF8" stroke-width="2.5" stroke-dasharray="5,3" />
+    <circle cx="270" cy="190" r="4" fill="#F59E0B" />
+    <text x="65" y="155" font-family="system-ui, sans-serif" font-size="10" fill="#0284C7">I_sc2 (6A)</text>
+
+    <!-- Curve 3: 300 W/m2 -->
+    <path d="M 60 220 L 240 222 Q 270 230 285 255 L 295 280" fill="none" stroke="#94A3B8" stroke-width="2" stroke-dasharray="3,3" />
+
+    <!-- Labels V_oc -->
+    <text x="320" y="295" font-family="system-ui, sans-serif" font-size="11" font-weight="700" fill="#334155" text-anchor="middle">V_oc (45V)</text>
+    
+    <!-- Annotation Box -->
+    <rect x="50" y="295" width="300" height="32" rx="4" fill="#E0F2FE" />
+    <text x="200" y="315" font-family="system-ui, sans-serif" font-size="10.5" font-weight="600" fill="#0369A1" text-anchor="middle">
+      Bức xạ GHI thay đổi ──► Dòng I_sc tỷ lệ thuận
+    </text>
+  </g>
+
+  <!-- Panel 2: P-V Curve (Right) -->
+  <g transform="translate(480, 90)">
+    <rect width="400" height="340" rx="10" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.5" />
+    <text x="200" y="30" font-family="system-ui, sans-serif" font-size="13" font-weight="700" fill="#C2410C" text-anchor="middle">
+      ĐẶC TUYẾN P-V THEO NHIỆT ĐỘ (T_cell)
+    </text>
+
+    <!-- Axes -->
+    <line x1="60" y1="280" x2="360" y2="280" stroke="#334155" stroke-width="2" marker-end="url(#arrowDark)" />
+    <line x1="60" y1="280" x2="60" y2="50" stroke="#334155" stroke-width="2" marker-end="url(#arrowDark)" />
+    <text x="365" y="295" font-family="system-ui, sans-serif" font-size="11" font-weight="600" fill="#475569">Điện áp V (Volt)</text>
+    <text x="35" y="45" font-family="system-ui, sans-serif" font-size="11" font-weight="600" fill="#475569">Công suất P (W)</text>
+
+    <!-- Curve 1: 25°C (STC) -->
+    <path d="M 60 280 Q 230 180 270 70 Q 290 80 320 280" fill="none" stroke="#10B981" stroke-width="3" />
+    <circle cx="270" cy="70" r="5" fill="#047857" />
+    <text x="270" y="55" font-family="system-ui, sans-serif" font-size="10.5" font-weight="700" fill="#047857" text-anchor="middle">
+      P_max = 400W (25°C - STC)
+    </text>
+
+    <!-- Curve 2: 50°C -->
+    <path d="M 60 280 Q 210 190 245 110 Q 265 130 290 280" fill="none" stroke="#F59E0B" stroke-width="2.5" stroke-dasharray="5,3" />
+    <circle cx="245" cy="110" r="4" fill="#D97706" />
+    <text x="245" y="100" font-family="system-ui, sans-serif" font-size="10" font-weight="700" fill="#D97706" text-anchor="middle">360W (50°C)</text>
+
+    <!-- Curve 3: 75°C -->
+    <path d="M 60 280 Q 190 210 220 150 Q 240 170 260 280" fill="none" stroke="#EF4444" stroke-width="2" stroke-dasharray="3,3" />
+    <circle cx="220" cy="150" r="4" fill="#DC2626" />
+    <text x="220" y="140" font-family="system-ui, sans-serif" font-size="10" font-weight="700" fill="#DC2626" text-anchor="middle">320W (75°C)</text>
+
+    <!-- Shift Arrows -->
+    <path d="M 320 275 L 260 275" stroke="#EF4444" stroke-width="2" marker-end="url(#arrowDark)" />
+    <text x="290" y="265" font-family="system-ui, sans-serif" font-size="9.5" font-weight="700" fill="#DC2626" text-anchor="middle">V_oc tụt</text>
+
+    <!-- Annotation Box -->
+    <rect x="50" y="295" width="300" height="32" rx="4" fill="#FEF2F2" />
+    <text x="200" y="315" font-family="system-ui, sans-serif" font-size="10.5" font-weight="600" fill="#B91C1C" text-anchor="middle">
+      Nhiệt độ T_cell tăng ──► V_oc &amp; P_mp sụt giảm (-0.35%/°C)
+    </text>
+  </g>
+
+  <!-- Bottom Key Insights -->
+  <g transform="translate(40, 445)">
+    <rect width="840" height="75" rx="8" fill="#F8FAFC" stroke="#CBD5E1" />
+    <text x="20" y="24" font-family="system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#0F172A">
+      QUY TẮC NGHIỆP VỤ CHO DATA ANALYST:
+    </text>
+    <text x="20" y="44" font-family="system-ui, sans-serif" font-size="10.5" fill="#334155">
+      • Nắng gắt giữa trưa mùa hè (GHI &gt; 900 W/m² nhưng T_cell &gt; 65°C) làm công suất thực tế suy hao từ 14% - 18% so với STC.
+    </text>
+    <text x="20" y="60" font-family="system-ui, sans-serif" font-size="10.5" fill="#334155">
+      • Đây là hiện tượng vật lý tự nhiên do dòng rò ngược bán dẫn tăng cao, thuật toán ML không được đánh nhãn đây là sự cố hỏng hóc.
+    </text>
+  </g>
+</svg>

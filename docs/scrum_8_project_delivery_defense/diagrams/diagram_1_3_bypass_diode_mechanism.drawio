@@ -1,0 +1,64 @@
+<mxfile host="app.diagrams.net" modified="2026-08-18T16:28:00.000Z" agent="Mozilla/5.0" version="21.0.0" type="device">
+  <diagram id="diagram-1-3" name="1.3 Bypass Diode Mechanism">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        
+        <mxCell id="hdr" value="&lt;b&gt;CƠ CHẾ BẢO VỆ CỦA BYPASS DIODE &amp;amp; SỰ SỤT GIẢM SẢN LƯỢNG KHI BỊ CHE BÓNG&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#0F172A;fontColor=#F8FAFC;fontSize=15;" vertex="1" parent="1">
+          <mxGeometry x="60" y="30" width="880" height="45" as="geometry" />
+        </mxCell>
+
+        <!-- Module Frame -->
+        <mxCell id="module_frame" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#94A3B8;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="60" y="95" width="880" height="310" as="geometry" />
+        </mxCell>
+
+        <!-- Substring 1 (Normal) -->
+        <mxCell id="sub1" value="&lt;b&gt;PHÂN VÙNG 1 (24 Cells)&lt;/b&gt;&lt;br&gt;[☼] [☼] [☼] [☼]&lt;br&gt;[☼] [☼] [☼] [☼]&lt;br&gt;&lt;font color=&quot;#059669&quot;&gt;&lt;b&gt;V_sub1 = +14.0V (Bình thường)&lt;/b&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F0F9FF;strokeColor=#0284C7;fontSize=12;fontColor=#0369A1;" vertex="1" parent="1">
+          <mxGeometry x="100" y="130" width="220" height="150" as="geometry" />
+        </mxCell>
+
+        <!-- Substring 2 (Shaded) -->
+        <mxCell id="sub2" value="&lt;b&gt;PHÂN VÙNG 2 (BỊ CHE BÓNG)&lt;/b&gt;&lt;br&gt;[☼] [░BÓNG░] [☼] [☼]&lt;br&gt;[☼] [☼] [☼] [☼]&lt;br&gt;&lt;font color=&quot;#DC2626&quot;&gt;&lt;b&gt;V_sub2 = -16.0V (Nghẽn dòng)&lt;/b&gt;&lt;/font&gt;&lt;br&gt;Nguy cơ Hot-spot cháy nổ" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEF2F2;strokeColor=#DC2626;strokeWidth=2;fontSize=12;fontColor=#B91C1C;" vertex="1" parent="1">
+          <mxGeometry x="390" y="130" width="220" height="150" as="geometry" />
+        </mxCell>
+
+        <!-- Substring 3 (Normal) -->
+        <mxCell id="sub3" value="&lt;b&gt;PHÂN VÙNG 3 (24 Cells)&lt;/b&gt;&lt;br&gt;[☼] [☼] [☼] [☼]&lt;br&gt;[☼] [☼] [☼] [☼]&lt;br&gt;&lt;font color=&quot;#059669&quot;&gt;&lt;b&gt;V_sub3 = +14.0V (Bình thường)&lt;/b&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F0F9FF;strokeColor=#0284C7;fontSize=12;fontColor=#0369A1;" vertex="1" parent="1">
+          <mxGeometry x="680" y="130" width="220" height="150" as="geometry" />
+        </mxCell>
+
+        <!-- Diode 1 -->
+        <mxCell id="d1" value="&lt;b&gt;Diode D1: TẮT&lt;/b&gt;&lt;br&gt;Phân cực ngược (Ngắt)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F1F5F9;strokeColor=#94A3B8;fontSize=11;fontColor=#475569;" vertex="1" parent="1">
+          <mxGeometry x="140" y="320" width="140" height="45" as="geometry" />
+        </mxCell>
+
+        <!-- Diode 2 (ON) -->
+        <mxCell id="d2" value="&lt;b&gt;Diode D2: BẬT (ON)&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#FEF08A&quot;&gt;&lt;b&gt;DẪN THÔNG DÒNG 10A&lt;/b&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DC2626;strokeColor=#B91C1C;fontSize=11;fontColor=#FFFFFF;" vertex="1" parent="1">
+          <mxGeometry x="430" y="320" width="140" height="45" as="geometry" />
+        </mxCell>
+
+        <!-- Diode 3 -->
+        <mxCell id="d3" value="&lt;b&gt;Diode D3: TẮT&lt;/b&gt;&lt;br&gt;Phân cực ngược (Ngắt)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F1F5F9;strokeColor=#94A3B8;fontSize=11;fontColor=#475569;" vertex="1" parent="1">
+          <mxGeometry x="720" y="320" width="140" height="45" as="geometry" />
+        </mxCell>
+
+        <!-- Bypass Wire Arrow -->
+        <mxCell id="bypass_wire" value="Dòng Bypass 10A dẫn thông qua Diode D2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#DC2626;strokeWidth=3;dashed=1;fontColor=#DC2626;fontSize=11;" edge="1" parent="1" source="sub1" target="sub3">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="350" y="342" />
+              <mxPoint x="650" y="342" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Summary Footer -->
+        <mxCell id="footer" value="&lt;b&gt;🔍 INSIGHT DỮ LIỆU TELEMETRY CHO DATA ANALYST:&lt;/b&gt;&lt;br&gt;• Khi 1 diode bypass dẫn thông bảo vệ (hoặc bị hỏng ngắn mạch), sản lượng của tấm pin sẽ sụt giảm chính xác 33.3% (mất 1/3 điện áp).&lt;br&gt;• Thuật toán ML gán nhãn dị thường cần phân biệt rõ giữa &quot;suy giảm do mây che&quot; (biến thiên mềm) và &quot;hỏng diode&quot; (bước nhảy bậc thang sụt 33.3%)." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEF9C3;strokeColor=#FDE047;align=left;spacingLeft=15;fontSize=12;fontColor=#854D0E;" vertex="1" parent="1">
+          <mxGeometry x="60" y="430" width="880" height="70" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

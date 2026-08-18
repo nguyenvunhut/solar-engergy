@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 220" width="100%" height="100%">
+  <defs>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-opacity="0.1" />
+    </filter>
+    <marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0284C7" />
+    </marker>
+  </defs>
+
+  <rect width="960" height="220" rx="12" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.5" />
+
+  <!-- Header -->
+  <rect x="20" y="15" width="920" height="35" rx="6" fill="#0F172A" />
+  <text x="480" y="38" font-family="system-ui, sans-serif" font-size="14" font-weight="700" fill="#F8FAFC" text-anchor="middle">
+    HÀNH TRÌNH 4 BƯỚC: TỪ 1 TIA NẮNG MẶT TRỜI ĐẾN DÒNG DỮ LIỆU TELEMETRY TRONG DATABASE
+  </text>
+
+  <!-- Step 1 -->
+  <g transform="translate(30, 65)" filter="url(#shadow)">
+    <rect width="195" height="135" rx="8" fill="#F0F9FF" stroke="#0284C7" stroke-width="1.5" />
+    <rect width="195" height="30" rx="8" fill="#0284C7" />
+    <text x="97" y="20" font-family="system-ui, sans-serif" font-size="11" font-weight="700" fill="#FFF" text-anchor="middle">BƯỚC 1: TRÊN MÁI NHÀ</text>
+    <text x="12" y="55" font-family="system-ui, sans-serif" font-size="11" font-weight="600" fill="#0369A1">Tấm pin Silicon</text>
+    <text x="12" y="75" font-family="system-ui, sans-serif" font-size="10" fill="#475569">Ánh nắng hất văng electron</text>
+    <text x="12" y="95" font-family="system-ui, sans-serif" font-size="10" fill="#475569">sinh ra dòng điện 1 chiều</text>
+    <text x="12" y="115" font-family="system-ui, sans-serif" font-size="10" font-weight="700" fill="#0284C7">(Dòng điện DC)</text>
+  </g>
+
+  <!-- Arrow 1 -->
+  <path d="M 230 130 L 265 130" stroke="#0284C7" stroke-width="3" marker-end="url(#arr)" />
+
+  <!-- Step 2 -->
+  <g transform="translate(270, 65)" filter="url(#shadow)">
+    <rect width="195" height="135" rx="8" fill="#F0FDF4" stroke="#16A34A" stroke-width="1.5" />
+    <rect width="195" height="30" rx="8" fill="#16A34A" />
+    <text x="97" y="20" font-family="system-ui, sans-serif" font-size="11" font-weight="700" fill="#FFF" text-anchor="middle">BƯỚC 2: TỦ INVERTER</text>
+    <text x="12" y="55" font-family="system-ui, sans-serif" font-size="11" font-weight="600" fill="#15803D">Biến tần Chuyển đổi</text>
+    <text x="12" y="75" font-family="system-ui, sans-serif" font-size="10" fill="#475569">Đổi điện DC sang AC 230V</text>
+    <text x="12" y="95" font-family="system-ui, sans-serif" font-size="10" fill="#475569">hòa vào lưới trường học</text>
+    <text x="12" y="115" font-family="system-ui, sans-serif" font-size="10" font-weight="700" fill="#16A34A">(Hiệu suất &gt;98%)</text>
+  </g>
+
+  <!-- Arrow 2 -->
+  <path d="M 470 130 L 505 130" stroke="#0284C7" stroke-width="3" marker-end="url(#arr)" />
+
+  <!-- Step 3 -->
+  <g transform="translate(510, 65)" filter="url(#shadow)">
+    <rect width="195" height="135" rx="8" fill="#FFFBEB" stroke="#D97706" stroke-width="1.5" />
+    <rect width="195" height="30" rx="8" fill="#D97706" />
+    <text x="97" y="20" font-family="system-ui, sans-serif" font-size="11" font-weight="700" fill="#FFF" text-anchor="middle">BƯỚC 3: SMART METER</text>
+    <text x="12" y="55" font-family="system-ui, sans-serif" font-size="11" font-weight="600" fill="#B45309">Đồng hồ Đo đếm</text>
+    <text x="12" y="75" font-family="system-ui, sans-serif" font-size="10" fill="#475569">Cứ 15 phút chốt 1 lần</text>
+    <text x="12" y="95" font-family="system-ui, sans-serif" font-size="10" fill="#475569">số kWh điện sản sinh</text>
+    <text x="12" y="115" font-family="system-ui, sans-serif" font-size="10" font-weight="700" fill="#D97706">(Độ trễ Modbus)</text>
+  </g>
+
+  <!-- Arrow 3 -->
+  <path d="M 710 130 L 745 130" stroke="#0284C7" stroke-width="3" marker-end="url(#arr)" />
+
+  <!-- Step 4 -->
+  <g transform="translate(750, 65)" filter="url(#shadow)">
+    <rect width="180" height="135" rx="8" fill="#FAF5FF" stroke="#7C3AED" stroke-width="1.5" />
+    <rect width="180" height="30" rx="8" fill="#7C3AED" />
+    <text x="90" y="20" font-family="system-ui, sans-serif" font-size="11" font-weight="700" fill="#FFF" text-anchor="middle">BƯỚC 4: DATABASE</text>
+    <text x="12" y="55" font-family="system-ui, sans-serif" font-size="11" font-weight="600" fill="#6D28D9">Data Lakehouse</text>
+    <text x="12" y="75" font-family="system-ui, sans-serif" font-size="10" fill="#475569">Lưu thành 1 dòng bản ghi</text>
+    <text x="12" y="95" font-family="system-ui, sans-serif" font-size="10" fill="#475569">[time, site, kwh, weather]</text>
+    <text x="12" y="115" font-family="system-ui, sans-serif" font-size="10" font-weight="700" fill="#7C3AED">(2.731.946 dòng)</text>
+  </g>
+
+</svg>

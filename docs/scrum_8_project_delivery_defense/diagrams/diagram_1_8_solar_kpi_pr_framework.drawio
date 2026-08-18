@@ -1,0 +1,14 @@
+<mxfile host="app.diagrams.net" modified="2026-08-18T17:15:00.000Z" agent="Mozilla/5.0" version="21.0.0" type="device">
+  <diagram id="diag-1-8" name="1.8 Solar KPI Framework">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850">
+      <root>
+        <mxCell id="0" /><mxCell id="1" parent="0" />
+        <mxCell id="hdr" value="&lt;b&gt;BỘ CHỈ SỐ ĐO LƯỜNG HIỆU NĂNG CỐT LÕI (SOLAR KPI FRAMEWORK - IEC 61724-1)&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#0F172A;fontColor=#F8FAFC;fontSize=14;" vertex="1" parent="1"><mxGeometry x="20" y="15" width="1020" height="46" as="geometry" /></mxCell>
+        <mxCell id="box1" value="&lt;b&gt;1. PR DANH ĐỊNH (IEC 61724-1)&lt;/b&gt;&lt;br&gt;PR = Y_f / Y_r = E_actual / [P_stc · (GHI/1000) · Δt]&lt;br&gt;Lọc dữ liệu GHI ≥ 100 W/m²" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F0F9FF;strokeColor=#0284C7;align=left;spacingLeft=12;" vertex="1" parent="1"><mxGeometry x="20" y="75" width="500" height="240" as="geometry" /></mxCell>
+        <mxCell id="box2" value="&lt;b&gt;2. PR HIỆU CHỈNH NHIỆT ĐỘ&lt;/b&gt;&lt;br&gt;PR_corr = PR / [1 + γ · (T_cell - 25°C)]&lt;br&gt;Loại trừ biến động mùa, đánh giá thoái hóa vật liệu" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F0FDF4;strokeColor=#16A34A;align=left;spacingLeft=12;" vertex="1" parent="1"><mxGeometry x="540" y="75" width="500" height="240" as="geometry" /></mxCell>
+        <mxCell id="box3" value="&lt;b&gt;3. THANG PHÂN LOẠI VẬN HÀNH&lt;/b&gt;&lt;br&gt;Class A: PR ≥ 78% (Tối ưu)&lt;br&gt;Class B: 65% ≤ PR &lt; 78% (Trung bình)&lt;br&gt;Class C: PR &lt; 65% (Cảnh báo sự cố)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFBEB;strokeColor=#D97706;align=left;spacingLeft=12;" vertex="1" parent="1"><mxGeometry x="20" y="330" width="500" height="230" as="geometry" /></mxCell>
+        <mxCell id="box4" value="&lt;b&gt;4. HIỆU QUẢ KINH TẾ &amp; CO2 (NGA)&lt;/b&gt;&lt;br&gt;Savings = E_actual · Tariff (AUD)&lt;br&gt;CO2 Avoided = E_actual · 0.82 kg CO2-e/kWh&lt;br&gt;UNISOLAR: 61,485 tấn CO2 giảm phát thải" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FAF5FF;strokeColor=#7C3AED;align=left;spacingLeft=12;" vertex="1" parent="1"><mxGeometry x="540" y="330" width="500" height="230" as="geometry" /></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

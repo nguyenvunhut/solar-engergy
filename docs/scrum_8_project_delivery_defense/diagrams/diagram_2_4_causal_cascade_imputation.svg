@@ -1,0 +1,133 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1060 620" width="100%" height="100%">
+  <defs>
+    <style>
+      .hdr { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 14px; font-weight: 700; fill: #F8FAFC; }
+      .subhdr { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; fill: #94A3B8; }
+      .box-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 12px; font-weight: 700; }
+      .txt { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; fill: #334155; }
+      .txt-bold { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; font-weight: 700; fill: #0F172A; }
+      .formula { font-family: "Courier New", Courier, monospace; font-size: 11px; font-weight: 700; }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1060" height="620" fill="#F8FAFC" rx="10" />
+
+  <!-- Header Banner -->
+  <rect x="20" y="15" width="1020" height="46" rx="8" fill="#0F172A" />
+  <text x="530" y="35" text-anchor="middle" class="hdr">CHIẾN LƯỢC ĐIỀN KHUYẾT NHÂN QUẢ 4 TẦNG &amp; CƠ CHẾ FLOOR-HOUR LOOKUP</text>
+  <text x="530" y="51" text-anchor="middle" class="subhdr">Khôi phục chuỗi thời gian liên tục, bảo toàn động học nhật quỹ và triệt tiêu rò rỉ dữ liệu tương lai (Data Leakage)</text>
+
+  <!-- Left Column: Causal Cascade Imputation Strategy -->
+  <g transform="translate(20, 75)">
+    <rect width="500" height="525" rx="8" fill="#FFFFFF" stroke="#0284C7" stroke-width="2" />
+    <rect width="500" height="34" rx="8" fill="#F0F9FF" />
+    <text x="250" y="22" text-anchor="middle" class="box-title" fill="#0369A1">1. QUY TRÌNH ĐIỀN KHUYẾT NHÂN QUẢ 4 TẦNG (CAUSAL CASCADE)</text>
+
+    <!-- Tier 1: Night Rule -->
+    <g transform="translate(15, 46)">
+      <rect width="470" height="88" rx="6" fill="#F8FAFC" stroke="#BAE6FD" />
+      <text x="12" y="20" class="txt-bold" fill="#0369A1">TẦNG 1: LUẬT KHUNG GIỜ ĐÊM (RULE-BASED NIGHT)</text>
+      <text x="12" y="38" class="txt">• Điều kiện: GHI ≤ 25 W/m² ∧ (T_amb ≥ 18.5°C ∨ T_amb &lt; 5.5°C)</text>
+      <text x="12" y="56" class="formula" fill="#0284C7">Hành động: Gán cứng E_actual = 0.0 kWh (Inverter tắt nguồn ban đêm)</text>
+      <text x="12" y="74" class="txt" fill="#64748B">Xử lý 53.8% tổng số bản ghi khuyết thiếu tự nhiên mà không cần nội suy.</text>
+    </g>
+
+    <!-- Tier 2: Linear Interpolation -->
+    <g transform="translate(15, 144)">
+      <rect width="470" height="92" rx="6" fill="#F0FDF4" stroke="#86EFAC" />
+      <text x="12" y="20" class="txt-bold" fill="#15803D">TẦNG 2: NỘI SUY TUYẾN TÍNH THỜI GIAN (LINEAR INTERPOLATION)</text>
+      <text x="12" y="38" class="txt">• Áp dụng: Đoạn khuyết ngắn ≤ 4 chu kỳ liên tiếp (Độ dài gián đoạn ≤ 1 giờ)</text>
+      <text x="12" y="56" class="formula" fill="#15803D">E(t) = E(t0) + [ (t - t0) / (t1 - t0) ] · [ E(t1) - E(t0) ]</text>
+      <text x="12" y="76" class="txt" fill="#64748B">Bảo toàn biến động sản lượng mượt mà giữa hai mốc đo đếm lân cận.</text>
+    </g>
+
+    <!-- Tier 3: Cubic Spline Interpolation -->
+    <g transform="translate(15, 246)">
+      <rect width="470" height="110" rx="6" fill="#FFFBEB" stroke="#FDE68A" />
+      <text x="12" y="20" class="txt-bold" fill="#B45309">TẦNG 3: NỘI SUY SPLINE BẬC BA (CUBIC SPLINE)</text>
+      <text x="12" y="38" class="txt">• Áp dụng: Đoạn khuyết trung bình 5 - 8 chu kỳ (Độ dài gián đoạn 1 giờ - 2 giờ)</text>
+      <text x="12" y="56" class="formula" fill="#B45309">S_i(t) = a_i + b_i(t - t_i) + c_i(t - t_i)² + d_i(t - t_i)³</text>
+      <text x="12" y="76" class="txt">• Tính chất: Đạo hàm bậc hai liên tục S''_i(t) = S''_{i-1}(t)</text>
+      <text x="12" y="94" class="txt" fill="#64748B">Tái tạo hoàn hảo quỹ đạo cong parabol tự nhiên của bức xạ nhật quỹ.</text>
+    </g>
+
+    <!-- Tier 4: Multivariate Regression -->
+    <g transform="translate(15, 366)">
+      <rect width="470" height="142" rx="6" fill="#FAF5FF" stroke="#E9D5FF" />
+      <text x="12" y="20" class="txt-bold" fill="#6D28D9">TẦNG 4: HỒI QUY ĐA BIẾN KHÍ QUYỂN (REGRESSION)</text>
+      <text x="12" y="38" class="txt">• Áp dụng: Đoạn khuyết dài &gt; 8 chu kỳ liên tiếp (Độ dài gián đoạn &gt; 2 giờ)</text>
+      <text x="12" y="58" class="formula" fill="#6D28D9">E = β0 + β1·GHI + β2·DNI + β3·DHI + β4·T_amb + ε</text>
+      <text x="12" y="78" class="txt">• Cơ sở: Sử dụng 4 biến khí tượng tương quan cao từ mô hình ERA5-Land.</text>
+      <text x="12" y="96" class="txt">• Kết quả: Khôi phục chuỗi dữ liệu dài mà không gây biến dạng phân phối.</text>
+      <text x="12" y="118" class="txt-bold" fill="#15803D">➔ 100% bản ghi khuyết thiếu được khôi phục liên tục!</text>
+    </g>
+  </g>
+
+  <!-- Right Column: Floor-Hour Causal Lookup -->
+  <g transform="translate(540, 75)">
+    <rect width="500" height="525" rx="8" fill="#FFFFFF" stroke="#D97706" stroke-width="2" />
+    <rect width="500" height="34" rx="8" fill="#FFFBEB" />
+    <text x="250" y="22" text-anchor="middle" class="box-title" fill="#B45309">2. CĂN CHỈNH KHÍ QUYỂN NHÂN QUẢ (FLOOR-HOUR LOOKUP)</text>
+
+    <!-- Risk Warning Box -->
+    <g transform="translate(15, 46)">
+      <rect width="470" height="70" rx="6" fill="#FEF2F2" stroke="#FECACA" />
+      <text x="12" y="20" class="txt-bold" fill="#DC2626">RỦI RO RÒ RỈ DỮ LIỆU TƯƠNG LAI (DATA LEAKAGE TRAP):</text>
+      <text x="12" y="38" class="txt">Nếu ghép sản lượng lúc 09:15 với thời tiết 10:00, mô hình sử dụng thông tin</text>
+      <text x="12" y="54" class="txt">của tương lai để giải thích cho quá khứ ➔ Vi phạm nguyên lý nhân quả!</text>
+    </g>
+
+    <!-- Solution Timeline Diagram -->
+    <g transform="translate(15, 126)">
+      <rect width="470" height="230" rx="6" fill="#F8FAFC" stroke="#CBD5E1" />
+      <text x="15" y="22" class="txt-bold" fill="#0F172A">SƠ ĐỒ CĂN CHỈNH THỜI GIAN NHÂN QUẢ TUYỆT ĐỐI:</text>
+
+      <!-- Weather Hourly Timeline -->
+      <line x1="40" y1="65" x2="430" y2="65" stroke="#0284C7" stroke-width="3" />
+      
+      <!-- Weather Point 09:00 -->
+      <circle cx="90" cy="65" r="8" fill="#0284C7" />
+      <text x="90" y="50" text-anchor="middle" class="txt-bold" fill="#0284C7">09:00</text>
+      <text x="90" y="84" text-anchor="middle" font-size="9" fill="#0369A1">Weather #1</text>
+
+      <!-- Weather Point 10:00 -->
+      <circle cx="380" cy="65" r="8" fill="#0284C7" />
+      <text x="380" y="50" text-anchor="middle" class="txt-bold" fill="#0284C7">10:00</text>
+      <text x="380" y="84" text-anchor="middle" font-size="9" fill="#0369A1">Weather #2</text>
+
+      <!-- 4 Solar 15-min Points -->
+      <circle cx="90" cy="140" r="5" fill="#D97706" />
+      <text x="90" y="160" text-anchor="middle" font-size="9" fill="#B45309">09:00</text>
+      
+      <circle cx="160" cy="140" r="5" fill="#D97706" />
+      <text x="160" y="160" text-anchor="middle" font-size="9" fill="#B45309">09:15</text>
+
+      <circle cx="230" cy="140" r="5" fill="#D97706" />
+      <text x="230" y="160" text-anchor="middle" font-size="9" fill="#B45309">09:30</text>
+
+      <circle cx="300" cy="140" r="5" fill="#D97706" />
+      <text x="300" y="160" text-anchor="middle" font-size="9" fill="#B45309">09:45</text>
+
+      <!-- Causal Arrows Back to 09:00 Weather -->
+      <path d="M 90 135 L 90 75" fill="none" stroke="#16A34A" stroke-width="2" />
+      <path d="M 160 135 L 96 75" fill="none" stroke="#16A34A" stroke-width="2" />
+      <path d="M 230 135 L 100 75" fill="none" stroke="#16A34A" stroke-width="2" />
+      <path d="M 300 135 L 104 75" fill="none" stroke="#16A34A" stroke-width="2" />
+
+      <text x="235" y="192" text-anchor="middle" class="txt-bold" fill="#15803D">Toàn bộ 4 chu kỳ 15 phút đều ánh xạ về Weather 09:00 trong Quá khứ</text>
+      <text x="235" y="212" text-anchor="middle" class="formula" fill="#15803D">Δt = t_weather - t_solar ∈ {-45, -30, -15, 0} phút ≤ 0</text>
+    </g>
+
+    <!-- Proof & Testing Box -->
+    <g transform="translate(15, 366)">
+      <rect width="470" height="142" rx="6" fill="#F0FDF4" stroke="#BBF7D0" />
+      <text x="12" y="20" class="txt-bold" fill="#15803D">CHỨNG MINH TOÁN HỌC &amp; RÀO CHẮN KIỂM ĐỊNH QA:</text>
+      <text x="12" y="42" class="formula" fill="#0F172A">Python Code: df['weather_time'] = df['solar_time'].dt.floor('h')</text>
+      <text x="12" y="62" class="formula" fill="#DC2626">assert (df['weather_time'] &gt; df['solar_time']).sum() == 0</text>
+      <text x="12" y="86" class="txt">• Kết quả Kiểm toán: 0 vi phạm trên toàn bộ 2,731,946 dòng dữ liệu.</text>
+      <text x="12" y="104" class="txt">• Độ tin cậy: Đảm bảo mô hình học máy được huấn luyện trên dữ liệu</text>
+      <text x="12" y="122" class="txt">hoàn toàn tuân thủ nguyên lý nhân quả thực tế vận hành.</text>
+    </g>
+  </g>
+</svg>

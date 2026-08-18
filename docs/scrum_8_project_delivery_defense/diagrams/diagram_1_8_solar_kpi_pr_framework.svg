@@ -1,0 +1,134 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1060 580" width="100%" height="100%">
+  <defs>
+    <style>
+      .hdr { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 14px; font-weight: 700; fill: #F8FAFC; }
+      .subhdr { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; fill: #94A3B8; }
+      .box-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 12px; font-weight: 700; }
+      .txt { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 10.5px; fill: #334155; }
+      .txt-bold { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 10.5px; font-weight: 700; fill: #0F172A; }
+      .formula { font-family: "Courier New", Courier, monospace; font-size: 10.5px; font-weight: 700; }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1060" height="580" fill="#F8FAFC" rx="10" />
+
+  <!-- Header Banner -->
+  <rect x="20" y="15" width="1020" height="46" rx="8" fill="#0F172A" />
+  <text x="530" y="35" text-anchor="middle" class="hdr">BỘ CHỈ SỐ ĐO LƯỜNG HIỆU NĂNG CỐT LÕI (SOLAR KPI FRAMEWORK - IEC 61724-1)</text>
+  <text x="530" y="51" text-anchor="middle" class="subhdr">Hệ số hiệu suất PR, hiệu chỉnh nhiệt độ PR_corr, năng suất riêng Specific Yield và chỉ số phát thải Scope 2 NGA</text>
+
+  <!-- Row 1: Top 2 Main KPI Engines (PR vs PR_corr) -->
+  <g transform="translate(20, 75)">
+    <!-- PR Nominal -->
+    <g transform="translate(0, 0)">
+      <rect width="500" height="240" rx="8" fill="#FFFFFF" stroke="#0284C7" stroke-width="2" />
+      <rect width="500" height="34" rx="8" fill="#F0F9FF" />
+      <text x="250" y="22" text-anchor="middle" class="box-title" fill="#0369A1">1. HỆ SỐ HIỆU SUẤT DANH ĐỊNH (PERFORMANCE RATIO - PR)</text>
+
+      <g transform="translate(15, 46)">
+        <rect width="470" height="48" rx="6" fill="#F8FAFC" stroke="#BAE6FD" />
+        <text x="235" y="22" text-anchor="middle" class="formula" fill="#0369A1">PR = Y_f / Y_r = E_actual / [ P_stc · (GHI / 1000) · Δt ] × 100%</text>
+        <text x="235" y="38" text-anchor="middle" class="txt" font-size="9.5" fill="#64748B">Chuẩn mực quốc tế IEC 61724-1:2021 (Lọc dữ liệu khi GHI ≥ 100 W/m²)</text>
+
+        <g transform="translate(5, 58)">
+          <text x="0" y="14" class="txt-bold">• Y_f (Final Yield):</text>
+          <text x="120" y="14" class="txt">Năng suất thực phát = E_actual / P_stc (kWh/kWp).</text>
+          
+          <text x="0" y="34" class="txt-bold">• Y_r (Reference):</text>
+          <text x="120" y="34" class="txt">Năng suất tham chiếu = (Σ GHI · Δt) / 1000 (Peak Sun Hours).</text>
+
+          <text x="0" y="54" class="txt-bold">• Biến thiên mùa vụ:</text>
+          <text x="120" y="54" class="txt">Tụt 5% - 10% vào mùa hè do nhiệt độ tấm pin tăng cao.</text>
+          
+          <text x="0" y="74" class="txt-bold">• Ngưỡng lọc Inverter:</text>
+          <text x="120" y="74" class="txt">Bỏ qua GHI &lt; 100 W/m² để triệt tiêu sai số khi khởi động.</text>
+        </g>
+      </g>
+    </g>
+
+    <!-- PR Temperature-Corrected -->
+    <g transform="translate(520, 0)">
+      <rect width="500" height="240" rx="8" fill="#FFFFFF" stroke="#16A34A" stroke-width="2" />
+      <rect width="500" height="34" rx="8" fill="#F0FDF4" />
+      <text x="250" y="22" text-anchor="middle" class="box-title" fill="#15803D">2. PR HIỆU CHỈNH NHIỆT ĐỘ (TEMPERATURE-CORRECTED PR)</text>
+
+      <g transform="translate(15, 46)">
+        <rect width="470" height="48" rx="6" fill="#F8FAFC" stroke="#BBF7D0" />
+        <text x="235" y="22" text-anchor="middle" class="formula" fill="#15803D">PR_corr = PR / [ 1 + γ · (T_cell - 25°C) ] × 100%</text>
+        <text x="235" y="38" text-anchor="middle" class="txt" font-size="9.5" fill="#64748B">Phụ lục B IEC 61724-1 &amp; NREL Weather-Corrected Model</text>
+
+        <g transform="translate(5, 58)">
+          <text x="0" y="14" class="txt-bold">• Hệ số nhiệt γ:</text>
+          <text x="120" y="14" class="txt">SunPower: -0.35%/°C | Trina Poly-Si: -0.42%/°C.</text>
+          
+          <text x="0" y="34" class="txt-bold">• Nhiệt độ T_cell:</text>
+          <text x="120" y="34" class="txt">Ước tính theo Sandia: T_amb + GHI·exp(a + b·v_wind).</text>
+
+          <text x="0" y="54" class="txt-bold">• Giá trị phân tích:</text>
+          <text x="120" y="54" class="txt">Loại trừ ảnh hưởng thời tiết, làm phẳng đồ thị PR cả năm.</text>
+          
+          <text x="0" y="74" class="txt-bold">• Ứng dụng DA:</text>
+          <text x="120" y="74" class="txt">Phát hiện chính xác tốc độ thoái hóa phần cứng (&lt;0.5%/năm).</text>
+        </g>
+      </g>
+    </g>
+  </g>
+
+  <!-- Row 2: Bottom 2 Panels (PR Rating Benchmark vs Economic/CO2 Framework) -->
+  <g transform="translate(20, 330)">
+    <!-- PR Benchmark Classification -->
+    <g transform="translate(0, 0)">
+      <rect width="500" height="230" rx="8" fill="#FFFFFF" stroke="#D97706" stroke-width="2" />
+      <rect width="500" height="34" rx="8" fill="#FFFBEB" />
+      <text x="250" y="22" text-anchor="middle" class="box-title" fill="#B45309">3. THANG PHÂN LOẠI HIỆU NĂNG VẬN HÀNH TRẠM</text>
+
+      <g transform="translate(15, 46)">
+        <!-- Class A -->
+        <g transform="translate(0, 0)">
+          <rect width="470" height="48" rx="6" fill="#F0FDF4" stroke="#86EFAC" />
+          <text x="15" y="20" class="txt-bold" fill="#15803D">CLASS A (PR ≥ 78%) - VẬN HÀNH XUẤT SẮC</text>
+          <text x="15" y="36" class="txt">Hệ thống đồng bộ hoàn hảo, suy hao bám bụi thấp, inverter làm việc tối ưu.</text>
+        </g>
+
+        <!-- Class B -->
+        <g transform="translate(0, 56)">
+          <rect width="470" height="48" rx="6" fill="#FFFBEB" stroke="#FDE68A" />
+          <text x="15" y="20" class="txt-bold" fill="#B45309">CLASS B (65% ≤ PR &lt; 78%) - VẬN HÀNH TRUNG BÌNH</text>
+          <text x="15" y="36" class="txt">Chịu suy hao nhiệt độ mùa hè hoặc bám bụi nhẹ, cần lên lịch rửa pin.</text>
+        </g>
+
+        <!-- Class C -->
+        <g transform="translate(0, 112)">
+          <rect width="470" height="48" rx="6" fill="#FEF2F2" stroke="#FECACA" />
+          <text x="15" y="20" class="txt-bold" fill="#DC2626">CLASS C (PR &lt; 65%) - CẢNH BÁO SỰ CỐ PHẦN CỨNG</text>
+          <text x="15" y="36" class="txt">Dị thường nghiêm trọng: hỏng diode bypass, ngắt inverter, quá áp lưới điện.</text>
+        </g>
+      </g>
+    </g>
+
+    <!-- Economic & CO2 Pipeline -->
+    <g transform="translate(520, 0)">
+      <rect width="500" height="230" rx="8" fill="#FFFFFF" stroke="#7C3AED" stroke-width="2" />
+      <rect width="500" height="34" rx="8" fill="#FAF5FF" />
+      <text x="250" y="22" text-anchor="middle" class="box-title" fill="#6D28D9">4. HIỆU QUẢ KINH TẾ &amp; GIẢM PHÁT THẢI SCOPE 2 NGA</text>
+
+      <g transform="translate(15, 46)">
+        <g transform="translate(0, 0)">
+          <rect width="470" height="65" rx="6" fill="#F8FAFC" stroke="#E2E8F0" />
+          <text x="15" y="20" class="txt-bold" fill="#6D28D9">A. Mô hình Tiết kiệm Chi phí Điện (AEMO NEM):</text>
+          <text x="15" y="38" class="formula" fill="#0F172A">Savings (AUD) = E_actual (kWh) × Tariff_AUD/kWh</text>
+          <text x="15" y="54" class="txt" fill="#64748B">Thanh toán bù trừ 5 phút; tối ưu hóa tự dùng tại 5 campus trường học.</text>
+        </g>
+
+        <g transform="translate(0, 75)">
+          <rect width="470" height="85" rx="6" fill="#F8FAFC" stroke="#E2E8F0" />
+          <text x="15" y="20" class="txt-bold" fill="#15803D">B. Giảm Phát thải Khí Nhà kính Quốc gia Úc (NGA Factor):</text>
+          <text x="15" y="38" class="formula" fill="#0F172A">CO2_Avoided (Tấn) = [ E_actual (kWh) × 0.82 kg CO2-e/kWh ] / 1000</text>
+          <text x="15" y="56" class="txt">• Tổng sản lượng UNISOLAR: 74.98 GWh (28 tháng vận hành)</text>
+          <text x="15" y="74" class="txt-bold" fill="#0369A1">• Giảm lũy kế: 61,485 Tấn CO2 | Tiết kiệm: 11.2 Triệu AUD</text>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

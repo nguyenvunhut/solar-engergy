@@ -1,0 +1,203 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 560" width="100%" height="100%">
+  <defs>
+    <linearGradient id="nTypeGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#E0F2FE" />
+      <stop offset="100%" stop-color="#BAE6FD" />
+    </linearGradient>
+    <linearGradient id="depletionGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FEF9C3" />
+      <stop offset="100%" stop-color="#FEF08A" />
+    </linearGradient>
+    <linearGradient id="pTypeGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFEDD5" />
+      <stop offset="100%" stop-color="#FED7AA" />
+    </linearGradient>
+    <filter id="dropShadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="2" dy="3" stdDeviation="4" flood-opacity="0.12" />
+    </filter>
+    <marker id="arrBlue" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0284C7" />
+    </marker>
+    <marker id="arrOrange" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#EA580C" />
+    </marker>
+    <marker id="arrRed" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#DC2626" />
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="560" rx="16" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="2" />
+
+  <!-- Header Banner -->
+  <rect x="20" y="15" width="920" height="50" rx="8" fill="#0F172A" />
+  <text x="480" y="46" font-family="system-ui, -apple-system, sans-serif" font-size="17" font-weight="700" fill="#F8FAFC" text-anchor="middle">
+    BẢN CHẤT VẬT LÝ VI MÔ TIẾP GIÁP p-n &amp; HIỆU ỨNG QUANG ĐIỆN (PHOTOVOLTAIC EFFECT)
+  </text>
+
+  <!-- Sun & Photon Rays -->
+  <g transform="translate(40, 80)">
+    <circle cx="40" cy="35" r="26" fill="#F59E0B" filter="url(#dropShadow)" />
+    <circle cx="40" cy="35" r="32" fill="none" stroke="#FBBF24" stroke-width="2" stroke-dasharray="5,3" />
+    <text x="40" y="40" font-family="system-ui, sans-serif" font-size="11" font-weight="700" fill="#FFFFFF" text-anchor="middle">SUN</text>
+  </g>
+
+  <!-- Photons Badge & Rays -->
+  <g transform="translate(130, 80)">
+    <rect x="0" y="15" width="460" height="36" rx="6" fill="#FFFBEB" stroke="#FCD34D" stroke-width="1.5" />
+    <text x="230" y="38" font-family="system-ui, sans-serif" font-size="13" font-weight="600" fill="#B45309" text-anchor="middle">
+      Hạt Ánh sáng (Photons): E = h·ν ≥ E_g (1.12 eV đối với Si)
+    </text>
+  </g>
+
+  <g stroke="#F59E0B" stroke-width="2" stroke-linecap="round">
+    <path d="M 610 98 L 680 145" marker-end="url(#arrOrange)" stroke-dasharray="5,3" />
+    <path d="M 640 85 L 750 145" marker-end="url(#arrOrange)" stroke-dasharray="5,3" />
+    <path d="M 670 75 L 820 145" marker-end="url(#arrOrange)" stroke-dasharray="5,3" />
+  </g>
+
+  <!-- MAIN SOLAR CELL BODY -->
+  <g transform="translate(150, 150)" filter="url(#dropShadow)">
+    
+    <!-- Top Grid Contacts (Metal Fingers) -->
+    <rect x="0" y="0" width="660" height="10" rx="2" fill="#64748B" />
+    <rect x="50" y="-10" width="16" height="10" fill="#475569" />
+    <rect x="180" y="-10" width="16" height="10" fill="#475569" />
+    <rect x="310" y="-10" width="16" height="10" fill="#475569" />
+    <rect x="440" y="-10" width="16" height="10" fill="#475569" />
+    <rect x="570" y="-10" width="16" height="10" fill="#475569" />
+
+    <!-- 1. N-TYPE LAYER -->
+    <rect x="0" y="10" width="660" height="70" fill="url(#nTypeGrad)" stroke="#0284C7" stroke-width="1.5" />
+    
+    <!-- Text Column Left -->
+    <text x="20" y="38" font-family="system-ui, sans-serif" font-size="14" font-weight="700" fill="#0369A1">
+      LỚP BÁN DẪN LOẠI N (N-Type Silicon Emitter)
+    </text>
+    <text x="20" y="60" font-family="system-ui, sans-serif" font-size="12" fill="#0C4A6E">
+      Pha tạp Phosphorus (P) ── Dư hạt mang điện tự do: Electron
+    </text>
+
+    <!-- Visual Electrons (Right Zone - No Text Underneath) -->
+    <g transform="translate(460, 25)">
+      <circle cx="0" cy="20" r="11" fill="#0284C7" />
+      <text x="0" y="24" font-family="system-ui, sans-serif" font-size="11" font-weight="700" fill="#FFF" text-anchor="middle">e⁻</text>
+      
+      <circle cx="45" cy="20" r="11" fill="#0284C7" />
+      <text x="45" y="24" font-family="system-ui, sans-serif" font-size="11" font-weight="700" fill="#FFF" text-anchor="middle">e⁻</text>
+      
+      <circle cx="90" cy="20" r="11" fill="#0284C7" />
+      <text x="90" y="24" font-family="system-ui, sans-serif" font-size="11" font-weight="700" fill="#FFF" text-anchor="middle">e⁻</text>
+
+      <circle cx="135" cy="20" r="11" fill="#0284C7" />
+      <text x="135" y="24" font-family="system-ui, sans-serif" font-size="11" font-weight="700" fill="#FFF" text-anchor="middle">e⁻</text>
+    </g>
+
+
+    <!-- 2. DEPLETION REGION (p-n JUNCTION) -->
+    <rect x="0" y="80" width="660" height="95" fill="url(#depletionGrad)" stroke="#CA8A04" stroke-width="1.5" />
+    
+    <!-- Title Left -->
+    <text x="20" y="110" font-family="system-ui, sans-serif" font-size="13" font-weight="700" fill="#854D0E">
+      VÙNG NGHÈO (DEPLETION REGION)
+    </text>
+    <text x="20" y="132" font-family="system-ui, sans-serif" font-size="11" fill="#713F12">
+      • Photon sinh cặp e⁻ / h⁺
+    </text>
+    <text x="20" y="152" font-family="system-ui, sans-serif" font-size="11" fill="#713F12">
+      • Điện trường E_bi tách hạt
+    </text>
+
+    <!-- Built-in Field Box (Center) -->
+    <g transform="translate(230, 95)">
+      <rect x="0" y="0" width="220" height="65" rx="6" fill="#FEFCE8" stroke="#EAB308" stroke-width="1" />
+      <text x="110" y="22" font-family="system-ui, sans-serif" font-size="11" font-weight="700" fill="#A16207" text-anchor="middle">
+        Điện trường nội tại E_bi
+      </text>
+      <text x="110" y="40" font-family="system-ui, sans-serif" font-size="10" fill="#854D0E" text-anchor="middle">
+        (Hướng từ N sang P)
+      </text>
+      <line x1="30" y1="52" x2="190" y2="52" stroke="#DC2626" stroke-width="2.5" marker-end="url(#arrRed)" />
+    </g>
+
+    <!-- Dedicated Carrier Movement Zone (Right Side) -->
+    <g transform="translate(480, 95)">
+      <rect x="0" y="0" width="165" height="65" rx="6" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1" />
+      
+      <!-- Electron separation (moves UP to N) -->
+      <g transform="translate(40, 38)">
+        <circle cx="0" cy="0" r="11" fill="#0284C7" />
+        <text x="0" y="4" font-family="system-ui, sans-serif" font-size="11" font-weight="700" fill="#FFF" text-anchor="middle">e⁻</text>
+        <path d="M 0 -13 L 0 -30" stroke="#0284C7" stroke-width="2.5" marker-end="url(#arrBlue)" />
+        <text x="0" y="20" font-family="system-ui, sans-serif" font-size="9" font-weight="700" fill="#0369A1" text-anchor="middle">Lên N (▲)</text>
+      </g>
+
+      <!-- Hole separation (moves DOWN to P) -->
+      <g transform="translate(120, 22)">
+        <circle cx="0" cy="0" r="11" fill="#EA580C" />
+        <text x="0" y="4" font-family="system-ui, sans-serif" font-size="11" font-weight="700" fill="#FFF" text-anchor="middle">h⁺</text>
+        <path d="M 0 13 L 0 30" stroke="#EA580C" stroke-width="2.5" marker-end="url(#arrOrange)" />
+        <text x="0" y="-16" font-family="system-ui, sans-serif" font-size="9" font-weight="700" fill="#C2410C" text-anchor="middle">Xuống P (▼)</text>
+      </g>
+    </g>
+
+
+    <!-- 3. P-TYPE LAYER -->
+    <rect x="0" y="175" width="660" height="70" fill="url(#pTypeGrad)" stroke="#EA580C" stroke-width="1.5" />
+    
+    <!-- Text Column Left -->
+    <text x="20" y="203" font-family="system-ui, sans-serif" font-size="14" font-weight="700" fill="#C2410C">
+      LỚP BÁN DẪN LOẠI P (P-Type Silicon Base)
+    </text>
+    <text x="20" y="225" font-family="system-ui, sans-serif" font-size="12" fill="#7C2D12">
+      Pha tạp Boron (B) ── Dư hạt mang điện: Lỗ trống (Holes)
+    </text>
+
+    <!-- Visual Holes (Right Zone - No Text Underneath) -->
+    <g transform="translate(460, 190)">
+      <circle cx="0" cy="20" r="11" fill="#EA580C" />
+      <text x="0" y="24" font-family="system-ui, sans-serif" font-size="11" font-weight="700" fill="#FFF" text-anchor="middle">h⁺</text>
+      
+      <circle cx="45" cy="20" r="11" fill="#EA580C" />
+      <text x="45" y="24" font-family="system-ui, sans-serif" font-size="11" font-weight="700" fill="#FFF" text-anchor="middle">h⁺</text>
+      
+      <circle cx="90" cy="20" r="11" fill="#EA580C" />
+      <text x="90" y="24" font-family="system-ui, sans-serif" font-size="11" font-weight="700" fill="#FFF" text-anchor="middle">h⁺</text>
+
+      <circle cx="135" cy="20" r="11" fill="#EA580C" />
+      <text x="135" y="24" font-family="system-ui, sans-serif" font-size="11" font-weight="700" fill="#FFF" text-anchor="middle">h⁺</text>
+    </g>
+
+    <!-- Bottom Metal Contact Plate -->
+    <rect x="0" y="245" width="660" height="12" rx="2" fill="#475569" />
+  </g>
+
+  <!-- EXTERNAL CIRCUIT -->
+  <path d="M 150 195 L 75 195 L 75 490 L 370 490" fill="none" stroke="#0284C7" stroke-width="3" />
+  <path d="M 810 400 L 885 400 L 885 490 L 590 490" fill="none" stroke="#EA580C" stroke-width="3" />
+
+  <!-- Inverter Box -->
+  <rect x="370" y="460" width="220" height="60" rx="8" fill="#1E293B" filter="url(#dropShadow)" />
+  <text x="480" y="485" font-family="system-ui, sans-serif" font-size="13" font-weight="700" fill="#F8FAFC" text-anchor="middle">
+    BIẾN TẦN / TẢI DC
+  </text>
+  <text x="480" y="505" font-family="system-ui, sans-serif" font-size="11" fill="#38BDF8" text-anchor="middle">
+    Dòng DC: I = I_ph - I_diode
+  </text>
+
+  <!-- Polarity Badges -->
+  <g transform="translate(40, 320)">
+    <rect width="70" height="45" rx="5" fill="#E0F2FE" stroke="#0284C7" />
+    <text x="35" y="20" font-family="system-ui, sans-serif" font-size="11" font-weight="700" fill="#0369A1" text-anchor="middle">Cực Âm (-)</text>
+    <text x="35" y="35" font-family="system-ui, sans-serif" font-size="9" fill="#0284C7" text-anchor="middle">e⁻ ra tải</text>
+    <path d="M 35 45 L 35 75" stroke="#0284C7" stroke-width="2" marker-end="url(#arrBlue)" />
+  </g>
+
+  <g transform="translate(850, 320)">
+    <rect width="70" height="45" rx="5" fill="#FFEDD5" stroke="#EA580C" />
+    <text x="35" y="20" font-family="system-ui, sans-serif" font-size="11" font-weight="700" fill="#C2410C" text-anchor="middle">Cực Dương (+)</text>
+    <text x="35" y="35" font-family="system-ui, sans-serif" font-size="9" fill="#EA580C" text-anchor="middle">Thu e⁻ về</text>
+    <path d="M 35 75 L 35 45" stroke="#EA580C" stroke-width="2" marker-end="url(#arrOrange)" />
+  </g>
+
+</svg>

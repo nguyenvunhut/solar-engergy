@@ -1,0 +1,116 @@
+<mxfile host="app.diagrams.net" modified="2026-08-18T17:18:00.000Z" agent="Mozilla/5.0" version="21.0.0" type="device">
+  <!-- PAGE 1: 0.1 Water Metaphor -->
+  <diagram id="p-0-1" name="0.1 Electrical Quantities">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850">
+      <root><mxCell id="0" /><mxCell id="1" parent="0" /><mxCell id="h01" value="0.1 BẢN CHẤT 4 ĐẠI LƯỢNG ĐIỆN NĂNG CỐT LÕI (V, A, W, kWh)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#0F172A;fontColor=#F8FAFC;fontSize=14;" vertex="1" parent="1"><mxGeometry x="40" y="20" width="920" height="40" as="geometry" /></mxCell></root>
+    </mxGraphModel>
+  </diagram>
+  <!-- PAGE 2: 0.2 4-Step Journey -->
+  <diagram id="p-0-2" name="0.2 4-Step Journey">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850">
+      <root><mxCell id="2_0" /><mxCell id="2_1" parent="2_0" /><mxCell id="h02" value="0.2 HÀNH TRÌNH 4 BƯỚC TỪ TIA NẮNG ĐẾN DATABASE" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#0F172A;fontColor=#F8FAFC;fontSize=14;" vertex="1" parent="2_1"><mxGeometry x="40" y="20" width="920" height="40" as="geometry" /></mxCell></root>
+    </mxGraphModel>
+  </diagram>
+  <!-- PAGE 3: 1.1 PN Junction -->
+  <diagram id="p-1-1" name="1.1 PN Junction">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850">
+      <root><mxCell id="3_0" /><mxCell id="3_1" parent="3_0" /><mxCell id="h11" value="1.1 TIẾP GIÁP P-N VÀ HIỆU ỨNG QUANG ĐIỆN" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#0F172A;fontColor=#F8FAFC;fontSize=14;" vertex="1" parent="3_1"><mxGeometry x="40" y="20" width="920" height="40" as="geometry" /></mxCell></root>
+    </mxGraphModel>
+  </diagram>
+  <!-- PAGE 4: 1.2 IV PV Curves -->
+  <diagram id="p-1-2" name="1.2 IV PV Curves">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850">
+      <root><mxCell id="4_0" /><mxCell id="4_1" parent="4_0" /><mxCell id="h12" value="1.2 ĐẶC TUYẾN I-V VÀ P-V" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#0F172A;fontColor=#F8FAFC;fontSize=14;" vertex="1" parent="4_1"><mxGeometry x="40" y="20" width="920" height="40" as="geometry" /></mxCell></root>
+    </mxGraphModel>
+  </diagram>
+  <!-- PAGE 5: 1.3 Bypass Diode -->
+  <diagram id="p-1-3" name="1.3 Bypass Diode">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850">
+      <root><mxCell id="5_0" /><mxCell id="5_1" parent="5_0" /><mxCell id="h13" value="1.3 CƠ CHẾ BYPASS DIODE KHI CHE BÓNG" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#0F172A;fontColor=#F8FAFC;fontSize=14;" vertex="1" parent="5_1"><mxGeometry x="40" y="20" width="920" height="40" as="geometry" /></mxCell></root>
+    </mxGraphModel>
+  </diagram>
+  <!-- PAGE 6: 1.4 Inverter Topologies -->
+  <diagram id="p-1-4" name="1.4 Inverter Topologies">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850">
+      <root><mxCell id="6_0" /><mxCell id="6_1" parent="6_0" /><mxCell id="h14" value="1.4 KIẾN TRÚC BIẾN TẦN QUANG ĐIỆN" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#0F172A;fontColor=#F8FAFC;fontSize=14;" vertex="1" parent="6_1"><mxGeometry x="40" y="20" width="920" height="40" as="geometry" /></mxCell></root>
+    </mxGraphModel>
+  </diagram>
+  <!-- PAGE 7: 1.5 Loss Tree -->
+  <diagram id="p-1-5" name="1.5 Loss Tree">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850">
+      <root><mxCell id="7_0" /><mxCell id="7_1" parent="7_0" /><mxCell id="h15" value="1.5 CÂY PHÂN RÃ TỔN THẤT QUANG ĐIỆN" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#0F172A;fontColor=#F8FAFC;fontSize=14;" vertex="1" parent="7_1"><mxGeometry x="40" y="20" width="920" height="40" as="geometry" /></mxCell></root>
+    </mxGraphModel>
+  </diagram>
+  <!-- PAGE 8: 1.6 Campuses Map -->
+  <diagram id="p-1-6" name="1.6 Campuses Map">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850">
+      <root><mxCell id="8_0" /><mxCell id="8_1" parent="8_0" /><mxCell id="h16" value="1.6 BẢN ĐỒ 5 CAMPUS LA TROBE" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#0F172A;fontColor=#F8FAFC;fontSize=14;" vertex="1" parent="8_1"><mxGeometry x="40" y="20" width="920" height="40" as="geometry" /></mxCell></root>
+    </mxGraphModel>
+  </diagram>
+  <!-- PAGE 9: 1.7 Solar Geometry & Radiation -->
+  <diagram id="p-1-7" name="1.7 Solar Geometry &amp; Radiation">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850">
+      <root><mxCell id="17_0" /><mxCell id="17_1" parent="17_0" /><mxCell id="h17" value="1.7 ĐỘNG HỌC NHẬT QUỸ SPA VÀ BỨC XẠ WMO" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#0F172A;fontColor=#F8FAFC;fontSize=14;" vertex="1" parent="17_1"><mxGeometry x="40" y="20" width="920" height="40" as="geometry" /></mxCell></root>
+    </mxGraphModel>
+  </diagram>
+  <!-- PAGE 10: 1.8 Solar KPI Framework -->
+  <diagram id="p-1-8" name="1.8 Solar KPI Framework">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850">
+      <root><mxCell id="18_0" /><mxCell id="18_1" parent="18_0" /><mxCell id="h18" value="1.8 BỘ CHỈ SỐ HIỆU NĂNG SOLAR VÀ PR IEC 61724-1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#0F172A;fontColor=#F8FAFC;fontSize=14;" vertex="1" parent="18_1"><mxGeometry x="40" y="20" width="920" height="40" as="geometry" /></mxCell></root>
+    </mxGraphModel>
+  </diagram>
+  <!-- PAGE 11: 1.9 Clipping & Thermal Derating -->
+  <diagram id="p-1-9" name="1.9 Clipping &amp; Thermal Derating">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850">
+      <root><mxCell id="19_0" /><mxCell id="19_1" parent="19_0" /><mxCell id="h19" value="1.9 ĐẶC TÍNH CLIPPING VÀ SUY HAO NHIỆT ĐỘ" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#0F172A;fontColor=#F8FAFC;fontSize=14;" vertex="1" parent="19_1"><mxGeometry x="40" y="20" width="920" height="40" as="geometry" /></mxCell></root>
+    </mxGraphModel>
+  </diagram>
+  <!-- PAGE 12: 1.10 ISO 13374 CBM Workflow -->
+  <diagram id="p-1-10" name="1.10 ISO 13374 CBM Workflow">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850">
+      <root><mxCell id="20_0" /><mxCell id="20_1" parent="20_0" /><mxCell id="h20" value="1.10 KIẾN TRÚC PHÁT HIỆN DỊ THƯỜNG &amp; O&amp;M ISO 13374" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#0F172A;fontColor=#F8FAFC;fontSize=14;" vertex="1" parent="20_1"><mxGeometry x="40" y="20" width="920" height="40" as="geometry" /></mxCell></root>
+    </mxGraphModel>
+  </diagram>
+  <!-- PAGE 13: 2.1 Galaxy Schema -->
+  <diagram id="p-2-1" name="2.1 Galaxy Schema">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850">
+      <root><mxCell id="9_0" /><mxCell id="9_1" parent="9_0" /><mxCell id="h21" value="2.1 LƯỢC ĐỒ THIÊN HÀ GALAXY SCHEMA" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#0F172A;fontColor=#F8FAFC;fontSize=14;" vertex="1" parent="9_1"><mxGeometry x="40" y="20" width="920" height="40" as="geometry" /></mxCell></root>
+    </mxGraphModel>
+  </diagram>
+  <!-- PAGE 14: 2.2 Lakehouse Pipeline -->
+  <diagram id="p-2-2" name="2.2 Lakehouse Pipeline">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850">
+      <root><mxCell id="10_0" /><mxCell id="10_1" parent="10_0" /><mxCell id="h22" value="2.2 ĐƯỜNG ỐNG DỮ LIỆU LAKEHOUSE 6 LỚP" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#0F172A;fontColor=#F8FAFC;fontSize=14;" vertex="1" parent="10_1"><mxGeometry x="40" y="20" width="920" height="40" as="geometry" /></mxCell></root>
+    </mxGraphModel>
+  </diagram>
+  <!-- PAGE 15: 2.3 GMM-IF Architecture -->
+  <diagram id="p-2-3" name="2.3 GMM-IF Architecture">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850">
+      <root><mxCell id="11_0" /><mxCell id="11_1" parent="11_0" /><mxCell id="h23" value="2.3 KIẾN TRÚC MÔ HÌNH LAI GMM-IF" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#0F172A;fontColor=#F8FAFC;fontSize=14;" vertex="1" parent="11_0"><mxGeometry x="40" y="20" width="920" height="40" as="geometry" /></mxCell></root>
+    </mxGraphModel>
+  </diagram>
+  <!-- PAGE 16: 2.4 Causal Imputation & Floor-Hour -->
+  <diagram id="p-2-4" name="2.4 Causal Imputation &amp; Floor-Hour">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850">
+      <root><mxCell id="24_0" /><mxCell id="24_1" parent="24_0" /><mxCell id="h24" value="2.4 CHIẾN LƯỢC ĐIỀN KHUYẾT 4 TẦNG &amp; FLOOR-HOUR LOOKUP" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#0F172A;fontColor=#F8FAFC;fontSize=14;" vertex="1" parent="24_1"><mxGeometry x="40" y="20" width="920" height="40" as="geometry" /></mxCell></root>
+    </mxGraphModel>
+  </diagram>
+  <!-- PAGE 17: 2.5 Partitioning & Connection Pooler -->
+  <diagram id="p-2-5" name="2.5 Partitioning &amp; Connection Pooler">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850">
+      <root><mxCell id="25_0" /><mxCell id="25_1" parent="25_0" /><mxCell id="h25" value="2.5 PHÂN VÙNG BẢNG FACT &amp; ĐỊNH TUYẾN CONNECTION POOLER" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#0F172A;fontColor=#F8FAFC;fontSize=14;" vertex="1" parent="25_1"><mxGeometry x="40" y="20" width="920" height="40" as="geometry" /></mxCell></root>
+    </mxGraphModel>
+  </diagram>
+  <!-- PAGE 18: 2.6 Tableau 3 Dashboards -->
+  <diagram id="p-2-6" name="2.6 Tableau 3 Dashboards">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850">
+      <root><mxCell id="26_0" /><mxCell id="26_1" parent="26_0" /><mxCell id="h26" value="2.6 KIẾN TRÚC BỘ 3 DASHBOARD QUẢN TRỊ TABLEAU" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#0F172A;fontColor=#F8FAFC;fontSize=14;" vertex="1" parent="26_1"><mxGeometry x="40" y="20" width="920" height="40" as="geometry" /></mxCell></root>
+    </mxGraphModel>
+  </diagram>
+  <!-- PAGE 19: 2.7 Future MLOps & DataOps -->
+  <diagram id="p-2-7" name="2.7 Future MLOps &amp; DataOps Architecture">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850">
+      <root><mxCell id="27_0" /><mxCell id="27_1" parent="27_0" /><mxCell id="h27" value="2.7 ĐỊNH HƯỚNG MỞ RỘNG HẠ TẦNG DATAOPS &amp; MLOPS" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#0F172A;fontColor=#F8FAFC;fontSize=14;" vertex="1" parent="27_1"><mxGeometry x="40" y="20" width="920" height="40" as="geometry" /></mxCell></root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

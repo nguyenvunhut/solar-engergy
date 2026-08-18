@@ -1,0 +1,230 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1060 620" width="100%" height="100%">
+  <defs>
+    <style>
+      .hdr { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 14px; font-weight: 700; fill: #F8FAFC; }
+      .subhdr { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; fill: #94A3B8; }
+      .step-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 10.5px; font-weight: 700; }
+      .txt { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 9.5px; fill: #334155; }
+      .txt-bold { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 9.5px; font-weight: 700; fill: #0F172A; }
+      .formula { font-family: "Courier New", Courier, monospace; font-size: 9px; font-weight: 700; }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1060" height="620" fill="#F8FAFC" rx="10" />
+
+  <!-- Header Banner -->
+  <rect x="20" y="15" width="1020" height="46" rx="8" fill="#0F172A" />
+  <text x="530" y="35" text-anchor="middle" class="hdr">KIẾN TRÚC PHÁT HIỆN DỊ THƯỜNG &amp; QUY TRÌNH TỰ ĐỘNG HÓA O&amp;M CHUẨN ISO 13374</text>
+  <text x="530" y="51" text-anchor="middle" class="subhdr">Chuỗi 4 giai đoạn: Thu nhận viễn thám ➔ Động cơ phát hiện 2 lớp ➔ Định lượng thiệt hại ➔ Tự động phát hành CMMS Work Order</text>
+
+  <!-- Step 1: Ingestion & Preprocessing -->
+  <g transform="translate(20, 75)">
+    <rect width="235" height="525" rx="8" fill="#FFFFFF" stroke="#0284C7" stroke-width="2" />
+    <rect width="235" height="34" rx="8" fill="#F0F9FF" />
+    <text x="117" y="22" text-anchor="middle" class="step-title" fill="#0369A1">GIAI ĐOẠN 1: THU NHẬN &amp; TIỀN XỬ LÝ</text>
+
+    <!-- Box 1 -->
+    <g transform="translate(12, 46)">
+      <rect width="211" height="92" rx="6" fill="#F8FAFC" stroke="#BAE6FD" />
+      <text x="10" y="18" class="txt-bold" fill="#0369A1">1. Dữ liệu Viễn thám Telemetry:</text>
+      <text x="10" y="34" class="txt">• 42 trạm (5 Campuses La Trobe)</text>
+      <text x="10" y="48" class="txt">• Chu kỳ đo đếm: 15 phút (0.25h)</text>
+      <text x="10" y="62" class="txt">• 2,731,946 bản ghi (28 tháng)</text>
+      <text x="10" y="78" class="formula" fill="#0284C7">[time_id, site_id, energy_kwh]</text>
+    </g>
+
+    <!-- Box 2 -->
+    <g transform="translate(12, 146)">
+      <rect width="211" height="92" rx="6" fill="#F8FAFC" stroke="#BAE6FD" />
+      <text x="10" y="18" class="txt-bold" fill="#0369A1">2. Dữ liệu ERA5-Land (WMO):</text>
+      <text x="10" y="34" class="txt">• 8 biến khí quyển cấp giờ</text>
+      <text x="10" y="48" class="txt">• GHI, DNI, DHI, T_amb, v_wind</text>
+      <text x="10" y="62" class="txt">• Cloud Cover &amp; Sunshine Duration</text>
+      <text x="10" y="78" class="formula" fill="#0284C7">850,752 bản ghi Open-Meteo</text>
+    </g>
+
+    <!-- Box 3 -->
+    <g transform="translate(12, 246)">
+      <rect width="211" height="110" rx="6" fill="#F8FAFC" stroke="#BAE6FD" />
+      <text x="10" y="18" class="txt-bold" fill="#0369A1">3. Căn chỉnh &amp; Điền khuyết:</text>
+      <text x="10" y="34" class="txt">• Floor-Hour Causal Lookup</text>
+      <text x="10" y="48" class="txt">• Khắc phục Data Leakage (Δt ≤ 0)</text>
+      <text x="10" y="62" class="txt">• Điền khuyết đa tầng (Iterative)</text>
+      <text x="10" y="76" class="txt">• Bổ sung Cyclical Hour_sin/cos</text>
+      <text x="10" y="94" class="formula" fill="#D97706">sin(h) &amp; cos(θ_z) SPA</text>
+    </g>
+
+    <!-- Box 4 -->
+    <g transform="translate(12, 364)">
+      <rect width="211" height="142" rx="6" fill="#F0FDF4" stroke="#BBF7D0" />
+      <text x="10" y="18" class="txt-bold" fill="#15803D">Mục tiêu Giai đoạn 1:</text>
+      <text x="10" y="36" class="txt">• Làm sạch 100% dữ liệu thiếu</text>
+      <text x="10" y="52" class="txt">• Chuẩn hóa đồng bộ mốc giờ</text>
+      <text x="10" y="68" class="txt">• Không rò rỉ dữ liệu tương lai</text>
+      <text x="10" y="90" class="txt-bold" fill="#15803D">➔ Sẵn sàng cho Động cơ ML</text>
+    </g>
+  </g>
+
+  <!-- Step 2: 2-Stage Anomaly Detection Engine -->
+  <g transform="translate(275, 75)">
+    <rect width="250" height="525" rx="8" fill="#FFFFFF" stroke="#D97706" stroke-width="2" />
+    <rect width="250" height="34" rx="8" fill="#FFFBEB" />
+    <text x="125" y="22" text-anchor="middle" class="step-title" fill="#B45309">GIAI ĐOẠN 2: PHÁT HIỆN DỊ THƯỜNG 2 LỚP</text>
+
+    <!-- Layer 1: 5 Physical Guardrails -->
+    <g transform="translate(12, 46)">
+      <rect width="226" height="210" rx="6" fill="#FEF3C7" stroke="#FCD34D" />
+      <text x="10" y="18" class="txt-bold" fill="#92400E">LỚP 1: 5 RÀO CHẮN VẬT LÝ</text>
+      
+      <text x="10" y="36" class="txt-bold" fill="#B45309">1. R1 - Cắt Nắng Gắt (Midday Trip):</text>
+      <text x="10" y="50" class="txt">GHI ≥ 700, Sunshine ≥ 3000s, E ≈ 0</text>
+      
+      <text x="10" y="70" class="txt-bold" fill="#B45309">2. R2 - Phát Đêm (Night Leakage):</text>
+      <text x="10" y="84" class="txt">GHI ≤ 25, Sunshine ≤ 60s, E ≥ 1.0</text>
+      
+      <text x="10" y="104" class="txt-bold" fill="#B45309">3. R3 - Vượt Công suất (Over-Cap):</text>
+      <text x="10" y="118" class="txt">E &gt; P_stc × 0.25h (SCADA Spikes)</text>
+
+      <text x="10" y="138" class="txt-bold" fill="#B45309">4. R4 - Phát Cao Bức xạ Kẹt:</text>
+      <text x="10" y="152" class="txt">GHI ≤ 50, E &gt; Q3 + 4·IQR (ADC error)</text>
+
+      <text x="10" y="172" class="txt-bold" fill="#B45309">5. R5 - Nhảy Phân phối (Jump):</text>
+      <text x="10" y="186" class="txt">|ΔE| ≥ max(0.15·P95, 1.0) (Đứt chuỗi)</text>
+    </g>
+
+    <!-- Layer 2: Hybrid GMM-IF Model -->
+    <g transform="translate(12, 264)">
+      <rect width="226" height="242" rx="6" fill="#FAF5FF" stroke="#E9D5FF" />
+      <text x="10" y="18" class="txt-bold" fill="#6D28D9">LỚP 2: MÔ HÌNH LAI GMM-IF</text>
+      
+      <text x="10" y="36" class="txt-bold" fill="#7C3AED">• Phân đoạn CART (R² = 0.758):</text>
+      <text x="10" y="50" class="txt">19 - 29 vùng lá đồng nhất vi khí hậu</text>
+
+      <text x="10" y="70" class="txt-bold" fill="#7C3AED">• Mô hình GMM Cục bộ:</text>
+      <text x="10" y="84" class="formula" fill="#6D28D9">P(X) &lt; 0.02 ➔ Dị thường cụm</text>
+
+      <text x="10" y="106" class="txt-bold" fill="#7C3AED">• Mô hình Isolation Forest:</text>
+      <text x="10" y="120" class="formula" fill="#6D28D9">Score_IF &gt; Ngưỡng toàn cục</text>
+
+      <text x="10" y="142" class="txt-bold" fill="#7C3AED">• Đồng thuận Nghiêm ngặt:</text>
+      <text x="10" y="156" class="formula" fill="#15803D">Flag_ML = Flag_GMM ∧ Flag_IF</text>
+      <text x="10" y="174" class="txt-bold" fill="#15803D">➔ Triệt tiêu &gt;80% Cảnh báo Giả!</text>
+    </g>
+  </g>
+
+  <!-- Step 3: Diagnostic Mapping to 6 Physical Failure Codes -->
+  <g transform="translate(545, 75)">
+    <rect width="245" height="525" rx="8" fill="#FFFFFF" stroke="#DC2626" stroke-width="2" />
+    <rect width="245" height="34" rx="8" fill="#FEF2F2" />
+    <text x="122" y="22" text-anchor="middle" class="step-title" fill="#B91C1C">GIAI ĐOẠN 3: PHÂN LOẠI 6 MÃ DỊ THƯỜNG</text>
+
+    <g transform="translate(10, 46)">
+      <!-- Code 1 -->
+      <g transform="translate(0, 0)">
+        <rect width="225" height="68" rx="4" fill="#FEF2F2" stroke="#FECACA" />
+        <text x="8" y="16" class="txt-bold" font-size="9" fill="#DC2626">1. LOW_ENERGY_STRONG_SUN</text>
+        <text x="8" y="30" class="txt">Quá áp lưới điện (AS/NZS 4777.2 &gt; 258V)</text>
+        <text x="8" y="44" class="txt">hoặc Inverter quá nhiệt ngắt bảo vệ.</text>
+      </g>
+
+      <!-- Code 2 -->
+      <g transform="translate(0, 74)">
+        <rect width="225" height="68" rx="4" fill="#FEF2F2" stroke="#FECACA" />
+        <text x="8" y="16" class="txt-bold" font-size="9" fill="#DC2626">2. HIGH_ENERGY_NO_SUN</text>
+        <text x="8" y="30" class="txt">Cảm biến CT trôi mốc 0 ban đêm</text>
+        <text x="8" y="44" class="txt">hoặc dòng phản kháng tĩnh từ lưới.</text>
+      </g>
+
+      <!-- Code 3 -->
+      <g transform="translate(0, 148)">
+        <rect width="225" height="68" rx="4" fill="#FEF2F2" stroke="#FECACA" />
+        <text x="8" y="16" class="txt-bold" font-size="9" fill="#DC2626">3. OVER_CAPACITY</text>
+        <text x="8" y="30" class="txt">Nghẽn Modbus/RS485, dồn gói SCADA</text>
+        <text x="8" y="44" class="txt">vọt sản lượng &gt; 100% công suất.</text>
+      </g>
+
+      <!-- Code 4 -->
+      <g transform="translate(0, 222)">
+        <rect width="225" height="68" rx="4" fill="#FEF2F2" stroke="#FECACA" />
+        <text x="8" y="16" class="txt-bold" font-size="9" fill="#DC2626">4. HIGH_ENERGY_LOW_RAD</text>
+        <text x="8" y="30" class="txt">Nhiễu ADC / Kẹt sensor Pyranometer</text>
+        <text x="8" y="44" class="txt">tín hiệu đo bức xạ không đồng bộ.</text>
+      </g>
+
+      <!-- Code 5 -->
+      <g transform="translate(0, 296)">
+        <rect width="225" height="68" rx="4" fill="#FEF2F2" stroke="#FECACA" />
+        <text x="8" y="16" class="txt-bold" font-size="9" fill="#DC2626">5. DISTRIBUTION_JUMP</text>
+        <text x="8" y="30" class="txt">Đứt cầu chì chuỗi DC (IEC 60269-6)</text>
+        <text x="8" y="44" class="txt">sụt giảm tức thời 20% - 50% công suất.</text>
+      </g>
+
+      <!-- Code 6 -->
+      <g transform="translate(0, 370)">
+        <rect width="225" height="88" rx="4" fill="#FAF5FF" stroke="#E9D5FF" />
+        <text x="8" y="16" class="txt-bold" font-size="9" fill="#6D28D9">6. GMM_IF_ANOMALY</text>
+        <text x="8" y="30" class="txt">Bụi bám nặng, che bóng phức tạp,</text>
+        <text x="8" y="44" class="txt">hoặc thoái hóa điện áp cảm ứng PID.</text>
+        <text x="8" y="66" class="txt-bold" font-size="8.5" fill="#6D28D9">➔ Tổng: 33,280 dòng (~1.22%)</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- Step 4: ISO 13374 Automated O&M & CMMS Dispatch -->
+  <g transform="translate(810, 75)">
+    <rect width="230" height="525" rx="8" fill="#FFFFFF" stroke="#16A34A" stroke-width="2" />
+    <rect width="230" height="34" rx="8" fill="#F0FDF4" />
+    <text x="115" y="22" text-anchor="middle" class="step-title" fill="#15803D">GIAI ĐOẠN 4: O&amp;M CHUẨN ISO 13374</text>
+
+    <g transform="translate(10, 46)">
+      <!-- Health Assessment -->
+      <g transform="translate(0, 0)">
+        <rect width="210" height="110" rx="6" fill="#F8FAFC" stroke="#BAE6FD" />
+        <text x="8" y="18" class="txt-bold" fill="#0369A1">1. Định lượng Thiệt hại:</text>
+        <text x="8" y="34" class="formula" fill="#0F172A">ΔE_lost = E_theo·PR_tar - E_act</text>
+        <text x="8" y="52" class="formula" fill="#DC2626">Loss ($) = ΔE_lost × Tariff</text>
+        <text x="8" y="70" class="txt">• Xếp hạng ưu tiên O&amp;M:</text>
+        <text x="8" y="88" class="txt-bold" fill="#DC2626">High (&gt;100$) | Med | Low</text>
+      </g>
+
+      <!-- Automated Work Order Box -->
+      <g transform="translate(0, 120)">
+        <rect width="210" height="338" rx="6" fill="#F0FDF4" stroke="#86EFAC" />
+        <text x="8" y="20" class="txt-bold" fill="#15803D">2. Phiếu CMMS Work Order:</text>
+        
+        <!-- Mock Ticket -->
+        <g transform="translate(8, 30)">
+          <rect width="194" height="290" rx="4" fill="#FFFFFF" stroke="#CBD5E1" />
+          <text x="8" y="18" class="txt-bold" fill="#0F172A">CMMS TICKET #WO-2022-841</text>
+          <line x1="8" y1="24" x2="186" y2="24" stroke="#E2E8F0" />
+          
+          <text x="8" y="40" class="txt-bold">Site:</text>
+          <text x="45" y="40" class="txt">Bundoora - Agora North</text>
+          
+          <text x="8" y="58" class="txt-bold">Inverter:</text>
+          <text x="60" y="58" class="txt">Fronius Symo 20.0</text>
+          
+          <text x="8" y="76" class="txt-bold">Error:</text>
+          <text x="45" y="76" class="txt-bold" fill="#DC2626">MIDDAY_TRIP (Over-V)</text>
+
+          <text x="8" y="94" class="txt-bold">Loss:</text>
+          <text x="45" y="94" class="txt">148 kWh ($28.40 AUD)</text>
+
+          <text x="8" y="112" class="txt-bold">Standard:</text>
+          <text x="65" y="112" class="txt">AS/NZS 4777.2</text>
+
+          <text x="8" y="132" class="txt-bold">Hành động Khuyến nghị:</text>
+          <rect x="8" y="140" width="178" height="85" rx="3" fill="#F8FAFC" stroke="#E2E8F0" />
+          <text x="12" y="156" class="txt" font-size="9">• Kiểm tra rơ-le áp lưới</text>
+          <text x="12" y="172" class="txt" font-size="9">• Đo điện áp pha hòa lưới</text>
+          <text x="12" y="188" class="txt" font-size="9">• Vệ sinh quạt tản nhiệt</text>
+          <text x="12" y="204" class="txt" font-size="9">• Reset tủ điều khiển MPPT</text>
+
+          <rect x="8" y="240" width="178" height="32" rx="4" fill="#16A34A" />
+          <text x="97" y="260" text-anchor="middle" font-size="10" font-weight="700" fill="#FFFFFF">DISPATCHED TO FIELD</text>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

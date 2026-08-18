@@ -1,0 +1,14 @@
+<mxfile host="app.diagrams.net" modified="2026-08-18T17:15:00.000Z" agent="Mozilla/5.0" version="21.0.0" type="device">
+  <diagram id="diag-1-10" name="1.10 ISO 13374 CBM Workflow">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850">
+      <root>
+        <mxCell id="0" /><mxCell id="1" parent="0" />
+        <mxCell id="hdr" value="&lt;b&gt;KIẾN TRÚC PHÁT HIỆN DỊ THƯỜNG &amp; QUY TRÌNH TỰ ĐỘNG HÓA O&amp;M CHUẨN ISO 13374&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#0F172A;fontColor=#F8FAFC;fontSize=14;" vertex="1" parent="1"><mxGeometry x="20" y="15" width="1020" height="46" as="geometry" /></mxCell>
+        <mxCell id="s1" value="&lt;b&gt;GIAI ĐOẠN 1: THU NHẬN &amp; TIỀN XỬ LÝ&lt;/b&gt;&lt;br&gt;2.73M telemetry rows (15-min)&lt;br&gt;ERA5-Land 8 WMO variables&lt;br&gt;Causal Floor-Hour Lookup" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F0F9FF;strokeColor=#0284C7;align=left;spacingLeft=12;" vertex="1" parent="1"><mxGeometry x="20" y="75" width="235" height="525" as="geometry" /></mxCell>
+        <mxCell id="s2" value="&lt;b&gt;GIAI ĐOẠN 2: PHÁT HIỆN DỊ THƯỜNG 2 LỚP&lt;/b&gt;&lt;br&gt;Lớp 1: 5 Rào chắn Vật lý&lt;br&gt;Lớp 2: Mô hình Lai GMM-IF&lt;br&gt;Đồng thuận nghiêm ngặt" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFBEB;strokeColor=#D97706;align=left;spacingLeft=12;" vertex="1" parent="1"><mxGeometry x="275" y="75" width="250" height="525" as="geometry" /></mxCell>
+        <mxCell id="s3" value="&lt;b&gt;GIAI ĐOẠN 3: PHÂN LOẠI 6 MÃ LỖI&lt;/b&gt;&lt;br&gt;1. LOW_ENERGY_STRONG_SUN&lt;br&gt;2. HIGH_ENERGY_NO_SUN&lt;br&gt;3. OVER_CAPACITY&lt;br&gt;4. HIGH_ENERGY_LOW_RAD&lt;br&gt;5. DISTRIBUTION_JUMP&lt;br&gt;6. GMM_IF_ANOMALY" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEF2F2;strokeColor=#DC2626;align=left;spacingLeft=12;" vertex="1" parent="1"><mxGeometry x="545" y="75" width="245" height="525" as="geometry" /></mxCell>
+        <mxCell id="s4" value="&lt;b&gt;GIAI ĐOẠN 4: O&amp;M CHUẨN ISO 13374&lt;/b&gt;&lt;br&gt;Định lượng kWh thất thoát &amp; AUD&lt;br&gt;Tự động phát hành CMMS Ticket&lt;br&gt;Điều phối O&amp;M hiện trường" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F0FDF4;strokeColor=#16A34A;align=left;spacingLeft=12;" vertex="1" parent="1"><mxGeometry x="810" y="75" width="230" height="525" as="geometry" /></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

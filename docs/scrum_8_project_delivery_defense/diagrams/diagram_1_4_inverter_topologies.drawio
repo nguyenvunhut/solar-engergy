@@ -1,0 +1,29 @@
+<mxfile host="app.diagrams.net" modified="2026-08-18T16:28:00.000Z" agent="Mozilla/5.0" version="21.0.0" type="device">
+  <diagram id="diagram-1-4" name="1.4 Inverter Topologies">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        
+        <mxCell id="hdr" value="&lt;b&gt;SO SÁNH 3 KIẾN TRÚC TÔ-PÔ BIẾN TẦN QUANG ĐIỆN (INVERTER TOPOLOGIES)&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#0F172A;fontColor=#F8FAFC;fontSize=15;" vertex="1" parent="1">
+          <mxGeometry x="60" y="30" width="880" height="45" as="geometry" />
+        </mxCell>
+
+        <!-- Col 1: Central -->
+        <mxCell id="col1" value="&lt;b&gt;1. CENTRAL INVERTER&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;b&gt;Quy mô:&lt;/b&gt; Utility-Scale (&gt;1 MWp)&lt;br&gt;&lt;br&gt;&lt;font color=&quot;#059669&quot;&gt;&lt;b&gt;Ưu điểm:&lt;/b&gt;&lt;/font&gt;&lt;br&gt;• CAPEX/Wp rẻ nhất&lt;br&gt;• Quản lý tập trung&lt;br&gt;&lt;br&gt;&lt;font color=&quot;#DC2626&quot;&gt;&lt;b&gt;Nhược điểm:&lt;/b&gt;&lt;/font&gt;&lt;br&gt;• Rủi ro Single Failure&lt;br&gt;• MPPT kém khi che bóng&lt;br&gt;• Tổn thất cáp DC dài" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#94A3B8;align=left;spacingLeft=15;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="60" y="95" width="270" height="410" as="geometry" />
+        </mxCell>
+
+        <!-- Col 2: String (UNISOLAR) -->
+        <mxCell id="col2" value="&lt;b&gt;2. STRING INVERTER (UNISOLAR)&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;b&gt;Quy mô:&lt;/b&gt; Áp mái C&amp;amp;I (20kW - 500kW)&lt;br&gt;&lt;br&gt;&lt;font color=&quot;#059669&quot;&gt;&lt;b&gt;Ưu điểm (Lý do chọn cho La Trobe):&lt;/b&gt;&lt;/font&gt;&lt;br&gt;• Đa kênh MPPT theo hướng mái&lt;br&gt;• Hỏng 1 Inverter chỉ mất cụm nhỏ&lt;br&gt;• Dễ bảo trì &amp;amp; thay thế&lt;br&gt;&lt;br&gt;&lt;font color=&quot;#B45309&quot;&gt;&lt;b&gt;Lưu ý cho DA:&lt;/b&gt;&lt;/font&gt;&lt;br&gt;• Chuẩn hóa dữ liệu [kWh/inverter]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F0FDF4;strokeColor=#16A34A;strokeWidth=2;align=left;spacingLeft=15;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="365" y="95" width="270" height="410" as="geometry" />
+        </mxCell>
+
+        <!-- Col 3: Micro / Optimizer -->
+        <mxCell id="col3" value="&lt;b&gt;3. MICRO-INV &amp;amp; OPTIMIZER&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;b&gt;Quy mô:&lt;/b&gt; Mái che bóng phức tạp&lt;br&gt;&lt;br&gt;&lt;font color=&quot;#059669&quot;&gt;&lt;b&gt;Ưu điểm:&lt;/b&gt;&lt;/font&gt;&lt;br&gt;• MPPT từng tấm pin (Module-level)&lt;br&gt;• Triệt tiêu 100% Mismatched Loss&lt;br&gt;• Giám sát đến từng panel&lt;br&gt;&lt;br&gt;&lt;font color=&quot;#DC2626&quot;&gt;&lt;b&gt;Nhược điểm:&lt;/b&gt;&lt;/font&gt;&lt;br&gt;• Chi phí CAPEX rất cao&lt;br&gt;• Quá nhiều linh kiện trên mái" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#94A3B8;align=left;spacingLeft=15;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="670" y="95" width="270" height="410" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -1,0 +1,49 @@
+<mxfile host="app.diagrams.net" modified="2026-08-18T16:28:00.000Z" agent="Mozilla/5.0" version="21.0.0" type="device">
+  <diagram id="diagram-1-5" name="1.5 Loss Decomposition Tree">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        
+        <mxCell id="hdr" value="&lt;b&gt;SƠ ĐỒ PHÂN RÃ TỔN THẤT QUANG ĐIỆN (SOLAR PV LOSS DECOMPOSITION)&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#0F172A;fontColor=#F8FAFC;fontSize=15;" vertex="1" parent="1">
+          <mxGeometry x="60" y="30" width="880" height="45" as="geometry" />
+        </mxCell>
+
+        <!-- Top Input -->
+        <mxCell id="step0" value="&lt;b&gt;1. NĂNG LƯỢNG LÝ THUYẾT ĐẦU VÀO TẠI STC (100% - 1000 W/m², 25°C)&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0284C7;strokeColor=#0369A1;fontColor=#FFFFFF;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="200" y="95" width="600" height="45" as="geometry" />
+        </mxCell>
+
+        <!-- Losses -->
+        <mxCell id="loss1" value="- Tổn thất Bức xạ Thấp &amp;amp; Góc Chiếu (IAM Loss: 2% - 4%)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFBEB;strokeColor=#F59E0B;fontColor=#B45309;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="120" y="160" width="360" height="40" as="geometry" />
+        </mxCell>
+
+        <mxCell id="loss2" value="- Tổn thất Bám Bụi &amp;amp; Che Bóng (Soiling/Shading: 2% - 6%)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF7ED;strokeColor=#EA580C;fontColor=#C2410C;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="520" y="215" width="360" height="40" as="geometry" />
+        </mxCell>
+
+        <mxCell id="loss3" value="&lt;b&gt;- Tổn thất Quá Nhiệt Tế bào Quang điện (Thermal Loss: 8% - 15%)&lt;/b&gt;&lt;br&gt;Hệ số suy giảm nhiệt độ: γ ≈ -0.35%/°C khi T_cell &gt; 25°C" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEF2F2;strokeColor=#DC2626;strokeWidth=2;fontColor=#B91C1C;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="120" y="270" width="360" height="50" as="geometry" />
+        </mxCell>
+
+        <mxCell id="loss4" value="- Tổn thất Mismatched Module &amp;amp; Cáp DC Ohmic (1% - 2%)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#64748B;fontColor=#334155;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="520" y="335" width="360" height="40" as="geometry" />
+        </mxCell>
+
+        <mxCell id="loss5" value="- Tổn thất Xén đỉnh &amp;amp; Hiệu suất Inverter DC/AC (3% - 5%)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F3FF;strokeColor=#7C3AED;fontColor=#6D28D9;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="120" y="390" width="360" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Final Output -->
+        <mxCell id="final_out" value="&lt;b&gt;2. SẢN LƯỢNG THỰC TẾ ĐO TẠI ĐỒNG HỒ ĐIỆN (NET AC GENERATION)&lt;/b&gt;&lt;br&gt;Performance Ratio (PR Thực tế: 75% - 85% | Hệ thống UNISOLAR: PR = 78.4%)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#10B981;strokeColor=#059669;fontColor=#FFFFFF;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="200" y="455" width="600" height="55" as="geometry" />
+        </mxCell>
+
+        <mxCell id="flow" value="" style="endArrow=classic;html=1;strokeColor=#94A3B8;strokeWidth=3;dashed=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="step0" target="final_out">
+          <mxGeometry width="50" height="50" relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

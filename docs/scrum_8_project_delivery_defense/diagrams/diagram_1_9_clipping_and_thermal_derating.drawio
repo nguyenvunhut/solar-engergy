@@ -1,0 +1,13 @@
+<mxfile host="app.diagrams.net" modified="2026-08-18T17:15:00.000Z" agent="Mozilla/5.0" version="21.0.0" type="device">
+  <diagram id="diag-1-9" name="1.9 Loss Mechanisms Profiles">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850">
+      <root>
+        <mxCell id="0" /><mxCell id="1" parent="0" />
+        <mxCell id="hdr" value="&lt;b&gt;ĐẶC TÍNH CHUỖI THỜI GIAN CỦA 3 CƠ CHẾ SUY HAO QUANG ĐIỆN CHÍNH&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#0F172A;fontColor=#F8FAFC;fontSize=14;" vertex="1" parent="1"><mxGeometry x="20" y="15" width="1020" height="46" as="geometry" /></mxCell>
+        <mxCell id="col1" value="&lt;b&gt;1. XÉN CÔNG SUẤT BIẾN TẦN (CLIPPING)&lt;/b&gt;&lt;br&gt;ILR = 1.15 - 1.30&lt;br&gt;Đỉnh phẳng hình thang khi P_DC vượt P_AC,max" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F0F9FF;strokeColor=#0284C7;align=left;spacingLeft=12;" vertex="1" parent="1"><mxGeometry x="20" y="75" width="326" height="505" as="geometry" /></mxCell>
+        <mxCell id="col2" value="&lt;b&gt;2. SUY HAO QUÁ NHIỆT (THERMAL LOSS)&lt;/b&gt;&lt;br&gt;Mùa hè T_cell = 65°C&lt;br&gt;Mất 14% - 18% công suất do tụt V_oc" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEF2F2;strokeColor=#DC2626;align=left;spacingLeft=12;" vertex="1" parent="1"><mxGeometry x="366" y="75" width="326" height="505" as="geometry" /></mxCell>
+        <mxCell id="col3" value="&lt;b&gt;3. BÁM BỤI &amp; RỬA TRÔI (SOILING)&lt;/b&gt;&lt;br&gt;Tích lũy bụi 0.2%/ngày&lt;br&gt;Mưa ≥ 5mm hồi phục 100% PR" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFBEB;strokeColor=#D97706;align=left;spacingLeft=12;" vertex="1" parent="1"><mxGeometry x="712" y="75" width="326" height="505" as="geometry" /></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

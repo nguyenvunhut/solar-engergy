@@ -1,0 +1,14 @@
+<mxfile host="app.diagrams.net" modified="2026-08-18T17:00:00.000Z" agent="Mozilla/5.0" version="21.0.0" type="device">
+  <diagram id="diag-0-1" name="0.1 Electrical Quantities">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850">
+      <root>
+        <mxCell id="0" /><mxCell id="1" parent="0" />
+        <mxCell id="hdr" value="&lt;b&gt;BẢN CHẤT VÀ MỐI QUAN HỆ GIỮA 4 ĐẠI LƯỢNG ĐIỆN NĂNG CỐT LÕI (V, A, W, kWh)&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#0F172A;fontColor=#F8FAFC;fontSize=14;" vertex="1" parent="1"><mxGeometry x="20" y="15" width="920" height="42" as="geometry" /></mxCell>
+        <mxCell id="c1" value="&lt;b&gt;1. ĐIỆN ÁP (Volt - V)&lt;/b&gt;&lt;br&gt;Hiệu điện thế giữa hai cực&lt;br&gt;V_string = 600V - 800V DC&lt;br&gt;Hệ số nhiệt gamma = -0.35%/°C" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F0F9FF;strokeColor=#0284C7;align=left;spacingLeft=12;" vertex="1" parent="1"><mxGeometry x="40" y="75" width="205" height="360" as="geometry" /></mxCell>
+        <mxCell id="c2" value="&lt;b&gt;2. DÒNG ĐIỆN (Ampe - A)&lt;/b&gt;&lt;br&gt;Cường độ dòng điện (8A - 13A)&lt;br&gt;Tỷ lệ thuận tuyến tính với GHI&lt;br&gt;Giới hạn bởi cell bị che bóng" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F0FDF4;strokeColor=#16A34A;align=left;spacingLeft=12;" vertex="1" parent="1"><mxGeometry x="265" y="75" width="205" height="360" as="geometry" /></mxCell>
+        <mxCell id="c3" value="&lt;b&gt;3. CÔNG SUẤT (Watt / kW)&lt;/b&gt;&lt;br&gt;Công suất tức thời P = V x I&lt;br&gt;Đạt cực đại lúc giữa trưa (MPP)&lt;br&gt;Tối ưu liên tục bởi thuật toán MPPT" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFBEB;strokeColor=#D97706;align=left;spacingLeft=12;" vertex="1" parent="1"><mxGeometry x="490" y="75" width="205" height="360" as="geometry" /></mxCell>
+        <mxCell id="c4" value="&lt;b&gt;4. SẢN LƯỢNG (kWh)&lt;/b&gt;&lt;br&gt;Điện năng tích lũy E = P x dt&lt;br&gt;Cột energy_kwh trong Database&lt;br&gt;Cơ sở tính PR và giảm phát thải CO2" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FAF5FF;strokeColor=#7C3AED;align=left;spacingLeft=12;" vertex="1" parent="1"><mxGeometry x="715" y="75" width="205" height="360" as="geometry" /></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

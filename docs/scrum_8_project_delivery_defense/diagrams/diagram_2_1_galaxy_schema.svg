@@ -1,0 +1,150 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1060 650" width="100%" height="100%">
+  <defs>
+    <style>
+      .hdr { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 14px; font-weight: 700; fill: #F8FAFC; }
+      .subhdr { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; fill: #94A3B8; }
+      .box-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11.5px; font-weight: 700; }
+      .pk-txt { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 10.5px; font-weight: 700; fill: #0369A1; }
+      .fk-txt { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 10.5px; font-weight: 700; fill: #D97706; }
+      .col-txt { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 10.5px; fill: #334155; }
+      .tag-txt { font-family: "Courier New", Courier, monospace; font-size: 10px; font-weight: 700; fill: #0284C7; }
+    </style>
+    <marker id="arrow-blue" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0284C7" />
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1060" height="650" fill="#F8FAFC" rx="10" />
+
+  <!-- Header Banner -->
+  <rect x="20" y="15" width="1020" height="46" rx="8" fill="#0F172A" />
+  <text x="530" y="35" text-anchor="middle" class="hdr">KIẾN TRÚC KHO DỮ LIỆU LƯỢC ĐỒ THIÊN HÀ (GALAXY SCHEMA / FACT CONSTELLATION)</text>
+  <text x="530" y="51" text-anchor="middle" class="subhdr">Tách biệt 2 bảng Fact độc lập giải quyết lệch pha Grain (15m vs 1h), liên kết qua 4 bảng Conformed Dimensions dùng chung</text>
+
+  <!-- TOP ROW: DIMENSIONS -->
+  <!-- Dim Solar Site -->
+  <g transform="translate(40, 75)">
+    <rect width="280" height="130" rx="6" fill="#FFFFFF" stroke="#0284C7" stroke-width="1.5" />
+    <rect width="280" height="28" rx="6" fill="#F0F9FF" />
+    <text x="140" y="19" text-anchor="middle" class="box-title" fill="#0369A1">dim_solar_site (42 Trạm)</text>
+    <text x="12" y="48" class="pk-txt">PK: site_id (Surrogate Key INT)</text>
+    <text x="12" y="66" class="col-txt">• site_name, capacity_kwp (P_stc)</text>
+    <text x="12" y="84" class="col-txt">• panel_brand, inverter_brand</text>
+    <text x="12" y="102" class="col-txt">• number_of_panels, number_of_inverters</text>
+    <text x="12" y="120" class="tag-txt">Grain: 1 dòng / 1 trạm quang điện</text>
+  </g>
+
+  <!-- Top Center Information Box -->
+  <g transform="translate(360, 75)">
+    <rect width="340" height="130" rx="6" fill="#EFF6FF" stroke="#3B82F6" stroke-dasharray="4 4" />
+    <text x="170" y="24" text-anchor="middle" class="box-title" fill="#1D4ED8">LUẬN CỨ GALAXY SCHEMA:</text>
+    <text x="15" y="46" class="col-txt">• Tránh hiện tượng Bẫy Đếm Trùng (Fan-out Trap)</text>
+    <text x="15" y="64" class="col-txt">• Tiết kiệm 300% dung lượng lưu trữ do không nhân bản</text>
+    <text x="15" y="82" class="col-txt">• Cho phép Drill-across Join đa chiều ở mức tổng hợp</text>
+    <text x="170" y="112" text-anchor="middle" class="tag-txt" fill="#1E40AF">2 Facts + 4 Conformed Dimensions</text>
+  </g>
+
+  <!-- Dim Weather Type -->
+  <g transform="translate(740, 75)">
+    <rect width="280" height="130" rx="6" fill="#FFFFFF" stroke="#0284C7" stroke-width="1.5" />
+    <rect width="280" height="28" rx="6" fill="#F0F9FF" />
+    <text x="140" y="19" text-anchor="middle" class="box-title" fill="#0369A1">dim_weather_type (22 Mã WMO)</text>
+    <text x="12" y="48" class="pk-txt">PK: weather_code (INT)</text>
+    <text x="12" y="66" class="col-txt">• weather_desc_wmo (Mô tả chuẩn WMO)</text>
+    <text x="12" y="84" class="col-txt">• weather_group (Clear / Cloudy / Rain / Snow)</text>
+    <text x="12" y="102" class="col-txt">• is_severe_storm, is_precipitation</text>
+    <text x="12" y="120" class="tag-txt">Grain: 1 dòng / 1 mã trạng thái thời tiết</text>
+  </g>
+
+  <!-- MIDDLE ROW: TWO FACT TABLES -->
+  <!-- Fact Solar Energy Gen -->
+  <g transform="translate(40, 230)">
+    <rect width="460" height="235" rx="8" fill="#FFFFFF" stroke="#0F172A" stroke-width="2" />
+    <rect width="460" height="34" rx="8" fill="#0F172A" />
+    <text x="230" y="22" text-anchor="middle" class="box-title" fill="#38BDF8">fact_solar_energy_gen (2.731.946 dòng @ 15 phút)</text>
+    
+    <text x="15" y="54" class="pk-txt">PK: solar_fact_id (BIGSERIAL)</text>
+    <text x="15" y="72" class="fk-txt">FK: site_id, FK: date_id, FK: time_id</text>
+    <text x="15" y="92" class="col-txt">• energy_kwh: Sản lượng điện thực phát trong chu kỳ 15 phút</text>
+    <text x="15" y="110" class="col-txt">• is_outlier: Cờ dị thường nhị phân (GMM-IF + 5 Rào chắn)</text>
+    <text x="15" y="128" class="col-txt">• outlier_reason: 6 mã phân loại nguyên nhân sự cố O&amp;M</text>
+    <text x="15" y="146" class="col-txt">• imputation_method: Phương pháp điền khuyết (night/linear/spline/reg)</text>
+    
+    <!-- Partition & Index Info -->
+    <rect x="15" y="160" width="430" height="60" rx="4" fill="#F0FDF4" stroke="#86EFAC" />
+    <text x="25" y="178" class="tag-txt" fill="#15803D">Partition: PARTITION BY RANGE (date_id) [2020, 2021, 2022]</text>
+    <text x="25" y="196" class="tag-txt" fill="#15803D">Indexes: (site_id, date_id) ∧ (date_id, time_id)</text>
+    <text x="25" y="212" class="col-txt" font-size="9" fill="#15803D">Quét đĩa giảm 66% nhờ Partition Pruning | Truy vấn &lt; 120 ms</text>
+  </g>
+
+  <!-- Fact Weather -->
+  <g transform="translate(560, 230)">
+    <rect width="460" height="235" rx="8" fill="#FFFFFF" stroke="#0F172A" stroke-width="2" />
+    <rect width="460" height="34" rx="8" fill="#0F172A" />
+    <text x="230" y="22" text-anchor="middle" class="box-title" fill="#FBBF24">fact_weather (850.752 dòng @ 1 giờ)</text>
+    
+    <text x="15" y="54" class="pk-txt">PK: weather_fact_id (BIGSERIAL)</text>
+    <text x="15" y="72" class="fk-txt">FK: geo_id, FK: date_id, FK: time_id, FK: weather_code</text>
+    <text x="15" y="92" class="col-txt">• ghi, dni, dhi: 3 thành phần bức xạ sóng ngắn WMO (W/m²)</text>
+    <text x="15" y="110" class="col-txt">• temperature_2m, relative_humidity_2m: Nhiệt độ &amp; Độ ẩm</text>
+    <text x="15" y="128" class="col-txt">• wind_speed_10m: Tốc độ gió phục vụ mô hình làm mát Sandia</text>
+    <text x="15" y="146" class="col-txt">• cloud_cover_total, sunshine_duration: Mây che &amp; Số giây nắng</text>
+    
+    <!-- Causal Alignment Info -->
+    <rect x="15" y="160" width="430" height="60" rx="4" fill="#FFFBEB" stroke="#FDE68A" />
+    <text x="25" y="178" class="tag-txt" fill="#B45309">Causal Mapping: Floor-Hour Lookup (Δt = t_weather - t_solar ≤ 0)</text>
+    <text x="25" y="196" class="tag-txt" fill="#B45309">Clear-Sky: GHI_cs (Haurwitz Model) &amp; Clear-Sky Index (CSI)</text>
+    <text x="25" y="212" class="col-txt" font-size="9" fill="#B45309">Hoàn toàn triệt tiêu rủi ro rò rỉ dữ liệu tương lai (Data Leakage)</text>
+  </g>
+
+  <!-- BOTTOM ROW: 3 CONFORMED DIMENSIONS -->
+  <!-- Dim Geography -->
+  <g transform="translate(40, 490)">
+    <rect width="300" height="135" rx="6" fill="#FFFFFF" stroke="#0284C7" stroke-width="1.5" />
+    <rect width="300" height="28" rx="6" fill="#F0F9FF" />
+    <text x="150" y="19" text-anchor="middle" class="box-title" fill="#0369A1">dim_geography (5 Campuses)</text>
+    <text x="12" y="48" class="pk-txt">PK: geo_id (INT)</text>
+    <text x="12" y="66" class="col-txt">• campus_name (Bundoora, Bendigo...)</text>
+    <text x="12" y="84" class="col-txt">• latitude, longitude (Tọa độ địa lý)</text>
+    <text x="12" y="102" class="col-txt">• elevation_m, climate_zone</text>
+    <text x="12" y="122" class="tag-txt">Conformed: Dùng chung 2 Facts</text>
+  </g>
+
+  <!-- Dim Date -->
+  <g transform="translate(380, 490)">
+    <rect width="300" height="135" rx="6" fill="#FFFFFF" stroke="#0284C7" stroke-width="1.5" />
+    <rect width="300" height="28" rx="6" fill="#F0F9FF" />
+    <text x="150" y="19" text-anchor="middle" class="box-title" fill="#0369A1">dim_date (2.312 Ngày 2018-2024)</text>
+    <text x="12" y="48" class="pk-txt">PK: date_id (INT YYYYMMDD)</text>
+    <text x="12" y="66" class="col-txt">• full_date, year, quarter, month, day</text>
+    <text x="12" y="84" class="col-txt">• is_weekend, is_holiday, day_name</text>
+    <text x="12" y="102" class="col-txt">• is_semester, is_exam (Lịch học La Trobe)</text>
+    <text x="12" y="122" class="tag-txt">Conformed: Dùng chung 2 Facts</text>
+  </g>
+
+  <!-- Dim Time -->
+  <g transform="translate(720, 490)">
+    <rect width="300" height="135" rx="6" fill="#FFFFFF" stroke="#0284C7" stroke-width="1.5" />
+    <rect width="300" height="28" rx="6" fill="#F0F9FF" />
+    <text x="150" y="19" text-anchor="middle" class="box-title" fill="#0369A1">dim_time (96 Mốc 15 Phút / Ngày)</text>
+    <text x="12" y="48" class="pk-txt">PK: time_id (INT 1-96)</text>
+    <text x="12" y="66" class="col-txt">• time_24h, hour, minute (00:00 - 23:45)</text>
+    <text x="12" y="84" class="col-txt">• period_of_day, is_daylight</text>
+    <text x="12" y="102" class="col-txt">• hour_sin, hour_cos (Mã hóa chu kỳ ML)</text>
+    <text x="12" y="122" class="tag-txt">Conformed: Dùng chung 2 Facts</text>
+  </g>
+
+  <!-- Connectors -->
+  <!-- Dim Site -> Fact Solar -->
+  <path d="M 180 205 L 180 230" fill="none" stroke="#0284C7" stroke-width="1.5" marker-end="url(#arrow-blue)" />
+  <!-- Dim Weather Type -> Fact Weather -->
+  <path d="M 880 205 L 880 230" fill="none" stroke="#0284C7" stroke-width="1.5" marker-end="url(#arrow-blue)" />
+  <!-- Dim Geo -> Fact Weather -->
+  <path d="M 190 490 L 190 465" fill="none" stroke="#0284C7" stroke-width="1.5" marker-end="url(#arrow-blue)" />
+  <!-- Dim Date -> Both Facts -->
+  <path d="M 480 490 L 350 465" fill="none" stroke="#0284C7" stroke-width="1.5" marker-end="url(#arrow-blue)" />
+  <path d="M 580 490 L 710 465" fill="none" stroke="#0284C7" stroke-width="1.5" marker-end="url(#arrow-blue)" />
+  <!-- Dim Time -> Both Facts -->
+  <path d="M 870 490 L 870 465" fill="none" stroke="#0284C7" stroke-width="1.5" marker-end="url(#arrow-blue)" />
+</svg>

@@ -1,0 +1,177 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1060 650" width="100%" height="100%">
+  <defs>
+    <style>
+      .hdr { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 14px; font-weight: 700; fill: #F8FAFC; }
+      .subhdr { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; fill: #94A3B8; }
+      .box-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11.5px; font-weight: 700; }
+      .txt { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 10.5px; fill: #334155; }
+      .txt-bold { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 10.5px; font-weight: 700; fill: #0F172A; }
+      .formula { font-family: "Courier New", Courier, monospace; font-size: 10px; font-weight: 700; }
+    </style>
+    <marker id="arr-blue" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0284C7" />
+    </marker>
+    <marker id="arr-orange" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#D97706" />
+    </marker>
+    <marker id="arr-purple" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#7C3AED" />
+    </marker>
+    <marker id="arr-dark" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0F172A" />
+    </marker>
+    <marker id="arr-red" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#DC2626" />
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1060" height="650" fill="#F8FAFC" rx="10" />
+
+  <!-- Header Banner -->
+  <rect x="20" y="15" width="1020" height="46" rx="8" fill="#0F172A" />
+  <text x="530" y="35" text-anchor="middle" class="hdr">KIẾN TRÚC MÔ HÌNH LAI 3 TẦNG GMM-IF VÀ 5 RÀO CHẮN VẬT LÝ</text>
+  <text x="530" y="51" text-anchor="middle" class="subhdr">Cơ chế đồng thuận hai tầng máy học kết hợp luật vật lý ghi đè ưu tiên, triệt tiêu hơn 80% cảnh báo giả</text>
+
+  <!-- LAYER 1: DATA INPUT & SEGMENTATION -->
+  <g transform="translate(20, 72)">
+    <!-- Input Box -->
+    <g transform="translate(0, 0)">
+      <rect width="320" height="75" rx="6" fill="#FFFFFF" stroke="#0284C7" stroke-width="1.5" />
+      <rect width="320" height="26" rx="6" fill="#F0F9FF" />
+      <text x="160" y="18" text-anchor="middle" class="box-title" fill="#0369A1">1. ĐẦU VÀO ĐẶC TRƯNG TELEMETRY</text>
+      <text x="12" y="44" class="formula" fill="#0F172A">X = [ GHI, T_amb, Hour, DNI, DHI, P_stc ]</text>
+      <text x="12" y="62" class="txt">• 2,731,946 bản ghi chuỗi thời gian 15 phút</text>
+    </g>
+
+    <!-- Arrow Input -> Decision Tree -->
+    <path d="M 320 37 L 355 37" fill="none" stroke="#0284C7" stroke-width="2" marker-end="url(#arr-blue)" />
+
+    <!-- Decision Tree Box -->
+    <g transform="translate(360, 0)">
+      <rect width="660" height="75" rx="6" fill="#FFFFFF" stroke="#16A34A" stroke-width="1.5" />
+      <rect width="660" height="26" rx="6" fill="#F0FDF4" />
+      <text x="330" y="18" text-anchor="middle" class="box-title" fill="#15803D">TẦNG 1: PHÂN ĐOẠN KHÔNG GIAN THỜI TIẾT (DECISION TREE LEAF SEGMENTATION)</text>
+      <text x="15" y="44" class="txt">• Thuật toán CART hồi quy chia không gian vận hành thành <tspan font-weight="700" fill="#15803D">19 - 29 vùng lá đồng nhất vi khí hậu</tspan> (R² = 0.758)</text>
+      <text x="15" y="62" class="txt">• Tách biệt hoàn toàn ngày nắng đẹp, mây đối lưu từng phần và trời âm u vào các phân vùng riêng biệt</text>
+    </g>
+  </g>
+
+  <!-- Branching Arrows from Decision Tree to Parallel Models -->
+  <path d="M 530 147 L 530 162 L 260 162 L 260 178" fill="none" stroke="#D97706" stroke-width="2" marker-end="url(#arr-orange)" />
+  <path d="M 530 147 L 530 162 L 800 162 L 800 178" fill="none" stroke="#7C3AED" stroke-width="2" marker-end="url(#arr-purple)" />
+
+  <!-- LAYER 2: PARALLEL MACHINE LEARNING (GMM & IF) -->
+  <g transform="translate(20, 180)">
+    <!-- GMM Box (Left) -->
+    <g transform="translate(0, 0)">
+      <rect width="500" height="150" rx="8" fill="#FFFFFF" stroke="#D97706" stroke-width="2" />
+      <rect width="500" height="30" rx="8" fill="#FFFBEB" />
+      <text x="250" y="20" text-anchor="middle" class="box-title" fill="#B45309">TẦNG 2: MÔ HÌNH HỖN HỢP GAUSS (GMM - LOCAL DENSITY)</text>
+      
+      <g transform="translate(15, 40)">
+        <text x="0" y="16" class="txt">• Ước lượng hàm mật độ xác suất cục bộ trong từng vùng lá thời tiết:</text>
+        <text x="0" y="36" class="formula" fill="#B45309">P(x) = Σ π_k · N(x | μ_k, Σ_k)   [Số thành phần M = 2]</text>
+        <text x="0" y="56" class="txt">• Nhận diện điểm dị thường mật độ cực thấp:</text>
+        <text x="0" y="74" class="formula" fill="#DC2626">Cờ Flag_GMM = 1 khi P_GMM(x) &lt; 0.02</text>
+        <text x="0" y="94" class="txt-bold" fill="#B45309">Ưu điểm: Học chính xác phân phối đa đỉnh phi tuyến của từng trạm.</text>
+      </g>
+    </g>
+
+    <!-- Isolation Forest Box (Right) -->
+    <g transform="translate(520, 0)">
+      <rect width="500" height="150" rx="8" fill="#FFFFFF" stroke="#7C3AED" stroke-width="2" />
+      <rect width="500" height="30" rx="8" fill="#FAF5FF" />
+      <text x="250" y="20" text-anchor="middle" class="box-title" fill="#6D28D9">TẦNG 3: RỪNG CÔ LẬP (ISOLATION FOREST - GLOBAL ISOLATION)</text>
+      
+      <g transform="translate(15, 40)">
+        <text x="0" y="16" class="txt">• Đo lường mức độ cô lập không gian đa chiều trên toàn bộ tập dữ liệu:</text>
+        <text x="0" y="36" class="formula" fill="#6D28D9">s(x, n) = 2^[ - E(h(x)) / c(n) ]   [N = 100 iTrees, contamination = 3%]</text>
+        <text x="0" y="56" class="txt">• Cô lập các điểm dữ liệu dị biệt bằng số lần cắt nhánh ngắn:</text>
+        <text x="0" y="74" class="formula" fill="#DC2626">Cờ Flag_IF = 1 khi Score_IF &gt; Ngưỡng phân vị</text>
+        <text x="0" y="94" class="txt-bold" fill="#6D28D9">Ưu điểm: Khám phá các điểm dị thường ngoại lai trong không gian nhiều chiều.</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- Converging Arrows to Consensus Box -->
+  <path d="M 270 330 L 270 348 L 470 348 L 470 360" fill="none" stroke="#D97706" stroke-width="2" marker-end="url(#arr-orange)" />
+  <path d="M 770 330 L 770 348 L 590 348 L 590 360" fill="none" stroke="#7C3AED" stroke-width="2" marker-end="url(#arr-purple)" />
+
+  <!-- LAYER 3: CONSENSUS STRATEGY -->
+  <g transform="translate(20, 362)">
+    <rect width="1020" height="52" rx="6" fill="#F8FAFC" stroke="#0F172A" stroke-width="2" />
+    <text x="510" y="22" text-anchor="middle" class="box-title" fill="#0F172A">CƠ CHẾ ĐỒNG THUẬN NGHIÊM NGẶT (STRICT CONSENSUS STRATEGY)</text>
+    <text x="510" y="40" text-anchor="middle" class="formula" fill="#15803D">Flag_ML = Flag_GMM ∧ Flag_IF  (Chỉ gán nhãn dị thường khi CẢ HAI mô hình cùng đồng thuận bỏ phiếu ➔ Triệt tiêu &gt;80% cảnh báo giả)</text>
+  </g>
+
+  <!-- Arrow from Consensus to Physical Guardrails -->
+  <path d="M 530 414 L 530 432" fill="none" stroke="#0F172A" stroke-width="2" marker-end="url(#arr-dark)" />
+
+  <!-- LAYER 4: 5 PHYSICAL GUARDRAILS OVERRIDES -->
+  <g transform="translate(20, 435)">
+    <rect width="1020" height="115" rx="8" fill="#FEF2F2" stroke="#DC2626" stroke-width="2" />
+    <rect width="1020" height="28" rx="8" fill="#DC2626" />
+    <text x="510" y="19" text-anchor="middle" class="hdr" font-size="12">5 RÀO CHẮN VẬT LÝ GHI ĐÈ ƯU TIÊN (PHYSICS-INFORMED GUARDRAILS OVERRIDE)</text>
+
+    <!-- 5 Rules Grid -->
+    <g transform="translate(15, 34)">
+      <!-- Rule 1 -->
+      <g transform="translate(0, 0)">
+        <rect width="190" height="70" rx="4" fill="#FFFFFF" stroke="#FECACA" />
+        <text x="10" y="16" class="txt-bold" font-size="9.5" fill="#DC2626">R1: OVER_CAPACITY</text>
+        <text x="10" y="32" class="formula" font-size="8.5" fill="#0F172A">E &gt; P_stc · 0.25h</text>
+        <text x="10" y="48" class="txt" font-size="9">• Xung ảo / Dồn SCADA</text>
+        <text x="10" y="62" class="tag-txt" font-size="8.5" fill="#DC2626">Ghi đè: 100% Anomaly</text>
+      </g>
+
+      <!-- Rule 2 -->
+      <g transform="translate(200, 0)">
+        <rect width="190" height="70" rx="4" fill="#FFFFFF" stroke="#FECACA" />
+        <text x="10" y="16" class="txt-bold" font-size="9.5" fill="#DC2626">R2: HIGH_NO_SUN</text>
+        <text x="10" y="32" class="formula" font-size="8.5" fill="#0F172A">GHI ≤ 25 ∧ E &gt; 0.2·P_stc</text>
+        <text x="10" y="48" class="txt" font-size="9">• Lệch mốc 0 cảm biến CT</text>
+        <text x="10" y="62" class="tag-txt" font-size="8.5" fill="#DC2626">Ghi đè: 100% Anomaly</text>
+      </g>
+
+      <!-- Rule 3 -->
+      <g transform="translate(400, 0)">
+        <rect width="190" height="70" rx="4" fill="#FFFFFF" stroke="#FECACA" />
+        <text x="10" y="16" class="txt-bold" font-size="9.5" fill="#DC2626">R3: HIGH_LOW_RAD</text>
+        <text x="10" y="32" class="formula" font-size="8.5" fill="#0F172A">GHI ≤ 50 ∧ E &gt; Q3+4·IQR</text>
+        <text x="10" y="48" class="txt" font-size="9">• Nhiễu Pyranometer/ADC</text>
+        <text x="10" y="62" class="tag-txt" font-size="8.5" fill="#DC2626">Ghi đè: 100% Anomaly</text>
+      </g>
+
+      <!-- Rule 4 -->
+      <g transform="translate(600, 0)">
+        <rect width="190" height="70" rx="4" fill="#FFFFFF" stroke="#FECACA" />
+        <text x="10" y="16" class="txt-bold" font-size="9.5" fill="#DC2626">R4: LOW_STRONG_SUN</text>
+        <text x="10" y="32" class="formula" font-size="8.5" fill="#0F172A">GHI ≥ 700 ∧ E ≤ 0.05·P95</text>
+        <text x="10" y="48" class="txt" font-size="9">• Quá áp lưới 258V ngắt</text>
+        <text x="10" y="62" class="tag-txt" font-size="8.5" fill="#DC2626">Ghi đè: 100% Anomaly</text>
+      </g>
+
+      <!-- Rule 5 -->
+      <g transform="translate(800, 0)">
+        <rect width="190" height="70" rx="4" fill="#FFFFFF" stroke="#FECACA" />
+        <text x="10" y="16" class="txt-bold" font-size="9.5" fill="#DC2626">R5: DISTRIBUTION_JUMP</text>
+        <text x="10" y="32" class="formula" font-size="8.5" fill="#0F172A">|ΔE| ≥ max(0.15·P95, 1.0)</text>
+        <text x="10" y="48" class="txt" font-size="9">• Đứt cầu chì chuỗi DC</text>
+        <text x="10" y="62" class="tag-txt" font-size="8.5" fill="#DC2626">Ghi đè: 100% Anomaly</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- Arrow from Guardrails to Final Output -->
+  <path d="M 530 550 L 530 568" fill="none" stroke="#DC2626" stroke-width="2" marker-end="url(#arr-red)" />
+
+  <!-- LAYER 5: FINAL OUTPUT TICKET & DWH -->
+  <g transform="translate(20, 570)">
+    <rect width="1020" height="65" rx="6" fill="#0F172A" />
+    <text x="510" y="24" text-anchor="middle" class="hdr" font-size="12" fill="#38BDF8">KẾT QUẢ ĐẦU RA: GÁN NHÃN FACT VÀ ĐIỀU PHỐI BẢO TRÌ O&amp;M CHUẨN ISO 13374</text>
+    <text x="510" y="48" text-anchor="middle" class="formula" fill="#F8FAFC">
+      fact_solar_energy_gen ➔ [ is_outlier = TRUE/FALSE, outlier_reason = 'PHYSICAL_LOW_ENERGY_STRONG_SUN' ... ] (33,280 bản ghi ~ 1.22%)
+    </text>
+  </g>
+</svg>

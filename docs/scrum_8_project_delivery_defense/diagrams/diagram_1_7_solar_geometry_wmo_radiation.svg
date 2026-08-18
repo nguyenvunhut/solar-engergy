@@ -1,0 +1,146 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1060 620" width="100%" height="100%">
+  <defs>
+    <style>
+      .hdr { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 14px; font-weight: 700; fill: #F8FAFC; }
+      .subhdr { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; fill: #94A3B8; }
+      .box-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 12px; font-weight: 700; }
+      .txt { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 10.5px; fill: #334155; }
+      .txt-bold { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 10.5px; font-weight: 700; fill: #0F172A; }
+      .formula { font-family: "Courier New", Courier, monospace; font-size: 10.5px; font-weight: 700; }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1060" height="620" fill="#F8FAFC" rx="10" />
+
+  <!-- Header Banner -->
+  <rect x="20" y="15" width="1020" height="46" rx="8" fill="#0F172A" />
+  <text x="530" y="35" text-anchor="middle" class="hdr">ĐỘNG HỌC NHẬT QUỸ NREL/NOAA SPA &amp; 3 THÀNH PHẦN BỨC XẠ MẶT TRỜ CHUẨN WMO</text>
+  <text x="530" y="51" text-anchor="middle" class="subhdr">Chuẩn hóa hình học chiếu sáng khí quyển, mô hình trời quang Haurwitz và cân bằng năng lượng bức xạ sóng ngắn</text>
+
+  <!-- Left Column: Solar Position Geometry (SPA) -->
+  <g transform="translate(20, 75)">
+    <rect width="500" height="525" rx="8" fill="#FFFFFF" stroke="#0284C7" stroke-width="2" />
+    <rect width="500" height="34" rx="8" fill="#F0F9FF" />
+    <text x="250" y="22" text-anchor="middle" class="box-title" fill="#0369A1">1. ĐỘNG HỌC NHẬT QUỸ (SOLAR POSITION SPA)</text>
+
+    <!-- Visual Geometry Box -->
+    <g transform="translate(20, 48)">
+      <rect width="460" height="230" rx="6" fill="#F8FAFC" stroke="#CBD5E1" stroke-dasharray="3 3" />
+      
+      <!-- Sky Arc -->
+      <path d="M 40 200 A 190 190 0 0 1 420 200" fill="none" stroke="#94A3B8" stroke-width="2" stroke-dasharray="4 4" />
+      <!-- Ground Line -->
+      <line x1="20" y1="200" x2="440" y2="200" stroke="#475569" stroke-width="2" />
+      <text x="430" y="218" text-anchor="end" class="txt" font-size="9" fill="#64748B">Mặt phẳng chân trời (Horizon)</text>
+      
+      <!-- Zenith Axis -->
+      <line x1="230" y1="200" x2="230" y2="25" stroke="#0284C7" stroke-width="2" stroke-dasharray="3 3" />
+      <polygon points="230,18 226,26 234,26" fill="#0284C7" />
+      <text x="230" y="14" text-anchor="middle" class="txt-bold" fill="#0284C7">Phương thẳng đứng Zenith (Z)</text>
+
+      <!-- Sun Position -->
+      <circle cx="340" cy="75" r="16" fill="#F59E0B" stroke="#D97706" stroke-width="2" />
+      <text x="340" y="79" text-anchor="middle" font-size="10" font-weight="700" fill="#FFFFFF">SUN</text>
+
+      <!-- Sun Ray to Observer -->
+      <line x1="340" y1="75" x2="230" y2="200" stroke="#F59E0B" stroke-width="2.5" />
+      <polygon points="230,200 236,192 242,197" fill="#F59E0B" />
+
+      <!-- Angles Notation -->
+      <path d="M 230 110 A 90 90 0 0 1 270 120" fill="none" stroke="#DC2626" stroke-width="2" />
+      <text x="275" y="105" class="txt-bold" fill="#DC2626">θ_z (Zenith)</text>
+
+      <path d="M 330 200 A 100 100 0 0 0 310 160" fill="none" stroke="#16A34A" stroke-width="2" />
+      <text x="340" y="180" class="txt-bold" fill="#16A34A">h (Elevation)</text>
+
+      <!-- Observer / PV Panel -->
+      <g transform="translate(205, 185)">
+        <rect x="0" y="0" width="50" height="15" rx="2" fill="#1E293B" transform="rotate(-20 25 7)" />
+        <line x1="25" y1="15" x2="25" y2="25" stroke="#475569" stroke-width="3" />
+      </g>
+      <text x="230" y="222" text-anchor="middle" class="txt-bold" fill="#0F172A">Trạm đo / Tấm pin (Observer)</text>
+    </g>
+
+    <!-- Formulas Table -->
+    <g transform="translate(20, 290)">
+      <rect width="460" height="215" rx="6" fill="#F0F9FF" stroke="#BAE6FD" />
+      <text x="15" y="24" class="txt-bold" fill="#0369A1">HỆ THỐNG PHƯƠNG TRÌNH GÓC NHẬT QUỸ (NREL SPA):</text>
+      
+      <text x="15" y="48" class="txt-bold">• Mối quan hệ Góc cao &amp; Thiên đỉnh:</text>
+      <text x="15" y="66" class="formula" fill="#0F172A">h = 90° - θ_z  ⟺  sin(h) = cos(θ_z)</text>
+      
+      <text x="15" y="90" class="txt-bold">• Phương trình Cơ bản Định vị Mặt Trời:</text>
+      <text x="15" y="108" class="formula" fill="#0369A1">sin(h) = sin(ϕ)·sin(δ) + cos(ϕ)·cos(δ)·cos(ω)</text>
+      
+      <text x="15" y="132" class="txt">• ϕ: Vĩ độ địa lý (Bundoora = -37.72°, Bendigo = -36.78°)</text>
+      <text x="15" y="150" class="txt">• δ: Góc xích vĩ biến thiên [-23.45°, +23.45°] theo chu kỳ năm</text>
+      <text x="15" y="168" class="txt">• ω: Góc giờ = 15°/h × (Giờ_Mặt_Trời_Thực - 12)</text>
+      <text x="15" y="194" class="formula" fill="#D97706">Hour_sin = sin(2π·Hour/24),  Hour_cos = cos(2π·Hour/24)</text>
+    </g>
+  </g>
+
+  <!-- Right Column: WMO Radiation Components & Clear-Sky Model -->
+  <g transform="translate(540, 75)">
+    <rect width="500" height="525" rx="8" fill="#FFFFFF" stroke="#D97706" stroke-width="2" />
+    <rect width="500" height="34" rx="8" fill="#FFFBEB" />
+    <text x="250" y="22" text-anchor="middle" class="box-title" fill="#B45309">2. BỨC XẠ WMO VÀ MÔ HÌNH TRỜI QUANG (CLEAR-SKY)</text>
+
+    <!-- 3 Components Breakdown -->
+    <g transform="translate(20, 48)">
+      <!-- GHI Box -->
+      <g transform="translate(0, 0)">
+        <rect width="460" height="68" rx="6" fill="#FFF7ED" stroke="#FDBA74" />
+        <text x="12" y="20" class="txt-bold" fill="#C2410C">GHI (Global Horizontal Irradiance) - Bức xạ Toàn phần Mặt ngang</text>
+        <text x="12" y="38" class="txt">Tổng năng lượng sóng ngắn (0.3 - 3.0 µm) chiếu lên 1 m² mặt phẳng ngang.</text>
+        <text x="12" y="56" class="formula" fill="#9A3412">GHI = DNI · cos(θ_z) + DHI = DNI · sin(h) + DHI  [W/m²]</text>
+      </g>
+
+      <!-- DNI Box -->
+      <g transform="translate(0, 76)">
+        <rect width="460" height="68" rx="6" fill="#FEF3C7" stroke="#FCD34D" />
+        <text x="12" y="20" class="txt-bold" fill="#B45309">DNI (Direct Normal Irradiance) - Bức xạ Trực xạ Pháp tuyến</text>
+        <text x="12" y="38" class="txt">Tia sáng chiếu thẳng từ đĩa Mặt Trời tới bề mặt vuông góc với tia tới.</text>
+        <text x="12" y="56" class="formula" fill="#78350F">Đo bằng Pyrheliometer bám nhật quỹ 2 trục tự động [W/m²]</text>
+      </g>
+
+      <!-- DHI Box -->
+      <g transform="translate(0, 152)">
+        <rect width="460" height="68" rx="6" fill="#F0FDF4" stroke="#86EFAC" />
+        <text x="12" y="20" class="txt-bold" fill="#15803D">DHI (Diffuse Horizontal Irradiance) - Bức xạ Tán xạ Khí quyển</text>
+        <text x="12" y="38" class="txt">Quang năng bị tán xạ bởi phân tử khí quyển (Rayleigh), bụi Aerosol và mây.</text>
+        <text x="12" y="56" class="formula" fill="#14532D">Hệ số tán xạ: k_d = DHI / GHI ∈ [0.1 (quang đãng), 1.0 (u ám)]</text>
+      </g>
+    </g>
+
+    <!-- Clear-Sky Model & CSI Classification -->
+    <g transform="translate(20, 290)">
+      <rect width="460" height="215" rx="6" fill="#FAFAFA" stroke="#E2E8F0" />
+      <text x="15" y="22" class="txt-bold" fill="#0F172A">MÔ HÌNH TRỜI QUANG HAURWITZ &amp; CHỈ SỐ CSI:</text>
+      
+      <text x="15" y="42" class="formula" fill="#0284C7">GHI_cs = 1098 · sin(h) · exp(-0.059 / sin(h)) · cs_factor</text>
+      <text x="15" y="60" class="formula" fill="#D97706">Chỉ số Bầu trời Quang: CSI = GHI / GHI_cs</text>
+
+      <!-- CSI Legend Table (Stacked Clean Layout) -->
+      <g transform="translate(12, 72)">
+        <rect width="436" height="130" rx="4" fill="#FFFFFF" stroke="#CBD5E1" />
+        
+        <!-- Row 1 -->
+        <text x="10" y="20" class="txt-bold" fill="#16A34A">• CSI ≥ 0.85 (Clear Sky):</text>
+        <text x="10" y="34" class="txt">Trời quang mây, sản lượng phát điện theo parabol lý tưởng chuẩn STC.</text>
+        
+        <!-- Row 2 -->
+        <text x="10" y="54" class="txt-bold" fill="#D97706">• 0.35 ≤ CSI &lt; 0.85 (Broken Clouds):</text>
+        <text x="10" y="68" class="txt">Mây đối lưu che từng phần, sản lượng dao động nhấp nhô liên tục.</text>
+        
+        <!-- Row 3 -->
+        <text x="10" y="88" class="txt-bold" fill="#64748B">• CSI &lt; 0.35 (Overcast):</text>
+        <text x="10" y="102" class="txt">Mây dày đặc, mất toàn bộ trực xạ DNI, chỉ còn lại tán xạ yếu DHI.</text>
+        
+        <!-- Row 4 -->
+        <text x="10" y="120" class="txt-bold" fill="#DC2626">• CSI &gt; 1.15 (Cloud Enhancement):</text>
+        <text x="210" y="120" class="txt">Cộng hưởng mép mây vọt GHI &gt; 1200 W/m².</text>
+      </g>
+    </g>
+  </g>
+</svg>

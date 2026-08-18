@@ -1,0 +1,15 @@
+<mxfile host="app.diagrams.net" modified="2026-08-18T16:55:00.000Z" agent="Mozilla/5.0" version="21.0.0" type="device">
+  <diagram id="diag-1-6" name="1.6 Campuses Map">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850">
+      <root>
+        <mxCell id="0" /><mxCell id="1" parent="0" />
+        <mxCell id="hdr" value="&lt;b&gt;BẢN ĐỒ PHÂN BỐ ĐỊA LÝ &amp;amp; ĐẶC TRƯNG VI KHÍ HẬU 5 KHUÔN VIÊN ĐẠI HỌC LA TROBE (VICTORIA, ÚC)&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#0F172A;fontColor=#F8FAFC;fontSize=14;" vertex="1" parent="1"><mxGeometry x="20" y="15" width="920" height="40" as="geometry" /></mxCell>
+        <mxCell id="cp1" value="&lt;b&gt;1. MILDURA CAMPUS [-34.22°, 142.15°]&lt;/b&gt;&lt;br&gt;Khí hậu Bán khô hạn nội địa (Mùa hè &gt;42°C) ── 2 trạm (100 kWp / 4.1%)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFBEB;strokeColor=#F59E0B;align=left;spacingLeft=15;" vertex="1" parent="1"><mxGeometry x="60" y="75" width="840" height="55" as="geometry" /></mxCell>
+        <mxCell id="cp2" value="&lt;b&gt;2. SHEPPARTON CAMPUS [-36.38°, 145.40°]&lt;/b&gt;&lt;br&gt;Thung lũng Goulburn nông nghiệp (Bức xạ DNI cao) ── 2 trạm (118 kWp / 4.9%)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F0FDF4;strokeColor=#16A34A;align=left;spacingLeft=15;" vertex="1" parent="1"><mxGeometry x="60" y="140" width="840" height="55" as="geometry" /></mxCell>
+        <mxCell id="cp3" value="&lt;b&gt;3. BENDIGO CAMPUS [-36.78°, 144.30°]&lt;/b&gt;&lt;br&gt;Vùng đồi trung du (Biên độ nhiệt ngày/đêm lớn) ── 10 trạm (580 kWp / 23.9%)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F0F9FF;strokeColor=#0284C7;align=left;spacingLeft=15;" vertex="1" parent="1"><mxGeometry x="60" y="205" width="840" height="55" as="geometry" /></mxCell>
+        <mxCell id="cp4" value="&lt;b&gt;4. ALBURY-WODONGA CAMPUS [-36.12°, 146.96°]&lt;/b&gt;&lt;br&gt;Thung lũng sông Murray giáp dãy Alps (Mùa đông sương mù) ── 4 trạm (210 kWp / 8.6%)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#64748B;align=left;spacingLeft=15;" vertex="1" parent="1"><mxGeometry x="60" y="270" width="840" height="55" as="geometry" /></mxCell>
+        <mxCell id="cp5" value="&lt;b&gt;5. BUNDOORA - MELBOURNE MAIN CAMPUS [-37.72°, 145.05°] (TRỤ SỞ CHÍNH)&lt;/b&gt;&lt;br&gt;Khí hậu Ôn đới Hải dương (Thời tiết biến đổi 4 mùa/ngày) ── 24 trạm (1.420 kWp / 58.5%)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FAF5FF;strokeColor=#7C3AED;strokeWidth=2;align=left;spacingLeft=15;" vertex="1" parent="1"><mxGeometry x="60" y="335" width="840" height="65" as="geometry" /></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

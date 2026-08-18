@@ -1,0 +1,194 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1060 620" width="100%" height="100%">
+  <defs>
+    <style>
+      .hdr { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 14px; font-weight: 700; fill: #F8FAFC; }
+      .subhdr { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; fill: #94A3B8; }
+      .box-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; font-weight: 700; }
+      .txt { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 10px; fill: #334155; }
+      .txt-bold { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 10px; font-weight: 700; fill: #0F172A; }
+      .formula { font-family: "Courier New", Courier, monospace; font-size: 9.5px; font-weight: 700; }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1060" height="620" fill="#F8FAFC" rx="10" />
+
+  <!-- Header Banner -->
+  <rect x="20" y="15" width="1020" height="46" rx="8" fill="#0F172A" />
+  <text x="530" y="35" text-anchor="middle" class="hdr">KIẾN TRÚC BỘ 3 DASHBOARD QUẢN TRỊ TRÊN TABLEAU DESKTOP</text>
+  <text x="530" y="51" text-anchor="middle" class="subhdr">Thiết kế theo nguyên tắc Gestalt, phân khu thẻ Card, bảng màu ngữ nghĩa và tầng Materialized Views BI Data Mart</text>
+
+  <!-- 3 Dashboards Layout -->
+  <g transform="translate(20, 75)">
+    <!-- Dashboard 1: Executive Overview -->
+    <g transform="translate(0, 0)">
+      <rect width="326" height="525" rx="8" fill="#FFFFFF" stroke="#0284C7" stroke-width="2" />
+      <rect width="326" height="34" rx="8" fill="#F0F9FF" />
+      <text x="163" y="22" text-anchor="middle" class="box-title" fill="#0369A1">DASHBOARD 1: EXECUTIVE OVERVIEW</text>
+
+      <!-- BANs Box -->
+      <g transform="translate(12, 46)">
+        <rect width="302" height="75" rx="6" fill="#F8FAFC" stroke="#BAE6FD" />
+        <text x="10" y="18" class="txt-bold" fill="#0369A1">1. Thẻ Chỉ số Cốt lõi (BANs Card):</text>
+        <text x="10" y="36" class="formula" fill="#0F172A">74.98 GWh | $11.2M AUD | 61.5k Tấn CO2</text>
+        <text x="10" y="54" class="txt">• Hệ số PR Trung bình: 78.4% (Class A)</text>
+        <text x="10" y="68" class="txt">• Hệ số Công suất CF: 15.2%</text>
+      </g>
+
+      <!-- Geo Map Box -->
+      <g transform="translate(12, 131)">
+        <rect width="302" height="135" rx="6" fill="#F8FAFC" stroke="#BAE6FD" />
+        <text x="10" y="18" class="txt-bold" fill="#0369A1">2. Bản đồ Địa lý 5 Campuses:</text>
+        <rect x="10" y="26" width="282" height="75" rx="4" fill="#EFF6FF" stroke="#CBD5E1" />
+        <circle cx="150" cy="64" r="14" fill="rgba(2, 132, 199, 0.6)" stroke="#0284C7" stroke-width="1.5" />
+        <text x="150" y="67" text-anchor="middle" font-size="8" font-weight="700" fill="#FFFFFF">MEL</text>
+        <circle cx="120" cy="49" r="10" fill="rgba(22, 163, 74, 0.6)" stroke="#16A34A" />
+        <text x="120" y="52" text-anchor="middle" font-size="7" font-weight="700" fill="#FFFFFF">BEN</text>
+        <circle cx="210" cy="44" r="8" fill="rgba(217, 119, 6, 0.6)" stroke="#D97706" />
+        <text x="210" y="47" text-anchor="middle" font-size="7" font-weight="700" fill="#FFFFFF">ALB</text>
+        <text x="10" y="118" class="txt" font-size="9" fill="#64748B">• Kích thước: Công suất kWp | Màu: CF (%)</text>
+      </g>
+
+      <!-- Yield Ranking Box -->
+      <g transform="translate(12, 276)">
+        <rect width="302" height="135" rx="6" fill="#F8FAFC" stroke="#BAE6FD" />
+        <text x="10" y="18" class="txt-bold" fill="#0369A1">3. Xếp hạng Năng suất [kWh/panel]:</text>
+        <g transform="translate(10, 26)">
+          <text x="0" y="15" class="txt" font-size="9">SunPower Mono</text>
+          <rect x="80" y="5" width="190" height="12" rx="2" fill="#0284C7" />
+          <text x="275" y="15" class="txt-bold" font-size="9">4.2 kWh</text>
+
+          <text x="0" y="35" class="txt" font-size="9">Jinko Tiger</text>
+          <rect x="80" y="25" width="170" height="12" rx="2" fill="#38BDF8" />
+          <text x="255" y="35" class="txt-bold" font-size="9">3.9 kWh</text>
+
+          <text x="0" y="55" class="txt" font-size="9">Trina Poly</text>
+          <rect x="80" y="45" width="145" height="12" rx="2" fill="#94A3B8" />
+          <text x="230" y="55" class="txt-bold" font-size="9">3.4 kWh</text>
+        </g>
+        <text x="10" y="118" class="txt-bold" fill="#15803D">Mono-Si vượt trội Poly-Si 4% - 6% PR</text>
+      </g>
+
+      <!-- User Role -->
+      <g transform="translate(12, 421)">
+        <rect width="302" height="85" rx="6" fill="#F0FDF4" stroke="#BBF7D0" />
+        <text x="10" y="18" class="txt-bold" fill="#15803D">Đối tượng Khai thác Chính:</text>
+        <text x="10" y="36" class="txt">• Ban Giám đốc (C-Level Executives)</text>
+        <text x="10" y="52" class="txt">• Nhà quản lý tài chính &amp; Bền vững ESG</text>
+        <text x="10" y="70" class="formula" font-size="9" fill="#15803D">F-Pattern Visual Flow Layout</text>
+      </g>
+    </g>
+
+    <!-- Dashboard 2: Operational Efficiency -->
+    <g transform="translate(346, 0)">
+      <rect width="326" height="525" rx="8" fill="#FFFFFF" stroke="#D97706" stroke-width="2" />
+      <rect width="326" height="34" rx="8" fill="#FFFBEB" />
+      <text x="163" y="22" text-anchor="middle" class="box-title" fill="#B45309">DASHBOARD 2: OPERATIONAL EFFICIENCY</text>
+
+      <!-- Dual Axis Graph -->
+      <g transform="translate(12, 46)">
+        <rect width="302" height="135" rx="6" fill="#F8FAFC" stroke="#FDE68A" />
+        <text x="10" y="18" class="txt-bold" fill="#B45309">1. Đồ thị 2 trục (Dual-Axis Timeline):</text>
+        <g transform="translate(10, 25)">
+          <rect width="282" height="80" rx="4" fill="#FFFFFF" stroke="#CBD5E1" />
+          <rect x="40" y="40" width="15" height="40" fill="#0284C7" />
+          <rect x="60" y="20" width="15" height="60" fill="#0284C7" />
+          <rect x="80" y="10" width="15" height="70" fill="#0284C7" />
+          <rect x="100" y="15" width="15" height="65" fill="#0284C7" />
+          <rect x="120" y="35" width="15" height="45" fill="#0284C7" />
+          <path d="M 20 65 Q 85 5 150 65" fill="none" stroke="#F59E0B" stroke-width="2" />
+          <path d="M 20 55 Q 95 25 150 40" fill="none" stroke="#DC2626" stroke-width="1.5" stroke-dasharray="3 3" />
+        </g>
+        <text x="10" y="125" class="txt" font-size="9">• Cột xanh: E_actual | Đường cam: GHI | Đỏ: T_cell</text>
+      </g>
+
+      <!-- Thermal Loss Heatmap -->
+      <g transform="translate(12, 191)">
+        <rect width="302" height="120" rx="6" fill="#F8FAFC" stroke="#FDE68A" />
+        <text x="10" y="18" class="txt-bold" fill="#B45309">2. Bản đồ Nhiệt Tổn thất Nhiệt độ:</text>
+        <g transform="translate(10, 26)">
+          <rect x="0" y="0" width="65" height="20" fill="#FEF2F2" /><text x="32" y="14" text-anchor="middle" font-size="8">T1 (16%)</text>
+          <rect x="70" y="0" width="65" height="20" fill="#FEE2E2" /><text x="102" y="14" text-anchor="middle" font-size="8">T2 (18%)</text>
+          <rect x="140" y="0" width="65" height="20" fill="#FEF3C7" /><text x="172" y="14" text-anchor="middle" font-size="8">T3 (12%)</text>
+          <rect x="210" y="0" width="65" height="20" fill="#F0FDF4" /><text x="242" y="14" text-anchor="middle" font-size="8">T4 (4%)</text>
+          
+          <rect x="0" y="25" width="65" height="20" fill="#F0FDF4" /><text x="32" y="39" text-anchor="middle" font-size="8">T5 (2%)</text>
+          <rect x="70" y="25" width="65" height="20" fill="#F0FDF4" /><text x="102" y="39" text-anchor="middle" font-size="8">T6 (1%)</text>
+          <rect x="140" y="25" width="65" height="20" fill="#F0FDF4" /><text x="172" y="39" text-anchor="middle" font-size="8">T7 (1%)</text>
+          <rect x="210" y="25" width="65" height="20" fill="#FEF3C7" /><text x="242" y="39" text-anchor="middle" font-size="8">T8 (3%)</text>
+        </g>
+        <text x="10" y="90" class="txt-bold" font-size="9" fill="#DC2626">Tổn thất mùa hè (T12 - T2) vượt 16% - 18%</text>
+        <text x="10" y="106" class="txt" font-size="9">Quy luật vật lý tự nhiên do T_cell đạt 65°C.</text>
+      </g>
+
+      <!-- Loss Decomposition -->
+      <g transform="translate(12, 321)">
+        <rect width="302" height="90" rx="6" fill="#F8FAFC" stroke="#FDE68A" />
+        <text x="10" y="18" class="txt-bold" fill="#B45309">3. Phân rã Tổn thất (Loss Tree):</text>
+        <text x="10" y="36" class="txt">• Suy hao Quá nhiệt: 10.4% tổng sản lượng</text>
+        <text x="10" y="52" class="txt">• Xén Biến tần (Clipping): 2.8% (ILR = 1.25)</text>
+        <text x="10" y="68" class="txt">• Bám bụi &amp; Che bóng: 3.2% (Kimber Model)</text>
+      </g>
+
+      <!-- User Role -->
+      <g transform="translate(12, 421)">
+        <rect width="302" height="85" rx="6" fill="#FFFBEB" stroke="#FCD34D" />
+        <text x="10" y="18" class="txt-bold" fill="#B45309">Đối tượng Khai thác Chính:</text>
+        <text x="10" y="36" class="txt">• Quản lý Vận hành &amp; Bảo trì (O&amp;M Managers)</text>
+        <text x="10" y="52" class="txt">• Kỹ sư Tối ưu hóa Năng lượng</text>
+        <text x="10" y="70" class="formula" font-size="9" fill="#B45309">Thermal Loss Matrix &amp; PR Benchmarking</text>
+      </g>
+    </g>
+
+    <!-- Dashboard 3: Anomaly Detection & CBM Dispatch -->
+    <g transform="translate(692, 0)">
+      <rect width="326" height="525" rx="8" fill="#FFFFFF" stroke="#DC2626" stroke-width="2" />
+      <rect width="326" height="34" rx="8" fill="#FEF2F2" />
+      <text x="163" y="22" text-anchor="middle" class="box-title" fill="#B91C1C">DASHBOARD 3: ANOMALY &amp; CBM DISPATCH</text>
+
+      <!-- Anomaly Flags Visual -->
+      <g transform="translate(12, 46)">
+        <rect width="302" height="135" rx="6" fill="#F8FAFC" stroke="#FECACA" />
+        <text x="10" y="18" class="txt-bold" fill="#DC2626">1. Chuỗi Thời gian Gắn Cờ Dị thường:</text>
+        <g transform="translate(10, 25)">
+          <rect width="282" height="80" rx="4" fill="#FFFFFF" stroke="#CBD5E1" />
+          <path d="M 20 70 Q 85 15 150 70" fill="none" stroke="#16A34A" stroke-width="2" />
+          <circle cx="95" cy="67" r="6" fill="#DC2626" stroke="#991B1B" stroke-width="1.5" />
+          <rect x="110" y="40" width="135" height="24" rx="3" fill="#FEF2F2" stroke="#DC2626" />
+          <text x="115" y="53" font-size="8" font-weight="700" fill="#DC2626">MIDDAY_TRIP: Over-V</text>
+          <text x="115" y="61" font-size="7" fill="#64748B">Loss: 148 kWh ($28.4 AUD)</text>
+        </g>
+        <text x="10" y="125" class="txt" font-size="9">• Điểm xanh: Bình thường | Điểm đỏ: Dị thường CBM</text>
+      </g>
+
+      <!-- Night Leakage Heatmap -->
+      <g transform="translate(12, 191)">
+        <rect width="302" height="110" rx="6" fill="#F8FAFC" stroke="#FECACA" />
+        <text x="10" y="18" class="txt-bold" fill="#DC2626">2. Bản đồ Dòng rò Ban đêm (Night Leakage):</text>
+        <text x="10" y="36" class="txt">• Phát hiện trôi mốc 0 của cảm biến CT khi</text>
+        <text x="10" y="50" class="formula" font-size="9" fill="#DC2626">GHI = 0 W/m² nhưng E_actual &gt; 0.1 kWh</text>
+        <text x="10" y="68" class="txt">• Trạm ghi nhận: Bundoora - Peribolos West</text>
+        <text x="10" y="86" class="txt-bold" fill="#B45309">➔ Cần hiệu chuẩn lại thiết bị đo biến dòng CT</text>
+      </g>
+
+      <!-- CBM Work Order Ticket -->
+      <g transform="translate(12, 311)">
+        <rect width="302" height="100" rx="6" fill="#F8FAFC" stroke="#FECACA" />
+        <text x="10" y="18" class="txt-bold" fill="#DC2626">3. Bảng Điều phối Công tác O&amp;M:</text>
+        <text x="10" y="36" class="txt">• Tự động phân loại 6 mã sự cố vật lý</text>
+        <text x="10" y="52" class="txt">• Định lượng số kWh thất thoát và số tiền AUD</text>
+        <text x="10" y="68" class="txt">• Mức độ ưu tiên: High / Medium / Low</text>
+        <text x="10" y="86" class="txt-bold" fill="#15803D">➔ Giảm 40% Thời gian Khắc phục Sự cố (MTTR)!</text>
+      </g>
+
+      <!-- User Role -->
+      <g transform="translate(12, 421)">
+        <rect width="302" height="85" rx="6" fill="#FEF2F2" stroke="#FECACA" />
+        <text x="10" y="18" class="txt-bold" fill="#DC2626">Đối tượng Khai thác Chính:</text>
+        <text x="10" y="36" class="txt">• Kỹ sư Hiện trường (Field Engineers)</text>
+        <text x="10" y="52" class="txt">• Điều phối viên Bảo trì Nhà máy CMMS</text>
+        <text x="10" y="70" class="formula" font-size="9" fill="#DC2626">ISO 13374 Condition-Based Maintenance</text>
+      </g>
+    </g>
+  </g>
+</svg>

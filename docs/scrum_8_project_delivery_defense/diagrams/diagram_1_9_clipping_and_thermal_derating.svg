@@ -1,0 +1,187 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1060 620" width="100%" height="100%">
+  <defs>
+    <style>
+      .hdr { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 14px; font-weight: 700; fill: #F8FAFC; }
+      .subhdr { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; fill: #94A3B8; }
+      .box-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11.5px; font-weight: 700; }
+      .txt { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 10px; fill: #334155; }
+      .txt-bold { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 10px; font-weight: 700; fill: #0F172A; }
+      .formula { font-family: "Courier New", Courier, monospace; font-size: 10px; font-weight: 700; }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1060" height="620" fill="#F8FAFC" rx="10" />
+
+  <!-- Header Banner -->
+  <rect x="20" y="15" width="1020" height="46" rx="8" fill="#0F172A" />
+  <text x="530" y="35" text-anchor="middle" class="hdr">ĐẶC TÍNH CHUỖI THỜI GIAN CỦA 3 CƠ CHẾ SUY HAO QUANG ĐIỆN CHÍNH</text>
+  <text x="530" y="51" text-anchor="middle" class="subhdr">Hiện tượng xén đỉnh công suất biến tần (Clipping), suy hao quá nhiệt tế bào (Thermal Derating) và bám bụi (Soiling)</text>
+
+  <!-- 3 Columns Layout -->
+  <g transform="translate(20, 75)">
+    <!-- Column 1: Inverter Clipping -->
+    <g transform="translate(0, 0)">
+      <rect width="326" height="525" rx="8" fill="#FFFFFF" stroke="#0284C7" stroke-width="2" />
+      <rect width="326" height="34" rx="8" fill="#F0F9FF" />
+      <text x="163" y="22" text-anchor="middle" class="box-title" fill="#0369A1">1. XÉN CÔNG SUẤT BIẾN TẦN (CLIPPING)</text>
+
+      <!-- Graph 1 -->
+      <g transform="translate(15, 46)">
+        <rect width="296" height="185" rx="6" fill="#F8FAFC" stroke="#E2E8F0" />
+        
+        <!-- Axes -->
+        <line x1="30" y1="155" x2="280" y2="155" stroke="#64748B" stroke-width="1.5" />
+        <line x1="30" y1="155" x2="30" y2="20" stroke="#64748B" stroke-width="1.5" />
+        <text x="280" y="170" text-anchor="end" class="txt" font-size="9">Giờ (h)</text>
+        <text x="25" y="15" text-anchor="start" class="txt" font-size="9">P (kW)</text>
+
+        <!-- Time Ticks -->
+        <text x="30" y="168" class="txt" font-size="9">6h</text>
+        <text x="155" y="168" class="txt" font-size="9">12h</text>
+        <text x="270" y="168" class="txt" font-size="9">18h</text>
+
+        <!-- Theoretical DC Parabola -->
+        <path d="M 30 155 Q 155 10 270 155" fill="none" stroke="#F59E0B" stroke-width="2" stroke-dasharray="4 4" />
+        
+        <!-- P_AC Max Clipping Line -->
+        <line x1="30" y1="65" x2="280" y2="65" stroke="#DC2626" stroke-width="1.5" stroke-dasharray="2 2" />
+        <text x="275" y="60" text-anchor="end" class="txt-bold" font-size="9" fill="#DC2626">P_AC,max (Inverter)</text>
+
+        <!-- Actual Clipped AC Profile -->
+        <path d="M 30 155 Q 95 95 115 65 L 195 65 Q 215 95 270 155" fill="rgba(2, 132, 199, 0.15)" stroke="#0284C7" stroke-width="2.5" />
+        
+        <!-- Clipped Area Fill -->
+        <path d="M 115 65 Q 155 25 195 65 Z" fill="rgba(220, 38, 38, 0.25)" stroke="#DC2626" stroke-width="1" />
+        <text x="155" y="52" text-anchor="middle" font-size="9" font-weight="700" fill="#DC2626">Tổn thất Xén (ILR=1.25)</text>
+      </g>
+
+      <!-- Explanation Box -->
+      <g transform="translate(15, 242)">
+        <rect width="296" height="268" rx="6" fill="#F0F9FF" stroke="#BAE6FD" />
+        <g transform="translate(10, 15)">
+          <text x="0" y="15" class="txt-bold" fill="#0369A1">• Tỷ lệ Quá tải DC/AC (Inverter Loading Ratio):</text>
+          <text x="0" y="32" class="formula" fill="#0F172A">ILR = P_DC / P_AC = 1.15 ➔ 1.30</text>
+          
+          <text x="0" y="58" class="txt-bold" fill="#0369A1">• Cơ chế MPPT Tự bảo vệ:</text>
+          <text x="0" y="74" class="txt">Dịch chuyển điện áp V_mp sang nhánh</text>
+          <text x="0" y="88" class="txt">điện áp cao hơn nhằm hãm dòng điện vào</text>
+          <text x="0" y="102" class="txt">khi công suất DC vượt quá ngưỡng định mức.</text>
+          
+          <text x="0" y="128" class="txt-bold" fill="#0369A1">• Nhận định cho Kỹ sư Phân tích:</text>
+          <text x="0" y="144" class="txt">Đồ thị đỉnh phẳng hình thang là kết quả</text>
+          <text x="0" y="158" class="txt">thiết kế tối ưu hóa kinh tế có chủ đích,</text>
+          <text x="0" y="172" class="txt-bold" fill="#15803D">hoàn toàn KHÔNG phải sự cố dị thường.</text>
+          
+          <text x="0" y="198" class="formula" fill="#0369A1">Tổn thất hàng năm: ~2.8% sản lượng</text>
+          <text x="0" y="215" class="txt" fill="#64748B">Đổi lại tăng 15% - 25% điện vào sáng sớm &amp; chiều.</text>
+        </g>
+      </g>
+    </g>
+
+    <!-- Column 2: Thermal Derating -->
+    <g transform="translate(346, 0)">
+      <rect width="326" height="525" rx="8" fill="#FFFFFF" stroke="#DC2626" stroke-width="2" />
+      <rect width="326" height="34" rx="8" fill="#FEF2F2" />
+      <text x="163" y="22" text-anchor="middle" class="box-title" fill="#B91C1C">2. SUY HAO QUÁ NHIỆT (THERMAL LOSS)</text>
+
+      <!-- Graph 2 -->
+      <g transform="translate(15, 46)">
+        <rect width="296" height="185" rx="6" fill="#F8FAFC" stroke="#E2E8F0" />
+        
+        <!-- Axes -->
+        <line x1="30" y1="155" x2="280" y2="155" stroke="#64748B" stroke-width="1.5" />
+        <line x1="30" y1="155" x2="30" y2="20" stroke="#64748B" stroke-width="1.5" />
+        <text x="280" y="170" text-anchor="end" class="txt" font-size="9">Giờ (h)</text>
+        <text x="25" y="15" text-anchor="start" class="txt" font-size="9">P (kW)</text>
+
+        <!-- Curve 1: Spring/Cool Day -->
+        <path d="M 30 155 Q 155 25 270 155" fill="none" stroke="#16A34A" stroke-width="2" />
+        <text x="155" y="20" text-anchor="middle" font-size="9" font-weight="700" fill="#16A34A">Mùa Xuân Mát (T_cell=25°C)</text>
+
+        <!-- Curve 2: Hot Summer Day -->
+        <path d="M 30 155 Q 155 55 270 155" fill="none" stroke="#DC2626" stroke-width="2.5" />
+        <text x="155" y="70" text-anchor="middle" font-size="9" font-weight="700" fill="#DC2626">Mùa Hè Nóng (T_cell=65°C)</text>
+
+        <!-- Loss Gap Indicator -->
+        <line x1="155" y1="30" x2="155" y2="52" stroke="#DC2626" stroke-width="1.5" />
+        <text x="165" y="44" class="txt-bold" font-size="9" fill="#DC2626">Mất 14% - 18%</text>
+      </g>
+
+      <!-- Explanation Box -->
+      <g transform="translate(15, 242)">
+        <rect width="296" height="268" rx="6" fill="#FEF2F2" stroke="#FECACA" />
+        <g transform="translate(10, 15)">
+          <text x="0" y="15" class="txt-bold" fill="#B91C1C">• Mô hình Nhiệt độ Tế bào Sandia:</text>
+          <text x="0" y="32" class="formula" font-size="9.5" fill="#0F172A">T_cell = T_amb + GHI·exp(a + b·v_wind)</text>
+          <text x="0" y="46" class="txt" fill="#64748B">a = -3.47, b = -0.0594 (Mái hở đối lưu)</text>
+          
+          <text x="0" y="72" class="txt-bold" fill="#B91C1C">• Tổn thất Năng lượng do Nhiệt độ:</text>
+          <text x="0" y="88" class="formula" font-size="9.5" fill="#DC2626">E_loss = E_theo · |γ| · (T_cell - 25°C)</text>
+          <text x="0" y="104" class="txt">• Hệ số nhiệt: γ = -0.35%/°C (SunPower)</text>
+          
+          <text x="0" y="128" class="txt-bold" fill="#B91C1C">• Bản chất Vật lý Bán dẫn:</text>
+          <text x="0" y="144" class="txt">T_cell mùa hè lên đến 65°C làm tăng mạnh</text>
+          <text x="0" y="158" class="txt">dòng bão hòa ngược I_0, khiến điện áp hở</text>
+          <text x="0" y="172" class="txt">mạch V_oc bị co hẹp mạnh nhất vào buổi trưa.</text>
+          
+          <text x="0" y="198" class="txt-bold" fill="#15803D">➔ Quy luật tự nhiên, làm giảm PR mùa hè.</text>
+          <text x="0" y="215" class="formula" fill="#B91C1C">Chiếm 10.4% tổng tổn thất toàn hệ thống</text>
+        </g>
+      </g>
+    </g>
+
+    <!-- Column 3: Soiling & Rain Recovery -->
+    <g transform="translate(692, 0)">
+      <rect width="326" height="525" rx="8" fill="#FFFFFF" stroke="#D97706" stroke-width="2" />
+      <rect width="326" height="34" rx="8" fill="#FFFBEB" />
+      <text x="163" y="22" text-anchor="middle" class="box-title" fill="#B45309">3. BÁM BỤI &amp; RỬA TRÔI (SOILING)</text>
+
+      <!-- Graph 3 -->
+      <g transform="translate(15, 46)">
+        <rect width="296" height="185" rx="6" fill="#F8FAFC" stroke="#E2E8F0" />
+        
+        <!-- Axes -->
+        <line x1="30" y1="155" x2="280" y2="155" stroke="#64748B" stroke-width="1.5" />
+        <line x1="30" y1="155" x2="30" y2="20" stroke="#64748B" stroke-width="1.5" />
+        <text x="280" y="170" text-anchor="end" class="txt" font-size="9">Thời gian (Ngày)</text>
+        <text x="25" y="15" text-anchor="start" class="txt" font-size="9">PR (%)</text>
+
+        <!-- Sawtooth Soiling Profile -->
+        <path d="M 30 40 L 100 80 L 100 40 L 190 95 L 190 40 L 270 75" fill="none" stroke="#D97706" stroke-width="2.5" />
+        
+        <!-- Rain Event 1 -->
+        <line x1="100" y1="40" x2="100" y2="155" stroke="#0284C7" stroke-width="1.5" stroke-dasharray="2 2" />
+        <text x="100" y="32" text-anchor="middle" font-size="8" font-weight="700" fill="#0284C7">Mưa ≥ 5mm</text>
+
+        <!-- Rain Event 2 -->
+        <line x1="190" y1="40" x2="190" y2="155" stroke="#0284C7" stroke-width="1.5" stroke-dasharray="2 2" />
+        <text x="190" y="32" text-anchor="middle" font-size="8" font-weight="700" fill="#0284C7">Mưa ≥ 8mm</text>
+        
+        <text x="60" y="70" class="txt" font-size="9" fill="#92400E">-0.2%/ngày</text>
+      </g>
+
+      <!-- Explanation Box -->
+      <g transform="translate(15, 242)">
+        <rect width="296" height="268" rx="6" fill="#FFFBEB" stroke="#FDE68A" />
+        <g transform="translate(10, 15)">
+          <text x="0" y="15" class="txt-bold" fill="#B45309">• Mô hình Tích lũy Bụi Kimber:</text>
+          <text x="0" y="32" class="formula" fill="#0F172A">Soiling_Rate = 0.1% - 0.3%/ngày</text>
+          <text x="0" y="46" class="txt" fill="#64748B">Tích lũy tuyến tính trong mùa khô hạn</text>
+          
+          <text x="0" y="72" class="txt-bold" fill="#B45309">• Cơ chế Tẩy rửa Tự nhiên:</text>
+          <text x="0" y="88" class="txt">Cơn mưa tích lũy ≥ 5 mm rửa trôi</text>
+          <text x="0" y="102" class="txt">bụi bẩn bám dính, phục hồi 100% PR.</text>
+          
+          <text x="0" y="128" class="txt-bold" fill="#B45309">• Tối ưu hóa Điều độ O&amp;M:</text>
+          <text x="0" y="144" class="txt">Kích hoạt lệnh điều phối rửa pin nhân tạo</text>
+          <text x="0" y="158" class="txt">khi chu kỳ không mưa kéo dài &gt; 30 ngày</text>
+          <text x="0" y="172" class="txt">hoặc tổn thất bám bụi tích lũy vượt 5%.</text>
+          
+          <text x="0" y="198" class="txt-bold" fill="#15803D">➔ Tối đa hóa hiệu quả chi phí bảo trì CMMS</text>
+          <text x="0" y="215" class="formula" fill="#B45309">Đặc trưng dạng răng cưa (Sawtooth)</text>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

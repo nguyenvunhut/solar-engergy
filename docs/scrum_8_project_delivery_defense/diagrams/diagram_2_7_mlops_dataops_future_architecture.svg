@@ -1,0 +1,218 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1060 620" width="100%" height="100%">
+  <defs>
+    <style>
+      .hdr { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 14px; font-weight: 700; fill: #F8FAFC; }
+      .subhdr { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; fill: #94A3B8; }
+      .box-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; font-weight: 700; }
+      .txt { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 10px; fill: #334155; }
+      .txt-bold { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 10px; font-weight: 700; fill: #0F172A; }
+      .formula { font-family: "Courier New", Courier, monospace; font-size: 9.5px; font-weight: 700; }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1060" height="620" fill="#F8FAFC" rx="10" />
+
+  <!-- Header Banner -->
+  <rect x="20" y="15" width="1020" height="46" rx="8" fill="#0F172A" />
+  <text x="530" y="35" text-anchor="middle" class="hdr">ĐỊNH HƯỚNG MỞ RỘNG HẠ TẦNG DATAOPS &amp; MLOPS TƯƠNG LAI</text>
+  <text x="530" y="51" text-anchor="middle" class="subhdr">Kiến trúc mở rộng quy mô 500 trạm: Apache Airflow DAGs, MLflow Model Registry, Kafka Streaming và Edge AI ONNX Runtime</text>
+
+  <!-- 4-Stage Horizontal Pipeline -->
+  <g transform="translate(20, 75)">
+    <!-- Column 1: Ingestion & Streaming -->
+    <g transform="translate(0, 0)">
+      <rect width="240" height="525" rx="8" fill="#FFFFFF" stroke="#0284C7" stroke-width="2" />
+      <rect width="240" height="34" rx="8" fill="#F0F9FF" />
+      <text x="120" y="22" text-anchor="middle" class="box-title" fill="#0369A1">1. THU NHẬN &amp; STREAMING</text>
+
+      <!-- Box 1 -->
+      <g transform="translate(10, 46)">
+        <rect width="220" height="92" rx="6" fill="#F8FAFC" stroke="#BAE6FD" />
+        <text x="10" y="18" class="txt-bold" fill="#0369A1">IoT Modbus Gateway (1s):</text>
+        <text x="10" y="34" class="txt">• Tiếp nhận viễn thám chu kỳ 1s</text>
+        <text x="10" y="48" class="txt">• 500 trạm năng lượng toàn quốc</text>
+        <text x="10" y="62" class="txt">• Cảm biến bức xạ, CT, dòng DC</text>
+        <text x="10" y="78" class="formula" fill="#0284C7">Edge RTU Protocol Buffer</text>
+      </g>
+
+      <!-- Box 2 -->
+      <g transform="translate(10, 146)">
+        <rect width="220" height="106" rx="6" fill="#F8FAFC" stroke="#BAE6FD" />
+        <text x="10" y="18" class="txt-bold" fill="#0369A1">Apache Kafka Cluster:</text>
+        <text x="10" y="34" class="txt">• Phân tán message streaming</text>
+        <text x="10" y="48" class="txt">• Topic: `solar.telemetry.raw`</text>
+        <text x="10" y="62" class="txt">• Topic: `solar.weather.stream`</text>
+        <text x="10" y="76" class="txt">• Băng thông: &gt; 100k msgs/s</text>
+        <text x="10" y="94" class="formula" fill="#0369A1">Zero Data Loss Buffer</text>
+      </g>
+
+      <!-- Box 3 -->
+      <g transform="translate(10, 260)">
+        <rect width="220" height="92" rx="6" fill="#F8FAFC" stroke="#BAE6FD" />
+        <text x="10" y="18" class="txt-bold" fill="#0369A1">Open-Meteo / ECMWF API:</text>
+        <text x="10" y="34" class="txt">• Dự báo thời tiết phân giải cao</text>
+        <text x="10" y="48" class="txt">• Cập nhật DNI, GHI, T_amb, gió</text>
+        <text x="10" y="62" class="txt">• Chu kỳ lấy mẫu 15 phút</text>
+        <text x="10" y="78" class="formula" fill="#0284C7">REST / Webhook Ingestion</text>
+      </g>
+
+      <!-- Box 4 -->
+      <g transform="translate(10, 360)">
+        <rect width="220" height="148" rx="6" fill="#F0FDF4" stroke="#BBF7D0" />
+        <text x="10" y="20" class="txt-bold" fill="#15803D">Mục tiêu Giai đoạn 1:</text>
+        <text x="10" y="38" class="txt">• Chuyển từ Batch sang Stream</text>
+        <text x="10" y="54" class="txt">• Độ trễ xử lý &lt; 500 ms</text>
+        <text x="10" y="70" class="txt">• Cảnh báo quá áp lưới tức thời</text>
+        <text x="10" y="90" class="txt-bold" fill="#15803D">➔ Phát hiện sự cố trong vài giây!</text>
+      </g>
+    </g>
+
+    <!-- Column 2: DataOps & Orchestration -->
+    <g transform="translate(260, 0)">
+      <rect width="240" height="525" rx="8" fill="#FFFFFF" stroke="#D97706" stroke-width="2" />
+      <rect width="240" height="34" rx="8" fill="#FFFBEB" />
+      <text x="120" y="22" text-anchor="middle" class="box-title" fill="#B45309">2. DATAOPS &amp; ORCHESTRATION</text>
+
+      <!-- Box 1 -->
+      <g transform="translate(10, 46)">
+        <rect width="220" height="106" rx="6" fill="#F8FAFC" stroke="#FDE68A" />
+        <text x="10" y="18" class="txt-bold" fill="#B45309">Apache Airflow DAGs:</text>
+        <text x="10" y="34" class="txt">• Lập lịch tự động ETL đa tầng</text>
+        <text x="10" y="48" class="txt">• Tự động Retry khi lỗi mạng</text>
+        <text x="10" y="62" class="txt">• Quản lý quan hệ phụ thuộc</text>
+        <text x="10" y="76" class="txt">• Floor-Hour Causal Task</text>
+        <text x="10" y="94" class="formula" fill="#B45309">dag_solar_master_pipeline</text>
+      </g>
+
+      <!-- Box 2 -->
+      <g transform="translate(10, 160)">
+        <rect width="220" height="106" rx="6" fill="#F8FAFC" stroke="#FDE68A" />
+        <text x="10" y="18" class="txt-bold" fill="#B45309">Data Observability &amp; QA:</text>
+        <text x="10" y="34" class="txt">• Great Expectations kiểm thử</text>
+        <text x="10" y="48" class="txt">• Giám sát trôi mốc 0 Checksum</text>
+        <text x="10" y="62" class="txt">• Giám sát tỷ lệ khuyết thiếu</text>
+        <text x="10" y="76" class="txt">• Zero-Sum Energy Audit</text>
+        <text x="10" y="94" class="formula" fill="#B45309">Automated SLA Monitoring</text>
+      </g>
+
+      <!-- Box 3 -->
+      <g transform="translate(10, 274)">
+        <rect width="220" height="92" rx="6" fill="#F8FAFC" stroke="#FDE68A" />
+        <text x="10" y="18" class="txt-bold" fill="#B45309">Distributed Lakehouse:</text>
+        <text x="10" y="34" class="txt">• Apache Spark on Databricks</text>
+        <text x="10" y="48" class="txt">• DuckDB nén cục bộ hiệu năng</text>
+        <text x="10" y="62" class="txt">• Apache Iceberg / Delta Lake</text>
+        <text x="10" y="78" class="formula" fill="#B45309">ACID Scalable Lakehouse</text>
+      </g>
+
+      <!-- Box 4 -->
+      <g transform="translate(10, 374)">
+        <rect width="220" height="134" rx="6" fill="#FFFBEB" stroke="#FCD34D" />
+        <text x="10" y="20" class="txt-bold" fill="#B45309">Mục tiêu Giai đoạn 2:</text>
+        <text x="10" y="38" class="txt">• Tự động hóa 100% luồng dữ liệu</text>
+        <text x="10" y="54" class="txt">• Cảnh báo qua Slack/Email</text>
+        <text x="10" y="70" class="txt">• Quản trị dữ liệu minh bạch</text>
+        <text x="10" y="90" class="txt-bold" fill="#B45309">➔ Vận hành DataOps liên tục!</text>
+      </g>
+    </g>
+
+    <!-- Column 3: MLOps Lifecycle -->
+    <g transform="translate(520, 0)">
+      <rect width="240" height="525" rx="8" fill="#FFFFFF" stroke="#7C3AED" stroke-width="2" />
+      <rect width="240" height="34" rx="8" fill="#FAF5FF" />
+      <text x="120" y="22" text-anchor="middle" class="box-title" fill="#6D28D9">3. MLOPS &amp; GOVERNANCE</text>
+
+      <!-- Box 1 -->
+      <g transform="translate(10, 46)">
+        <rect width="220" height="106" rx="6" fill="#F8FAFC" stroke="#E9D5FF" />
+        <text x="10" y="18" class="txt-bold" fill="#6D28D9">MLflow Model Registry:</text>
+        <text x="10" y="34" class="txt">• Theo dõi thí nghiệm GMM-IF</text>
+        <text x="10" y="48" class="txt">• Quản lý phiên bản Model v1, v2</text>
+        <text x="10" y="62" class="txt">• Lưu trữ siêu tham số &amp; Artifacts</text>
+        <text x="10" y="76" class="txt">• Stage: Staging ➔ Production</text>
+        <text x="10" y="94" class="formula" fill="#6D28D9">mlflow.register_model()</text>
+      </g>
+
+      <!-- Box 2 -->
+      <g transform="translate(10, 160)">
+        <rect width="220" height="106" rx="6" fill="#F8FAFC" stroke="#E9D5FF" />
+        <text x="10" y="18" class="txt-bold" fill="#6D28D9">Drift Detection &amp; Retrain:</text>
+        <text x="10" y="34" class="txt">• Giám sát Concept Drift (Evidently)</text>
+        <text x="10" y="48" class="txt">• Phát hiện thoái hóa tế bào PID</text>
+        <text x="10" y="62" class="txt">• Tự động tái huấn luyện khi</text>
+        <text x="10" y="76" class="txt">  sai số dự báo vượt ngưỡng 5%</text>
+        <text x="10" y="94" class="formula" fill="#6D28D9">Auto-Trigger Retraining</text>
+      </g>
+
+      <!-- Box 3 -->
+      <g transform="translate(10, 274)">
+        <rect width="220" height="92" rx="6" fill="#F8FAFC" stroke="#E9D5FF" />
+        <text x="10" y="18" class="txt-bold" fill="#6D28D9">Feature Store (Feast):</text>
+        <text x="10" y="34" class="txt">• Kho đặc trưng dùng chung</text>
+        <text x="10" y="48" class="txt">• Biến nhật quỹ sin(h), cos(θz)</text>
+        <text x="10" y="62" class="txt">• Đồng bộ Online/Offline Features</text>
+        <text x="10" y="78" class="formula" fill="#6D28D9">Online Redis / Offline Parquet</text>
+      </g>
+
+      <!-- Box 4 -->
+      <g transform="translate(10, 374)">
+        <rect width="220" height="134" rx="6" fill="#FAF5FF" stroke="#DDD6FE" />
+        <text x="10" y="20" class="txt-bold" fill="#6D28D9">Mục tiêu Giai đoạn 3:</text>
+        <text x="10" y="38" class="txt">• Vòng đời AI khép kín</text>
+        <text x="10" y="54" class="txt">• Mô hình thích ứng suy thoái</text>
+        <text x="10" y="70" class="txt">• Không can thiệp thủ công</text>
+        <text x="10" y="90" class="txt-bold" fill="#6D28D9">➔ MLOps Lifecycle Chuẩn mực!</text>
+      </g>
+    </g>
+
+    <!-- Column 4: Edge AI & Serving -->
+    <g transform="translate(780, 0)">
+      <rect width="240" height="525" rx="8" fill="#FFFFFF" stroke="#16A34A" stroke-width="2" />
+      <rect width="240" height="34" rx="8" fill="#F0FDF4" />
+      <text x="120" y="22" text-anchor="middle" class="box-title" fill="#15803D">4. SERVING &amp; EDGE AI</text>
+
+      <!-- Box 1 -->
+      <g transform="translate(10, 46)">
+        <rect width="220" height="106" rx="6" fill="#F8FAFC" stroke="#86EFAC" />
+        <text x="10" y="18" class="txt-bold" fill="#15803D">Edge AI Deployment:</text>
+        <text x="10" y="34" class="txt">• Xuất mô hình sang ONNX / TensorRT</text>
+        <text x="10" y="48" class="txt">• Nhúng trực tiếp vào RTU tại trạm</text>
+        <text x="10" y="62" class="txt">• Tự động nhận diện dị thường</text>
+        <text x="10" y="76" class="txt">  ngay cả khi mất kết nối mạng</text>
+        <text x="10" y="94" class="formula" fill="#15803D">ONNX Runtime Inference</text>
+      </g>
+
+      <!-- Box 2 -->
+      <g transform="translate(10, 160)">
+        <rect width="220" height="106" rx="6" fill="#F8FAFC" stroke="#86EFAC" />
+        <text x="10" y="18" class="txt-bold" fill="#15803D">BESS Storage Optimization:</text>
+        <text x="10" y="34" class="txt">• Tối ưu hóa sạc/xả pin lưu trữ</text>
+        <text x="10" y="48" class="txt">• Thuật toán Reinforcement Learning</text>
+        <text x="10" y="62" class="txt">• Cắt giảm phụ tải đỉnh (Peak Shaving)</text>
+        <text x="10" y="76" class="txt">• Tối đa hóa biểu giá TOU/FiT</text>
+        <text x="10" y="94" class="formula" fill="#15803D">Smart Campus Microgrid</text>
+      </g>
+
+      <!-- Box 3 -->
+      <g transform="translate(10, 274)">
+        <rect width="220" height="92" rx="6" fill="#F8FAFC" stroke="#86EFAC" />
+        <text x="10" y="18" class="txt-bold" fill="#15803D">Real-Time OLAP DWH:</text>
+        <text x="10" y="34" class="txt">• ClickHouse Columnar DB</text>
+        <text x="10" y="48" class="txt">• Truy vấn hàng tỷ bản ghi &lt; 50ms</text>
+        <text x="10" y="62" class="txt">• Phục vụ Tableau &amp; Web App</text>
+        <text x="10" y="78" class="formula" fill="#15803D">Ultra-Fast Query Engine</text>
+      </g>
+
+      <!-- Box 4 -->
+      <g transform="translate(10, 374)">
+        <rect width="220" height="134" rx="6" fill="#F0FDF4" stroke="#BBF7D0" />
+        <text x="10" y="20" class="txt-bold" fill="#15803D">Mục tiêu Giai đoạn 4:</text>
+        <text x="10" y="38" class="txt">• Ra quyết định điều độ biên (Edge)</text>
+        <text x="10" y="54" class="txt">• Tối ưu hóa kinh tế tối đa</text>
+        <text x="10" y="70" class="txt">• Sẵn sàng mở rộng 500+ trạm</text>
+        <text x="10" y="90" class="txt-bold" fill="#15803D">➔ Hoàn thiện Hệ sinh thái Thông minh!</text>
+      </g>
+    </g>
+  </g>
+</svg>

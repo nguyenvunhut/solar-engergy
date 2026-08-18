@@ -1,0 +1,17 @@
+<mxfile host="app.diagrams.net" modified="2026-08-18T16:55:00.000Z" agent="Mozilla/5.0" version="21.0.0" type="device">
+  <diagram id="diag-0-2" name="0.2 Photon to Database">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850">
+      <root>
+        <mxCell id="0" /><mxCell id="1" parent="0" />
+        <mxCell id="hdr" value="&lt;b&gt;HÀNH TRÌNH 4 BƯỚC: TỪ 1 TIA NẮNG MẶT TRỜI ĐẾN DÒNG DỮ LIỆU TELEMETRY TRONG DATABASE&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#0F172A;fontColor=#F8FAFC;fontSize=14;" vertex="1" parent="1"><mxGeometry x="20" y="15" width="920" height="35" as="geometry" /></mxCell>
+        <mxCell id="s1" value="&lt;b&gt;BƯỚC 1: TRÊN MÁI NHÀ&lt;/b&gt;&lt;br&gt;Tấm pin Silicon&lt;br&gt;Ánh nắng hất văng electron&lt;br&gt;Tạo dòng điện một chiều DC" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F0F9FF;strokeColor=#0284C7;align=left;spacingLeft=12;" vertex="1" parent="1"><mxGeometry x="30" y="65" width="195" height="135" as="geometry" /></mxCell>
+        <mxCell id="s2" value="&lt;b&gt;BƯỚC 2: TỦ INVERTER&lt;/b&gt;&lt;br&gt;Biến tần chuyển đổi&lt;br&gt;Đổi điện DC sang AC 230V&lt;br&gt;Hiệu suất &gt;98%" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F0FDF4;strokeColor=#16A34A;align=left;spacingLeft=12;" vertex="1" parent="1"><mxGeometry x="270" y="65" width="195" height="135" as="geometry" /></mxCell>
+        <mxCell id="s3" value="&lt;b&gt;BƯỚC 3: SMART METER&lt;/b&gt;&lt;br&gt;Đồng hồ đo đếm&lt;br&gt;Mỗi 15 phút chốt 1 lần&lt;br&gt;Ghi nhận số kWh phát ra" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFBEB;strokeColor=#D97706;align=left;spacingLeft=12;" vertex="1" parent="1"><mxGeometry x="510" y="65" width="195" height="135" as="geometry" /></mxCell>
+        <mxCell id="s4" value="&lt;b&gt;BƯỚC 4: DATABASE&lt;/b&gt;&lt;br&gt;Data Lakehouse&lt;br&gt;Lưu 1 dòng bản ghi&lt;br&gt;2.731.946 dòng dữ liệu" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FAF5FF;strokeColor=#7C3AED;align=left;spacingLeft=12;" vertex="1" parent="1"><mxGeometry x="750" y="65" width="180" height="135" as="geometry" /></mxCell>
+        <mxCell id="a1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0284C7;strokeWidth=3;" edge="1" parent="1" source="s1" target="s2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="a2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0284C7;strokeWidth=3;" edge="1" parent="1" source="s2" target="s3"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="a3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0284C7;strokeWidth=3;" edge="1" parent="1" source="s3" target="s4"><mxGeometry relative="1" as="geometry" /></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

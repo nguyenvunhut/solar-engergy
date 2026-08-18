@@ -1,0 +1,13 @@
+<mxfile host="app.diagrams.net" modified="2026-08-18T17:35:00.000Z" agent="Mozilla/5.0" version="21.0.0" type="device">
+  <diagram id="diag-2-6" name="2.6 Tableau 3 Dashboards">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850">
+      <root>
+        <mxCell id="0" /><mxCell id="1" parent="0" />
+        <mxCell id="hdr" value="&lt;b&gt;KIẾN TRÚC BỘ 3 DASHBOARD QUẢN TRỊ TRÊN TABLEAU DESKTOP&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#0F172A;fontColor=#F8FAFC;fontSize=14;" vertex="1" parent="1"><mxGeometry x="20" y="15" width="1020" height="46" as="geometry" /></mxCell>
+        <mxCell id="col1" value="&lt;b&gt;DASHBOARD 1: EXECUTIVE OVERVIEW&lt;/b&gt;&lt;br&gt;BANs: 74.98 GWh, $11.2M AUD, 61.5k Tấn CO2&lt;br&gt;Bản đồ địa lý 5 Campuses&lt;br&gt;Xếp hạng sản lượng kWh/panel&lt;br&gt;Dành cho C-Level Executives" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F0F9FF;strokeColor=#0284C7;align=left;spacingLeft=12;" vertex="1" parent="1"><mxGeometry x="20" y="75" width="326" height="525" as="geometry" /></mxCell>
+        <mxCell id="col2" value="&lt;b&gt;DASHBOARD 2: OPERATIONAL EFFICIENCY&lt;/b&gt;&lt;br&gt;Đồ thị 2 trục Dual-Axis E_actual vs GHI vs T_cell&lt;br&gt;Bản đồ nhiệt suy hao quá nhiệt 12 tháng&lt;br&gt;Phân rã tổn thất Inverter Clipping, Soiling&lt;br&gt;Dành cho Quản lý Vận hành O&amp;M" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFBEB;strokeColor=#D97706;align=left;spacingLeft=12;" vertex="1" parent="1"><mxGeometry x="366" y="75" width="326" height="525" as="geometry" /></mxCell>
+        <mxCell id="col3" value="&lt;b&gt;DASHBOARD 3: ANOMALY &amp; CBM DISPATCH&lt;/b&gt;&lt;br&gt;Chuỗi thời gian gắn cờ dị thường đỏ GMM-IF&lt;br&gt;Bản đồ nhiệt dòng rò ban đêm (CT Drift)&lt;br&gt;Bảng điều phối công tác bảo trì ISO 13374&lt;br&gt;Dành cho Kỹ sư Hiện trường" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEF2F2;strokeColor=#DC2626;align=left;spacingLeft=12;" vertex="1" parent="1"><mxGeometry x="712" y="75" width="326" height="525" as="geometry" /></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
