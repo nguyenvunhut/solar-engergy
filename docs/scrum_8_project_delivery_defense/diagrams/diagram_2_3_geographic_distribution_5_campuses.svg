@@ -1,0 +1,150 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1060 620" width="100%" height="100%">
+  <defs>
+    <style>
+      .hdr { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13.5px; font-weight: 700; fill: #F8FAFC; }
+      .subhdr { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; fill: #94A3B8; }
+      .box-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11.5px; font-weight: 700; }
+      .txt { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 9px; fill: #334155; }
+      .txt-bold { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 9px; font-weight: 700; fill: #0F172A; }
+      .campus-name { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 9.5px; font-weight: 700; }
+      .val-lbl { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 9.5px; font-weight: 700; }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1060" height="620" fill="#F8FAFC" rx="10" />
+
+  <!-- Header Banner -->
+  <rect x="20" y="15" width="1020" height="48" rx="8" fill="#0F172A" />
+  <text x="530" y="35" text-anchor="middle" class="hdr">PHÂN BỐ ĐỊA LÝ &amp; THỐNG KÊ SỐ GIỜ OVER-IRRADIANCE (GHI > 1.000 W/m²) TẠI 5 CAMPUS LA TROBE (VICTORIA, ÚC)</text>
+  <text x="530" y="51" text-anchor="middle" class="subhdr">Dữ liệu kiểm toán thực nghiệm 28 tháng trên 42 trạm quang điện áp mái (850.752 giờ khí tượng ERA5-Land)</text>
+
+  <!-- Left Column: Map of Victoria with 5 Campuses -->
+  <g transform="translate(20, 75)">
+    <rect width="470" height="525" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.5" />
+    <rect width="470" height="34" rx="8" fill="#F0F9FF" />
+    <text x="235" y="22" text-anchor="middle" class="box-title" fill="#0369A1">BẢN ĐỒ VI KHÍ HẬU 5 CAMPUS BANG VICTORIA</text>
+
+    <!-- Map Canvas Area -->
+    <g transform="translate(15, 45)">
+      <!-- Victoria State Boundary Outline (Stylized) -->
+      <path d="M 25 35 L 305 25 L 395 90 L 420 250 L 370 330 L 250 355 L 170 330 L 85 290 L 25 170 Z" 
+            fill="#F8FAFC" stroke="#CBD5E1" stroke-width="2" stroke-dasharray="3 3" />
+      <text x="170" y="45" class="txt" font-size="8.5" fill="#94A3B8">Bang Victoria (Úc)</text>
+      <text x="325" y="345" class="txt" font-size="8.5" fill="#94A3B8">Eo biển Bass</text>
+
+      <!-- Campus 1: Mildura (Far Top-Left: x in [10..145], y in [63..109]) -->
+      <g transform="translate(45, 45)">
+        <circle cx="0" cy="0" r="8" fill="#EF4444" stroke="#B91C1C" stroke-width="2" />
+        <circle cx="0" cy="0" r="13" fill="none" stroke="#EF4444" stroke-width="1" stroke-dasharray="2 2" />
+        <line x1="0" y1="0" x2="0" y2="18" stroke="#EF4444" stroke-width="1" />
+        <rect x="-35" y="18" width="135" height="46" rx="4" fill="#FEF2F2" stroke="#EF4444" stroke-width="1.2" />
+        <text x="-27" y="32" class="campus-name" fill="#B91C1C">1. MILDURA (1 trạm)</text>
+        <text x="-27" y="46" class="txt-bold" fill="#DC2626">374,0 h | Max 1.109 W/m²</text>
+        <text x="-27" y="58" class="txt" font-size="7.5" fill="#7F1D1D">Bán khô hạn Outback</text>
+      </g>
+
+      <!-- Campus 4: Albury-Wodonga (Far Top-Right: x in [275..410], y in [68..114]) -->
+      <g transform="translate(340, 50)">
+        <circle cx="0" cy="0" r="8" fill="#0284C7" stroke="#0369A1" stroke-width="2" />
+        <line x1="0" y1="0" x2="0" y2="18" stroke="#0284C7" stroke-width="1" />
+        <rect x="-65" y="18" width="135" height="46" rx="4" fill="#F0F9FF" stroke="#0284C7" stroke-width="1.2" />
+        <text x="-57" y="32" class="campus-name" fill="#0369A1">4. ALBURY-WOD. (5 trạm)</text>
+        <text x="-57" y="46" class="txt-bold" fill="#0284C7">189,0 h | Max 1.091 W/m²</text>
+        <text x="-57" y="58" class="txt" font-size="7.5" fill="#075985">Biên giới Đông Bắc</text>
+      </g>
+
+      <!-- Campus 3: Shepparton (North-Central: x in [224..364], y in [108..154]) -->
+      <g transform="translate(210, 130)">
+        <circle cx="0" cy="0" r="8" fill="#F59E0B" stroke="#D97706" stroke-width="2" />
+        <line x1="0" y1="0" x2="14" y2="0" stroke="#F59E0B" stroke-width="1" />
+        <rect x="14" y="-22" width="140" height="46" rx="4" fill="#FEF3C7" stroke="#F59E0B" stroke-width="1.2" />
+        <text x="22" y="-8" class="campus-name" fill="#B45309">3. SHEPPARTON (1 trạm)</text>
+        <text x="22" y="6" class="txt-bold" fill="#D97706">238,0 h | Max 1.088 W/m²</text>
+        <text x="22" y="18" class="txt" font-size="7.5" fill="#78350F">Thung lũng Goulburn</text>
+      </g>
+
+      <!-- Campus 2: Bendigo (Central-West: x in [15..150], y in [204..250]) -->
+      <g transform="translate(110, 190)">
+        <circle cx="0" cy="0" r="8" fill="#EA580C" stroke="#C2410C" stroke-width="2" />
+        <line x1="0" y1="0" x2="0" y2="14" stroke="#EA580C" stroke-width="1" />
+        <rect x="-95" y="14" width="135" height="46" rx="4" fill="#FFF7ED" stroke="#EA580C" stroke-width="1.2" />
+        <text x="-87" y="28" class="campus-name" fill="#C2410C">2. BENDIGO (8 trạm)</text>
+        <text x="-87" y="42" class="txt-bold" fill="#EA580C">282,0 h | Max 1.095 W/m²</text>
+        <text x="-87" y="54" class="txt" font-size="7.5" fill="#9A3412">Nội địa trung tâm</text>
+      </g>
+
+      <!-- Campus 5: Bundoora (Melbourne South-East: x in [254..409], y in [255..301]) -->
+      <g transform="translate(240, 270)">
+        <circle cx="0" cy="0" r="8" fill="#64748B" stroke="#334155" stroke-width="2" />
+        <line x1="0" y1="0" x2="14" y2="0" stroke="#64748B" stroke-width="1" />
+        <rect x="14" y="-15" width="155" height="46" rx="4" fill="#F8FAFC" stroke="#64748B" stroke-width="1.2" />
+        <text x="22" y="-1" class="campus-name" fill="#334155">5. BUNDOORA (27 trạm)</text>
+        <text x="22" y="13" class="txt-bold" fill="#475569">126,0 h | Max 1.081 W/m²</text>
+        <text x="22" y="25" class="txt" font-size="7.5" fill="#475569">Melbourne duyên hải ôn đới</text>
+      </g>
+    </g>
+
+    <!-- Bottom summary box -->
+    <g transform="translate(15, 425)">
+      <rect width="440" height="85" rx="5" fill="#FFFBEB" stroke="#FDE68A" />
+      <text x="12" y="18" class="txt-bold" fill="#92400E">ĐẶC TRƯNG VI KHÍ HẬU 5 KHUÔN VIÊN:</text>
+      <text x="12" y="35" class="txt">• <tspan class="txt-bold" fill="#B91C1C">Mildura (Outback):</tspan> Đỉnh cao nhất (374 h/trạm), bức xạ nền lớn.</text>
+      <text x="12" y="52" class="txt">• <tspan class="txt-bold" fill="#C2410C">Bendigo &amp; Shepparton:</tspan> Thường xuyên có mây đối lưu nhiệt trưa hè.</text>
+      <text x="12" y="69" class="txt">• <tspan class="txt-bold" fill="#475569">Bundoora (Melbourne):</tspan> Duyên hải ẩm ướt làm giảm số giờ đỉnh (126 h).</text>
+    </g>
+  </g>
+
+  <!-- Right Column: Bar Chart & Comparison -->
+  <g transform="translate(510, 75)">
+    <rect width="530" height="525" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.5" />
+    <rect width="530" height="34" rx="8" fill="#FEF2F2" />
+    <text x="265" y="22" text-anchor="middle" class="box-title" fill="#991B1B">SỐ GIỜ OVER-IRRADIANCE TRUNG BÌNH TRÊN MỖI TRẠM (28 THÁNG)</text>
+
+    <!-- Bar Chart Canvas -->
+    <g transform="translate(25, 48)">
+      <!-- Background Grid Reference Line (Drawn behind bars) -->
+      <line x1="240" y1="15" x2="240" y2="280" stroke="#E9D5FF" stroke-width="1.5" stroke-dasharray="3 3" />
+
+      <!-- Mildura Bar -->
+      <text x="95" y="44" text-anchor="end" class="txt-bold" fill="#B91C1C">Mildura (1 trạm)</text>
+      <rect x="105" y="26" width="245" height="26" rx="4" fill="#EF4444" />
+      <text x="358" y="43" class="val-lbl" fill="#B91C1C">374,0 h (Max 1.109 W/m²)</text>
+
+      <!-- Bendigo Bar -->
+      <text x="95" y="96" text-anchor="end" class="txt-bold" fill="#C2410C">Bendigo (8 trạm)</text>
+      <rect x="105" y="78" width="185" height="26" rx="4" fill="#EA580C" />
+      <text x="298" y="95" class="val-lbl" fill="#C2410C">282,0 h (Max 1.095 W/m²)</text>
+
+      <!-- Shepparton Bar -->
+      <text x="95" y="148" text-anchor="end" class="txt-bold" fill="#B45309">Shepparton (1 trạm)</text>
+      <rect x="105" y="130" width="156" height="26" rx="4" fill="#F59E0B" />
+      <text x="269" y="147" class="val-lbl" fill="#B45309">238,0 h (Max 1.088 W/m²)</text>
+
+      <!-- Albury-Wodonga Bar -->
+      <text x="95" y="200" text-anchor="end" class="txt-bold" fill="#0369A1">Albury-Wod. (5 trạm)</text>
+      <rect x="105" y="182" width="124" height="26" rx="4" fill="#0284C7" />
+      <text x="237" y="199" class="val-lbl" fill="#0369A1">189,0 h (Max 1.091 W/m²)</text>
+
+      <!-- Bundoora Bar -->
+      <text x="95" y="252" text-anchor="end" class="txt-bold" fill="#334155">Bundoora (27 trạm)</text>
+      <rect x="105" y="234" width="82" height="26" rx="4" fill="#64748B" />
+      <text x="195" y="251" class="val-lbl" fill="#334155">126,0 h (Max 1.081 W/m²)</text>
+
+      <!-- Average Benchmark Badge -->
+      <rect x="125" y="282" width="230" height="24" rx="4" fill="#FAF5FF" stroke="#C084FC" />
+      <text x="240" y="298" text-anchor="middle" class="txt-bold" font-size="9" fill="#7E22CE">Trung bình toàn hệ thống: 171,8 giờ/trạm</text>
+    </g>
+
+    <!-- Analytical Takeaways Box -->
+    <g transform="translate(15, 380)">
+      <rect width="500" height="130" rx="6" fill="#F8FAFC" stroke="#E2E8F0" />
+      <text x="12" y="20" class="txt-bold" fill="#0F172A">NHẬN XÉT ĐẶC ĐIỂM VI KHÍ HẬU &amp; Ý NGHĨA DỮ LIỆU:</text>
+      <text x="12" y="38" class="txt">• <tspan class="txt-bold" fill="#B91C1C">Mildura cao gấp 3 lần Bundoora:</tspan> Vùng bán khô hạn gần sa mạc có độ trong khí quyển cực lớn.</text>
+      <text x="12" y="56" class="txt">• <tspan class="txt-bold">Mây nhiệt đối lưu mùa hè:</tspan> Các trạm nội địa (Bendigo, Shepparton) thường xuyên hình thành mây tích</text>
+      <text x="12" y="72" class="txt">  Cumulus vào đầu giờ chiều sau các đợt bốc hơi nhiệt, tạo hiệu ứng hội tụ mép mây dày đặc.</text>
+      <text x="12" y="90" class="txt">• <tspan class="txt-bold">Bundoora (Melbourne):</tspan> Độ ẩm duyên hải cao và sương mù mùa đông làm giảm tỷ lệ Over-irradiance.</text>
+      <text x="12" y="110" class="txt-bold" fill="#0369A1">→ Khẳng định tính đa dạng vi khí hậu của bộ dữ liệu UNISOLAR 42 trạm.</text>
+    </g>
+  </g>
+</svg>

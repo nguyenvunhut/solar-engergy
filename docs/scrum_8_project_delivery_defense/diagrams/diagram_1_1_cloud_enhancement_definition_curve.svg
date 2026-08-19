@@ -1,0 +1,201 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1060 620" width="100%" height="100%">
+  <defs>
+    <style>
+      .hdr { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13.5px; font-weight: 700; fill: #F8FAFC; }
+      .subhdr { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; fill: #94A3B8; }
+      .box-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11.5px; font-weight: 700; }
+      .txt { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 9.5px; fill: #334155; }
+      .txt-bold { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 9.5px; font-weight: 700; fill: #0F172A; }
+      .axis-lbl { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 9.5px; fill: #64748B; }
+      .formula { font-family: "Courier New", Courier, monospace; font-size: 9.5px; font-weight: 700; }
+    </style>
+    <linearGradient id="clearSkyGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#3B82F6" stop-opacity="0.25" />
+      <stop offset="100%" stop-color="#3B82F6" stop-opacity="0.02" />
+    </linearGradient>
+    <linearGradient id="spikeGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#EF4444" stop-opacity="0.45" />
+      <stop offset="100%" stop-color="#F59E0B" stop-opacity="0.05" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1060" height="620" fill="#F8FAFC" rx="10" />
+
+  <!-- Header Banner -->
+  <rect x="20" y="15" width="1020" height="48" rx="8" fill="#0F172A" />
+  <text x="530" y="35" text-anchor="middle" class="hdr">TRỰC QUAN HÓA HIỆN TƯỢNG CLOUD ENHANCEMENT (OVER-IRRADIANCE) VS ĐƯỜNG TRỜI QUANG</text>
+  <text x="530" y="51" text-anchor="middle" class="subhdr">Giải thích bản chất: Bức xạ thực tế vọt đỉnh 1.200 – 1.400 W/m² (CSI = 1.15 – 1.45) vượt giới hạn lý thuyết khí quyển</text>
+
+  <!-- Left: Main Large Intuitive Chart -->
+  <g transform="translate(20, 75)">
+    <rect width="670" height="525" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.5" />
+    
+    <!-- Title bar -->
+    <rect width="670" height="34" rx="8" fill="#F8FAFC" />
+    <text x="335" y="22" text-anchor="middle" class="box-title" fill="#0F172A">DIỄN BIẾN BỨC XẠ TOÀN PHẦN MẶT NGANG (GHI) TRONG NGÀY CÓ MÂY TÍCH CUMULUS</text>
+
+    <!-- Legend Bar at top of chart -->
+    <g transform="translate(30, 42)">
+      <!-- Clear Sky Legend -->
+      <line x1="0" y1="8" x2="25" y2="8" stroke="#2563EB" stroke-width="3" />
+      <text x="32" y="12" class="txt-bold" fill="#1D4ED8">Đường Trời Quang Lý Thuyết (CSI = 1.0)</text>
+
+      <!-- Cloud Enhancement Legend -->
+      <line x1="260" y1="8" x2="285" y2="8" stroke="#EA580C" stroke-width="2.5" />
+      <circle cx="272" cy="8" r="3.5" fill="#DC2626" />
+      <text x="292" y="12" class="txt-bold" fill="#C2410C">Bức Xạ Thực Tế Đo Được (GHI thực)</text>
+
+      <!-- STC Limit Legend -->
+      <line x1="500" y1="8" x2="525" y2="8" stroke="#DC2626" stroke-width="1.5" stroke-dasharray="3 3" />
+      <text x="532" y="12" class="txt-bold" fill="#B91C1C">Chuẩn STC (1.000)</text>
+    </g>
+
+    <!-- Graph Canvas Area -->
+    <g transform="translate(65, 75)">
+      <!-- Horizontal Reference Gridlines -->
+      <line x1="0" y1="340" x2="575" y2="340" stroke="#CBD5E1" stroke-width="1.5" />
+      <line x1="0" y1="272" x2="575" y2="272" stroke="#F1F5F9" stroke-width="1" />
+      <line x1="0" y1="204" x2="575" y2="204" stroke="#F1F5F9" stroke-width="1" />
+      <line x1="0" y1="136" x2="575" y2="136" stroke="#F1F5F9" stroke-width="1" />
+      <line x1="0" y1="68" x2="575" y2="68" stroke="#F1F5F9" stroke-width="1" />
+      <line x1="0" y1="0" x2="575" y2="0" stroke="#F1F5F9" stroke-width="1" />
+
+      <!-- Y-Axis Numeric Labels -->
+      <text x="-12" y="344" text-anchor="end" class="axis-lbl">0</text>
+      <text x="-12" y="276" text-anchor="end" class="axis-lbl">300</text>
+      <text x="-12" y="208" text-anchor="end" class="axis-lbl">600</text>
+      <text x="-12" y="140" text-anchor="end" class="axis-lbl">900</text>
+      <text x="-12" y="116" text-anchor="end" class="axis-lbl" font-weight="700" fill="#DC2626">1.000 STC</text>
+      <text x="-12" y="72" text-anchor="end" class="axis-lbl" font-weight="700" fill="#D97706">1.200</text>
+      <text x="-12" y="4" text-anchor="end" class="axis-lbl" font-weight="700" fill="#B91C1C">1.500 W/m²</text>
+
+      <!-- Solar Constant Reference Line (1.361 W/m2 at y=31) -->
+      <line x1="0" y1="31" x2="575" y2="31" stroke="#9333EA" stroke-width="1.2" stroke-dasharray="3 3" />
+      <rect x="330" y="21" width="240" height="18" rx="3" fill="#FAF5FF" stroke="#E9D5FF" />
+      <text x="450" y="34" text-anchor="middle" class="txt-bold" font-size="8.5" fill="#7E22CE">Hằng số Mặt Trời ngoài khí quyển G_sc = 1.361 W/m²</text>
+
+      <!-- STC Line (1.000 W/m2 at y=113) -->
+      <line x1="0" y1="113" x2="575" y2="113" stroke="#DC2626" stroke-width="1.5" stroke-dasharray="4 4" />
+
+      <!-- Area Under Theoretical Curve -->
+      <path d="M 30 340 Q 287 95 545 340 Z" fill="url(#clearSkyGrad)" />
+
+      <!-- Theoretical Clear-Sky Parabola Line -->
+      <path d="M 30 340 Q 287 95 545 340" fill="none" stroke="#2563EB" stroke-width="2.5" />
+
+      <!-- Area Under Over-irradiance Spikes -->
+      <path d="M 215 155 
+               L 240 38 
+               L 255 165 
+               L 275 22 
+               L 290 180 
+               L 310 16 
+               L 328 190 
+               L 350 35 
+               L 368 150 Z" fill="url(#spikeGrad)" />
+
+      <!-- Actual Real-world Curve with Spikes & Shadow Dips -->
+      <path d="M 30 340 
+               Q 100 290 140 235 
+               L 160 270 
+               L 175 205 
+               L 190 300 
+               L 215 155 
+               L 240 38 
+               L 255 255 
+               L 275 22 
+               L 290 285 
+               L 310 16 
+               L 328 300 
+               L 350 35 
+               L 368 150 
+               L 385 275 
+               L 415 190 
+               L 455 250 
+               Q 505 310 545 340" 
+            fill="none" stroke="#EA580C" stroke-width="2.5" />
+
+      <!-- Spikes Peak Markers -->
+      <circle cx="240" cy="38" r="4" fill="#DC2626" stroke="#FFFFFF" stroke-width="1.5" />
+      <circle cx="275" cy="22" r="4" fill="#DC2626" stroke="#FFFFFF" stroke-width="1.5" />
+      <circle cx="310" cy="16" r="4.5" fill="#DC2626" stroke="#FFFFFF" stroke-width="1.5" />
+      <circle cx="350" cy="35" r="4" fill="#DC2626" stroke="#FFFFFF" stroke-width="1.5" />
+
+      <!-- Callout 1: Peak Over-irradiance (Clear isolated box with leader line) -->
+      <line x1="310" y1="16" x2="310" y2="-12" stroke="#DC2626" stroke-width="1.5" />
+      <rect x="175" y="-30" width="270" height="22" rx="4" fill="#FEF2F2" stroke="#DC2626" stroke-width="1.5" />
+      <text x="310" y="-15" text-anchor="middle" class="txt-bold" font-size="9" fill="#B91C1C">⚡ XUNG CLOUD ENHANCEMENT: 1.380 W/m² (CSI = 1,38)</text>
+
+      <!-- Callout 2: Cloud Shadow Dip (Clear isolated box) -->
+      <rect x="235" y="305" width="150" height="22" rx="4" fill="#F1F5F9" stroke="#64748B" stroke-width="1" />
+      <text x="310" y="320" text-anchor="middle" class="txt-bold" font-size="8.5" fill="#475569">☁️ Vùng bóng mây che (Dips)</text>
+
+      <!-- X-Axis Timestamps -->
+      <text x="30" y="360" text-anchor="middle" class="axis-lbl">06:00 (Bình minh)</text>
+      <text x="120" y="360" text-anchor="middle" class="axis-lbl">08:30</text>
+      <text x="210" y="360" text-anchor="middle" class="axis-lbl">11:00</text>
+      <text x="287" y="360" text-anchor="middle" class="txt-bold" font-size="9.5" fill="#0F172A">12:30 (Giữa trưa)</text>
+      <text x="375" y="360" text-anchor="middle" class="axis-lbl">14:30</text>
+      <text x="460" y="360" text-anchor="middle" class="axis-lbl">17:00</text>
+      <text x="545" y="360" text-anchor="middle" class="axis-lbl">19:30 (Hoàng hôn)</text>
+
+      <!-- Bottom Explanation Ribbon Inside Canvas -->
+      <rect x="15" y="380" width="545" height="52" rx="5" fill="#FFFBEB" stroke="#FDE68A" />
+      <text x="25" y="398" class="txt-bold" fill="#92400E">BẢN CHẤT QUANG HỌC:</text>
+      <text x="25" y="414" class="txt">Đĩa Mặt Trời nằm giữa khe mây (Trực xạ DNI nguyên vẹn) + Mép mây trắng Cumulus phản xạ hội tụ</text>
+      <text x="25" y="425" class="txt">thêm hàng triệu photon $\rightarrow$ Bức xạ tổng cộng $GHI$ vọt lên cao hơn hẳn ngày không mây!</text>
+    </g>
+  </g>
+
+  <!-- Right: 3 Concept Breakdown Cards -->
+  <g transform="translate(705, 75)">
+    <rect width="335" height="525" rx="8" fill="#FFFFFF" stroke="#0284C7" stroke-width="1.5" />
+    <rect width="335" height="34" rx="8" fill="#F0F9FF" />
+    <text x="167" y="22" text-anchor="middle" class="box-title" fill="#0369A1">ĐỊNH LƯỢNG VỚI CHỈ SỐ CSI</text>
+
+    <!-- Card 1: CSI Definition -->
+    <g transform="translate(15, 45)">
+      <rect width="305" height="65" rx="6" fill="#F8FAFC" stroke="#E2E8F0" />
+      <text x="12" y="20" class="txt-bold" fill="#0F172A">CHỈ SỐ BẦU TRỜI QUANG (CLEAR-SKY INDEX):</text>
+      <rect x="25" y="28" width="255" height="24" rx="4" fill="#EFF6FF" stroke="#BFDBFE" />
+      <text x="152" y="44" text-anchor="middle" class="formula" fill="#1D4ED8">CSI = GHI_thực_đo / GHI_trời_quang</text>
+    </g>
+
+    <!-- Card 2: 3 Meteorological Regimes -->
+    <g transform="translate(15, 120)">
+      <rect width="305" height="255" rx="6" fill="#FFFFFF" stroke="#CBD5E1" />
+      <rect width="305" height="26" rx="6" fill="#F1F5F9" />
+      <text x="12" y="17" class="txt-bold" fill="#334155">3 TRẠNG THÁI KHÍ TƯỢNG BỨC XẠ:</text>
+      
+      <!-- State 1 -->
+      <text x="12" y="45" class="txt-bold" fill="#2563EB">1. Ngày Trời Trong (Clear Sky):</text>
+      <text x="12" y="60" class="txt">• <tspan class="txt-bold">CSI = 0,95 – 1,00</tspan> (Đường cong Parabol chuẩn)</text>
+      <text x="12" y="74" class="txt">• Bức xạ cực đại giữa trưa ≈ 950 – 1.050 W/m²</text>
+
+      <!-- State 2 -->
+      <text x="12" y="100" class="txt-bold" fill="#64748B">2. Mây Mù U Ám / Mưa Dày (Overcast):</text>
+      <text x="12" y="115" class="txt">• <tspan class="txt-bold">CSI = 0,10 – 0,40</tspan> (Mất hoàn toàn trực xạ DNI)</text>
+      <text x="12" y="129" class="txt">• Bức xạ chỉ còn 100 – 350 W/m² khuếch tán</text>
+
+      <!-- State 3 -->
+      <text x="12" y="155" class="txt-bold" fill="#DC2626">3. Cloud Enhancement (Mép Mây Hội Tụ):</text>
+      <text x="12" y="170" class="txt">• <tspan class="txt-bold" fill="#DC2626">CSI = 1,15 – 1,45 (VƯỢT NGƯỠNG LÝ THUYẾT!)</tspan></text>
+      <text x="12" y="185" class="txt">• Bức xạ vọt lên: <tspan class="txt-bold">1.150 – 1.400 W/m²</tspan></text>
+      <text x="12" y="199" class="txt">• Dao động xung cực mạnh trong 1 – 15 phút</text>
+      <text x="12" y="213" class="txt">• Sinh điện tức thời vượt công suất danh định STC</text>
+      <text x="12" y="235" class="txt-bold" fill="#B91C1C">→ Tạo ra hiện tượng PR tức thời &gt; 100%</text>
+    </g>
+
+    <!-- Card 3: Data Engineering Verdict -->
+    <g transform="translate(15, 385)">
+      <rect width="305" height="125" rx="6" fill="#ECFDF5" stroke="#A7F3D0" />
+      <text x="12" y="20" class="txt-bold" fill="#065F46">NGUYÊN TẮC DATA SCIENCE &amp; DWH:</text>
+      <text x="12" y="38" class="txt">• <tspan class="txt-bold" fill="#047857">100% là quá trình vật lý quang học thật</tspan>, không phải</text>
+      <text x="12" y="52" class="txt">  lỗi đo đếm của cảm biến Pyranometer.</text>
+      <text x="12" y="70" class="txt">• <tspan class="txt-bold" fill="#B91C1C">TUYỆT ĐỐI KHÔNG XÓA BỎ:</tspan> Giữ nguyên phân phối</text>
+      <text x="12" y="84" class="txt">  thống kê để huấn luyện mô hình ML dự báo phụ tải đỉnh</text>
+      <text x="12" y="98" class="txt">  và rủi ro ngắt Inverter do quá công suất.</text>
+    </g>
+  </g>
+</svg>

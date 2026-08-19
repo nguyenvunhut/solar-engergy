@@ -1,0 +1,167 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1060 580" width="100%" height="100%">
+  <defs>
+    <style>
+      .hdr { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13.5px; font-weight: 700; fill: #F8FAFC; }
+      .subhdr { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; fill: #94A3B8; }
+      .box-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11.5px; font-weight: 700; }
+      .txt { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 9.5px; fill: #334155; }
+      .txt-bold { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 9.5px; font-weight: 700; fill: #0F172A; }
+      .loss-val { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 10px; font-weight: 700; fill: #DC2626; }
+      .step-lbl { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 9px; font-weight: 700; fill: #0F172A; }
+      .step-sub { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 8px; fill: #64748B; }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1060" height="580" fill="#F8FAFC" rx="10" />
+
+  <!-- Header Banner -->
+  <rect x="20" y="15" width="1020" height="46" rx="8" fill="#0F172A" />
+  <text x="530" y="34" text-anchor="middle" class="hdr">CÂY PHÂN RÃ SUY HAO NĂNG LƯỢNG QUANG ĐIỆN (PV LOSS TREE WATERFALL - IEC 61724-1)</text>
+  <text x="530" y="50" text-anchor="middle" class="subhdr">Minh chứng vật lý vì sao PR tích lũy dài hạn luôn giảm từ 100% xuống dải thực tế 78% – 85%</text>
+
+  <!-- Main Waterfall Canvas -->
+  <g transform="translate(20, 75)">
+    <rect width="1020" height="485" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.5" />
+    <rect width="1020" height="32" rx="8" fill="#F8FAFC" />
+    <text x="510" y="21" text-anchor="middle" class="box-title" fill="#0F172A">DÒNG CHẢY SUY HAO TỔNG HÒA QUA CÁC TẦNG PHẦN CỨNG &amp; MÔI TRƯỜNG</text>
+
+    <!-- Waterfall Steps Flow -->
+    <g transform="translate(20, 45)">
+      
+      <!-- Baseline horizontal gridlines -->
+      <line x1="0" y1="310" x2="980" y2="310" stroke="#CBD5E1" stroke-width="1" />
+      <line x1="0" y1="230" x2="980" y2="230" stroke="#F1F5F9" stroke-width="1" />
+      <line x1="0" y1="150" x2="980" y2="150" stroke="#F1F5F9" stroke-width="1" />
+      <line x1="0" y1="70" x2="980" y2="70" stroke="#F1F5F9" stroke-width="1" />
+
+      <!-- Step 0: 100% STC Initial (x=10, w=85, y=10..310) -->
+      <g transform="translate(10, 0)">
+        <rect x="0" y="10" width="85" height="300" rx="5" fill="#2563EB" />
+        <text x="42" y="35" text-anchor="middle" class="txt-bold" font-size="11" fill="#FFFFFF">100,0%</text>
+        <text x="42" y="55" text-anchor="middle" class="txt" font-size="8.5" fill="#DBEAFE">Bức xạ STC</text>
+        <text x="42" y="70" text-anchor="middle" class="txt" font-size="8.5" fill="#DBEAFE">Danh định</text>
+
+        <!-- Bottom Label Card (Aligned baseline at y=325) -->
+        <rect x="-2" y="325" width="89" height="42" rx="4" fill="#EFF6FF" stroke="#BFDBFE" />
+        <text x="42" y="342" text-anchor="middle" class="step-lbl" fill="#1E40AF">1. Bức xạ STC</text>
+        <text x="42" y="357" text-anchor="middle" class="step-sub">1.000 W/m²</text>
+      </g>
+
+      <!-- Connector 0->1 -->
+      <line x1="95" y1="10" x2="115" y2="10" stroke="#94A3B8" stroke-dasharray="2 2" />
+
+      <!-- Loss 1: IAM Optical Reflection (-3.0%) (x=115, w=85, y=10..22) -->
+      <g transform="translate(115, 0)">
+        <rect x="0" y="10" width="85" height="15" rx="3" fill="#FCA5A5" stroke="#EF4444" />
+        <text x="42" y="22" text-anchor="middle" class="loss-val">-3,0%</text>
+
+        <rect x="-2" y="325" width="89" height="42" rx="4" fill="#FEF2F2" stroke="#FECACA" />
+        <text x="42" y="342" text-anchor="middle" class="step-lbl" fill="#991B1B">2. Góc tới IAM</text>
+        <text x="42" y="357" text-anchor="middle" class="step-sub">Phản xạ kính</text>
+      </g>
+
+      <!-- Connector 1->2 -->
+      <line x1="200" y1="25" x2="220" y2="25" stroke="#94A3B8" stroke-dasharray="2 2" />
+
+      <!-- Loss 2: Soiling & Dust (-3.0%) (x=220, w=85, y=25..40) -->
+      <g transform="translate(220, 0)">
+        <rect x="0" y="25" width="85" height="15" rx="3" fill="#FCA5A5" stroke="#EF4444" />
+        <text x="42" y="37" text-anchor="middle" class="loss-val">-3,0%</text>
+
+        <rect x="-2" y="325" width="89" height="42" rx="4" fill="#FEF2F2" stroke="#FECACA" />
+        <text x="42" y="342" text-anchor="middle" class="step-lbl" fill="#991B1B">3. Bám bụi Soiling</text>
+        <text x="42" y="357" text-anchor="middle" class="step-sub">Bụi bề mặt</text>
+      </g>
+
+      <!-- Connector 2->3 -->
+      <line x1="305" y1="40" x2="325" y2="40" stroke="#94A3B8" stroke-dasharray="2 2" />
+
+      <!-- Loss 3: Thermal Derating (-12.0%) (x=325, w=95, y=40..85) -->
+      <g transform="translate(325, 0)">
+        <rect x="0" y="40" width="95" height="45" rx="3" fill="#EF4444" stroke="#B91C1C" />
+        <text x="47" y="58" text-anchor="middle" class="loss-val" fill="#FFFFFF">-8,5% ~ -14,8%</text>
+        <text x="47" y="73" text-anchor="middle" class="txt" font-size="7.5" fill="#FEE2E2">Nhiệt độ cell hè</text>
+
+        <rect x="-2" y="325" width="99" height="42" rx="4" fill="#FEF2F2" stroke="#EF4444" />
+        <text x="47" y="342" text-anchor="middle" class="step-lbl" fill="#B91C1C">4. Suy hao Nhiệt</text>
+        <text x="47" y="357" text-anchor="middle" class="step-sub">T_cell &gt; 50°C</text>
+      </g>
+
+      <!-- Connector 3->4 -->
+      <line x1="420" y1="85" x2="440" y2="85" stroke="#94A3B8" stroke-dasharray="2 2" />
+
+      <!-- Loss 4: Module Mismatch (-2.0%) (x=440, w=85, y=85..97) -->
+      <g transform="translate(440, 0)">
+        <rect x="0" y="85" width="85" height="12" rx="3" fill="#FCA5A5" stroke="#EF4444" />
+        <text x="42" y="95" text-anchor="middle" class="loss-val">-2,0%</text>
+
+        <rect x="-2" y="325" width="89" height="42" rx="4" fill="#FEF2F2" stroke="#FECACA" />
+        <text x="42" y="342" text-anchor="middle" class="step-lbl" fill="#991B1B">5. Sai lệch String</text>
+        <text x="42" y="357" text-anchor="middle" class="step-sub">Mismatch PV</text>
+      </g>
+
+      <!-- Connector 4->5 -->
+      <line x1="525" y1="97" x2="545" y2="97" stroke="#94A3B8" stroke-dasharray="2 2" />
+
+      <!-- Loss 5: DC/AC Ohmic Cable Resistance (-1.5%) (x=545, w=85, y=97..107) -->
+      <g transform="translate(545, 0)">
+        <rect x="0" y="97" width="85" height="10" rx="3" fill="#FCA5A5" stroke="#EF4444" />
+        <text x="42" y="106" text-anchor="middle" class="loss-val">-1,5%</text>
+
+        <rect x="-2" y="325" width="89" height="42" rx="4" fill="#FEF2F2" stroke="#FECACA" />
+        <text x="42" y="342" text-anchor="middle" class="step-lbl" fill="#991B1B">6. Cáp DC/AC</text>
+        <text x="42" y="357" text-anchor="middle" class="step-sub">Điện trở I²R</text>
+      </g>
+
+      <!-- Connector 5->6 -->
+      <line x1="630" y1="107" x2="650" y2="107" stroke="#94A3B8" stroke-dasharray="2 2" />
+
+      <!-- Loss 6: Inverter Inefficiency (-2.5%) (x=650, w=85, y=107..120) -->
+      <g transform="translate(650, 0)">
+        <rect x="0" y="107" width="85" height="13" rx="3" fill="#FCA5A5" stroke="#EF4444" />
+        <text x="42" y="118" text-anchor="middle" class="loss-val">-2,5%</text>
+
+        <rect x="-2" y="325" width="89" height="42" rx="4" fill="#FEF2F2" stroke="#FECACA" />
+        <text x="42" y="342" text-anchor="middle" class="step-lbl" fill="#991B1B">7. Nghịch lưu</text>
+        <text x="42" y="357" text-anchor="middle" class="step-sub">Hiệu suất Inverter</text>
+      </g>
+
+      <!-- Connector 6->7 -->
+      <line x1="735" y1="120" x2="755" y2="120" stroke="#94A3B8" stroke-dasharray="2 2" />
+
+      <!-- Loss 7: Inverter Clipping (-2.3%) (x=755, w=85, y=120..132) -->
+      <g transform="translate(755, 0)">
+        <rect x="0" y="120" width="85" height="12" rx="3" fill="#FCA5A5" stroke="#EF4444" />
+        <text x="42" y="130" text-anchor="middle" class="loss-val">-2,3%</text>
+
+        <rect x="-2" y="325" width="89" height="42" rx="4" fill="#FEF2F2" stroke="#FECACA" />
+        <text x="42" y="342" text-anchor="middle" class="step-lbl" fill="#991B1B">8. Xén Clipping</text>
+        <text x="42" y="357" text-anchor="middle" class="step-sub">ILR 1.25 quá tải</text>
+      </g>
+
+      <!-- Connector 7->8 -->
+      <line x1="840" y1="132" x2="865" y2="132" stroke="#94A3B8" stroke-dasharray="2 2" />
+
+      <!-- Final Result: 81.5% Net PR Output (x=865, w=95, y=132..310) -->
+      <g transform="translate(865, 0)">
+        <rect x="0" y="132" width="95" height="178" rx="5" fill="#10B981" />
+        <text x="47" y="165" text-anchor="middle" class="txt-bold" font-size="12" fill="#FFFFFF">81,5%</text>
+        <text x="47" y="182" text-anchor="middle" class="txt" font-size="8.5" fill="#ECFDF5">(±3,5%)</text>
+        <text x="47" y="210" text-anchor="middle" class="txt" font-size="8.5" fill="#ECFDF5">PR Thực tế</text>
+        <text x="47" y="225" text-anchor="middle" class="txt" font-size="8.5" fill="#ECFDF5">Tích lũy</text>
+
+        <rect x="-2" y="325" width="99" height="42" rx="4" fill="#ECFDF5" stroke="#A7F3D0" />
+        <text x="47" y="342" text-anchor="middle" class="step-lbl" fill="#065F46">9. PR Lũy kế Thực</text>
+        <text x="47" y="357" text-anchor="middle" class="step-sub" fill="#047857">Chuẩn Class A</text>
+      </g>
+    </g>
+
+    <!-- Bottom Conclusion Banner -->
+    <g transform="translate(20, 420)">
+      <rect width="980" height="50" rx="6" fill="#ECFDF5" stroke="#A7F3D0" />
+      <text x="15" y="20" class="txt-bold" fill="#065F46">KẾT LUẬN VẬT LÝ TUYỆT ĐỐI:</text>
+      <text x="15" y="36" class="txt" fill="#047857">Toàn bộ chuỗi 7 tầng suy hao phần cứng và môi trường luôn lấy đi tổng cộng từ <tspan class="txt-bold" fill="#B91C1C">15,5% đến 23,5%</tspan> tiềm năng quang năng ban đầu. Do đó, trong chu kỳ tích lũy dài hạn (Tháng/Năm), <tspan class="txt-bold" fill="#065F46">Hệ số PR BẮT BUỘC &lt; 100%</tspan> (thường dao động từ 78% đến 85% cho các trạm vận hành tốt).</text>
+    </g>
+  </g>
+</svg>

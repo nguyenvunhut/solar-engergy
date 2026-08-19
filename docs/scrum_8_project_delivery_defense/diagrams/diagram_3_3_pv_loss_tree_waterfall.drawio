@@ -1,0 +1,11 @@
+<mxfile host="app.diagrams.net" modified="2026-08-19T22:23:00.000Z" agent="Mozilla/5.0" version="21.0.0" type="device">
+  <diagram id="diag-3-3-loss-tree" name="3.3 PV Loss Tree Waterfall">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850">
+      <root>
+        <mxCell id="0" /><mxCell id="1" parent="0" />
+        <mxCell id="hdr" value="&lt;b&gt;CÂY PHÂN RÃ SUY HAO NĂNG LƯỢNG QUANG ĐIỆN (PV LOSS TREE WATERFALL - IEC 61724-1)&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#0F172A;fontColor=#F8FAFC;fontSize=14;" vertex="1" parent="1"><mxGeometry x="20" y="15" width="1020" height="46" as="geometry" /></mxCell>
+        <mxCell id="c1" value="&lt;b&gt;DÒNG CHẢY SUY HAO TỔNG HÒA QUA CÁC TẦNG PHẦN CỨNG &amp; MÔI TRƯỜNG&lt;/b&gt;&lt;br&gt;&lt;br&gt;1. Bức xạ STC ban đầu: 100,0%&lt;br&gt;2. Suy hao Góc tới IAM (Phản xạ kính): -3,0%&lt;br&gt;3. Suy hao Bám bụi Soiling: -3,0%&lt;br&gt;4. Suy hao Nhiệt độ (Thermal Derating mùa hè): -8,5% đến -14,8%&lt;br&gt;5. Sai lệch Mismatch dải String: -2,0%&lt;br&gt;6. Điện trở cáp DC/AC (I²R Ohmic): -1,5%&lt;br&gt;7. Tổn thất nghịch lưu Inverter: -2,5%&lt;br&gt;8. Tổn thất xén công suất Clipping: -2,3%&lt;br&gt;&lt;br&gt;→ &lt;b&gt;PR TÍCH LŨY DÀI HẠN THỰC TẾ = 81,5% (±3,5%)&lt;/b&gt; (BẮT BUỘC &lt; 100%)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#CBD5E1;align=left;spacingLeft=12;verticalAlign=top;" vertex="1" parent="1"><mxGeometry x="20" y="75" width="1020" height="465" as="geometry" /></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

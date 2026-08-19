@@ -1,0 +1,153 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1060 620" width="100%" height="100%">
+  <defs>
+    <style>
+      .hdr { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13.5px; font-weight: 700; fill: #F8FAFC; }
+      .subhdr { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; fill: #94A3B8; }
+      .box-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11.5px; font-weight: 700; }
+      .txt { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 9.5px; fill: #334155; }
+      .txt-bold { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 9.5px; font-weight: 700; fill: #0F172A; }
+      .formula { font-family: "Courier New", Courier, monospace; font-size: 10px; font-weight: 700; }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1060" height="620" fill="#F8FAFC" rx="10" />
+
+  <!-- Header Banner -->
+  <rect x="20" y="15" width="1020" height="46" rx="8" fill="#0F172A" />
+  <text x="530" y="34" text-anchor="middle" class="hdr">CƠ CHẾ QUANG HỌC HIỆU ỨNG HỘI TỤ PHẢN XẠ MÉP MÂY (CLOUD ENHANCEMENT EFFECT)</text>
+  <text x="530" y="50" text-anchor="middle" class="subhdr">Hiện tượng bức xạ mặt đất vượt ngưỡng trời quang (Over-irradiance CSI > 1.0) và động học quang học khí quyển</text>
+
+  <!-- Left Column: Optical Physics Diagram -->
+  <g transform="translate(20, 75)">
+    <rect width="500" height="525" rx="8" fill="#FFFFFF" stroke="#D97706" stroke-width="1.5" />
+    <rect width="500" height="34" rx="8" fill="#FEF3C7" />
+    <text x="250" y="22" text-anchor="middle" class="box-title" fill="#B45309">1. CƠ CHẾ VẬT LÝ QUANG HỌC KHÍ QUYỂN (OPTICAL PHENOMENON)</text>
+
+    <!-- Visual Box -->
+    <g transform="translate(20, 48)">
+      <rect width="460" height="260" rx="6" fill="#F0F9FF" stroke="#BAE6FD" />
+
+      <!-- Sun -->
+      <circle cx="230" cy="32" r="20" fill="#FBBF24" stroke="#F59E0B" stroke-width="2.5" />
+      <text x="230" y="37" text-anchor="middle" font-size="15" fill="#78350F">☀️</text>
+      <text x="230" y="62" text-anchor="middle" class="txt-bold" font-size="9" fill="#B45309">Mặt Trời (Solar Disk)</text>
+
+      <!-- Clouds Left & Right -->
+      <!-- Left Cloud -->
+      <g transform="translate(30, 50)">
+        <path d="M 20 60 Q 10 35 35 30 Q 50 15 75 25 Q 100 10 120 30 Q 140 35 135 60 Z" fill="#E2E8F0" stroke="#94A3B8" stroke-width="1.5" />
+        <text x="75" y="46" text-anchor="middle" class="txt-bold" font-size="9" fill="#475569">Mây tích Cumulus</text>
+        <text x="75" y="74" text-anchor="middle" class="txt" font-size="8" fill="#64748B">Mép mây tán xạ Mie</text>
+      </g>
+
+      <!-- Right Cloud -->
+      <g transform="translate(300, 50)">
+        <path d="M 20 60 Q 10 35 35 30 Q 50 15 75 25 Q 100 10 120 30 Q 140 35 135 60 Z" fill="#E2E8F0" stroke="#94A3B8" stroke-width="1.5" />
+        <text x="75" y="46" text-anchor="middle" class="txt-bold" font-size="9" fill="#475569">Mây tích Cumulus</text>
+        <text x="75" y="74" text-anchor="middle" class="txt" font-size="8" fill="#64748B">Phản xạ Albedo cao</text>
+      </g>
+
+      <!-- Ray 1: Direct DNI -->
+      <line x1="230" y1="52" x2="230" y2="185" stroke="#EA580C" stroke-width="3" />
+      <polygon points="230,190 226,182 234,182" fill="#EA580C" />
+      
+      <!-- Direct Ray Label Badge with background to prevent line overlap -->
+      <rect x="155" y="105" width="150" height="20" rx="3" fill="#FFF7ED" stroke="#FDBA74" />
+      <text x="230" y="119" text-anchor="middle" class="txt-bold" font-size="8.5" fill="#C2410C">Trực xạ trực tiếp (DNI · sin h)</text>
+
+      <!-- Ray 2: Left Cloud Edge Reflection -->
+      <line x1="215" y1="42" x2="155" y2="95" stroke="#F59E0B" stroke-width="1.5" stroke-dasharray="3 3" />
+      <line x1="155" y1="95" x2="220" y2="185" stroke="#D97706" stroke-width="2" />
+      <polygon points="220,189 216,181 224,183" fill="#D97706" />
+      <rect x="65" y="145" width="105" height="18" rx="3" fill="#FEF3C7" stroke="#FDE68A" />
+      <text x="117" y="157" text-anchor="middle" class="txt-bold" font-size="8" fill="#92400E">Tán xạ tiến (Mie)</text>
+
+      <!-- Ray 3: Right Cloud Edge Reflection -->
+      <line x1="245" y1="42" x2="305" y2="95" stroke="#F59E0B" stroke-width="1.5" stroke-dasharray="3 3" />
+      <line x1="305" y1="95" x2="240" y2="185" stroke="#D97706" stroke-width="2" />
+      <polygon points="240,189 236,183 244,181" fill="#D97706" />
+      <rect x="290" y="145" width="115" height="18" rx="3" fill="#FEF3C7" stroke="#FDE68A" />
+      <text x="347" y="157" text-anchor="middle" class="txt-bold" font-size="8" fill="#92400E">Phản xạ mép mây</text>
+
+      <!-- Solar Panel on Ground (Clean geometry at y=190..235) -->
+      <g transform="translate(160, 192)">
+        <!-- Ground Line -->
+        <line x1="-50" y1="36" x2="190" y2="36" stroke="#475569" stroke-width="1.5" />
+        <!-- Mount Legs -->
+        <line x1="30" y1="22" x2="30" y2="36" stroke="#64748B" stroke-width="2.5" />
+        <line x1="75" y1="22" x2="75" y2="36" stroke="#64748B" stroke-width="2.5" />
+        <line x1="110" y1="22" x2="110" y2="36" stroke="#64748B" stroke-width="2.5" />
+        <!-- Panel Frame -->
+        <polygon points="10,24 55,5 135,5 90,24" fill="#1E3A8A" stroke="#0284C7" stroke-width="2" />
+        <line x1="32" y1="14" x2="112" y2="14" stroke="#38BDF8" stroke-width="1" />
+        <line x1="55" y1="5" x2="35" y2="24" stroke="#38BDF8" stroke-width="1" />
+        <line x1="95" y1="5" x2="75" y2="24" stroke="#38BDF8" stroke-width="1" />
+      </g>
+
+      <!-- Total Peak Irradiance Badge positioned cleanly at bottom -->
+      <rect x="75" y="232" width="310" height="22" rx="4" fill="#FEF2F2" stroke="#EF4444" stroke-width="1.5" />
+      <text x="230" y="247" text-anchor="middle" class="txt-bold" font-size="9" fill="#B91C1C">GHI = DNI·sin(h) + DHI_enhanced &gt; 1.250 – 1.400 W/m²</text>
+    </g>
+
+    <!-- Key Insights Box -->
+    <g transform="translate(20, 320)">
+      <rect width="460" height="185" rx="6" fill="#FFFBEB" stroke="#FDE68A" />
+      <text x="12" y="20" class="txt-bold" fill="#92400E">ĐẶC TRƯNG QUANG HỌC &amp; VẬT LÝ KHÍ QUYỂN:</text>
+      <text x="12" y="38" class="txt">• <tspan class="txt-bold">Cộng hưởng thấu kính tự nhiên:</tspan> Mép mây trắng tích đối lưu hội tụ bức xạ trực tiếp và tán xạ.</text>
+      <text x="12" y="56" class="txt">• <tspan class="txt-bold">Vượt hằng số mặt trời:</tspan> GHI mặt đất có thể chạm 1.150 - 1.400 W/m² (G_sc = 1.361 W/m²).</text>
+      <text x="12" y="74" class="txt">• <tspan class="txt-bold">Chỉ số trời quang CSI:</tspan> CSI = GHI / GHI_clearsky đạt 1,15 đến 1,45 (Bình thường CSI ≤ 1,0).</text>
+      <text x="12" y="92" class="txt">• <tspan class="txt-bold">Thời gian tồn tại:</tspan> Diễn ra ngắn hạn từ vài chục giây đến 15 - 30 phút theo chuyển động mây.</text>
+      <text x="12" y="110" class="txt">• <tspan class="txt-bold">Loại mây gây ra:</tspan> Cumulus humilis/mediocris (mây tích rời) và Stratocumulus (mây tầng tích).</text>
+      <text x="12" y="128" class="txt">• <tspan class="txt-bold">Tính xác thực dữ liệu:</tspan> Hiện tượng vật lý 100% có thật, tuyệt đối KHÔNG được lọc bỏ coi là lỗi.</text>
+      <text x="12" y="146" class="txt">• <tspan class="txt-bold">Tác động Inverter:</tspan> Có thể gây xén công suất (Inverter Clipping) hoặc quá tải nhiệt tạm thời.</text>
+    </g>
+  </g>
+
+  <!-- Right Column: Performance Ratio > 100% Analysis -->
+  <g transform="translate(540, 75)">
+    <rect width="500" height="525" rx="8" fill="#FFFFFF" stroke="#2563EB" stroke-width="1.5" />
+    <rect width="500" height="34" rx="8" fill="#EFF6FF" />
+    <text x="250" y="22" text-anchor="middle" class="box-title" fill="#1D4ED8">2. HIỆN TƯỢNG PERFORMANCE RATIO (PR) VƯỢT 100%</text>
+
+    <!-- Top Formula Card -->
+    <g transform="translate(20, 48)">
+      <rect width="460" height="68" rx="6" fill="#F8FAFC" stroke="#CBD5E1" />
+      <text x="12" y="18" class="txt-bold" fill="#0F172A">CÔNG THỨC PR TỨC THỜI (IEC 61724-1 CLASS A):</text>
+      <text x="230" y="38" text-anchor="middle" class="formula" fill="#1E40AF">PR_inst = [ E_actual / P_stc ] / [ (GHI / 1000 W/m²) · Δt ] × 100%</text>
+      <text x="230" y="56" text-anchor="middle" class="txt" font-size="8.5" fill="#64748B">Khi E_actual / (P_stc · Δt) sinh ra lớn hơn tỷ lệ bức xạ đo được → PR vượt 100%</text>
+    </g>
+
+    <!-- 3 Core Mechanisms -->
+    <g transform="translate(20, 126)">
+      <!-- Mechanism 1 -->
+      <rect width="460" height="105" rx="6" fill="#F0FDF4" stroke="#86EFAC" />
+      <text x="12" y="18" class="txt-bold" fill="#166534">CƠ CHẾ 1: QUÁN TÍNH NHIỆT &amp; PIN LẠNH (COLD-CELL THERMAL INERTIA)</text>
+      <text x="12" y="35" class="txt">• Trước khi nắng chiếu, mảng pin bị mây che nên nhiệt độ tế bào rất mát (T_cell ≈ 15°C - 20°C &lt; 25°C).</text>
+      <text x="12" y="52" class="txt">• Khi Cloud Enhancement ập tới, quang thông tăng tức thời nhưng pin CHƯA KỊP NÓNG LÊN.</text>
+      <text x="12" y="69" class="txt">• Vì T_cell &lt; 25°C, hệ số nhiệt độ γ (-0.35%/°C) làm điện áp Voc và công suất TĂNG THÊM +3.5% đến +5.0%.</text>
+      <text x="12" y="86" class="txt">• Sản lượng thực tế vượt công suất định mức lý thuyết STC → PR tức thời đạt 105% - 118%.</text>
+    </g>
+
+    <g transform="translate(20, 241)">
+      <!-- Mechanism 2 -->
+      <rect width="460" height="90" rx="6" fill="#FDF4FF" stroke="#F0ABFC" />
+      <text x="12" y="18" class="txt-bold" fill="#86198F">CƠ CHẾ 2: LỆCH PHA KHÔNG GIAN CẢM BIẾN (SPATIAL SENSOR MISMATCH)</text>
+      <text x="12" y="35" class="txt">• Cảm biến Pyranometer chỉ đo tại 1 điểm, trong khi mảng trạm PV trải rộng hàng nghìn mét vuông.</text>
+      <text x="12" y="52" class="txt">• Khi mép mây quét qua, mảng pin hứng trọn chùm sáng hội tụ trước khi tới vị trí cảm biến.</text>
+      <text x="12" y="69" class="txt">• Mẫu số (GHI_sensor) bị đo thấp hơn lượng photon thực tế mảng pin thu được → PR vọt lên &gt; 100%.</text>
+    </g>
+
+    <g transform="translate(20, 341)">
+      <!-- Mechanism 3 -->
+      <rect width="460" height="165" rx="6" fill="#F8FAFC" stroke="#E2E8F0" />
+      <text x="12" y="18" class="txt-bold" fill="#0F172A">ĐỐI CHIẾU: PR TỨC THỜI (15 PHÚT) VS PR TÍCH LŨY DÀI HẠN (NGÀY/THÁNG)</text>
+      <text x="12" y="35" class="txt">• <tspan class="txt-bold" fill="#16A34A">PR tức thời (15p / 1h):</tspan> CÓ THỂ vượt 100% (105% - 120%) do Cold-cell và Cloud Enhancement.</text>
+      <text x="12" y="52" class="txt">• <tspan class="txt-bold" fill="#DC2626">PR dài hạn (Ngày / Tháng / Năm):</tspan> KHÔNG THỂ vượt 100% (luôn nằm trong dải 78% - 85%).</text>
+      <text x="12" y="70" class="txt">• <tspan class="txt-bold">Lý do dài hạn:</tspan> Cây suy hao tích lũy cả ngày luôn làm giảm sản lượng:</text>
+      <text x="20" y="87" class="txt">- Suy hao quá nhiệt tế bào buổi trưa (-10% đến -15%)</text>
+      <text x="20" y="102" class="txt">- Hiệu suất biến tần Inverter (-2% đến -3%) &amp; Dây dẫn DC/AC (-1% đến -2%)</text>
+      <text x="20" y="117" class="txt">- Suy hao góc tới quang học IAM &amp; Bám bụi Soiling (-3% đến -5%)</text>
+    </g>
+  </g>
+</svg>

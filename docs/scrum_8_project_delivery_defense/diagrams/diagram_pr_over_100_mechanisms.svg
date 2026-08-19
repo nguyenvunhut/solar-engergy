@@ -1,0 +1,146 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1060 620" width="100%" height="100%">
+  <defs>
+    <style>
+      .hdr { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13.5px; font-weight: 700; fill: #F8FAFC; }
+      .subhdr { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; fill: #94A3B8; }
+      .box-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 10.5px; font-weight: 700; }
+      .txt { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 9px; fill: #334155; }
+      .txt-bold { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 9px; font-weight: 700; fill: #0F172A; }
+      .badge { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 8px; font-weight: 700; }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1060" height="620" fill="#F8FAFC" rx="10" />
+
+  <!-- Header Banner -->
+  <rect x="20" y="15" width="1020" height="46" rx="8" fill="#0F172A" />
+  <text x="530" y="34" text-anchor="middle" class="hdr">HỆ THỐNG 6 HIỆN TƯỢNG VẬT LÝ &amp; KỸ THUẬT LÀM PR HOẶC SẢN LƯỢNG VƯỢT CÔNG SUẤT ĐỈNH (P_STC)</text>
+  <text x="530" y="50" text-anchor="middle" class="subhdr">Phân loại theo quy mô thời gian (Ngắn hạn &lt;1h, Trung hạn 1h-1d, Dài hạn &gt;1d) và giải pháp xử lý dữ liệu chuẩn DWH</text>
+
+  <!-- Row 1: Short-term phenomena (< 1h) -->
+  <g transform="translate(20, 75)">
+    <!-- Card 1: Cloud Enhancement -->
+    <g transform="translate(0, 0)">
+      <rect width="326" height="245" rx="8" fill="#FFFFFF" stroke="#EA580C" stroke-width="1.5" />
+      <rect width="326" height="30" rx="8" fill="#FFF7ED" />
+      <text x="10" y="19" class="box-title" fill="#C2410C">1. CLOUD ENHANCEMENT</text>
+      <rect x="228" y="6" width="90" height="18" rx="4" fill="#FDBA74" />
+      <text x="273" y="18" text-anchor="middle" class="badge" fill="#7C2D12">NGẮN HẠN (&lt;30p)</text>
+      
+      <text x="10" y="48" class="txt-bold" fill="#0F172A">Nguyên nhân:</text>
+      <text x="10" y="63" class="txt">Tán xạ tiến hội tụ bức xạ GHI lên 1.200 - 1.400 W/m².</text>
+      <text x="10" y="82" class="txt-bold" fill="#0F172A">Tác động PR &amp; Sản lượng:</text>
+      <text x="10" y="97" class="txt">• PR tức thời vọt lên 105% - 120% do pin còn mát.</text>
+      <text x="10" y="112" class="txt">• P_actual có thể chạm hoặc vượt nhẹ P_stc danh định.</text>
+      <text x="10" y="131" class="txt-bold" fill="#0F172A">Dấu hiệu nhận biết:</text>
+      <text x="10" y="146" class="txt">Chỉ số trời quang CSI &gt; 1.10, mây tích rời rác.</text>
+      <text x="10" y="165" class="txt-bold" fill="#0F172A">Quy tắc Data Engineering:</text>
+      <text x="10" y="180" class="txt">KHÔNG xóa bỏ; đây là hiện tượng vật lý quang học thật.</text>
+      <text x="10" y="195" class="txt">Bảo toàn phân phối thống kê để ML dự báo tải đỉnh.</text>
+    </g>
+
+    <!-- Card 2: Cold-Cell / Sub-zero Morning Flash -->
+    <g transform="translate(346, 0)">
+      <rect width="326" height="245" rx="8" fill="#FFFFFF" stroke="#0284C7" stroke-width="1.5" />
+      <rect width="326" height="30" rx="8" fill="#F0F9FF" />
+      <text x="10" y="19" class="box-title" fill="#0369A1">2. SÁNG MÙA ĐÔNG LẠNH</text>
+      <rect x="228" y="6" width="90" height="18" rx="4" fill="#BAE6FD" />
+      <text x="273" y="18" text-anchor="middle" class="badge" fill="#0C4A6E">NGẮN/TRUNG (1-2h)</text>
+      
+      <text x="10" y="48" class="txt-bold" fill="#0F172A">Nguyên nhân:</text>
+      <text x="10" y="63" class="txt">Sáng sớm mùa đông Úc (T_amb &lt; 5°C, sương muối lạnh).</text>
+      <text x="10" y="82" class="txt-bold" fill="#0F172A">Tác động PR &amp; Sản lượng:</text>
+      <text x="10" y="97" class="txt">• Điện áp Voc tăng mạnh theo hệ số γ (-0.35%/°C).</text>
+      <text x="10" y="112" class="txt">• Hiệu suất tấm pin tăng +7% đến +10% so với STC.</text>
+      <text x="10" y="131" class="txt-bold" fill="#0F172A">Dấu hiệu nhận biết:</text>
+      <text x="10" y="146" class="txt">Nhiệt độ T_amb &lt; 10°C, GHI tăng nhanh lúc 09:00 - 11:00.</text>
+      <text x="10" y="165" class="txt-bold" fill="#0F172A">Quy tắc Data Engineering:</text>
+      <text x="10" y="180" class="txt">Áp dụng công thức PR hiệu chỉnh nhiệt độ (IEC 61724-1)</text>
+      <text x="10" y="195" class="txt">để đưa về mốc chuẩn 25°C trước khi so sánh benchmark.</text>
+    </g>
+
+    <!-- Card 3: Spatial / Angle of Incidence Mismatch -->
+    <g transform="translate(692, 0)">
+      <rect width="328" height="245" rx="8" fill="#FFFFFF" stroke="#7C3AED" stroke-width="1.5" />
+      <rect width="328" height="30" rx="8" fill="#FAF5FF" />
+      <text x="10" y="19" class="box-title" fill="#6D28D9">3. LỆCH PHA CẢM BIẾN</text>
+      <rect x="230" y="6" width="90" height="18" rx="4" fill="#DDD6FE" />
+      <text x="275" y="18" text-anchor="middle" class="badge" fill="#4C1D95">NGẮN HẠN (&lt;15p)</text>
+      
+      <text x="10" y="48" class="txt-bold" fill="#0F172A">Nguyên nhân:</text>
+      <text x="10" y="63" class="txt">Pyranometer bị bóng mây che trước mảng pin hoặc sai số Cos.</text>
+      <text x="10" y="82" class="txt-bold" fill="#0F172A">Tác động PR &amp; Sản lượng:</text>
+      <text x="10" y="97" class="txt">• Mẫu số bức xạ bị đo thiếu trầm trọng (GHI đo &lt; GHI thực).</text>
+      <text x="10" y="112" class="txt">• PR tính toán ảo vọt lên 130% - 180% (Ảo ảnh toán học).</text>
+      <text x="10" y="131" class="txt-bold" fill="#0F172A">Dấu hiệu nhận biết:</text>
+      <text x="10" y="146" class="txt">GHI đo được &lt; 150 W/m² nhưng sản lượng trạm vẫn cao.</text>
+      <text x="10" y="165" class="txt-bold" fill="#0F172A">Quy tắc Data Engineering:</text>
+      <text x="10" y="180" class="txt">Thiết lập ngưỡng lọc GHI &lt; 100 W/m² khi tính PR để loại bỏ</text>
+      <text x="10" y="195" class="txt">nhiễu mẫu số nhỏ (Small-Denominator Instability).</text>
+    </g>
+  </g>
+
+  <!-- Row 2: Medium/Long-term phenomena -->
+  <g transform="translate(20, 335)">
+    <!-- Card 4: High Inverter Loading Ratio (ILR) -->
+    <g transform="translate(0, 0)">
+      <rect width="326" height="255" rx="8" fill="#FFFFFF" stroke="#059669" stroke-width="1.5" />
+      <rect width="326" height="30" rx="8" fill="#ECFDF5" />
+      <text x="10" y="19" class="box-title" fill="#047857">4. QUÁ TẢI BIẾN TẦN (ILR)</text>
+      <rect x="228" y="6" width="90" height="18" rx="4" fill="#A7F3D0" />
+      <text x="273" y="18" text-anchor="middle" class="badge" fill="#064E3B">DÀI HẠN (THIẾT KẾ)</text>
+      
+      <text x="10" y="48" class="txt-bold" fill="#0F172A">Nguyên nhân:</text>
+      <text x="10" y="63" class="txt">Mảng DC được lắp vượt công suất AC (P_dc / P_ac = 1.25 - 1.35).</text>
+      <text x="10" y="82" class="txt-bold" fill="#0F172A">Tác động PR &amp; Sản lượng:</text>
+      <text x="10" y="97" class="txt">• Sản lượng đạt đỉnh AC liên tục trong nhiều giờ giữa trưa.</text>
+      <text x="10" y="112" class="txt">• Xuất hiện đường đồ thị hình thang phẳng (Inverter Clipping).</text>
+      <text x="10" y="131" class="txt-bold" fill="#0F172A">Dấu hiệu nhận biết:</text>
+      <text x="10" y="146" class="txt">P_out duy trì ổn định tại 100% P_ac_max khi GHI &gt; 850 W/m².</text>
+      <text x="10" y="165" class="txt-bold" fill="#0F172A">Quy tắc Data Engineering:</text>
+      <text x="10" y="180" class="txt">Định danh mã dị thường INVERTER_CLIPPING thay vì coi</text>
+      <text x="10" y="195" class="txt">là lỗi suy giảm công suất hỏng hóc.</text>
+    </g>
+
+    <!-- Card 5: High Ground Albedo & White Roofs -->
+    <g transform="translate(346, 0)">
+      <rect width="326" height="255" rx="8" fill="#FFFFFF" stroke="#D97706" stroke-width="1.5" />
+      <rect width="326" height="30" rx="8" fill="#FEF3C7" />
+      <text x="10" y="19" class="box-title" fill="#B45309">5. MÁI TÔN TRẮNG ALBEDO</text>
+      <rect x="228" y="6" width="90" height="18" rx="4" fill="#FDE68A" />
+      <text x="273" y="18" text-anchor="middle" class="badge" fill="#78350F">DÀI HẠN (MÔI TRƯỜNG)</text>
+      
+      <text x="10" y="48" class="txt-bold" fill="#0F172A">Nguyên nhân:</text>
+      <text x="10" y="63" class="txt">Mái tôn trắng Colorbond tại Úc có suất phản xạ cao (0.5 - 0.7).</text>
+      <text x="10" y="82" class="txt-bold" fill="#0F172A">Tác động PR &amp; Sản lượng:</text>
+      <text x="10" y="97" class="txt">• Bức xạ nghiêng POA hứng thêm ánh sáng phản xạ từ mặt sàn.</text>
+      <text x="10" y="112" class="txt">• Tăng sản lượng tổng +10% đến +20% (Đặc biệt với Bifacial).</text>
+      <text x="10" y="131" class="txt-bold" fill="#0F172A">Dấu hiệu nhận biết:</text>
+      <text x="10" y="146" class="txt">Tỷ lệ Specific Yield kWh/kWp cao hơn trạm lân cận 10-15%.</text>
+      <text x="10" y="165" class="txt-bold" fill="#0F172A">Quy tắc Data Engineering:</text>
+      <text x="10" y="180" class="txt">Bổ sung hệ số Albedo vào mô hình tính toán POA Transposition</text>
+      <text x="10" y="195" class="txt">(Perez model) để phản ánh trung thực năng lượng đầu vào.</text>
+    </g>
+
+    <!-- Card 6: Telemetry SCADA Buffering Spike -->
+    <g transform="translate(692, 0)">
+      <rect width="328" height="255" rx="8" fill="#FFFFFF" stroke="#DC2626" stroke-width="1.5" />
+      <rect width="328" height="30" rx="8" fill="#FEF2F2" />
+      <text x="10" y="19" class="box-title" fill="#B91C1C">6. DỒN GÓI SCADA MODBUS</text>
+      <rect x="230" y="6" width="90" height="18" rx="4" fill="#FECACA" />
+      <text x="275" y="18" text-anchor="middle" class="badge" fill="#991B1B">DỊ THƯỜNG TRUYỀN THÔNG</text>
+      
+      <text x="10" y="48" class="txt-bold" fill="#0F172A">Nguyên nhân:</text>
+      <text x="10" y="63" class="txt">Mất kết nối mạng Modbus khiến bộ đệm dồn 2 chu kỳ vào 1 mốc.</text>
+      <text x="10" y="82" class="txt-bold" fill="#0F172A">Tác động PR &amp; Sản lượng:</text>
+      <text x="10" y="97" class="txt">• Sản lượng tăng gấp đôi (E_15min &gt; P_stc × 0.25h) trong 1 chu kỳ.</text>
+      <text x="10" y="112" class="txt">• PR vọt lên &gt; 200% do gộp sản lượng của 30 phút vào 15 phút.</text>
+      <text x="10" y="131" class="txt-bold" fill="#0F172A">Dấu hiệu nhận biết:</text>
+      <text x="10" y="146" class="txt">Bản ghi trước đó bị NULL hoặc 0, bản ghi sau vọt đỉnh gấp đôi.</text>
+      <text x="10" y="165" class="txt-bold" fill="#0F172A">Quy tắc Data Engineering:</text>
+      <text x="10" y="180" class="txt">Rào chắn PHYSICAL_OVER_CAPACITY phát hiện và gán cờ,</text>
+      <text x="10" y="195" class="txt">tiến hành phân bổ đều (Re-distribution) cho chu kỳ bị thiếu.</text>
+    </g>
+  </g>
+</svg>
