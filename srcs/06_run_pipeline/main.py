@@ -268,7 +268,7 @@ def run_bimarts() -> None:
         # 05_mv_bi_mart truoc day khong duoc goi trong --stage all, phai chay tay.
         # Superset/Tableau doc tu Materialized View nay, nen thieu no thi BI hien
         # so cu du bang nen da cap nhat.
-        mv_bi_mart_builder.build_mv_bi_mart(engine)
+        mv_bi_mart_builder.setup_materialized_views()
         log.info("Build BI Marts hoàn tất")
     except Exception:
         log.exception("Build BI Marts thất bại")
