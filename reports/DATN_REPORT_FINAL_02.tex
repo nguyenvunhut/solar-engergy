@@ -92,6 +92,7 @@
 \usepackage{caption}
 \usepackage{subcaption}
 \usepackage{tikz}
+\usetikzlibrary{arrows.meta,calc}
 \usepackage[titles]{tocloft}
 
 % VIỆT HÓA TOÀN BỘ CÁC TIÊU ĐỀ HỆ THỐNG
@@ -1270,155 +1271,189 @@ LoadSpec(
 \section{Làm sạch và Chuẩn hóa Dữ liệu (Data Cleaning)}
 \label{sec:cleaning}
 
-\subsection{Xử lý Dữ liệu Khuyết thiếu và Lỗi Logic}
+\subsection{Xử lý Dữ liệu Khuyết thiếu và Lỗi Logic (Hybrid Causal Imputation)}
 \label{subsec:null_imputation}
 
-Để phục hồi dữ liệu khuyết thiếu cho trường sản lượng phát điện (\texttt{energy\_generated\_kwh}), dự án áp dụng chiến lược nội suy lai nghiêm ngặt (Hybrid Imputation Strategy) tích hợp giữa các bộ quy tắc nghiệp vụ vật lý và mô hình học máy trong file \texttt{solar\_data\_pipeline.py}. Tiến trình xử lý gồm hai giai đoạn chính:
+Trong chuỗi thời gian vận hành thực tế của $42$ trạm điện mặt trời áp mái tại Đại học La Trobe, dữ liệu đo đạc bước $15$ phút phát sinh $1.536.301$ ô khuyết thiếu ($56{,}23\%$ tổng số bản ghi) do sự cố ngắt kết nối cảm biến Modbus, bảo trì lưới điện cục bộ và gián đoạn viễn thông. Nếu áp dụng các thuật toán nội suy thuần toán học (như Mean, Linear hay Natural Spline) một cách máy móc trên toàn chuỗi, hệ thống sẽ gây ra hiện tượng rò rỉ dữ liệu tương lai (Data Leakage), tạo ra sản lượng điện dương vào ban đêm hoặc bóp méo hình dạng chuông phân phối nhật quỹ mặt trời.
 
-\subsubsection{Giai đoạn 1: Lọc vật lý ban đêm (Rule-Based Night Zeroing)}
-Đối với các trạm phát điện mặt trời quang điện, sản lượng điện năng luôn bằng 0 vào ban đêm do không có bức xạ mặt trời. Nếu sử dụng các thuật toán nội suy thuần toán học (như tuyến tính hay spline) trên các khoảng trống kéo dài qua đêm, hệ thống sẽ sinh ra các giá trị sản lượng ảo (dương) phi vật lý. 
+Để giải quyết triệt để bài toán này, nhóm nghiên cứu phát triển và triển khai chiến lược **Điền khuyết Nhân quả Đa tầng (Causal Cascade Imputation Strategy)** kết hợp cơ chế kẹp trần vật lý ($1{,}20\times P_{\text{stc}}$) trong mã nguồn \texttt{srcs/02\_transform/02\_run\_hybrid\_imputation.py}.
 
-Do đó, thuật toán tiến hành rà soát mốc thời gian và áp đặt giá trị 0 ngay lập tức nếu thỏa mãn một trong hai điều kiện logic sau:
-\begin{itemize}
-    \item \textbf{Khung giờ ban đêm tự nhiên:} Mốc thời gian đo đạc nằm trong khoảng từ 18:30 chiều hôm trước đến 05:30 sáng hôm sau ($T \ge 18.5$ hoặc $T < 5.5$).
-    \item \textbf{Điều kiện thời tiết triệt tiêu:} Giá trị bức xạ sóng ngắn mặt trời (\texttt{shortwave\_radiation}) bằng 0 hoặc cờ chỉ số ánh sáng ngày \texttt{is\_day} bằng 0 trong tập dữ liệu thời tiết (được đồng bộ hóa sang dòng sản lượng tương ứng bằng thuật toán ghép nối mốc gần nhất \texttt{pd.merge\_asof} với ngưỡng sai lệch thời gian tối đa là 30 phút).
-\end{itemize}
-Giai đoạn này đã xử lý thành công 94.618 ô dữ liệu trống (chiếm tới 88,1\% tổng số giá trị khuyết thiếu ban đầu), gán chúng về giá trị \texttt{0.0} một cách chính xác.
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=\textwidth]{diagram_causal_cascade_imputation.png}
+    \caption{Sơ đồ Kiến trúc Quy trình Điền khuyết Nhân quả Đa tầng (Causal Cascade Imputation).}
+    \label{fig:causal_cascade_imputation}
+\end{figure}
 
-Mã nguồn Python hiện thực thuật toán lọc vật lý ban đêm:
+\subsubsection{Cơ sở Thiên văn học của Biến \texttt{is\_day} và Ngưỡng Khởi động Inverter}
+\label{subsubsec:astronomical_is_day}
 
-\begin{lstlisting}[language=Python, caption={Mã nguồn Python hiện thực bộ quy tắc Night-Zeroing vật lý}, label={lst:night_zero}]
-def rule_based_night_zero(
-    solar_df: pd.DataFrame, weather_df: pd.DataFrame, site_key: int
-) -> tuple:
-    gen = solar_df["energy_generated_kwh"].copy()
-    ts = solar_df["timestamp"]
+Một đóng góp quan trọng trong quy trình tiền xử lý là việc tích hợp cờ nhị phân thiên văn học \texttt{is\_day} ($0$: Ban đêm, $1$: Ban ngày) từ mô hình khí tượng tái phân tích ERA5-Land (Open-Meteo API)~\cite{openmeteo2025isday}. Khác với các biến thời tiết viễn thám thông thường được nội suy từ lưới dự báo khí tượng, biến \texttt{is\_day} được tính toán trực tiếp thông qua **Thuật toán Vị trí Nhật tâm / Địa tâm (Astronomical Solar Position Algorithm)** dựa trên tọa độ thực tế của từng trạm phát:
 
-    # Xac dinh gio dem tu nhien
-    hour = ts.dt.hour + ts.dt.minute / 60
-    is_night = (hour >= NIGHT_START + 0.5) | (hour < NIGHT_END + 0.5)
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=\textwidth]{diagram_astronomical_is_day_physics.png}
+    \caption{Cơ chế Thiên văn học tính toán biến \texttt{is\_day} và Góc nâng Mặt Trời ($\alpha$).}
+    \label{fig:astronomical_is_day}
+\end{figure}
 
-    # Ket noi voi open_meteo de lay thong tin buc xa song ngan
-    w = weather_df[weather_df["sitekey"] == site_key][
-        ["timestamp", "shortwave_radiation", "is_day"]
-    ].copy()
-    w = w.rename(columns={"timestamp": "timestamp"})
-    w["timestamp"] = pd.to_datetime(w["timestamp"])
+Thuật toán thiên văn trải qua 4 bước lượng giác cầu:
+\begin{enumerate}[label=\arabic*., leftmargin=*]
+    \item \textbf{Góc năm phân số ($\gamma$, Fractional Year):} Tính theo ngày trong năm ($DOY \in [1, 366]$) và giờ phối hợp quốc tế ($Hour_{\text{UTC}}$):
+    \begin{equation}
+    \gamma = \frac{2\pi}{365} \left( DOY - 1 + \frac{Hour_{\text{UTC}} - 12}{24} \right)
+    \end{equation}
 
-    merged = pd.merge_asof(
-        solar_df[["timestamp"]].reset_index(),
-        w.sort_values("timestamp"),
-        on="timestamp",
-        tolerance=pd.Timedelta("30min"),
-        direction="nearest",
-    ).set_index("index")
+    \item \textbf{Phương trình thời gian ($EoT$) và Độ xích vĩ Mặt Trời ($\delta$):}
+    \begin{align}
+    EoT &= 229{,}18 \times \big( 0{,}000075 + 0{,}001868\cos\gamma - 0{,}032077\sin\gamma \nonumber\\
+        &\quad - 0{,}014615\cos 2\gamma - 0{,}040849\sin 2\gamma \big) \quad (\text{phút}) \\
+    \delta &= 0{,}006918 - 0{,}399912\cos\gamma + 0{,}070257\sin\gamma - 0{,}006758\cos 2\gamma \nonumber\\
+           &\quad + 0{,}000907\sin 2\gamma - 0{,}002697\cos 3\gamma + 0{,}00148\sin 3\gamma \quad (\text{radian})
+    \end{align}
 
-    # Dieu kien buc xa song ngan bang 0 hoac co dem is_day = 0
-    zero_radiation = (merged["shortwave_radiation"].fillna(0) == 0) | (
-        merged["is_day"].fillna(0) == 0
-    )
-    mask_zero = is_night.values | zero_radiation.values
+    \item \textbf{Giờ Mặt Trời thực ($TST$) và Góc giờ ($\omega$):} Hiệu chỉnh độ lệch kinh độ $\lambda$ và múi giờ $TZ$:
+    \begin{equation}
+    \Delta t = EoT + 4\lambda - 60 \cdot TZ \implies TST = (Hour_{\text{local}} \times 60 + Minute) + \Delta t
+    \end{equation}
+    \begin{equation}
+    \omega = \left( \frac{TST}{4} \right) - 180^\circ
+    \end{equation}
 
-    n_filled = (mask_zero & gen.isna()).sum()
-    gen[mask_zero & gen.isna()] = 0.0
-    return gen, n_filled
-\end{lstlisting}
-
-\subsubsection{Giai đoạn 2: Nội suy phân cấp theo quy mô khoảng trống (Imputation Gaps classification)}
-Đối với 12.834 ô dữ liệu khuyết thiếu phát sinh vào ban ngày (khi có bức xạ), thuật toán tiến hành phân tích độ dài chuỗi khuyết liên tiếp (Gap size) của từng trạm phát độc lập để áp dụng phương pháp điền khuyết tối ưu:
-
-\begin{enumerate}[label=\alph*., leftmargin=*]
-    \item \textbf{Khoảng khuyết ngắn ($\le 2$ dòng liên tiếp, tương đương $\le 30$ phút):} Áp dụng phương pháp nội suy tuyến tính (\textit{Linear Interpolation}) theo thời gian. Do khoảng thời gian gián đoạn rất ngắn, biến động của ánh sáng mặt trời được coi là thay đổi tuyến tính đều giữa điểm biên trước và biên sau khoảng khuyết.
-    \item \textbf{Khoảng khuyết trung bình (Từ 3 đến 8 dòng liên tiếp, tương đương từ 45 phút đến 2 tiếng):} Áp dụng phương pháp nội suy \textit{Cubic Spline}. Đường cong bậc ba giúp mô phỏng mượt mà sự trồi sụt tự nhiên của sản lượng điện do mây che phủ đi qua trạm pin. Để tránh hiện tượng sập nhiễu ma trận khi gặp các khoảng khuyết lớn lân cận, thuật toán xây dựng một bản sao tạm thời được điền tuyến tính để làm mịn dữ liệu mốc trước khi tính toán spline bậc ba thực tế.
-    \item \textbf{Khoảng khuyết diện rộng ($> 8$ dòng liên tiếp, tương đương $> 2$ tiếng):} Trong trường hợp này, dữ liệu bị mất quá dài khiến các phương pháp nội suy chuỗi đơn biến (Tuyến tính/Spline) mất khả năng phục hồi chính xác xu hướng thực tế. Nhóm thiết lập mô hình hồi quy đa biến (\textit{Multivariate Regression Imputation}) độc lập cho từng trạm phát.
-    
-    Mô hình Hồi quy Tuyến tính (\texttt{LinearRegression} từ thư viện \texttt{scikit-learn}) được huấn luyện trên tập các bản ghi sạch (đầy đủ thông tin) của chính trạm đó. Các biến đầu vào (Features) bao gồm: bức xạ sóng ngắn mặt trời (\texttt{shortwave\_radiation}), bức xạ chiếu trực tiếp (\texttt{direct\_normal\_irradiance}), bức xạ khuếch tán (\texttt{diffuse\_solar\_radiation}) và nhiệt độ không khí ở độ cao 2m (\texttt{temperature\_c}). 
-    
-    Sau khi huấn luyện, mô hình sẽ dự đoán sản lượng điện năng cho các khoảng khuyết diện rộng dựa trên dữ liệu khí tượng thực tế tại tọa độ trạm phát đó. Kết quả dự đoán được cắt giới hạn dưới bằng 0 (\texttt{clip(lower=0)}) để loại bỏ các giá trị âm sinh ra do sai số hồi quy.
+    \item \textbf{Góc nâng Mặt Trời ($\alpha$, Solar Elevation Angle) và Quyết định Nhị phân:}
+    \begin{equation}
+    \sin\alpha = \sin\phi \cdot \sin\delta + \cos\phi \cdot \cos\delta \cdot \cos\omega \implies \alpha = \arcsin(\sin\alpha)
+    \end{equation}
+    Xét tới hiện tượng khúc xạ khí quyển (Atmospheric Refraction) ở sát mặt đất làm Mặt Trời trông thấy nhô lên sớm hơn thực tế $0{,}833^\circ$, quy tắc phân loại nhị phân được thiết lập:
+    \begin{equation}
+    \texttt{is\_day} = \begin{cases}
+    1 & \text{khi } \alpha > -0{,}833^\circ \quad (\text{Ban ngày: Mặt Trời trên đường chân trời}) \\
+    0 & \text{khi } \alpha \le -0{,}833^\circ \quad (\text{Ban đêm: Mặt Trời lặn dưới chân trời})
+    \end{cases}
+    \end{equation}
 \end{enumerate}
 
-Mã nguồn Python thực thi hồi quy đa biến điền khuyết diện rộng ban ngày:
+\textbf{Ngưỡng khởi động Inverter quang điện ($20\,\text{W/m}^2$):}
+Trong kỹ thuật điện mặt trời công nghiệp, các biến tần hòa lưới (Grid-tied Inverters) yêu cầu một mức điện áp DC hở mạch tối thiểu ($V_{\text{pv\_start}} \approx 120 - 200\,\text{V}$) để kích hoạt bộ vi điều khiển MPPT và đóng rơ-le hòa lưới AC. Trong dải bức xạ cực thấp ($GHI \le 20\,\text{W/m}^2$, tương đương rạng sáng sớm hoặc nhá nhem tối), dòng quang hóa $I_{\text{sc}}$ sinh ra quá nhỏ không đủ bù đắp điện áp ngưỡng và tổn hao tự dùng của biến tần, khiến Inverter duy trì trạng thái chờ (Standby / Sleep mode) với sản lượng phát thực tế hoàn toàn bằng $0\,\text{kWh}$.
 
-\begin{lstlisting}[language=Python, caption={Mã nguồn Python thực thi Multivariate Regression Imputation cho các khoảng khuyết lớn}, label={lst:regression_impute}]
-def regression_imputation_large_gaps_strict(
-    solar_sub: pd.DataFrame,
+Do đó, điều kiện gán không vật lý ở Cấp 1 được tối ưu hóa chuẩn xác:
+\begin{equation}
+\text{Condition}_{\text{Zero}} = (GHI \le 20\,\text{W/m}^2) \lor (\texttt{is\_day} == 0)
+\end{equation}
+
+\subsubsection{Chiến lược Điền khuyết 4 Cấp độ và So sánh Toán học PCHIP Spline}
+
+Đối với toàn bộ các ô khuyết thiếu, pipeline thực thi phân cấp theo 4 cấp độ nhân quả độc lập:
+
+\begin{enumerate}[label=\alph*., leftmargin=*]
+    \item \textbf{Cấp 1: Quy tắc Ban đêm \& Ngưỡng Khởi động Inverter (\texttt{rule\_based\_night}):}
+    Áp dụng $\text{Condition}_{\text{Zero}}$. Xử lý triệt để $1.383.493$ dòng ($50{,}64\%$), triệt tiêu hoàn toàn hiện tượng trôi điểm 0 ban đêm (Zero Drift) do cảm biến dòng CT gây ra.
+
+    \item \textbf{Cấp 2: Nội suy Tuyến tính Thời gian Ngắn (\texttt{linear}):}
+    Áp dụng cho khoảng khuyết $\le 2$ bước ($\le 30$ phút) phát sinh vào ban ngày ($\texttt{is\_day} == 1$). Trong khoảng thời gian ngắn, góc chiếu mặt trời biến thiên gần như tuyến tính:
+    \begin{equation}
+    E(t) = E(t_a) + \frac{E(t_b) - E(t_a)}{t_b - t_a} (t - t_a)
+    \end{equation}
+    Đã điền thành công $53.684$ dòng ($1{,}96\%$).
+
+    \item \textbf{Cấp 3: Nội suy Đa thức Hermite Bảo toàn Đơn điệu (\texttt{cubic} / PCHIP Spline):}
+    Áp dụng cho khoảng khuyết trung bình $3 - 8$ bước ($45$ phút đến $2$ giờ). 
+    
+    \textit{Khắc phục hiện tượng dao động Runge của Natural Cubic Spline:} Các thuật toán Cubic Spline tự nhiên truyền thống bắt buộc đạo hàm bậc hai $C^2$ liên tục, dẫn tới hiện tượng quá đà sóng (Overshoot / Undershoot) tại các điểm uốn có độ dốc lớn (như lúc nắng lên nhanh $08\text{h}00-10\text{h}00$), khiến giá trị nội suy bị võng xuống dưới $0\,\text{kWh}$ (âm phi vật lý) hoặc dao động hình sin giả mạo. 
+    
+    Dự án thay thế bằng thuật toán **PCHIP (Piecewise Cubic Hermite Interpolating Polynomial)**~\cite{fritsch1980pchip}. PCHIP duy trì tính trơn $C^1$ và bảo toàn nghiêm ngặt tính đơn điệu (Monotonicity Preserving): nếu dữ liệu hai đầu đang tăng thì đường cong nội suy luôn tăng đơn điệu, triệt tiêu $100\%$ các điểm cực trị cục bộ giả và không bao giờ sinh ra sản lượng âm. Đã điền thành công $50.704$ dòng ($1{,}86\%$).
+
+    \item \textbf{Cấp 4: Hồi quy Tuyến tính Đa biến Theo Trạm (\texttt{regression}):}
+    Áp dụng cho khoảng khuyết dài $> 8$ bước ($> 2$ giờ). Thuật toán huấn luyện mô hình \texttt{LinearRegression} độc lập trên các bản ghi ban ngày sạch của từng trạm với 4 biến dự báo chuẩn hóa:
+    \begin{equation}
+    \hat{E} = \beta_0 + \beta_1 \cdot GHI + \beta_2 \cdot DNI + \beta_3 \cdot DHI + \beta_4 \cdot T_{\text{ambient}}
+    \end{equation}
+    Đã điền thành công $48.420$ dòng ($1{,}77\%$).
+\end{enumerate}
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=\textwidth]{diagram_cloud_enhancement_and_physical_clamping.png}
+    \caption{Cơ chế Hiện tượng Cloud Enhancement, Giới hạn Trần Inverter và So sánh Toán học PCHIP Spline.}
+    \label{fig:cloud_enhancement_clamping}
+\end{figure}
+
+\subsubsection{Cơ chế Kẹp trần Công suất Vật lý Tuyệt đối ($1{,}20\times P_{\text{stc}}$)}
+\label{subsubsec:physical_clamping}
+
+Toàn bộ các giá trị điền khuyết từ Cấp 2, Cấp 3 và Cấp 4 đều được đưa qua bộ kẹp biên vật lý 2 đầu (Bidirectional Physical Clamping):
+\begin{equation}
+E_{\text{imputed}} = \text{clip}\Big( \hat{E},\ 0{,}0,\ P_{\text{stc}} \times 0{,}25\,\text{h} \times 1{,}20 \Big)
+\end{equation}
+Trong đó hệ số trần vật lý $1{,}20\times$ được định lượng khoa học dựa trên 3 yếu tố:
+\begin{itemize}
+    \item \textbf{Hiện tượng Tán xạ Mép Mây (Cloud Enhancement):} Tán xạ Mie tiến từ mép mây Cumulus cộng hưởng với trực xạ $DNI$ làm bức xạ mặt phẳng nghiêng vọt lên $1.150 - 1.400\,\text{W/m}^2$ ($CSI \ge 1{,}20$).
+    \item \textbf{Quán tính Nhiệt Pin Lạnh (Cold PV Dynamics):} Khi mây che vừa dạt ra, bề mặt cell pin còn mát ($10 - 18^\circ\text{C}$), hệ số nhiệt $\gamma = -0{,}38\%/^\circ\text{C}$ đẩy hiệu suất quang điện tức thời tăng thêm $3 - 6\%$.
+    \item \textbf{Khả năng Quá tải Biến tần (Inverter AC Overload Standard):} Theo tiêu chuẩn quốc tế IEC 62109 và AS/NZS 4777.2, biến tần thương mại cho phép quá tải nhiệt $110\% - 130\%$ công suất danh định trong vài phút trước khi kích hoạt thuật toán bóp dòng MPPT (Inverter Clipping). Tích phân trung bình thời gian trong cửa sổ 15 phút san phẳng các xung đỉnh $1{,}40\times$ tức thời xuống mức trần kỹ thuật không quá $1{,}20\times$.
+\end{itemize}
+
+\subsubsection{Mã nguồn Python Pipeline Điền khuyết Hoàn chỉnh}
+
+Dưới đây là trích đoạn mã nguồn thực thi từ \texttt{srcs/02\_transform/02\_run\_hybrid\_imputation.py}:
+
+\begin{lstlisting}[language=Python, caption={Mã nguồn Python thực thi Causal Cascade Imputation kèm PCHIP Spline và Physical Clamping}, label={lst:hybrid_imputation_full}]
+def build_imputed_solar(
+    solar_df: pd.DataFrame,
     weather_df: pd.DataFrame,
-    site_key: int,
-    large_gap_indices: set,
-) -> tuple:
-    FEATURES = [
-        "shortwave_radiation",
-        "direct_normal_irradiance",
-        "diffuse_solar_radiation",
-        "temperature_c",
-    ]
+    site_capacity_map: dict[str, float] | None = None,
+) -> tuple[pd.DataFrame, dict[str, int], dict[str, pd.DataFrame]]:
+    # 1. Gioi han tran cong suat vat ly 15 phut: P_stc * 0.25h * 1.20
+    capacity_kw = site_capacity_map.get(str(site), 0.0) if site_capacity_map else 0.0
+    max_physical_kwh = capacity_kw * 0.25 * 1.20 if capacity_kw > 0 else float("inf")
 
-    cols = ["timestamp"] + FEATURES
-    w = weather_df[weather_df["sitekey"] == site_key][cols].copy()
-    w = w.rename(columns={"timestamp": "timestamp"})
-    w["timestamp"] = pd.to_datetime(w["timestamp"])
+    # 2. Cap 1: Rule-based Night & Inverter Startup Threshold (GHI <= 20 W/m2 hoac is_day == 0)
+    low_radiation = (
+        (merged["shortwave_radiation"].fillna(0) <= 20.0)
+        | (merged["is_day"].fillna(0) == 0)
+    )
+    fill_mask = low_radiation.values & generation.isna()
+    generation[fill_mask] = 0.0
+    subset.loc[fill_mask, "fill_null_algorithm"] = "rule_based_night"
 
-    merged = pd.merge_asof(
-        solar_sub[["timestamp", "energy_generated_kwh"]].reset_index(),
-        w.sort_values("timestamp"),
-        on="timestamp",
-        tolerance=pd.Timedelta("60min"),
-        direction="nearest",
-    ).set_index("index")
+    # 3. Cap 2: Linear Interpolation cho khoang khuyet ngan (<= 2 buoc = <= 30 phut)
+    if linear_indices:
+        interpolated = time_series.interpolate(method="time")
+        for idx in linear_indices:
+            time_series.iloc[idx] = float(np.clip(interpolated.iloc[idx], 0.0, max_physical_kwh))
+        subset.loc[linear_indices, "fill_null_algorithm"] = "linear"
 
-    train_mask = merged["energy_generated_kwh"].notna() & \
-                 merged[FEATURES].notna().all(axis=1)
-    pred_mask = merged["energy_generated_kwh"].isna() & \
-                merged[FEATURES].notna().all(axis=1)
+    # 4. Cap 3: PCHIP Monotonic Spline cho khoang khuyet trung binh (3 - 8 buoc)
+    if cubic_indices:
+        temporary = time_series.interpolate(method="linear")
+        interpolated = temporary.interpolate(method="pchip")
+        for idx in cubic_indices:
+            time_series.iloc[idx] = float(np.clip(interpolated.iloc[idx], 0.0, max_physical_kwh))
+        subset.loc[cubic_indices, "fill_null_algorithm"] = "cubic"
 
-    filled = 0
-    if train_mask.sum() < 10:
-        return solar_sub["energy_generated_kwh"].values, 0
+    # 5. Cap 4: Multivariate Regression cho khoang khuyet dai (> 8 buoc = > 2 gio)
+    if large_gap_indices:
+        values, n_filled, positions = regression_imputation_large_gaps_strict(
+            subset, weather_df, site, large_gap_indices, max_physical_kwh=max_physical_kwh
+        )
+        subset["energy_generated_kwh"] = values
+        subset.loc[positions, "fill_null_algorithm"] = "regression"
 
-    X_train = merged.loc[train_mask, FEATURES].values
-    y_train = merged.loc[train_mask, "energy_generated_kwh"].values
-
-    # Chuan hoa thong so dac trung dau vao
-    scaler = StandardScaler()
-    X_train_sc = scaler.fit_transform(X_train)
-
-    model = LinearRegression()
-    model.fit(X_train_sc, y_train)
-
-    if pred_mask.sum() > 0:
-        X_pred = merged.loc[pred_mask, FEATURES].values
-        X_pred_sc = scaler.transform(X_pred)
-        y_pred = model.predict(X_pred_sc)
-
-        result = solar_sub["energy_generated_kwh"].copy()
-        pred_indices = merged[pred_mask].index.tolist()
-
-        for pos, idx in enumerate(pred_indices):
-            local_pos = (
-                solar_sub.index.get_loc(idx)
-                if idx in solar_sub.index else None
-            )
-            # Chi ghi vao cac vi tri thuoc khoang khuyet lon
-            if local_pos is not None and local_pos in large_gap_indices:
-                result.iloc[local_pos] = max(0.0, y_pred[pos])
-                filled += 1
-
-        return result.values, filled
-    return solar_sub["energy_generated_kwh"].values, 0
+    return subset
 \end{lstlisting}
 
-Tổng hợp kết quả sau quy trình làm sạch và điền khuyết dữ liệu chuỗi thời gian:
+\subsubsection{Tổng kết Đánh giá Kiểm toán Điền khuyết}
+Bảng kiểm toán toàn vẹn trên toàn bộ $2.731.946$ dòng dữ liệu Data Warehouse ghi nhận:
 \begin{itemize}
-    \item Tổng số dòng toàn bộ kho dữ liệu: $2.731.946$ dòng ($100{,}0\%$).
-    \item Số dòng dữ liệu đo đạc gốc ban ngày (\texttt{original}): $1.195.645$ dòng ($43{,}77\%$).
-    \item Tổng số ô khuyết thiếu được điền sạch: $1.536.301$ dòng ($56{,}23\%$), trong đó:
+    \item Tổng số dòng toàn bộ kho dữ liệu: $\mathbf{2.731.946}$ dòng ($100{,}0\%$).
+    \item Số dòng dữ liệu đo đạc gốc ban ngày (\texttt{original}): $\mathbf{1.195.645}$ dòng ($43{,}77\%$).
+    \item Tổng số ô khuyết thiếu được điền sạch: $\mathbf{1.536.301}$ dòng ($56{,}23\%$), phân rã theo:
     \begin{itemize}
-        \item Điền qua quy tắc ban đêm \& ngưỡng bức xạ khởi động Inverter (\texttt{rule\_based\_night}): $1.383.493$ dòng ($50{,}64\%$).
-        \item Điền qua nội suy tuyến tính thời gian ngắn $\le 2$ dòng (\texttt{linear}): $53.684$ dòng ($1{,}96\%$).
-        \item Điền qua nội suy bảo toàn đơn điệu PCHIP Spline $3$--$8$ dòng (\texttt{cubic}): $50.704$ dòng ($1{,}86\%$).
-        \item Điền qua mô hình hồi quy đa biến diện rộng $> 8$ dòng (\texttt{regression}): $48.420$ dòng ($1{,}77\%$).
+        \item Điền qua quy tắc ban đêm \& ngưỡng bức xạ Inverter (\texttt{rule\_based\_night}): $\mathbf{1.383.493}$ dòng ($50{,}64\%$).
+        \item Điền qua nội suy tuyến tính thời gian ngắn $\le 2$ dòng (\texttt{linear}): $\mathbf{53.684}$ dòng ($1{,}96\%$).
+        \item Điền qua nội suy bảo toàn đơn điệu PCHIP Spline $3$--$8$ dòng (\texttt{cubic}): $\mathbf{50.704}$ dòng ($1{,}86\%$).
+        \item Điền qua mô hình hồi quy đa biến diện rộng $> 8$ dòng (\texttt{regression}): $\mathbf{48.420}$ dòng ($1{,}77\%$).
     \end{itemize}
-    \item Số ô NULL còn lại trong kho dữ liệu: $0$ ô (Điền khuyết thành công $100{,}0\%$).
+    \item Số ô NULL còn lại trong kho dữ liệu: $\mathbf{0}$ dòng (Tỷ lệ làm sạch và điền khuyết đạt $100{,}0\%$).
 \end{itemize}
 
 \subsection{Xử lý Dữ liệu Ngoại lai (Outliers) và Lọc nhiễu}
@@ -2235,7 +2270,42 @@ quay ngược về yêu cầu nghiệp vụ, và kết quả đánh giá quay ng
 
 \begin{figure}[!htbp]
     \centering
-    \includegraphics[width=0.60\textwidth]{sodo_ml_lifecycle_vi.pdf}
+    \resizebox{0.68\textwidth}{!}{%
+    \begin{tikzpicture}[
+      hopxanh/.style={
+        draw=tblNavy, line width=1.1pt, fill=blue!10, rounded corners=9pt,
+        align=center, inner sep=4pt, text width=4.15cm, minimum height=2.3cm,
+        font=\large\bfseries, text=tblNavy
+      },
+      hopcam/.style={
+        draw=tblOrange, line width=1.1pt, fill=orange!10, rounded corners=9pt,
+        align=center, inner sep=4pt, text width=3.75cm, minimum height=2.15cm,
+        font=\large\bfseries, text=tblOrange!90!black
+      }
+    ]
+    \def\Rx{7.05}   \def\Cy{3.30}
+    \def\Rc{4.50}
+
+    \fill[orange!15] (0,0) circle (\Rc);
+    \draw[tblOrange, line width=7pt] (0,0) circle (\Rc);
+
+    \draw[tblNavy, line width=6pt]
+      ([shift={(0,\Cy)}]-27:\Rx) arc[start angle=-27, end angle=207, radius=\Rx];
+
+    % Bon hop tren cung xanh
+    \node[hopxanh] at ($(0,\Cy)+(131.3:\Rx)$) {Giám sát\\Phân tích thông tin};
+    \node[hopxanh] at ($(0,\Cy)+( 50.6:\Rx)$) {Yêu cầu\\nghiệp vụ};
+    \node[hopxanh] at ($(0,\Cy)+( 10.3:\Rx)$) {Xác định\\bài toán};
+    \node[hopxanh] at ($(0,\Cy)+(170.3:\Rx)$) {Triển khai mô hình};
+
+    % Nam hop tren vong cam
+    \node[hopcam] at ( 89.3:\Rc) {Thu thập\\dữ liệu};
+    \node[hopcam] at ( 10.5:\Rc) {Xử lý\\dữ liệu};
+    \node[hopcam] at (-43.2:\Rc) {Sinh\\đặc trưng};
+    \node[hopcam] at (227.8:\Rc) {Huấn luyện\\mô hình};
+    \node[hopcam] at (170.3:\Rc) {Đánh giá\\mô hình};
+    \end{tikzpicture}%
+    }
     \caption{Vòng đời phát triển và vận hành mô hình học máy (MLOps)~\cite{aivietnam2025dvc}.}
     \label{fig:ml_lifecycle}
 \end{figure}
