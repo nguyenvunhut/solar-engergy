@@ -22,6 +22,7 @@
   * [3.1. Phân biệt Bản chất: PR Tức thời (15 phút) vs PR Tích lũy Dài hạn (Ngày/Tháng/Năm)](#31-phân-biệt-bản-chất-pr-tức-thời-15-phút-vs-pr-tích-lũy-dài-hạn-ngàythángnăm)
   * [3.2. Ba Cơ chế Vật lý Khiến PR Tức thời Vượt 100% (105% – 120%)](#32-ba-cơ-chế-vật-lý-khiến-pr-tức-thời-vượt-100-105--120)
   * [3.3. Vì sao PR Tích lũy Dài hạn KHÔNG THỂ Vượt 100% (Cây Suy hao Năng lượng)](#33-vì-sao-pr-tích-lũy-dài-hạn-không-thể-vượt-100-cây-suy-hao-năng-lượng)
+  * [3.4. Định lượng Giới hạn Trần Sản lượng 15 phút (E_max vs Capacity) & Thiết lập Hard-Rules cho Outlier Detection](#34-định-lượng-giới-hạn-trần-sản-lượng-15-phút-e_max-vs-capacity--thiết-lập-hard-rules-cho-outlier-detection)
 * [4. Toàn bộ Các Hiện tượng Vật lý & Kỹ thuật Làm PR hoặc Sản lượng Vượt Công suất Đỉnh (P_stc)](#4-toàn-bộ-các-hiện-tượng-vật-lý--kỹ-thuật-làm-pr-hoặc-sản-lượng-vượt-công-suất-đỉnh-p_stc)
   * [4.1. Hiệu ứng "Sáng Mùa đông Lạnh & Nắng Đột ngột" (Winter Cold-Bright Anomaly)](#41-hiệu-ứng-sáng-mùa-đông-lạnh--nắng-đột-ngột-winter-cold-bright-anomaly)
   * [4.2. Hệ số Tỷ lệ Tải Biến tần Cao (High DC/AC Inverter Loading Ratio - ILR)](#42-hệ-số-tỷ-lệ-tải-biến-tần-cao-high-dcac-inverter-loading-ratio---ilr)
@@ -251,6 +252,51 @@ Dù các đỉnh $PR$ tức thời có thể chạm $115\%$, nhưng trong chu k�
          ▼
 [PR Thực tế Tích lũy Dài hạn = 76.5% - 84.5% (Không bao giờ vượt 100%)]
 ```
+
+---
+
+### 3.4. Định lượng Giới hạn Trần Sản lượng 15 phút ($E_{\text{max}}$ vs Capacity) & Thiết lập Hard-Rules cho Outlier Detection
+
+#### 3.4.1. Cơ sở Vật lý & Kỹ thuật Điện Xác định Trần Sản lượng 15 phút ($E_{\text{max\_15min}}$)
+Trong chu kỳ đo lường vi mô $15\,\text{phút}$ ($\Delta t = 0{,}25\,\text{h}$), sản lượng điện phát chuẩn lý thuyết ở điều kiện tiêu chuẩn STC ($1.000\,\text{W/m}^2$, $25^\circ\text{C}$) là:
+$$E_{\text{stc\_15min}} = P_{\text{stc}} \times 0{,}25\,\text{h} \quad (\text{kWh})$$
+
+Khi xảy ra đồng thời các hiện tượng khuếch đại công suất: **Cloud Enhancement** ($GHI \approx 1.250 - 1.380\,\text{W/m}^2$), **Pin Lạnh Quán Tính Nhiệt** ($T_{\text{cell}} \approx 12 - 15^\circ\text{C} < 25^\circ\text{C} \implies +3{,}5\% - +5{,}0\%$), và **Mái Tôn Trắng Albedo** ($+5\% - +10\%$), sản lượng thực tế $E_{\text{actual\_15min}}$ có thể vượt qua $E_{\text{stc\_15min}}$. 
+
+Tuy nhiên, trong thực tế kỹ thuật điện, mức sản lượng 15 phút này **BỊ CHẶN CỨNG BỞI 3 RÀO CHẮN PHẦN CỨNG & TOÁN HỌC TÍCH PHÂN**:
+
+1. **Rào chắn Quá tải Biến tần (Inverter AC Overload Limit):**  
+   * Theo tiêu chuẩn an toàn thiết bị biến tần **IEC 62109-1/-2** và quy chuẩn hòa lưới Úc **AS/NZS 4777.2**, các dòng biến tần công nghiệp thương mại (SMA Sunny Tripower, Fronius Eco, Sungrow, Huawei) chỉ cho phép khả năng chịu quá tải công suất AC liên tục tối đa từ **$110\% \text{ đến } 115\%$** công suất danh định biến tần ($P_{\text{ac\_rating}}$) trong thời gian ngắn ($10 - 15\,\text{phút}$) để bảo vệ quá nhiệt van bán dẫn IGBT.  
+   * Khi công suất DC từ mảng pin vượt qua giới hạn dòng/nhiệt an toàn của biến tần, bộ vi xử lý MPPT sẽ tự động dịch chuyển điểm làm việc ($V_{\text{mpp}} \rightarrow V_{\text{oc}}$) để kích hoạt chế độ **Xén công suất (Inverter Clipping)**, triệt tiêu phần công suất dư thừa.
+
+2. **Động học Tích phân Chu kỳ 15 phút (Time-integral Averaging):**  
+   * Các xung cực đoan của Cloud Enhancement ($1.300 - 1.400\,\text{W/m}^2$) mang tính chuyển động vi mô của mép mây, thường chỉ duy trì đỉnh từ **$2 - 5\,\text{phút}$**. Trong các phút còn lại của chu kỳ 15 phút, bức xạ sẽ quay về mức nền trời trong ($950 - 1.000\,\text{W/m}^2$) hoặc bị bóng mây che khuất cục bộ ($200 - 400\,\text{W/m}^2$).  
+   * Do đó, tích phân năng lượng trung bình trên toàn chu kỳ $15\,\text{phút}$ ($E = \int_0^{0{,}25} P(t) dt$) không thể duy trì ở mức đỉnh $140\%$ liên tục.
+
+3. **Giới hạn Trần Vật lý Tuyệt đối (Absolute Physical Ceilings):**  
+   * **Mức vận hành Cloud Enhancement thực tế điển hình:** $E_{\text{actual\_15min}} \le \mathbf{1{,}15 \times (P_{\text{stc}} \times 0{,}25\,\text{h})}$ (tương đương **$115\%$** công suất danh định 15 phút).  
+   * **Mức kịch bản cực đoan nhất (Bifacial + Mái trắng Surfmist + Đỉnh bức xạ 15p liên tục):** $E_{\text{actual\_15min}} \le \mathbf{1{,}20 \times (P_{\text{stc}} \times 0{,}25\,\text{h})}$ (tương đương **$120\%$** công suất danh định 15 phút).
+
+---
+
+#### 3.4.2. Bảng Thiết lập Quy tắc Cứng (Hard-Rules Matrix) Cho Thuật toán Phát hiện Dị thường (Outlier Detection)
+
+Dựa trên ngưỡng trần vật lý $120\%$, ta phân định 3 vùng dữ liệu để thiết lập thuật toán lọc dị thường và làm sạch dữ liệu trong Data Engineering & Machine Learning Pipeline:
+
+| Dải Tỷ Lệ Sản Lượng ($E_{\text{15min}} / (P_{\text{stc}} \times 0{,}25\,\text{h})$) | Bản Chất Vật Lý / Kỹ Thuật | Phân Loại Outlier | Hành Động Xử Lý Trong Pipeline ML & DWH |
+| :--- | :--- | :--- | :--- |
+| **$0\% \le \text{Ratio} \le 100\%$** | Vận hành bình thường trong dải danh định STC | **Hợp lệ (Normal Inlier)** | Chấp nhận $100\%$, nạp trực tiếp vào Data Warehouse. |
+| **$100\% < \text{Ratio} \le 115\%$** (hoặc $\le 120\%$) | **Cloud Enhancement + Cold-Cell Boost** (Hiện tượng quang học & bán dẫn thật) | **Hợp lệ Ngoại lệ (Physical Flare / Valid Inlier)** | **BẢO TOÀN DỮ LIỆU $100\%$:** Tuyệt đối KHÔNG xóa bỏ, không gán NULL, không coi là lỗi cảm biến. Gắn nhãn metadata `is_cloud_enhancement = TRUE` để huấn luyện ML dự báo phụ tải đỉnh. |
+| **$> 120\%$** (hoặc $> 125\%$) | **VI PHẠM GIỚI HẠN VẬT LÝ TUYỆT ĐỐI** (Physical Impossible Spikes) | **Dị thường Cứng (Hard Outlier / System Error)** | **KÍCH HOẠT RÀO CHẮN VẬT LÝ:** Gắn nhãn `PHYSICAL_OVER_CAPACITY`. Nguyên nhân: Dồn gói viễn thám SCADA Modbus hoặc lỗi tỷ số biến dòng CT. Áp dụng kỹ thuật Clamping hoặc phân bổ lại (Re-distribution) cho chu kỳ thiếu liền kề. |
+
+---
+
+#### 3.4.3. Ứng dụng Mã Nguồn Rule-based Clamping trong Production Pipeline
+Trong mã nguồn xử lý nội suy và làm sạch dữ liệu quang điện (`srcs/02_transform/02_run_hybrid_imputation.py`), quy tắc kẹp trần vật lý (Physical Clamping) được chuẩn hóa như sau:
+
+$$\text{Clamped Energy} = \min\left(E_{\text{imputed}}, P_{\text{stc}} \times \frac{\Delta t_{\text{sec}}}{3.600} \times 1{,}15\right)$$
+
+*Với hệ thống có thiết kế chống dồn gói SCADA chặt chẽ, ngưỡng an toàn đề xuất là **$1{,}15 \times P_{\text{stc}} \times \Delta t$** ($115\%$). Đối với các trạm có pin hai mặt Bifacial trên mái tôn trắng, ngưỡng trần mở rộng tối đa là **$1{,}20 \times P_{\text{stc}} \times \Delta t$** ($120\%$).*
 
 ---
 
