@@ -106,31 +106,35 @@ Kế thừa kiến trúc **Medallion Architecture (Databricks)** [4] kết hợp
 ---
 
 ### 2.2. Chiến lược Điền khuyết Nhân quả Đa tầng (Causal Cascade Imputation) [5, 6]
-Dữ liệu viễn thám có tỷ lệ bản ghi khuyết thiếu lên tới $56{,}2\%$. Để khôi phục tính liên tục của chuỗi thời gian mà không làm sai lệch bản chất vật lý, thuật toán Causal Cascade lựa chọn phương pháp tối ưu theo độ dài của từng đoạn đứt gãy [5]:
+Dữ liệu viễn thám có tỷ lệ bản ghi khuyết thiếu lên tới $56{,}2\%$ (gồm $1.536.301$ dòng). Để khôi phục tính liên tục của chuỗi thời gian mà không làm sai lệch bản chất vật lý quang điện, thuật toán Causal Cascade lựa chọn phương pháp tối ưu theo bản chất khí quyển và độ dài của từng đoạn đứt gãy [5]:
 
 ```
-[Bản ghi Khuyết thiếu (Missing Value)]
+[Bản ghi Khuyết thiếu (Missing Value - 1.536.301 dòng)]
                   │
-                  ├── GHI ≤ 25 W/m² hoặc Đêm? ───► TẦNG 1: Luật Khung giờ Đêm (Gán E = 0.0 kWh)
+                  ├── GHI ≤ 20 W/m² HOẶC is_day == 0? ──► TẦNG 1: Luật Đêm Vật lý & Ngưỡng Inverter (1.383.493 dòng - 90.05%)
                   │
-                  ├── Độ dài lỗ khuyết ≤ 4 bước (≤ 1h)? ──► TẦNG 2: Nội suy Tuyến tính Thời gian (Linear)
+                  ├── Độ dài lỗ khuyết ≤ 2 bước (≤ 30p)? ─► TẦNG 2: Nội suy Tuyến tính Thời gian (53.684 dòng - 3.49%)
                   │
-                  ├── Độ dài 5 - 8 bước (1h - 2h)? ──────► TẦNG 3: Nội suy Spline Bậc Ba (Cubic Spline)
+                  ├── Độ dài 3 - 8 bước (45p - 2h)? ─────► TẦNG 3: Nội suy PCHIP Spline Đơn điệu (50.704 dòng - 3.30%)
                   │
-                  └── Độ dài > 8 bước (> 2h)? ───────────► TẦNG 4: Hồi quy Tuyến tính Đa biến Khí quyển
+                  └── Độ dài > 8 bước (> 2h)? ───────────► TẦNG 4: Hồi quy Đa biến Khí quyển + Kẹp trần (48.420 dòng - 3.15%)
 ```
 
-1.  **Tầng 1 - Quy tắc Khung giờ Đêm (`rule_based_night`):**
-    *   *Điều kiện:* $GHI \le 25\,\text{W/m}^2$ kết hợp với $T_{\text{amb}} \ge 18{,}5^\circ\text{C}$ (hoặc $T_{\text{amb}} < 5{,}5^\circ\text{C}$).
-    *   *Xử lý:* Gán cứng giá trị sản lượng $E = 0{,}0\,\text{kWh}$ (phù hợp với thực tế vật lý khi không có bức xạ và Inverter ngắt nguồn ban đêm).
-2.  **Tầng 2 - Đoạn Khuyết Ngắn ($\le 4$ chu kỳ, tương đương $\le 1\,\text{h}$ - `linear`) [5]:**
-    *   *Xử lý:* Áp dụng nội suy tuyến tính thời gian:
-        $$E(t) = E(t_0) + \frac{t - t_0}{t_1 - t_0} \cdot \left[E(t_1) - E(t_0)\right]$$
-3.  **Tầng 3 - Đoạn Khuyết Trung bình ($5 - 8$ chu kỳ, tương đương $1 - 2\,\text{h}$ - `cubic`) [6]:**
-    *   *Xử lý:* Áp dụng nội suy đường cong bậc ba (*Cubic Spline Interpolation*) $S_i(t) = a_i + b_i(t - t_i) + c_i(t - t_i)^2 + d_i(t - t_i)^3$ thỏa mãn tính liên tục của đạo hàm bậc hai $S''_i(t_i) = S''_{i-1}(t_i)$ tại mọi điểm nút, giúp bảo toàn quỹ đạo cong parabol tự nhiên của bức xạ mặt trời [6].
-4.  **Tầng 4 - Đoạn Khuyết Dài ($> 8$ chu kỳ, tương đương $> 2\,\text{h}$ - `regression`) [5]:**
-    *   *Xử lý:* Huấn luyện mô hình hồi quy tuyến tính đa biến (*Multiple Linear Regression*) dựa trên tập đặc trưng khí quyển tương quan cao:
-        $$E = \beta_0 + \beta_1 \cdot GHI + \beta_2 \cdot DNI + \beta_3 \cdot DHI + \beta_4 \cdot T_{\text{amb}} + \epsilon$$
+1.  **Tầng 1 - Luật Đêm Vật lý & Ngưỡng Khởi động Inverter (`rule_based_night` - 90.05%):**
+    *   *Bản chất Domain:* Loại bỏ hoàn toàn khung giờ tĩnh ($18\text{h}30 - 05\text{h}30$) để tự động thích ứng với sự thay đổi nhật quỹ 4 mùa tại bang Victoria (Úc). Biến `is_day` được tính toán thiên văn từ mô hình **ECMWF ERA5-Land** dựa trên góc cao mặt trời ($h > 0^\circ \implies \text{is\_day}=1$, $h \le 0^\circ \implies \text{is\_day}=0$).
+    *   *Điều kiện:*
+        $$\text{zero\_mask} = (\text{shortwave\_radiation} \le 20{,}0\,\text{W/m}^2) \lor (\text{is\_day} == 0)$$
+    *   *Xử lý:* Gán cứng $E = 0{,}0\,\text{kWh}$. Khi bức xạ $\le 20\,\text{W/m}^2$, dòng quang sinh không đủ đạt điện áp khởi động $V_{\text{start}}$ ($\approx 200\,\text{V}$) để kích hoạt biến tần, Inverter ở chế độ chờ (*Standby*) và không phát điện [14]. Giúp cứu được $31.503$ dòng nắng chiều hè ($18:30 - 20:30$) và bắt trọn $217.828$ dòng đêm mùa đông.
+2.  **Tầng 2 - Đoạn Khuyết Ngắn ($\le 2$ chu kỳ, tương đương $\le 30\,\text{phút}$ - `linear` - 3.49%) [5]:**
+    *   *Xử lý:* Áp dụng nội suy tuyến tính thời gian kết hợp kẹp cứng công suất:
+        $$E(t) = \text{clip}\left(E(t_0) + \frac{t - t_0}{t_1 - t_0} \cdot \left[E(t_1) - E(t_0)\right],\, 0{,}0,\, P_{\text{stc}} \times 0{,}25\,\text{h}\right)$$
+3.  **Tầng 3 - Đoạn Khuyết Trung bình ($3 - 8$ chu kỳ, tương đương $45\,\text{phút} - 2\,\text{h}$ - `pchip` - 3.30%) [6]:**
+    *   *Xử lý:* Thay thế Cubic Spline tự do bằng **PCHIP (Piecewise Cubic Hermite Interpolating Polynomial)**. PCHIP bảo toàn tính đơn điệu (*Monotonicity Preserving*), triệt tiêu hoàn toàn hiện tượng dao động sóng và vọt đỉnh giả tạo (Runge phenomenon), kết hợp kẹp trần công suất cực đại:
+        $$E(t) = \text{clip}\left(\text{PCHIP}(t),\, 0{,}0,\, P_{\text{stc}} \times 0{,}25\,\text{h}\right)$$
+4.  **Tầng 4 - Đoạn Khuyết Dài ($> 8$ chu kỳ, tương đương $> 2\,\text{h}$ - `regression` - 3.15%) [5]:**
+    *   *Xử lý:* Huấn luyện mô hình hồi quy tuyến tính đa biến (*Multiple Linear Regression*) riêng cho từng trạm (*Per-site model*) dựa trên 4 biến khí quyển tương quan cao ($GHI, DNI, DHI, T_{\text{amb}}$), kết hợp kẹp trần vật lý nghiêm ngặt:
+        $$E = \text{clip}\left(\beta_0 + \beta_1 \cdot GHI + \beta_2 \cdot DNI + \beta_3 \cdot DHI + \beta_4 \cdot T_{\text{amb}},\, 0{,}0,\, P_{\text{stc}} \times 0{,}25\,\text{h}\right)$$
+    *   *Hiệu quả kiểm chứng:* Triệt tiêu $100\%$ lỗi sinh sản lượng ảo vượt quá công suất vật lý trạm (loại bỏ hoàn toàn các trường hợp vọt lên $44{,}63\,\text{kWh}$ trên trạm $34\,\text{kWp}$).
 
 ---
 
@@ -431,6 +435,7 @@ Dự án được tổ chức theo khung làm việc Scrum chuẩn mực gồm 8
 | **8** | *Làm thế nào để cập nhật nhãn dị thường cho 2.73 triệu bản ghi trên DWH mà không làm gián đoạn hệ thống?* | **Trả lời:** Nhóm áp dụng quy trình cập nhật thưa 4 bước (Sparse Update): Xác thực mã băm MD5 toàn vẹn $\to$ Nạp $33.280$ bản ghi dị thường ($1{,}22\%$) vào bảng tạm $\to$ Kiểm tra Anti-join khóa chính $\to$ Thực thi câu lệnh `UPDATE FROM` trong một Transaction nguyên tử duy nhất, hoàn tất trong $1{,}8\,\text{giây}$ mà không gây khóa bảng kéo dài. *(Tham khảo: Kimball & Ross [8], PostgreSQL Docs [9])*. |
 | **9** | *Điểm khác biệt giữa PR danh định và PR hiệu chỉnh nhiệt độ (Temperature-Corrected PR) là gì?* | **Trả lời:** $PR$ danh định bị sụt giảm tự nhiên $5\% - 10\%$ vào mùa hè do nhiệt độ cell pin tăng cao làm sụt điện áp $V_{\text{oc}}$. $PR_{\text{corr}}$ chuẩn hóa hiệu suất về mốc nhiệt độ chuẩn $25^\circ\text{C}$ theo Phụ lục B tiêu chuẩn IEC 61724-1, loại bỏ biến động mùa để theo dõi chính xác tốc độ thoái hóa suy thoái vật liệu thực tế của tấm pin qua từng năm. *(Tham khảo: IEC 61724-1:2021 [14], Dierauf et al., NREL [15])*. |
 | **10** | *Nếu dự án được mở rộng lên 500 trạm trên toàn quốc, kiến trúc hiện tại cần nâng cấp những thành phần nào?* | **Trả lời:** Nhóm sẽ nâng cấp 3 thành phần chính: (1) Thay thế tiến trình ETL theo lô bằng đường ống phân tán **Apache Spark on Databricks**; (2) Tiếp nhận dữ liệu viễn thám thời gian thực qua cụm **Apache Kafka** và lưu trữ trên cơ sở dữ liệu phân tích thời gian thực **ClickHouse**; (3) Triển khai mô hình AI dạng **Edge AI (ONNX Runtime)** trực tiếp tại gateway của trạm để xử lý tại chỗ. *(Tham khảo: Armbrust et al. [4], Kreps et al. [24])*. |
+| **11** | *Tại sao trong bước Điền khuyết Tầng 1 nhóm lại dùng điều kiện `GHI <= 20 W/m2 OR is_day == 0` mà không dùng khung giờ cố định? Biến `is_day` lấy ở đâu và nhóm xử lý rủi ro tràn công suất vật lý (Over-capacity) ra sao?* | **Trả lời:** Khung giờ tĩnh ($18\text{h}30 - 05\text{h}30$) sai lệch lớn giữa mùa đông và mùa hè tại Úc ($9{,}5\,\text{h}$ vs $14{,}5\,\text{h}$ nắng). Biến `is_day` được tính toán thiên văn từ mô hình **ERA5-Land** (góc cao mặt trời $h \le 0^\circ$). Kết hợp với ngưỡng khởi động Inverter ($20\,\text{W/m}^2$), logic `GHI <= 20 OR is_day == 0` điền chính xác $90{,}05\%$ dòng khuyết mà không làm mất $31.503$ dòng nắng chiều hè. Đồng thời, nhóm áp dụng **Physical Clamping** ($0 \le E \le P_{\text{stc}} \times 0{,}25\,\text{h}$) trên cả Linear, PCHIP Spline và Regression, triệt tiêu $100\%$ lỗi sinh sản lượng ảo vượt quá công suất vật lý trạm. *(Tham khảo: IEC 61724-1:2021 [14], Muñoz-Sabater et al. [2])*. |
 
 ---
 
