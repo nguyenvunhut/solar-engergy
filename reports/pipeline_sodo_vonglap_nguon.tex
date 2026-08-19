@@ -1,0 +1,98 @@
+% =============================================================================
+%  So do VONG LAP VO CUC (infinity loop) cua quy trinh hoc may - dung rieng.
+%  Dung lai:  xelatex pipeline_sodo_vonglap_nguon.tex
+%             cp pipeline_sodo_vonglap_nguon.pdf images/pipeline_sodo_vonglap.pdf
+%
+%  Dang hinh: hai thuy noi nhau o eo giua, dung quy uoc MLOps pho bien (bien the cua
+%  vong lap vo cuc DevOps). Thuy TRAI la vong PHAT TRIEN, thuy PHAI la vong VAN HANH.
+%  Buoc giam sat o cuoi thuy phai day nguoc ve buoc du lieu o dau thuy trai - do la
+%  cho khep kin, khong phai mot mui ten trang tri.
+%
+%  CHU Y: so do CHI ve cac BUOC, tuyet doi khong ghi ten cong cu (thu vien, framework,
+%  dich vu). Ten cong cu doi theo nam, con vong doi thi khong.
+% =============================================================================
+\documentclass[11pt]{article}
+\usepackage{fontspec}
+\setmainfont{TeX Gyre Heros}
+\usepackage[margin=0.5cm,paperwidth=27cm,paperheight=14cm]{geometry}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc}
+\pagestyle{empty}
+
+\definecolor{cPhatTrien}{HTML}{4E79A7}
+\definecolor{cVanHanh}{HTML}{B07AA1}
+\definecolor{cChu}{HTML}{2B2B2B}
+\definecolor{cBang}{HTML}{E8E8E8}
+\definecolor{cNhat}{HTML}{8A8A8A}
+
+\begin{document}
+\centering
+\vspace*{\fill}
+\begin{tikzpicture}[
+  buoc/.style={
+    draw=#1, line width=1pt, fill=white,
+    rounded corners=4pt, align=center, inner sep=5pt,
+    text width=3.15cm, font=\small, text=cChu, minimum height=1.25cm
+  },
+  so/.style={circle, draw=#1, fill=#1, text=white,
+             font=\bfseries\scriptsize, inner sep=0pt, minimum size=5.4mm},
+  mui/.style={-{Stealth[length=3mm,width=2.2mm]}, line width=1.1pt, color=#1}
+]
+
+\def\r{3.9}
+\coordinate (T) at (-\r,0);   % tam thuy trai
+\coordinate (P) at ( \r,0);   % tam thuy phai
+
+% ── Dai bang vo cuc ve mo phia sau ──
+\draw[color=cBang, line width=15pt, line cap=round] (T) circle (\r);
+\draw[color=cBang, line width=15pt, line cap=round] (P) circle (\r);
+
+% ── Nhan hai vong ──
+\node[font=\bfseries\small, text=cPhatTrien] at ($(T)+(0,\r+1.15)$) {VÒNG PHÁT TRIỂN};
+\node[font=\bfseries\small, text=cVanHanh]  at ($(P)+(0,\r+1.15)$) {VÒNG VẬN HÀNH};
+
+% ── Bon buoc thuy TRAI, di nguoc chieu kim dong ho tu eo giua ──
+\node[buoc=cPhatTrien] (b1) at ($(T)+(90:\r)$)  {Dữ liệu đo\\và làm sạch};
+\node[buoc=cPhatTrien] (b2) at ($(T)+(152:\r)$) {Chia dữ liệu\\theo trục thời gian};
+\node[buoc=cPhatTrien] (b3) at ($(T)+(208:\r)$) {Sinh và\\chọn đặc trưng};
+\node[buoc=cPhatTrien] (b4) at ($(T)+(270:\r)$) {Huấn luyện\\và tinh chỉnh};
+
+% ── Bon buoc thuy PHAI, di thuan chieu kim dong ho tu eo giua ──
+\node[buoc=cVanHanh] (b5) at ($(P)+(90:\r)$)  {Đánh giá trên\\tập niêm phong};
+\node[buoc=cVanHanh] (b6) at ($(P)+(28:\r)$)   {Giải thích\\mô hình};
+\node[buoc=cVanHanh] (b7) at ($(P)+(-28:\r)$)  {Phục vụ\\dự báo};
+\node[buoc=cVanHanh] (b8) at ($(P)+(-90:\r)$) {Giám sát và\\phát hiện suy giảm};
+
+% ── So thu tu ──
+\foreach \n/\c in {b1/cPhatTrien, b2/cPhatTrien, b3/cPhatTrien, b4/cPhatTrien,
+                   b5/cVanHanh, b6/cVanHanh, b7/cVanHanh, b8/cVanHanh} {}
+\node[so=cPhatTrien] at ($(b1.north west)+(0.08,-0.08)$) {1};
+\node[so=cPhatTrien] at ($(b2.north west)+(0.08,-0.08)$) {2};
+\node[so=cPhatTrien] at ($(b3.north west)+(0.08,-0.08)$) {3};
+\node[so=cPhatTrien] at ($(b4.north west)+(0.08,-0.08)$) {4};
+\node[so=cVanHanh]   at ($(b5.north west)+(0.08,-0.08)$) {5};
+\node[so=cVanHanh]   at ($(b6.north west)+(0.08,-0.08)$) {6};
+\node[so=cVanHanh]   at ($(b7.north west)+(0.08,-0.08)$) {7};
+\node[so=cVanHanh]   at ($(b8.north west)+(0.08,-0.08)$) {8};
+
+% ── Dong chay thuy trai: 1 -> 2 -> 3 -> 4 ──
+\draw[mui=cPhatTrien] (b1) to[bend right=20] (b2);
+\draw[mui=cPhatTrien] (b2) to[bend right=20] (b3);
+\draw[mui=cPhatTrien] (b3) to[bend right=20] (b4);
+
+% ── Bat cheo qua eo giua: 4 -> 5 ──
+\draw[mui=cPhatTrien] (b4) to[bend left=22] (b5);
+
+% ── Dong chay thuy phai: 5 -> 6 -> 7 -> 8 ──
+\draw[mui=cVanHanh] (b5) to[bend left=20] (b6);
+\draw[mui=cVanHanh] (b6) to[bend left=20] (b7);
+\draw[mui=cVanHanh] (b7) to[bend left=20] (b8);
+
+% ── KHEP VONG: 8 -> 1, di qua eo giua ──
+\draw[mui=cVanHanh, line width=1.6pt, dashed] (b8) to[bend right=14] (b1);
+\node[font=\scriptsize\bfseries, text=cVanHanh, align=center, fill=white, inner sep=3pt]
+  at (0,-0.55) {dữ liệu mới và tín hiệu suy giảm\\kích hoạt huấn luyện lại};
+
+\end{tikzpicture}
+\vspace*{\fill}
+\end{document}
