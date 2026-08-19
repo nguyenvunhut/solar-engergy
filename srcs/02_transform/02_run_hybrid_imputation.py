@@ -34,6 +34,9 @@ GAP_LINEAR_MAX = int(_config["imputation"]["gap_linear_max_rows"])
 GAP_CUBIC_MAX = int(_config["imputation"]["gap_cubic_max_rows"])
 NIGHT_START = float(_config["imputation"]["night_start_hour"])
 NIGHT_END = float(_config["imputation"]["night_end_hour"])
+NIGHT_RADIATION_THRESHOLD = float(
+    _config["imputation"].get("night_radiation_threshold", 20.0)
+)
 NIGHT_TOLERANCE = pd.Timedelta(
     _config["imputation"]["night_weather_tolerance"]
 )
@@ -87,12 +90,8 @@ def rule_based_night_zero(
     weather_df: pd.DataFrame,
     site_key: int,
 ) -> tuple[pd.Series, int, pd.Series]:
-    """Set missing generation to zero at night or when radiation is zero."""
+    """Set missing generation to zero when radiation is below inverter startup threshold or is_day == 0."""
     generation = solar_df["energy_generated_kwh"].copy()
-    timestamp = solar_df["timestamp"]
-
-    decimal_hour = timestamp.dt.hour + timestamp.dt.minute / 60
-    is_night = (decimal_hour >= NIGHT_START) | (decimal_hour < NIGHT_END)
 
     weather = weather_df[weather_df["sitekey"] == site_key][
         ["timestamp", "shortwave_radiation", "is_day"]
@@ -107,11 +106,12 @@ def rule_based_night_zero(
         direction="nearest",
     ).set_index("index")
 
-    zero_radiation = (
-        (merged["shortwave_radiation"].fillna(0) == 0)
+    # Bản chất vật lý: Bức xạ <= ngưỡng khởi động Inverter (20 W/m2) HOẶC Mặt trời dưới chân trời (is_day == 0)
+    low_radiation = (
+        (merged["shortwave_radiation"].fillna(0) <= NIGHT_RADIATION_THRESHOLD)
         | (merged["is_day"].fillna(0) == 0)
     )
-    zero_mask = is_night.values | zero_radiation.values
+    zero_mask = low_radiation.values
     fill_mask = zero_mask & generation.isna()
     filled = int(fill_mask.sum())
     generation[fill_mask] = 0.0
@@ -123,8 +123,9 @@ def regression_imputation_large_gaps_strict(
     weather_df: pd.DataFrame,
     site_key: int,
     large_gap_indices: set[int],
+    max_physical_kwh: float = np.inf,
 ) -> tuple[np.ndarray, int, list[int]]:
-    """Apply the original per-site regression only to original large gaps."""
+    """Apply the original per-site regression only to original large gaps with physical clamping."""
     weather = weather_df[weather_df["sitekey"] == site_key][
         ["timestamp", *REGRESSION_FEATURES]
     ].copy()
@@ -179,7 +180,9 @@ def regression_imputation_large_gaps_strict(
                 local_position is not None
                 and local_position in large_gap_indices
             ):
-                result.iloc[local_position] = max(0.0, prediction)
+                result.iloc[local_position] = float(
+                    np.clip(prediction, 0.0, max_physical_kwh)
+                )
                 filled += 1
                 filled_positions.append(local_position)
     return result.values, filled, filled_positions
@@ -188,8 +191,9 @@ def regression_imputation_large_gaps_strict(
 def build_imputed_solar(
     solar_df: pd.DataFrame,
     weather_df: pd.DataFrame,
+    site_capacity_map: dict[str, float] | None = None,
 ) -> tuple[pd.DataFrame, dict[str, int], dict[str, pd.DataFrame]]:
-    """Run the original hybrid imputation algorithm without database writes."""
+    """Run the optimized hybrid imputation algorithm with physical boundary clamping."""
     solar_df = solar_df.copy()
     weather_df = weather_df.copy()
     solar_df["timestamp"] = pd.to_datetime(
@@ -244,6 +248,17 @@ def build_imputed_solar(
             results.append(subset)
             continue
 
+        # Giới hạn vật lý công suất trạm trong 15 phút (0.25h)
+        capacity_kw = (
+            site_capacity_map.get(str(site), 0.0)
+            if site_capacity_map
+            else 0.0
+        )
+        max_physical_kwh = (
+            capacity_kw * 0.25 if capacity_kw > 0 else float("inf")
+        )
+
+        # 1. Rule-based Night & Low Radiation (Threshold Inverter Startup)
         generation, night_filled, night_fill_mask = rule_based_night_zero(
             subset, weather_df, site
         )
@@ -255,6 +270,7 @@ def build_imputed_solar(
         if EXPORT_INTERMEDIATE:
             stage_results["rule"].append(subset.copy())
 
+        # 2 & 3. Linear & PCHIP Spline Interpolation (Monotonicity Preserving)
         time_series = pd.Series(
             subset["energy_generated_kwh"].values,
             index=pd.DatetimeIndex(subset["timestamp"]),
@@ -277,7 +293,9 @@ def build_imputed_solar(
             linear_missing_before = time_series.isna()
             interpolated = time_series.interpolate(method="time")
             for index in linear_indices:
-                time_series.iloc[index] = interpolated.iloc[index]
+                time_series.iloc[index] = float(
+                    np.clip(interpolated.iloc[index], 0.0, max_physical_kwh)
+                )
             linear_filled_mask = linear_missing_before & time_series.notna()
             linear_filled_positions = [
                 index
@@ -298,9 +316,11 @@ def build_imputed_solar(
         if cubic_indices:
             cubic_missing_before = time_series.isna()
             temporary = time_series.interpolate(method="linear")
-            interpolated = temporary.interpolate(method="cubic")
+            interpolated = temporary.interpolate(method="pchip")
             for index in cubic_indices:
-                time_series.iloc[index] = interpolated.iloc[index]
+                time_series.iloc[index] = float(
+                    np.clip(interpolated.iloc[index], 0.0, max_physical_kwh)
+                )
             cubic_filled_mask = cubic_missing_before & time_series.notna()
             cubic_filled_positions = [
                 index
@@ -317,6 +337,7 @@ def build_imputed_solar(
             cubic_result["energy_generated_kwh"] = time_series.values
             stage_results["cubic"].append(cubic_result)
 
+        # 4. Regression with Physical Clamping
         subset["energy_generated_kwh"] = time_series.values
         values, regression_filled, regression_filled_positions = (
             regression_imputation_large_gaps_strict(
@@ -324,6 +345,7 @@ def build_imputed_solar(
                 weather_df,
                 site,
                 large_gap_indices,
+                max_physical_kwh=max_physical_kwh,
             )
         )
         subset["energy_generated_kwh"] = values
@@ -337,10 +359,10 @@ def build_imputed_solar(
 
         subset["energy_generated_kwh"] = subset[
             "energy_generated_kwh"
-        ].clip(lower=0)
+        ].clip(lower=0.0, upper=max_physical_kwh)
         results.append(subset)
         log.info(
-            "Site %s | night=%s | linear=%s | cubic=%s | regression=%s "
+            "Site %s | night=%s | linear=%s | pchip=%s | regression=%s "
             "| remaining_null=%s",
             site,
             f"{night_filled:,}",
@@ -443,7 +465,7 @@ def _copy_updates_to_temp_table(connection, cleaned: pd.DataFrame) -> None:
 
 
 def run_hybrid_imputation(engine, *, execute: bool = True) -> dict[str, int]:
-    """Read buffers, apply the original algorithm, and update energy safely."""
+    """Read buffers, apply the optimized algorithm, and update energy safely."""
     log.info(">> Đang kéo 2.7 triệu dòng Solar từ Cloud về máy... (sẽ mất khoảng 1-3 phút tùy mạng)")
     solar = pd.read_sql_query(
         text(f"SELECT * FROM {SCHEMA}.{SOLAR_TABLE}"),
@@ -454,8 +476,33 @@ def run_hybrid_imputation(engine, *, execute: bool = True) -> dict[str, int]:
         text(f"SELECT * FROM {SCHEMA}.{WEATHER_TABLE}"),
         con=engine,
     )
+
+    site_capacity_map: dict[str, float] = {}
+    try:
+        dim_site = pd.read_sql_query(
+            text(f"SELECT sitekey, capacity_kw FROM {SCHEMA}.dim_solar_site"),
+            con=engine,
+        )
+        site_capacity_map = dict(
+            zip(
+                dim_site["sitekey"].astype(str),
+                dim_site["capacity_kw"].astype(float),
+            )
+        )
+        log.info(
+            ">> Đã tải %s bản ghi cấu hình công suất trạm từ dim_solar_site.",
+            len(site_capacity_map),
+        )
+    except Exception as exc:
+        log.warning(
+            "Không thể tải dim_solar_site để kẹp giới hạn công suất vật lý: %s",
+            exc,
+        )
+
     log.info(">> Đã kéo xong toàn bộ data! Đang chạy mô hình AI nội suy (Imputation)...")
-    cleaned, counters, stages = build_imputed_solar(solar, weather)
+    cleaned, counters, stages = build_imputed_solar(
+        solar, weather, site_capacity_map=site_capacity_map
+    )
 
     if EXPORT_INTERMEDIATE:
         export_csv(stages["rule"], "result_01_rule_based_night.csv")
@@ -469,7 +516,7 @@ def run_hybrid_imputation(engine, *, execute: bool = True) -> dict[str, int]:
     log.info(f"  NULL ban đầu       : {counters['input_null']:,}")
     log.info(f"  - Rule-based (đêm) : điền {counters.get('night', 0):,}")
     log.info(f"  - Linear (≤ 2h)    : điền {counters.get('linear', 0):,}")
-    log.info(f"  - Cubic (3-8h)     : điền {counters.get('cubic', 0):,}")
+    log.info(f"  - PCHIP Spline     : điền {counters.get('cubic', 0):,}")
     log.info(f"  - Regression (> 8h): điền {counters.get('regression', 0):,}")
     log.info(f"  => TỔNG ĐÃ ĐIỀN    : {counters['filled_total']:,}")
     log.info(f"  NULL còn lại       : {counters['remaining_null']:,}")

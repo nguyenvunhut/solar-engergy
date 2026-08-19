@@ -11,6 +11,7 @@ imputation:
   gap_cubic_max_rows: 8
   night_start_hour: 18.5
   night_end_hour: 5.5
+  night_radiation_threshold: 20.0
   night_weather_tolerance: 30min
   regression_weather_tolerance: 60min
   regression_min_training_rows: 10
