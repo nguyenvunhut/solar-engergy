@@ -61,7 +61,7 @@ GMM_PROB_THRESHOLD = float(_cfg.get("algorithm", {}).get("gmm_if_prob_threshold"
 IF_CONTAMINATION = float(_cfg.get("algorithm", {}).get("gmm_if_if_contamination", 0.03))
 IF_N_ESTIMATORS = int(_cfg.get("algorithm", {}).get("gmm_if_if_estimators", 100))
 OVER_CAPACITY_TOLERANCE = float(
-    _cfg.get("algorithm", {}).get("gmm_if_over_capacity_tolerance", 1.0)
+    _cfg.get("algorithm", {}).get("gmm_if_over_capacity_tolerance", 1.20)
 )
 RANDOM_STATE = 42
 
@@ -277,8 +277,9 @@ def _add_weather_and_physical_features(solar: pd.DataFrame) -> pd.DataFrame:
     expected_high = solar["expected_energy_by_radiation"] >= 0.20 * site_p95
 
     # Strict capacity guardrail: one 15-minute energy record should not exceed
-    # rated site capacity by a large margin. Use metadata capacity_kw only;
-    # do not fallback to site_p95 for this physical check.
+    # rated site capacity by more than the physical over-irradiance ceiling (1.20x).
+    # This accommodates legitimate Cloud Enhancement (+20%) while strictly catching
+    # Modbus SCADA buffering spikes (> 1.20x). Use metadata capacity_kw only.
     max_energy_15min = solar["capacity_kw"] * 0.25
     solar["physical_over_capacity"] = (
         solar["capacity_kw"].notna()

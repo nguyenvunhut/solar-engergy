@@ -248,14 +248,15 @@ def build_imputed_solar(
             results.append(subset)
             continue
 
-        # Giới hạn vật lý công suất trạm trong 15 phút (0.25h)
+        # Giới hạn vật lý công suất trạm trong 15 phút (0.25h) kèm dung sai trần vật lý 1.20x
+        # (Cloud Enhancement + Quán tính nhiệt pin lạnh + Mái tôn trắng Albedo cao)
         capacity_kw = (
             site_capacity_map.get(str(site), 0.0)
             if site_capacity_map
             else 0.0
         )
         max_physical_kwh = (
-            capacity_kw * 0.25 if capacity_kw > 0 else float("inf")
+            capacity_kw * 0.25 * 1.20 if capacity_kw > 0 else float("inf")
         )
 
         # 1. Rule-based Night & Low Radiation (Threshold Inverter Startup)
