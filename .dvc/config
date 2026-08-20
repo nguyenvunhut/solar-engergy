@@ -8,3 +8,7 @@
     url = s3://mlmart/model_v4
     endpointurl = https://gocnjdtutobgalyqomwz.storage.supabase.co/storage/v1/s3
     region = ap-southeast-1
+['remote "model_v5"']
+    url = s3://mlmart/model_v5
+    endpointurl = https://gocnjdtutobgalyqomwz.storage.supabase.co/storage/v1/s3
+    region = ap-southeast-1

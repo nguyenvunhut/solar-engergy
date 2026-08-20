@@ -1,0 +1,6 @@
+outs:
+- md5: 31e51e902eab0bb1b454a986a4ed4d69.dir
+  size: 125925806
+  nfiles: 8
+  hash: md5
+  path: 08_explain
