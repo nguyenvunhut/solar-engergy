@@ -209,8 +209,14 @@ class DichVuDuBao:
                 d = pd.read_parquet(MLMART, columns=cot)
             except Exception as exc:
                 raise ForecastDomainError(f"Không đọc được metadata trạm: {MLMART}") from exc
-            if d.empty or d[cot].isna().any().any():
-                raise ForecastDomainError("Metadata trạm có cột thiếu/NaN")
+            # Chỉ ba cột này là BẮT BUỘC. capacity_kw / number_of_panels được phép NaN:
+            # từ 2026-08-18 nhóm quyết định KHÔNG điền hai cột này (17/42 trạm thiếu hoàn
+            # toàn; bản cũ điền bằng trung vị toàn cục 51,15 kW là số bịa). Hai cột đó không
+            # nằm trong 39 đặc trưng của mô hình, chỉ dùng cho chỉ số hiển thị theo tấm pin.
+            cot_bat_buoc = ["site_id", "latitude", "longitude"]
+            if d.empty or d[cot_bat_buoc].isna().any().any():
+                raise ForecastDomainError(
+                    "Metadata trạm thiếu site_id/latitude/longitude — không dự báo được")
             self._sieu_du_lieu = d.groupby("site_id").first().reset_index()
         return self._sieu_du_lieu
 

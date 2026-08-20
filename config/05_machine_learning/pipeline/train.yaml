@@ -62,7 +62,16 @@ experiment: measured_only_headline
 
 # THU NGHIEM 2: tang trong so vung dinh - nhan (1 + he_so * k) de ep model hoc ky vung san
 # luong cao (chua sai biet bien do ~6-12% tren ca 42 site). Dat 0.0 de tat.
-he_so_trong_so_dinh: 1.0   # thu 0.0/1.0/2.0: 1.0 can bang WAPE va bien do dinh tot nhat
+# TAT tu 2026-08-20. Do tren du lieu v5 (TN4/TN11 trong notebook 05b): bat trong so
+# lam WAPE val xau di (22.2349 vs 22.1904 khi tat) va thien lech ME gap ~3 lan
+# (+0.371 vs +0.126 kWh); loi ich duy nhat la vung dinh (12.78 vs 14.23) - khong du
+# bu tren WAPE, la thuoc do chinh thuc cua bao cao. Dat > 0 de chay lai ablation.
+# Co che trong so mau. 'mau_so' = w ty le mau_so chuan hoa (site_scale x sin_elevation),
+# dong bo voi notebook 06_x tu 2026-08-20: tu so cua WAPE kWh = MAE co trong so mau_so
+# tren thang k, nen huan luyen dung tren thuoc do bao cao va khong sinh thien lech.
+# Cac gia tri hop le: mau_so | khong | theo_nhan (co che cu 1 + a*k, da bo).
+che_do_trong_so: mau_so
+he_so_trong_so_dinh: 0.0
 
 # ── Chuan hoa muc tieu ──
 # Model KHONG du bao thang kWh - no du bao ty le k = energy / (site_scale * sin_elevation).
