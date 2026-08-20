@@ -1,0 +1,55 @@
+<mxfile host="Electron" modified="2026-08-20T02:25:00.000Z" agent="Mozilla/5.0" version="21.6.8" type="device">
+  <diagram id="diag_3_2" name="Galaxy Schema">
+    <mxGraphModel dx="1422" dy="820" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="900" background="#F8FAFC" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="t0" value="MÔ HÌNH DỮ LIỆU LOGIC THEO LƯỢC ĐỒ THIÊN HÀ (GALAXY SCHEMA / FACT CONSTELLATION)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#1E293B;fontColor=#FFFFFF;fontSize=14;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="20" y="20" width="1340" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="dim_geo" value="dim_geography (Bảng Chiều Địa Lý)&#xa;--------------------------------------------&#xa;PK geo_id : INT&#xa;• campus_name : VARCHAR(100)&#xa;• latitude : NUMERIC(8,4)&#xa;• longitude : NUMERIC(8,4)&#xa;• state : VARCHAR(50)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EFF6FF;strokeColor=#3B82F6;strokeWidth=1.8;fontColor=#1E293B;fontSize=10;align=left;spacingLeft=10;verticalAlign=top;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="490" y="100" width="420" height="125" as="geometry" />
+        </mxCell>
+        <mxCell id="dim_site" value="dim_solar_site (Bảng Chiều Trạm Phát)&#xa;--------------------------------------------&#xa;PK site_id : INT&#xa;FK geo_id : INT&#xa;• capacity_kw : NUMERIC(10,2)&#xa;• panel_brand : VARCHAR(100)&#xa;• inverter_brand : VARCHAR(100)&#xa;• panel_count : INT" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EFF6FF;strokeColor=#3B82F6;strokeWidth=1.8;fontColor=#1E293B;fontSize=10;align=left;spacingLeft=10;verticalAlign=top;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="490" y="240" width="420" height="125" as="geometry" />
+        </mxCell>
+        <mxCell id="dim_time" value="dim_date &amp; dim_time (Bảng Chiều Thời Gian)&#xa;--------------------------------------------&#xa;PK date_id : INT (YYYYMMDD)&#xa;PK time_id : INT (HHMI)&#xa;• full_date : DATE&#xa;• hour : INT (0-23) | minute : INT (0,15,30,45)&#xa;• is_holiday : BOOL | is_day : BOOL" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EFF6FF;strokeColor=#3B82F6;strokeWidth=1.8;fontColor=#1E293B;fontSize=10;align=left;spacingLeft=10;verticalAlign=top;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="490" y="390" width="420" height="125" as="geometry" />
+        </mxCell>
+        <mxCell id="dim_wtype" value="dim_weather_type (Bảng Tra Cứu WMO)&#xa;--------------------------------------------&#xa;PK weather_type_id : INT&#xa;• weather_code : INT&#xa;• weather_condition : VARCHAR(100)&#xa;• description_vi : VARCHAR(255)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EFF6FF;strokeColor=#3B82F6;strokeWidth=1.8;fontColor=#1E293B;fontSize=10;align=left;spacingLeft=10;verticalAlign=top;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="490" y="540" width="420" height="125" as="geometry" />
+        </mxCell>
+        <mxCell id="fact_gen" value="fact_solar_energy_gen (Sản Lượng Điện 15m)&#xa;============================================&#xa;PK gen_id : BIGINT&#xa;FK site_id : INT&#xa;FK geo_id : INT&#xa;FK date_id : INT&#xa;FK time_id : INT&#xa;--------------------------------------------&#xa;• energy_generated_kwh : NUMERIC(12,4)&#xa;• gmm_if_outlier_flag : BOOLEAN&#xa;• gmm_if_outlier_reason : VARCHAR(50)&#xa;• fill_null_algorithm : VARCHAR(50)&#xa;--------------------------------------------&#xa;(2.731.946 dòng, Phân vùng Range Năm)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ECFDF5;strokeColor=#10B981;strokeWidth=2.2;fontColor=#064E3B;fontSize=10.5;align=left;spacingLeft=10;verticalAlign=top;spacingTop=8;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="160" width="380" height="440" as="geometry" />
+        </mxCell>
+        <mxCell id="fact_w" value="fact_weather (Khí Tượng Viễn Thám 1h)&#xa;============================================&#xa;PK weather_id : BIGINT&#xa;FK geo_id : INT&#xa;FK date_id : INT&#xa;FK time_id : INT&#xa;FK weather_type_id : INT&#xa;--------------------------------------------&#xa;• shortwave_radiation (GHI) : NUMERIC(10,2)&#xa;• direct_normal_irradiance (DNI) : NUMERIC(10,2)&#xa;• diffuse_solar_radiation (DHI) : NUMERIC(10,2)&#xa;• temperature_c : NUMERIC(6,2)&#xa;• cloud_cover_total : INT&#xa;--------------------------------------------&#xa;(850.752 dòng, Dữ liệu ERA5-Land)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEFCE8;strokeColor=#CA8A04;strokeWidth=2.2;fontColor=#78350F;fontSize=10.5;align=left;spacingLeft=10;verticalAlign=top;spacingTop=8;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="970" y="160" width="380" height="440" as="geometry" />
+        </mxCell>
+        <mxCell id="e_l_dim_geo" value="1:N" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#3B82F6;strokeWidth=1.5;endArrow=open;endFill=0;fontSize=10;fontStyle=1;" edge="1" parent="1" source="dim_geo" target="fact_gen">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_r_dim_geo" value="1:N" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#CA8A04;strokeWidth=1.5;endArrow=open;endFill=0;fontSize=10;fontStyle=1;" edge="1" parent="1" source="dim_geo" target="fact_w">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_l_dim_site" value="1:N" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#3B82F6;strokeWidth=1.5;endArrow=open;endFill=0;fontSize=10;fontStyle=1;" edge="1" parent="1" source="dim_site" target="fact_gen">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_r_dim_site" value="1:N" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#CA8A04;strokeWidth=1.5;endArrow=open;endFill=0;fontSize=10;fontStyle=1;" edge="1" parent="1" source="dim_site" target="fact_w">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_l_dim_time" value="1:N" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#3B82F6;strokeWidth=1.5;endArrow=open;endFill=0;fontSize=10;fontStyle=1;" edge="1" parent="1" source="dim_time" target="fact_gen">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_r_dim_time" value="1:N" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#CA8A04;strokeWidth=1.5;endArrow=open;endFill=0;fontSize=10;fontStyle=1;" edge="1" parent="1" source="dim_time" target="fact_w">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_l_dim_wtype" value="1:N" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#3B82F6;strokeWidth=1.5;endArrow=open;endFill=0;fontSize=10;fontStyle=1;" edge="1" parent="1" source="dim_wtype" target="fact_gen">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_r_dim_wtype" value="1:N" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#CA8A04;strokeWidth=1.5;endArrow=open;endFill=0;fontSize=10;fontStyle=1;" edge="1" parent="1" source="dim_wtype" target="fact_w">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

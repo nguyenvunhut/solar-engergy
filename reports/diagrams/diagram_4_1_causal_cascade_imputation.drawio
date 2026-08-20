@@ -1,0 +1,76 @@
+<mxfile host="Electron" modified="2026-08-20T02:30:00.000Z" agent="Mozilla/5.0" version="21.6.8" type="device">
+  <diagram id="diag_4_1" name="Causal Cascade Imputation">
+    <mxGraphModel dx="1600" dy="950" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="950" background="#F8FAFC" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="t0" value="QUY TRÌNH ĐIỀN KHUYẾT NHÂN QUẢ ĐA TẦNG (CAUSAL CASCADE IMPUTATION)&#xa;Chuẩn hóa lưới 15 phút, bảo toàn tính nhân quả &amp; kẹp trần vật lý 1.20x" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#0F172A;fontColor=#FFFFFF;fontSize=16;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="20" y="20" width="1320" height="75" as="geometry" />
+        </mxCell>
+        <mxCell id="c1_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EFF6FF;strokeColor=#3B82F6;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="20" y="115" width="640" height="245" as="geometry" />
+        </mxCell>
+        <mxCell id="c1_hdr" value="CẤP 1: QUY TẮC ĐÊM &amp; INVERTER (is_day = 0)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1D4ED8;strokeColor=none;fontColor=#FFFFFF;fontSize=13.5;fontStyle=1;align=left;spacingLeft=12;" vertex="1" parent="1">
+          <mxGeometry x="20" y="115" width="640" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="c1_body" value="• Điều kiện: GHI &lt;= 20 W/m² HOẶC is_day == 0 (Mặt Trời dưới chân trời)&#xa;• Xử lý: Gán chính xác 0.0 kWh (không nội suy toán học)&#xa;• Đã xử lý: 1.383.493 dòng dữ liệu (50,64% tổng kho DWH)&#xa;• Bản chất: Triệt tiêu 100% hiện tượng trôi mốc 0 (Zero Drift) cảm biến CT" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=12;fontColor=#1E293B;spacingLeft=10;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="20" y="155" width="640" height="195" as="geometry" />
+        </mxCell>
+        <mxCell id="c2_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#475569;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="700" y="115" width="640" height="245" as="geometry" />
+        </mxCell>
+        <mxCell id="c2_hdr" value="BỘ PHÂN TÁCH KHOẢNG TRỐNG BAN NGÀY" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#334155;strokeColor=none;fontColor=#FFFFFF;fontSize=13.5;fontStyle=1;align=left;spacingLeft=12;" vertex="1" parent="1">
+          <mxGeometry x="700" y="115" width="640" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="c2_body" value="• Phạm vi: is_day == 1 (Khung giờ ban ngày có bức xạ quang học)&#xa;• Phân loại theo độ dài chuỗi khuyết thiếu (Gap Size):&#xa;   * Ngắn:  &lt;= 2 bước  (&lt;= 30 phút)&#xa;   * Vừa:    3 - 8 bước (45 phút - 2 giờ)&#xa;   * Dài:    &gt; 8 bước   (&gt; 2 giờ)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=12;fontColor=#1E293B;spacingLeft=10;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="700" y="155" width="640" height="195" as="geometry" />
+        </mxCell>
+        <mxCell id="arr_c2_1" value="&lt;= 30 phút" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2563EB;strokeWidth=2.2;endArrow=classic;endFill=1;fontSize=11.5;fontStyle=1;fontColor=#1D4ED8;labelBackgroundColor=#FFFFFF;labelBorderColor=#CBD5E1;" edge="1" parent="1" source="c2_box" target="lv2_box">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arr_c2_2" value="45 phút - 2 giờ" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#D97706;strokeWidth=2.2;endArrow=classic;endFill=1;fontSize=11.5;fontStyle=1;fontColor=#B45309;labelBackgroundColor=#FFFFFF;labelBorderColor=#CBD5E1;" edge="1" parent="1" source="c2_box" target="lv3_box">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arr_c2_3" value="&gt; 2 giờ" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#DC2626;strokeWidth=2.2;endArrow=classic;endFill=1;fontSize=11.5;fontStyle=1;fontColor=#B91C1C;labelBackgroundColor=#FFFFFF;labelBorderColor=#CBD5E1;" edge="1" parent="1" source="c2_box" target="lv4_box">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="lv2_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F0FDF4;strokeColor=#16A34A;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="20" y="420" width="420" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="lv2_hdr" value="CẤP 2: TUYẾN TÍNH (Linear)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#15803D;strokeColor=none;fontColor=#FFFFFF;fontSize=13;fontStyle=1;align=left;spacingLeft=12;" vertex="1" parent="1">
+          <mxGeometry x="20" y="420" width="420" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="lv2_body" value="• Phạm vi: Gap &lt;= 2 bước (&lt;= 30 phút)&#xa;• Thuật toán: Time-based Linear Interpolation&#xa;• Đã điền: 53.684 dòng (1,96%)&#xa;• Ưu điểm: Khử độ lệch dốc ngắn hạn tự nhiên" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=12;fontColor=#1E293B;spacingLeft=10;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="20" y="460" width="420" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="lv3_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEFCE8;strokeColor=#CA8A04;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="470" y="420" width="420" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="lv3_hdr" value="CẤP 3: PCHIP SPLINE" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#A16207;strokeColor=none;fontColor=#FFFFFF;fontSize=13;fontStyle=1;align=left;spacingLeft=12;" vertex="1" parent="1">
+          <mxGeometry x="470" y="420" width="420" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="lv3_body" value="• Phạm vi: Gap 3 - 8 bước (45 phút - 2 giờ)&#xa;• Thuật toán: PCHIP Hermite bảo toàn đơn điệu&#xa;• Đã điền: 50.704 dòng (1,86%)&#xa;• Triệt tiêu 100% sóng âm Runge &amp; cực trị giả" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=12;fontColor=#1E293B;spacingLeft=10;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="470" y="460" width="420" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="lv4_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF1F2;strokeColor=#E11D48;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="920" y="420" width="420" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="lv4_hdr" value="CẤP 4: HỒI QUY ĐA BIẾN (Regression)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BE123C;strokeColor=none;fontColor=#FFFFFF;fontSize=13;fontStyle=1;align=left;spacingLeft=12;" vertex="1" parent="1">
+          <mxGeometry x="920" y="420" width="420" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="lv4_body" value="• Phạm vi: Gap &gt; 8 bước (&gt; 2 giờ)&#xa;• Model: LinearRegression theo từng trạm&#xa;• Biến độc lập: GHI, DNI, DHI, Temp_2m&#xa;• Đã điền: 48.420 dòng (1,77%)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=12;fontColor=#1E293B;spacingLeft=10;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="920" y="460" width="420" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="clamp_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEF2F2;strokeColor=#EF4444;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="20" y="700" width="1320" height="145" as="geometry" />
+        </mxCell>
+        <mxCell id="clamp_hdr" value="RÀO CHẮN KẸP BIÊN VẬT LÝ 2 ĐẦU (BIDIRECTIONAL PHYSICAL CLAMPING: 0.0 &lt;= E &lt;= 1.20 * P_stc)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DC2626;strokeColor=none;fontColor=#FFFFFF;fontSize=13.5;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="20" y="700" width="1320" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="clamp_body" value="• Công thức kiểm soát: E_final = np.clip(E_imputed, 0.0, P_stc * 0.25h * 1.20)&#xa;• Cơ sở kỹ thuật: Tán xạ mép mây Cloud Enhancement &amp; Tiêu chuẩn quá tải Inverter AS/NZS 4777.2&#xa;• Kết quả kiểm toán: Đã làm sạch 1.536.301 ô (100.0%) | Dữ liệu gốc: 1.195.645 dòng | Null còn lại: 0" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=12;fontColor=#1E293B;spacingLeft=15;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="20" y="740" width="1320" height="100" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

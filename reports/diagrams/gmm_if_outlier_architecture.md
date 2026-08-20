@@ -31,8 +31,8 @@ flowchart TD
         F1["• Đồng thuận ML (Phép Giao AND): Flag_ML = Flag_GMM ∧ Flag_IF (Jaccard 6.4%–16.7%) → GMM_IF_CONSENSUS<br>• Quyết định cờ cuối (Phép Hợp OR): Flag_Final = Flag_ML ∨ Flag_Physical | Hỗ trợ ghép chuỗi đa nguyên nhân"]:::fusionStyle
     end
 
-    subgraph S4 ["4. QUY TRÌNH NẠP CSDL SUPABASE AN TOÀN [33.280 Dòng (1.22%)]"]
-        W1["1. MD5 Checksum (2.73M dòng) → 2. Upload bảng tạm (33.280 dòng) → 3. Anti-Join Check → 4. Bulk Join Update"]:::dwhStyle
+    subgraph S4 ["4. QUY TRÌNH NẠP CSDL SUPABASE AN TOÀN [7.431 Dòng (0.27%)]"]
+        W1["1. MD5 Checksum (2.73M dòng) → 2. Upload bảng tạm (7.431 dòng) → 3. Anti-Join Check → 4. Bulk Join Update"]:::dwhStyle
     end
 
     S1 -->|1. Kiểm tra vật lý| S2A
