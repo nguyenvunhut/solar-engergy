@@ -4,11 +4,10 @@
 horizon_steps: [1, 4]     # 1 = h1 (T+15p), 4 = h4 (T+60p)
 
 # ── 3 bien the loss ──
-# Ket qua thuc te tren tap test (notebook 06_x, 2026-07-31):
-#   huber a=1 : khop dinh 15p 19,9% | bien do dinh 0,916 | WAPE 21,58%
-#   mae  (l1) : khop dinh 15p 20,1% | bien do dinh 0,952 | WAPE 21,69%
-# Model vo dich chinh thuc chon tren tap VALIDATION (khong phai test): huber
-# (h1 WAPE_val 14,73% | h4 15,09%) - xem 06_4_validate_model_selection.ipynb
+# Model vo dich chinh thuc chon tren tap VALIDATION (khong phai test): MAE ca hai tam
+# (h1 WAPE_val 21,8684% | h4 25,8240%; huber 22,1592/25,9443; mse 22,4822/26,5108)
+# - do tren du lieu v5 ngay 2026-08-20, xem 06_4_validate_model_selection.ipynb va
+# data/model/v5/07_final_test/val_model_selection_check.json.
 losses:
   mae:
     objective: l1
@@ -83,8 +82,9 @@ k_target_min: 0.0
 # buoc nay nen giu nguyen de metrics_val.json hai ben khop nhau.
 k_target_max: 1.5
 # Nguong cat MUC TIEU HUAN LUYEN thi KHONG viet cung: suy tu phan vi cua k tren tap
-# train, giong notebook 06 (CLIP_K = None -> tinh_clip_tu_train). Tren bo v4 gia tri
-# thu duoc la 1,3764. Truoc day pipeline cat luon o 1.5 nen train tren mot muc tieu
+# train, giong notebook 06 (CLIP_K = None -> tinh_clip_tu_train). Tren bo v5 gia tri
+# thu duoc la 1,3686 (chung cho ca hai tam sau khi mau so chuyen sang T+h). Truoc
+# day pipeline cat luon o 1.5 nen train tren mot muc tieu
 # khac han notebook.
 clip_phan_vi: 0.99
 tran_cong_suat_he_so: 1.02   # cho phep vuot tran 2% (khuyen xa may - cloud edge enhancement)
