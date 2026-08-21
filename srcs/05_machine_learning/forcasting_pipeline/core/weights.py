@@ -7,6 +7,7 @@ weight = 0 - dong do khong tham gia ham muc tieu nhung VAN GIU trong du lieu de 
 """
 from __future__ import annotations
 
+import numpy as np
 import pandas as pd
 
 from .columns import NHAN_OUTLIER, NHAN_SOURCE, TARGET_SHIFTED
@@ -68,9 +69,25 @@ def build_sample_weight(df: pd.DataFrame, cfg: Cfg) -> pd.Series:
     # moi dong co k > nguong (dung 1% quan sat) nhan trong so toi 2,5 trong khi notebook
     # chi cho toi 1 + 1,3764 = 2,3764. Lech trong so o vung dinh keo WAPE kiem dinh lech
     # 0,01 - 0,09 diem du du lieu vao hai ben giong het nhau tung byte.
+    # ── Co che trong so mau (dong bo voi notebook 06_x tu 2026-08-20) ────────────
+    # 'mau_so'    : w = mau_so chuan hoa (site_scale x sin_elevation), chuan ve trung binh 1.
+    #               Vi y_hat - y = mau_so x (k_hat - k) nen MAE co trong so mau_so tren thang k
+    #               CHINH LA tu so cua WAPE kWh -> huan luyen dung tren thuoc do bao cao.
+    #               Trong so TAT DINH (khong nhin nhan) nen khong lam thien lech du bao.
+    # 'theo_nhan' : w = 1 + he_so_trong_so_dinh x k (co che cu, da bo o nhanh notebook).
+    # 'khong'     : w = 1/0 thuan.
+    che_do = str(cfg.train.get("che_do_trong_so", "theo_nhan"))
+    eps = float(cfg.features["eps_elev"])
+    if che_do == "mau_so":
+        m = pd.Series(mau_chuan_hoa(df, eps), index=df.index).astype(float)
+        tb = m[w > 0].mean()
+        if tb and np.isfinite(tb) and tb > 0:
+            w = w * (m / tb).fillna(0.0)
+        return w
+    if che_do == "khong":
+        return w
     he_so_dinh = float(cfg.train["he_so_trong_so_dinh"])
     if he_so_dinh > 0:
-        eps = float(cfg.features["eps_elev"])
         k = (df[TARGET_SHIFTED] / mau_chuan_hoa(df, eps)).clip(0, nguong_cat(cfg)).fillna(0.0)
         w = w * (1.0 + he_so_dinh * k)
     return w

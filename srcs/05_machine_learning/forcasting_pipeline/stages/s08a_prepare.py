@@ -49,14 +49,15 @@ from core.weights import build_sample_weight
 
 
 def _doc_tap(duong_dan, features: list[str], cfg: Cfg, ten: str = "") -> pd.DataFrame:
-    """Doc parquet, chi lay cot can, loc dong hop le.
+    """Doc parquet, chi lay cot can. CHI duoc loc theo TRAM o day.
 
-    Bon dieu kien loc (copy nguyen si tu doc_du_lieu() cua 04_x_train_*.py) - thieu
-    bat ky dieu kien nao la lech so dong train:
-      1. exclude_from_training == False      (dong da bi danh dau loai tu ETL)
-      2. has_complete_history_features == True (du lich su de tinh lag/rolling)
-      3. target khong NaN
-      4. bo site trong exclude_sites          (capacity_kw khong dang tin)
+    SUA 2026-08-22: ba dieu kien loc THEO DONG (exclude_from_training,
+    has_complete_history_features, target NaN) da duoc chuyen xuong SAU
+    them_muc_tieu() trong core/target.py. Loc chung o day duc lo hong tren luoi 15
+    phut, khien phep tra nhan T+h khong tim thay moc va mat nhan oan - do duoc 31 dong
+    o tam H1, keo phan vi 99 cua k lech 3e-06 va WAPE kiem dinh lech 0,015 diem so voi
+    notebook. Loc theo TRAM thi an toan: moi phep tra deu nam trong groupby(site_id)
+    nen bo ca mot tram khong lam thung luoi cua tram khac.
     """
     co_san = cot_co_san(duong_dan)
     muon = list(dict.fromkeys(
@@ -64,12 +65,6 @@ def _doc_tap(duong_dan, features: list[str], cfg: Cfg, ten: str = "") -> pd.Data
     ))
     df = read_parquet(duong_dan, columns=[c for c in muon if c in co_san])
     n0 = len(df)
-
-    if "exclude_from_training" in df.columns:
-        df = df[df["exclude_from_training"] == False]  # noqa: E712 - cot co the la object
-    if "has_complete_history_features" in df.columns:
-        df = df[df["has_complete_history_features"] == True]  # noqa: E712
-    df = df.dropna(subset=[TARGET_COL])
 
     loai = cfg.data["exclude_sites"]
     if loai and SITE_COL in df.columns:
@@ -81,7 +76,7 @@ def _doc_tap(duong_dan, features: list[str], cfg: Cfg, ten: str = "") -> pd.Data
 
 def _loc_ban_ngay(df: pd.DataFrame, eps_elev: float) -> pd.DataFrame:
     """Bo dong khong the chuan hoa: site_scale <= 0 hoac mat troi duoi nguong."""
-    return df[(df["site_scale"] > 0) & (df["sin_elevation"] > eps_elev)].copy()
+    return df[(df["site_scale"] > 0) & (df["sin_elevation_mt"] > eps_elev)].copy()
 
 
 def chuan_bi(ctx: Ctx) -> Ctx:

@@ -27,7 +27,7 @@ from dashboard_common import header_bao_cao, load_shared_css, nap_runtime_cpp
 nap_runtime_cpp()
 
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
-VERSION = os.environ.get("DASHBOARD_VERSION", "v4")
+VERSION = os.environ.get("DASHBOARD_VERSION", "v5")
 DATA_DIR = PROJECT_ROOT / "data" / "model" / VERSION
 
 st.set_page_config(page_title="Model Explainability (XAI)", page_icon="🔬", layout="wide")
@@ -302,14 +302,44 @@ st.caption(
 )
 
 
+# SUA 2026-08-22: ban cu khop CHUOI CON nen phan nhom sai nhieu cho:
+#   sin_elevation -> "Thoi gian" (vi co "sin"), ghi_cs -> "Thoi tiet" (vi co "ghi"),
+#   solar_elevation/solar_azimuth roi xuong "Vi tri & Metadata".
+# Hau qua: bieu do dong gop theo nhom gan cong cho "Thoi tiet" phan von la thien van
+# TAT DINH. Ban duoi phan nhom theo TEN CHINH XAC, xet theo thu tu uu tien.
+_NHOM_HINH_HOC = {
+    "solar_elevation", "solar_azimuth", "azimuth_sin", "azimuth_cos",
+    "sin_elevation", "ghi_cs", "clearsky_proxy", "ky_vong", "ty_le_bao_hoa",
+}
+_NHOM_LICH = {
+    "hour", "hour_of_day", "hour_bucket_model", "hour_sin", "hour_cos",
+    "minute", "minute_of_day", "day", "day_of_week", "day_of_year",
+    "month", "doy_sin", "doy_cos",
+}
+_NHOM_TRAM = {
+    "site_scale", "tran_cong_suat", "capacity_kw", "number_of_panels",
+    "con_cach_tran", "capacity_per_panel",
+}
+
+
 def get_group(name: str) -> str:
-    if name.startswith("lag_") or name.startswith("rolling_"):
+    """Phan nhom dac trung de ve dong gop SHAP. Cot _mt cung nhom voi cot goc."""
+    goc = name[:-3] if name.endswith("_mt") else name
+    if goc.startswith(("lag_", "rolling_")):
         return "Lịch sử & Lag"
-    if any(k in name for k in ["ghi", "poa", "temp", "dhi", "dni", "cloud", "pv_", "radiation", "shortwave"]):
-        return "Thời tiết & Bức xạ"
-    if any(k in name for k in ["hour", "month", "day", "sin", "cos", "doy", "minute"]):
+    if goc in _NHOM_HINH_HOC:
+        return "Hình học Mặt Trời"
+    if goc in _NHOM_LICH:
         return "Thời gian & Chu kỳ"
-    return "Vị trí & Metadata"
+    if goc in _NHOM_TRAM or goc.endswith("_enc"):
+        return "Vị trí & Metadata"
+    if "_x_" in goc:
+        return "Tương tác"
+    if any(k in goc for k in ("radiation", "irradiance", "shortwave", "diffuse",
+                              "temperature", "cloud", "wind", "precip",
+                              "troi_quang", "cs_factor", "sunshine")):
+        return "Thời tiết & Bức xạ"
+    return "Khác"
 
 
 df_imp["group"] = df_imp["feature"].apply(get_group)
@@ -540,7 +570,29 @@ with st.container(border=True):
         _what_if_model, _what_if_config = load_what_if_model(
             str(_model_spec["model_path"]), str(_model_spec["config_path"])
         )
-        _site_ids = sorted(_what_if_features["site_id"].dropna().unique().tolist())
+        # Kich ban What-if nhan theo SO TAM PIN nen chi chay duoc o tram co metadata cong
+        # suat. Tu ban trich v5, capacity_kw / number_of_panels khong con duoc dien bia:
+        # 17/42 tram giu nguyen khuyet (xem muc 6.1.1 bao cao), nen phai loc truoc khi
+        # dua vao o chon - neu khong int(NaN) se nem TypeError va sap ca trang.
+        _meta_du = _site_metadata.dropna(subset=["number_of_panels", "capacity_kw"])
+        _site_ids = sorted(
+            set(_what_if_features["site_id"].dropna().unique().tolist())
+            & set(_meta_du["site_id"].tolist())
+        )
+        _so_tram_thieu_meta = len(_site_metadata) - len(_meta_du)
+
+        if not _site_ids:
+            st.warning(
+                "Khong tram nao co du metadata so tam pin de chay What-if "
+                f"({_so_tram_thieu_meta}/{len(_site_metadata)} tram thieu)."
+            )
+            st.stop()
+
+        if _so_tram_thieu_meta:
+            st.caption(
+                f"Da an {_so_tram_thieu_meta}/{len(_site_metadata)} tram thieu metadata "
+                "so tam pin - kich ban What-if can con so nay de nhan ty le."
+            )
 
         _ctl_site, _ctl_date, _ctl_time, _ctl_panels = st.columns([0.8, 1.2, 1.0, 1.2])
         with _ctl_site:

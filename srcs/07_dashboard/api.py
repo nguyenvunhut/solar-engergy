@@ -45,7 +45,7 @@ app = FastAPI(
 )
 
 GOC_REPO = Path(__file__).resolve().parents[2]
-VERSION = os.environ.get("DASHBOARD_VERSION", "v4")
+VERSION = os.environ.get("DASHBOARD_VERSION", "v5")
 DATA_DIR = GOC_REPO / "data" / "model" / VERSION
 FINAL_DIR = DATA_DIR / "07_final_test"
 PROPHET_DIR = DATA_DIR / "08_baseline_prophet_test"

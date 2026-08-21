@@ -75,7 +75,7 @@ def ghi_model(ctx: Ctx) -> None:
         # y_pred ra thang do 0..1,5 trong khi y_true la kWh - bug "du bao duoi dat".
         "chuan_hoa": bool(ctx.cfg.train["chuan_hoa"]),
         "cot_quy_mo": COT_QUY_MO,
-        "cot_sin_elev": "sin_elevation",
+        "cot_sin_elev": "sin_elevation_mt",
         "cot_tran": "tran_cong_suat",
         "eps_elev": float(ctx.cfg.features["eps_elev"]),
         # Nguong cat muc tieu, suy tu phan vi cua k tren tap train. Notebook 06 ghi khoa

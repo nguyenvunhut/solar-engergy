@@ -124,14 +124,25 @@ def fit_an_toan(params: dict, X, y, sample_weight=None, cfg: Cfg | None = None,
     """
     from lightgbm import LGBMRegressor, early_stopping, log_evaluation
 
+    # SUA 2026-08-22: khai bao cot *_enc la CATEGORICAL, giong notebook
+    # (cot_categorical(X) o cell 13 cua 06_1/2/3, truyen vao moi loi goi fit).
+    # Thieu khai bao nay thi LightGBM coi site_id_enc / inverter_enc /
+    # weather_condition_enc / weather_description_enc la SO va tach nhanh theo nguong -
+    # trong khi ma tram 7 va 8 khong he co quan he lon-be. Cay sinh ra khac han
+    # notebook: do duoc WAPE kiem dinh lech 0,029 diem du moi dau vao da trung khit.
+    cot_cat = [c for c in X.columns if c.endswith("_enc")] if hasattr(X, "columns") else []
+
     def _fit(model):
+        kw = {"sample_weight": sample_weight}
+        if cot_cat:
+            kw["categorical_feature"] = cot_cat
         if eval_set and dung_som:
-            model.fit(X, y, sample_weight=sample_weight, eval_set=eval_set,
+            model.fit(X, y, eval_set=eval_set,
                       callbacks=[early_stopping(dung_som, first_metric_only=True,
                                                 verbose=False),
-                                 log_evaluation(0)])
+                                 log_evaluation(0)], **kw)
         else:
-            model.fit(X, y, sample_weight=sample_weight)
+            model.fit(X, y, **kw)
         return model
 
     try:
