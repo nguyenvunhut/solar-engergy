@@ -35,7 +35,7 @@ def mau_chuan_hoa(df: pd.DataFrame, eps_elev: float) -> np.ndarray:
 
     clip duoi bang eps_elev de khong chia cho ~0 luc binh minh/hoang hon.
     """
-    return (df["site_scale"] * np.clip(df["sin_elevation"], eps_elev, None)).to_numpy()
+    return (df["site_scale"] * np.clip(df["sin_elevation_mt"], eps_elev, None)).to_numpy()
 
 
 def them_muc_tieu(df: pd.DataFrame, horizon_steps: int, cfg: Cfg) -> pd.DataFrame:
@@ -50,21 +50,45 @@ def them_muc_tieu(df: pd.DataFrame, horizon_steps: int, cfg: Cfg) -> pd.DataFram
     h = int(horizon_steps)
     freq = int(cfg.data["freq_minutes"])
     out = df.copy()
-    out[TARGET_SHIFTED] = out.groupby(SITE_COL)[TARGET_COL].shift(-h)
     out["plot_timestamp"] = out[TIMESTAMP_COL] + pd.Timedelta(minutes=freq * h)
-    g = out.groupby(SITE_COL)
 
-    if cfg.features["them_dac_trung_muc_tieu"]:
-        for c in [c for c in cfg.features["cot_tat_dinh"] if c in out.columns]:
-            out[ten_cot_muc_tieu(c)] = g[c].shift(-h)
+    # SUA 2026-08-21: TRA THEO MOC THOI GIAN, khong dung shift(-h) theo DONG nua.
+    # shift(-h) dem theo VI TRI DONG nen chi dung khi luoi 15 phut con nguyen ven. Chi can
+    # thieu mot moc - dong bi loc o buoc truoc, hoac ETL khong sinh - la no vo phai dong
+    # ke tiep CON SONG chu khong phai moc T+h that:
+    #     ngay 10 do that | ngay 11 bi bo | ngay 12 do that
+    #     -> ngay 10 nhan nhan cua ngay 12, tuc mot cai nhan khong ton tai.
+    # Do tren du lieu v5: cach cu sinh 747 nhan sai moc (xa nhat 36,7 gio), va neu loc
+    # them dong khong phai do that thi len 23.763 nhan sai.
+    # Tra theo (site_id, timestamp) thi moc nao khong co that se ra NaN va bi bo - dung
+    # ban chat "du bao cho DUNG thoi diem T+h". Ap dung cho CA BA nhom: muc tieu, cot _mt
+    # va cot nhan_*.
+    cot_mt = ([c for c in cfg.features["cot_tat_dinh"] if c in df.columns]
+              if cfg.features["them_dac_trung_muc_tieu"] else [])
+    cot_nhan = [c for c in COT_NHAN if c in df.columns]
+    doi_ten = {TIMESTAMP_COL: "plot_timestamp", TARGET_COL: TARGET_SHIFTED}
+    doi_ten.update({c: ten_cot_muc_tieu(c) for c in cot_mt})
+    doi_ten.update({c: f"nhan_{c}" for c in cot_nhan})
+
+    tra = df[[SITE_COL, TIMESTAMP_COL, TARGET_COL] + cot_mt + cot_nhan].rename(columns=doi_ten)
+    out = out.merge(tra, on=[SITE_COL, "plot_timestamp"], how="left")
 
     for cot, mac_dinh in COT_NHAN.items():
         ten_nhan = f"nhan_{cot}"
-        if cot in out.columns:
-            out[ten_nhan] = g[cot].shift(-h).fillna(mac_dinh)
-        else:
-            out[ten_nhan] = mac_dinh
-    return out.dropna(subset=[TARGET_SHIFTED])
+        out[ten_nhan] = out[ten_nhan].fillna(mac_dinh) if ten_nhan in out.columns else mac_dinh
+    out = out.dropna(subset=[TARGET_SHIFTED])
+
+    # Loc theo DONG dat o day, tuc SAU khi nhan da dung xong. Dat truoc se xoa dong giua
+    # chuoi va lam mat moc T+h that. Dong bo voi notebook 06_1/06_2/06_3 va 07:
+    #   - exclude_from_training: dong nam trong gap >= 24h, target la 0 gia, lich su quanh
+    #     no cung la 0 gia.
+    #   - has_complete_history_features: dong khong du 96 buoc lich su nen lag/rolling
+    #     tinh thieu, tuc dac trung dau vao sai.
+    if "exclude_from_training" in out.columns:
+        out = out[out["exclude_from_training"] == False]  # noqa: E712
+    if "has_complete_history_features" in out.columns:
+        out = out[out["has_complete_history_features"] == True]  # noqa: E712
+    return out
 
 
 def eligibility_mask(df: pd.DataFrame) -> pd.Series:
@@ -144,4 +168,4 @@ def du_bao_ve_kwh(
     if "tran_cong_suat" in df.columns:
         he_so = float(cfg.train["tran_cong_suat_he_so"])
         y = np.minimum(y, df["tran_cong_suat"].to_numpy() * he_so)
-    return np.where(df["sin_elevation"].to_numpy() <= eps, 0.0, y)
+    return np.where(df["sin_elevation_mt"].to_numpy() <= eps, 0.0, y)

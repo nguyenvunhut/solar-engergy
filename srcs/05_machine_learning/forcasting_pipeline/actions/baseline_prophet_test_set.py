@@ -50,7 +50,10 @@ BUOC_PHUT = 15  # luoi 15 phut
 # Tham so chuan hoa — DOC TU model_config.json cua LightGBM, khong viet lai bang tay.
 # Hai mo hinh phai dung DUNG cung mot cong thuc thi so sanh moi co nghia.
 CAU_HINH_MODEL = GOC_REPO / "data/model/v3/06_train/huber/h1/model_config.json"
-K_TARGET_MAX = 1.5        # train.yaml: k_target_max
+# SUA 2026-08-22: nguong cat KHONG ghim cung 1.5 nua. Quy uoc cua du an: 06_4 cham
+# validation bang k_target_max, con 07/07b cham TEST bang clip_k cua chinh mo hinh.
+# File nay so tren tap TEST nen phai theo clip_k - doc tu model_config trong
+# tham_so_chuan_hoa(). Ghim 1.5 lam Prophet duoc tran rong hon LightGBM.
 TRAN_HE_SO = 1.02         # train.yaml: tran_cong_suat_he_so
 
 
@@ -59,20 +62,25 @@ def tham_so_chuan_hoa() -> dict:
     c = json.loads(CAU_HINH_MODEL.read_text(encoding="utf-8"))
     return {
         "quy_mo": c["cot_quy_mo"],          # site_scale
-        "sin_elev": c["cot_sin_elev"],      # sin_elevation
+        # model_config ghi 'sin_elevation_mt' (mau so lay tai T+h). File nay TU tra
+        # sang T+h bang hau to _mt_h{h} o duoi, con tep 05_selected chi co cot GOC -
+        # nen phai lui ve TEN GOC, neu khong vua doc thieu cot vua dich hai lan.
+        "sin_elev": (c["cot_sin_elev"][:-3]
+                     if c["cot_sin_elev"].endswith("_mt") else c["cot_sin_elev"]),
         "tran": c["cot_tran"],              # tran_cong_suat
         "eps": float(c.get("eps_elev", 0.05)),
+        "clip_k": float(c["clip_k"]),
     }
 
 
-def giai_chuan_hoa(k, quy_mo, sin_elev, tran, eps) -> np.ndarray:
+def giai_chuan_hoa(k, quy_mo, sin_elev, tran, eps, clip_k) -> np.ndarray:
     """Nhan nguoc k -> kWh, DUNG y cong thuc LightGBM dung o s09b.
 
-        y = clip(k, 0, 1.5) * site_scale * max(sin_elev, eps)
+        y = clip(k, 0, clip_k) * site_scale * max(sin_elev, eps)
         y = min(y, tran_cong_suat * 1.02)
         y = 0  khi sin_elev <= eps        <- ban dem tu ve 0, khong phai chan tay
     """
-    y = np.clip(k, 0.0, K_TARGET_MAX) * quy_mo * np.maximum(sin_elev, eps)
+    y = np.clip(k, 0.0, clip_k) * quy_mo * np.maximum(sin_elev, eps)
     y = np.minimum(y, tran * TRAN_HE_SO)
     return np.where(sin_elev <= eps, 0.0, y)
 
@@ -129,7 +137,7 @@ def nap_du_lieu(horizons: list[int]) -> tuple[pd.DataFrame, pd.DataFrame]:
     dev = dev[giu].copy()
     dev["k"] = (dev["energy_generated_kwh"]
                 / (dev[ts["quy_mo"]] * np.maximum(dev[ts["sin_elev"]], ts["eps"])))
-    dev["k"] = dev["k"].clip(0.0, K_TARGET_MAX)
+    dev["k"] = dev["k"].clip(0.0, ts["clip_k"])
     dev = dev.rename(columns={"timestamp": "ds", "k": "y"})
 
     au = pd.read_parquet(AUDIT)
@@ -142,12 +150,22 @@ def nap_du_lieu(horizons: list[int]) -> tuple[pd.DataFrame, pd.DataFrame]:
                   on=["site_id", "timestamp"], how="left")
     au = au.sort_values(["site_id", "timestamp"]).reset_index(drop=True)
     for h in horizons:
-        au[f"src_nhan_h{h}"] = au.groupby("site_id")["src_goc"].shift(-h)
-        # Dai luong de nhan nguoc phai lay tai MOC MUC TIEU T+h, khong phai tai T.
-        # sin_elevation la dai luong thien van tinh truoc duoc nen dung o T da biet
-        # chinh xac gia tri tai T+h — khong phai leakage.
-        for c in (ts["sin_elev"], ts["quy_mo"], ts["tran"]):
-            au[f"{c}_mt_h{h}"] = au.groupby("site_id")[c].shift(-h)
+        # SUA 2026-08-21: TRA THEO MOC THOI GIAN, khong con shift(-h) theo DONG.
+        # shift dem theo VI TRI DONG nen thung luoi mot moc la vo phai dong ke tiep CON
+        # SONG chu khong phai moc T+h that. Dai luong de nhan nguoc phai lay tai MOC MUC
+        # TIEU T+h: sin_elevation la dai luong thien van tinh truoc duoc nen dung o T da
+        # biet chinh xac gia tri tai T+h - khong phai leakage.
+        _cot = [c for c in (ts["sin_elev"], ts["quy_mo"], ts["tran"]) if c in au.columns]
+        _m = au[["site_id", "timestamp"]].copy()
+        _m["timestamp"] = _m["timestamp"] + pd.Timedelta(minutes=15 * h)
+        _m["_i"] = au.index
+        _t = au[["site_id", "timestamp", "src_goc"] + _cot].rename(
+            columns={"src_goc": f"src_nhan_h{h}",
+                     **{c: f"{c}_mt_h{h}" for c in _cot}})
+        _kq = _m.merge(_t, on=["site_id", "timestamp"], how="left").set_index("_i")
+        au[f"src_nhan_h{h}"] = _kq[f"src_nhan_h{h}"].reindex(au.index)
+        for c in _cot:
+            au[f"{c}_mt_h{h}"] = _kq[f"{c}_mt_h{h}"].reindex(au.index)
     return dev[["site_id", "ds", "y"]], au
 
 
@@ -251,6 +269,7 @@ def main() -> int:
                 au_s[f'{ts["sin_elev"]}_mt_h{h}'].to_numpy(float),
                 au_s[f'{ts["tran"]}_mt_h{h}'].to_numpy(float),
                 ts["eps"],
+                ts["clip_k"],
             )
             au.loc[au_s.index, f"prophet_h{h}"] = gia_tri
 

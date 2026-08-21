@@ -15,9 +15,14 @@ from __future__ import annotations
 
 import pandas as pd
 
+from core.columns import SITE_COL, TIMESTAMP_COL
+
 TOP_K = 35
 CO_MAU_MI = 100_000
 SEED = 42
+# Tam dich nhan khi cham diem MI. Notebook 05 dung HORIZON_MI = 1 (15 phut).
+HORIZON_MI = 1
+BUOC_PHUT = 15
 
 # Dac trung PHAI giu du diem MI thap - deu co ly do vat ly ro rang.
 # Xem docs/2026_07_30_Khu_Tre_Pha_Du_Bao_15_Phut.md
@@ -43,16 +48,33 @@ BAO_VE = [
 
 
 def cham_diem_mi(df: pd.DataFrame, ung_vien: list[str], target: str) -> pd.DataFrame:
-    """Tinh Mutual Information giua tung ung vien va target, tren mau."""
+    """Tinh Mutual Information giua tung ung vien va NHAN TAI T+h, tren mau.
+
+    SUA 2026-08-22: cham diem voi nhan tai T+h chu KHONG phai tai T. Day la bai toan
+    du bao nen cau hoi dung la "dac trung nay cho biet gi ve san luong h buoc NUA",
+    khong phai "ve san luong NGAY BAY GIO". Xep hang theo y(T) thien vi cac dac trung
+    mo ta hien tai (rolling ngan, buc xa dang do) hon cac dac trung co suc tien doan.
+    Notebook 05 da lam dung tu truoc (cell 9: y_muc_tieu qua merge moc_nhan); ban .py
+    nay sot lai nen chon ra bo dac trung khac notebook o vi tri sat nguong Top-K.
+    """
     from sklearn.feature_selection import mutual_info_regression
 
-    # Chi cham diem tren du lieu sach
-    sach = (df[df["exclude_from_training"] == False]  # noqa: E712
-            if "exclude_from_training" in df.columns else df)
+    # Dich nhan sang T+h bang phep TRA THEO MOC THOI GIAN (khong shift theo dong):
+    # shift dem theo vi tri dong nen thung luoi mot moc la vo phai dong ke tiep.
+    d = df.sort_values([SITE_COL, TIMESTAMP_COL]).copy()
+    d["_moc_nhan"] = d[TIMESTAMP_COL] + pd.Timedelta(minutes=BUOC_PHUT * HORIZON_MI)
+    _tra = d[[SITE_COL, TIMESTAMP_COL, target]].rename(
+        columns={TIMESTAMP_COL: "_moc_nhan", target: "_y_muc_tieu"})
+    d = d.merge(_tra, on=[SITE_COL, "_moc_nhan"], how="left")
+    d = d.dropna(subset=["_y_muc_tieu"])
+
+    # Loc theo dong DAT SAU khi da dich nhan - loc truoc se duc lo hong tren luoi.
+    sach = (d[d["exclude_from_training"] == False]  # noqa: E712
+            if "exclude_from_training" in d.columns else d)
     mau = sach.sample(n=min(CO_MAU_MI, len(sach)), random_state=SEED).copy()
 
     X = mau[ung_vien].copy()
-    y = mau[target].values
+    y = mau["_y_muc_tieu"].values
     # Cot chuoi (season, season_model...) phai ma hoa sang so truoc khi tinh MI
     for c in X.columns:
         if not pd.api.types.is_numeric_dtype(X[c]):

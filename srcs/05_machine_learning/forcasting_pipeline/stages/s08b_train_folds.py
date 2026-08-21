@@ -50,7 +50,7 @@ def doc_fold(ctx: Ctx, n: int | None, vai_tro: str,
 
     d = them_muc_tieu(d, ctx.horizon_steps, cfg)
     eps = float(cfg.features["eps_elev"])
-    d = d[(d["site_scale"] > 0) & (d["sin_elevation"] > eps)].copy()
+    d = d[(d["site_scale"] > 0) & (d["sin_elevation_mt"] > eps)].copy()
     d["k_target"] = k_target(d, cfg)
     d["w"] = build_sample_weight(d, cfg)
     return d[d["w"].gt(0)]
@@ -83,7 +83,7 @@ def nap_cac_fold(ctx: Ctx) -> Ctx:
             "yva_kwh": va[TARGET_SHIFTED].to_numpy(),
             "mau_va": mau_chuan_hoa(va, eps),
             "tran_va": va["tran_cong_suat"].to_numpy(),
-            "sin_va": va["sin_elevation"].to_numpy(),
+            "sin_va": va["sin_elevation_mt"].to_numpy(),
         })
         print(f"- fold {n}: train {len(tr):,} dong, val {len(va):,} dong (da ap weight)")
         del tr, va

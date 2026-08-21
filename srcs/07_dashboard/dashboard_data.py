@@ -30,9 +30,9 @@ import streamlit as st
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
-# Doi phien ban bang bien moi truong, vi du: DASHBOARD_VERSION=v3 streamlit run ...
+# Doi phien ban bang bien moi truong, vi du: DASHBOARD_VERSION=v4 streamlit run ...
 # Mac dinh v3 de khong doi hanh vi cua nhung phien dang mo.
-VERSION = os.environ.get("DASHBOARD_VERSION", "v4")
+VERSION = os.environ.get("DASHBOARD_VERSION", "v5")
 DATA_DIR = PROJECT_ROOT / "data" / "model" / VERSION
 
 # ── Nguon chinh thuc duy nhat ────────────────────────────────────────────────
@@ -168,8 +168,20 @@ def audit_metrics(_df: pd.DataFrame, horizon: int, cache_key: str = "") -> tuple
     if df.empty or tc not in df.columns:
         return {}, pd.DataFrame()
     d = df.dropna(subset=[tc, pc]).copy()
-    if "is_daylight" in d.columns:
-        d = d[d["is_daylight"].fillna(False).astype(bool)]
+    # SUA 2026-08-22: pham vi phai TRUNG voi con so cong bo trong bao cao:
+    #   nhan la do that  &  ban ngay  &  khong vuot tran cong suat vat ly,
+    # va cả ba dieu kien xet tai MOC NHAN T+h (cot nhan_*), khong phai tai T.
+    # Ban cu chi loc is_daylight tai T nen gom ca dong ETL dien khuyet (de doan hon)
+    # va cho ra WAPE thap hon bao cao 0,60 diem o H1 va 0,80 diem o H4.
+    _ng = d.get(f"nhan_energy_source_h{horizon}", d.get("energy_source"))
+    _bn = d.get(f"nhan_is_daylight_h{horizon}", d.get("is_daylight"))
+    _og = d.get(f"nhan_outlier_group_h{horizon}")
+    if _bn is not None:
+        d = d[_bn.reindex(d.index).fillna(False).astype(bool)]
+    if _ng is not None:
+        d = d[_ng.reindex(d.index).astype(str) == "measured"]
+    if _og is not None:
+        d = d[_og.reindex(d.index).astype(str) != "physical_over_capacity"]
     overall = {"measured_daylight": _thong_ke(d, tc, pc)}
     by_site = (
         d.groupby("site_id")

@@ -62,18 +62,18 @@ def _dien_toa_do(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def _dien_sieu_du_lieu_tram(df: pd.DataFrame) -> pd.DataFrame:
-    """capacity_kw/number_of_panels lay trung vi THEO KHUON VIEN nen campus_name phai xong truoc."""
+    """Dien sieu du lieu dang CHU cua tram; hai cot cong suat thi GIU NGUYEN KHUYET.
+
+    capacity_kw va number_of_panels khuyet o 17/42 tram (1.132.078 dong). Ban truoc lay
+    trung vi theo khuon vien, nhung 4/5 khuon vien khong con lay mot gia tri nao de tinh
+    trung vi nen tat ca roi xuong trung vi toan cuc - tuc gan CUNG MOT con so bia cho ca
+    17 tram. Nhom chot ngay 2026-08-18 khong dien nua: de nguyen khuyet, LightGBM xu ly
+    o khuyet truc tiep (use_missing mac dinh). Notebook 00 da bo tu ban do; day la buoc
+    dong bo srcs cho khop - bo luon hai cot co *_is_imputed vi khong con phep dien nao.
+    """
     df["campus_name"] = df.groupby("site_id", observed=True)["campus_name"].transform(
         lambda x: x.ffill().bfill())
     df["campus_name"] = df["campus_name"].fillna("Unknown")
-
-    for c in ("capacity_kw", "number_of_panels"):
-        if c not in df.columns:
-            continue
-        df[f"{c}_is_imputed"] = df[c].isnull().astype(int)
-        df[c] = df[c].fillna(
-            df.groupby("campus_name", observed=True)[c].transform("median"))
-        df[c] = df[c].fillna(df[c].median())
 
     for c in ("panel", "inverter", "location_name"):
         if c in df.columns:

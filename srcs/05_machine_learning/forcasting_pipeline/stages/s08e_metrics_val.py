@@ -74,19 +74,24 @@ def nap_val_kieu_06_4(ctx: Ctx) -> pd.DataFrame:
         d = d[~d[SITE_COL].isin(bo)].reset_index(drop=True)
         print(f"   Loai site {bo}: {n0:,} -> {len(d):,} dong")
 
-    d["y_true"] = d.groupby(SITE_COL)[TARGET_COL].shift(-h)
-    g = d.groupby(SITE_COL)
-    for c in cot_tat_dinh:
-        if c in d.columns and f"{c}_mt" in ctx.features:
-            d[f"{c}_mt"] = g[c].shift(-h)
-    # Nhan la san luong tai T+h, nen pham vi "do that ban ngay" phai xet DONG NHAN
-    # tai T+h chu khong phai dong dac trung tai T.
-    for c in COT_NHAN:
-        if c in d.columns:
-            d[f"nhan_{c}"] = g[c].shift(-h)
+    # SUA 2026-08-21: TRA THEO MOC THOI GIAN, khong con shift(-h) theo DONG.
+    # shift(-h) dem theo VI TRI DONG nen chi dung khi luoi 15 phut con nguyen ven. Thieu
+    # mot moc - dong bi loc hoac ETL khong sinh - la no vo phai dong ke tiep CON SONG chu
+    # khong phai moc T+h that. Lay CA BA nhom (y_true, cac cot _mt, cac cot nhan_*) trong
+    # CUNG mot phep tra de chung chac chan cung thuoc mot thoi diem.
+    freq = int(cfg.data["freq_minutes"])
+    d["plot_timestamp"] = d[TIMESTAMP_COL] + pd.Timedelta(minutes=freq * h)
+    _mt = [c for c in cot_tat_dinh if c in d.columns and f"{c}_mt" in ctx.features]
+    _nhan = [c for c in COT_NHAN if c in d.columns]
+    _doi = {TIMESTAMP_COL: "plot_timestamp", TARGET_COL: "y_true"}
+    _doi.update({c: f"{c}_mt" for c in _mt})
+    _doi.update({c: f"nhan_{c}" for c in _nhan})
+    _tra = d[[SITE_COL, TIMESTAMP_COL, TARGET_COL] + _mt + _nhan].rename(columns=_doi)
+    d = d.merge(_tra, on=[SITE_COL, "plot_timestamp"], how="left")
 
     d = d.dropna(subset=["y_true"])
-    return d[(d["site_scale"] > 0) & (d["sin_elevation"] > eps)].copy()
+    # Mau so chuan hoa lay tai T+h, nen nguong ban ngay cung phai xet tai T+h.
+    return d[(d["site_scale"] > 0) & (d["sin_elevation_mt"] > eps)].copy()
 
 
 def _du_bao(ctx: Ctx, val: pd.DataFrame) -> np.ndarray:
@@ -103,9 +108,9 @@ def _du_bao(ctx: Ctx, val: pd.DataFrame) -> np.ndarray:
     medians = pd.Series({k: float(v) for k, v in ctx.medians.items()})
     X = val[ctx.features].fillna(medians).astype(cfg.runtime["dtype"])
     k = np.clip(ctx.model.predict(X), cfg.train["k_target_min"], tran)
-    mau = val["site_scale"].to_numpy() * val["sin_elevation"].to_numpy()
+    mau = val["site_scale"].to_numpy() * val["sin_elevation_mt"].to_numpy()
     yp = np.minimum(k * mau, val["tran_cong_suat"].to_numpy() * he_so)
-    return np.where(val["sin_elevation"].to_numpy() <= eps, 0.0, yp)
+    return np.where(val["sin_elevation_mt"].to_numpy() <= eps, 0.0, yp)
 
 
 def tinh_metrics_val_06_4(ctx: Ctx) -> dict:

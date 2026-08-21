@@ -1,6 +1,0 @@
-outs:
-- md5: 061bedce56f7c6fdf3d4eca6462a60ce.dir
-  size: 5688274
-  nfiles: 4
-  hash: md5
-  path: 08_baseline_prophet_test

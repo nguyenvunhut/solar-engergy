@@ -37,8 +37,8 @@ import pandas as pd
 
 GOC_REPO = Path(__file__).resolve().parents[2]
 
-# Doi phien ban bang bien moi truong DASHBOARD_VERSION, mac dinh v4.
-VERSION = os.environ.get("DASHBOARD_VERSION", "v4")
+# Doi phien ban bang bien moi truong DASHBOARD_VERSION, mac dinh v5.
+VERSION = os.environ.get("DASHBOARD_VERSION", "v5")
 MODEL_ROOT = GOC_REPO / "data" / "model" / VERSION
 
 PIPELINE = GOC_REPO / "srcs/05_machine_learning/forcasting_pipeline"
@@ -169,6 +169,10 @@ class DichVuDuBao:
             if not np.isfinite(self.medians.to_numpy()).all():
                 raise ValueError
             self.chuan_hoa = self.cfg_model["chuan_hoa"]
+            # SUA 2026-08-22: mau so chuan hoa nay lay tai T+h (cot sin_elevation_mt),
+            # doc ten cot tu model_config thay vi ghim cung - ghim cung se nhan nguoc
+            # bang sin tai T trong khi model hoc voi sin tai T+h.
+            self.cot_sin_elev = self.cfg_model.get("cot_sin_elev", "sin_elevation")
             self.eps = float(self.cfg_model["eps_elev"])
         except (KeyError, TypeError, ValueError) as exc:
             raise ForecastDomainError(f"Metadata feature/scale không đầy đủ: {thu_muc}") from exc
@@ -414,7 +418,7 @@ class DichVuDuBao:
             tho = float(self.model.predict(X)[0])
 
             if chuan_hoa:
-                sin_e = float(hang["sin_elevation"].iloc[0])
+                sin_e = float(hang[self.cot_sin_elev].iloc[0])
                 y_bao = np.clip(tho, 0, clip_k) * quy_mo * max(sin_e, eps)
                 y_bao = min(y_bao, tran * 1.02)
                 if sin_e <= eps:
@@ -428,7 +432,7 @@ class DichVuDuBao:
                 "timestamp": hang["timestamp"].iloc[0],
                 "plot_timestamp": hang["timestamp"].iloc[0] + pd.Timedelta(minutes=BUOC_PHUT * self.horizon),
                 "y_pred_kwh": y_bao,
-                "sin_elevation": float(hang["sin_elevation"].iloc[0]),
+                "sin_elevation": float(hang[self.cot_sin_elev].iloc[0]),
                 "shortwave_radiation": float(hang.get("shortwave_radiation", pd.Series([np.nan])).iloc[0]),
                 "so_buoc_de_quy": i + 1,
             })
@@ -499,7 +503,7 @@ class DichVuDuBao:
         X = d.reindex(columns=self.features).fillna(self.medians).astype(np.float32)
         tho = self.model.predict(X)
 
-        sin_e = d["sin_elevation"].to_numpy(float)
+        sin_e = d[self.cot_sin_elev].to_numpy(float)
         if chuan_hoa:
             y_bao = np.clip(tho, 0, clip_k) * quy_mo * np.maximum(sin_e, eps)
             y_bao = np.minimum(y_bao, tran * 1.02)

@@ -50,14 +50,14 @@
   42 dàn PV --- 5 khuôn viên\\
   2,73 triệu bản ghi bước 15 phút\\
   \texttt{03\_convert\_query\_to\_parquet}
-  \art{v4\_preprocessing.parquet}};
+  \art{v5\_preprocessing.parquet}};
 
 \node[the=cPrep] (c2) at (\xb,\ya) {
   \ic{jupyter}{7mm}~{\color{cPrep}\bfseries 2. TIỀN XỬ LÝ}\\[4pt]
   \texttt{00\_fill\_null\_imputation}\\
   \texttt{00b\_recheck\_fill\_null}\\
   Thời tiết ghép theo mốc quá khứ
-  \art{v4\_final\_cleaned.parquet}};
+  \art{v5\_final\_cleaned.parquet}};
 
 %=================== HANG 2 : 3 -> 4 (sang trai) ===================
 \node[the=cPrep] (c3) at (\xc,\ya) {
@@ -80,7 +80,7 @@
   \texttt{03\_1\_time} --- lag, rolling, Lonij\\
   \texttt{03\_2\_spatial} --- Haurwitz, site\_scale\\
   \texttt{03\_3\_aggregate} --- tương tác, mã hoá\\
-  \texttt{04\_vif} $\rightarrow$ \texttt{05\_select} --- còn 40 cột
+  \texttt{04\_vif} $\rightarrow$ \texttt{05\_select} --- còn 39 cột
   \art{selected\_features.json}};
 
 \node[the=cTrain] (c6) at (\xa,\yb) {
@@ -96,7 +96,7 @@
   \ic{jupyter}{7mm}~{\color{cEval}\bfseries 7. ĐÁNH GIÁ}\\[4pt]
   \texttt{07\_final\_test} --- mở đúng một lần\\
   \texttt{08\_explainable\_ai} --- SHAP\\
-  \texttt{06\_0b} --- đối chứng Prophet
+  \texttt{07b} --- đối chứng Prophet
   \art{metrics\_overall.json}};
 
 \node[the=cServe] (c8) at (\xb,\yc) {
@@ -109,7 +109,7 @@
 \node[the=cNguon] (c9) at (\xc,\yc) {
   \ic{git}{7mm}~{\color{cNguon}\bfseries 9. PHIÊN BẢN}\\[4pt]
   DVC theo dõi \texttt{data/} và \texttt{models/}\\
-  Git chỉ giữ 26 con trỏ \texttt{.dvc}\\
+  Git chỉ giữ 67 con trỏ \texttt{.dvc}\\
   đồng bộ Supabase Storage
   \art{*.dvc + Storage}};
 
