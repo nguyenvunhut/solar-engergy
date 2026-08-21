@@ -13,17 +13,17 @@
 #
 # Truoc day chi co mot khoa `root` va stage_goc() dung chung no. Khi doi root sang nhanh
 # tai lap thi stage_goc() cung bi keo theo, lam mat luon duong doi chieu. Tach doi tu day.
-root:     data/model/v4_tai_lap
-root_goc: data/model/v4
-version: v4
+root:     data/model/v5_new
+root_goc: data/model/v5
+version: v5
 
 # ── Dau vao ──
 # mlmart_raw  = ban trich tang ETL, dau vao cua s00 (dien khuyet). La ban SAO dat trong
-#               thu muc rieng v4_tai_lap/ - ban goc data/mlmart_base/v4_preprocessing.parquet
-#               khong duoc cham toi.
+#               thu muc rieng v5_new/ - ban goc data/mlmart_base/v5_preprocessing.parquet
+#               khong duoc cham toi (da doi chieu MD5 fc85fe65... hai ban giong nhau).
 # mlmart_base = ket qua cua s00, dau vao cua s01 tro di.
-mlmart_raw:  data/mlmart_base/v4_tai_lap/v4_preprocessing.parquet
-mlmart_base: data/mlmart_base/v4_tai_lap/v4_final_cleaned.parquet
+mlmart_raw:  data/mlmart_base/v5_new/v5_preprocessing.parquet
+mlmart_base: data/mlmart_base/v5_new/v5_final_cleaned.parquet
 # CSV raw goc (Kaggle) - dung de xac dinh dong nao DO THAT (measured) va dong nao
 # do ETL dien (etl_imputed). Khong co file nay thi khong biet provenance cua target,
 # ma toan bo metric headline deu chi tinh tren energy_source == 'measured'.
@@ -43,7 +43,7 @@ raw_cot:
 output_suffix: "_new"
 
 stages:
-  s01_reindex:      01_reindex/v4_continuous_grid.parquet
+  s01_reindex:      01_reindex/v5_continuous_grid.parquet
   s02_split:        02_split
   s03_features:     03_1_features_time
   s04_spatial:      03_2_features_spatial
