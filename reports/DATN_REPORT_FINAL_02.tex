@@ -3252,11 +3252,16 @@ Notebook \texttt{03\_2\_features\_spatial} sinh nhóm đặc trưng suy từ v�
 nhóm đều là hàm xác định của thời gian và vị trí hoặc là tổ hợp của các biến đã có,
 nên không mang rủi ro rò rỉ.
 
-\subsubsection{Vị trí Mặt Trời theo thuật toán NOAA}
+\subsubsection{Vị trí Mặt Trời: từ thuật toán NOAA sang pvlib SPA}
 
-Góc cao $h$ và góc phương vị được tính theo thuật toán vị trí Mặt Trời chuẩn của NOAA~\cite{noaa_solar}. Nó dựa trên
-chuỗi Fourier cho độ xích vĩ, phương trình thời gian và góc giờ. Đây là công cụ tham chiếu
-chính thức.
+Bản dựng đầu tiên tính góc cao $h$ và góc phương vị bằng thuật toán vị trí Mặt Trời của
+NOAA~\cite{noaa_solar}, dựa trên chuỗi Fourier cho độ xích vĩ, phương trình thời gian và
+góc giờ. Cách làm đó cho kết quả đủ dùng nhưng vướng một điểm yếu ở khâu quy đổi múi giờ,
+trình bày ngay dưới đây. Bản hiện hành thay bằng hàm
+\texttt{pvlib.solarposition.get\_solarposition} của thư viện \texttt{pvlib}
+phiên bản $0{,}15{,}2$~\cite{holmgren2018pvlib}, tức thuật toán SPA của Reda và
+Andreas, đồng thời lấy lịch giờ mùa hè thật của múi \texttt{Australia/Melbourne} thay cho
+quy ước cắt theo nguyên tháng.
 
 Ba chi tiết cài đặt đáng nêu, tóm tắt ở Bảng~\ref{tab:chi_tiet_solar}.
 
@@ -3270,10 +3275,11 @@ Ba chi tiết cài đặt đáng nêu, tóm tắt ở Bảng~\ref{tab:chi_tiet_s
 \textbf{Chi tiết} & \textbf{Trong mã nguồn} & \textbf{Lý do} \\
 \midrule
 Quy đổi về giờ UTC &
-\texttt{utc = ts - tz\_gio}, với \texttt{tz\_gio} bằng $11$ cho tháng $10$--$3$ và $10$ cho
-tháng $4$--$9$ &
+\texttt{ZoneInfo("Australia/}\allowbreak\texttt{Melbourne")} tra đúng lịch giờ mùa hè cho
+từng mốc &
 Mốc trong dữ liệu là \textbf{giờ địa phương của Úc}, còn công thức thiên văn cần giờ UTC.
-Úc áp dụng giờ mùa hè nên độ lệch đổi theo mùa \\
+Bản trước dùng quy ước $11$ giờ cho tháng $10$--$3$ và $10$ giờ cho tháng $4$--$9$; xem
+đoạn đối chiếu bên dưới về giá phải trả của cách xấp xỉ đó \\
 \addlinespace
 Góc phương vị &
 \texttt{np.arctan2(...)} thay cho $\arccos$ &
@@ -3290,9 +3296,42 @@ thực tế nhưng cách xa trên thang số \\
 
 \end{table}
 
-Cách cắt mùa theo nguyên tháng là một xấp xỉ: giờ mùa hè ở Úc bắt đầu Chủ nhật đầu
-tiên của tháng $10$ và kết thúc Chủ nhật đầu tiên của tháng $4$, nên vài ngày đầu hai tháng
-đó nhận độ lệch chênh một giờ, khoảng $12$ ngày mỗi năm.
+\textbf{Vì sao phải bỏ cách cắt mùa theo nguyên tháng.} Giờ mùa hè ở Úc bắt đầu Chủ nhật
+đầu tiên của tháng $10$ và kết thúc Chủ nhật đầu tiên của tháng $4$, không rơi đúng vào
+ranh giới tháng. Quy ước cắt theo nguyên tháng vì thế gán sai một giờ cho những ngày nằm
+giữa đầu tháng và Chủ nhật đầu tiên, khoảng $12$ ngày mỗi năm. Sai một giờ trong góc giờ
+kéo theo sai vài độ trong góc cao, mà góc cao lại nằm ở mẫu số của phép chuẩn hoá mục
+tiêu, nên sai số đó truyền thẳng vào nhãn huấn luyện.
+
+Notebook \texttt{03\_2b\_doi\_chieu\_pvlib.ipynb} đo cụ thể cái giá ấy trên $84.000$ điểm
+của $42$ trạm, so từng điểm với \texttt{pvlib} làm chuẩn. Kết quả tóm tắt ở
+Bảng~\ref{tab:doi_chieu_pvlib}: giữ quy ước tháng thì góc cao lệch tới $8{,}5403^\circ$ ở
+phân vị $99$ và $12{,}3542^\circ$ ở mức lớn nhất; chuyển sang lịch múi giờ thật thì sai số
+về đúng $0{,}0000^\circ$ ở cả hai mức. Công thức Haurwitz do nhóm tự cài cũng khớp
+\texttt{pvlib.clearsky.haurwitz} tới $0{,}0000$ W/m$^2$.
+
+\begin{table}[htbp]
+\centering
+\caption{Đối chiếu hình học Mặt Trời với \texttt{pvlib} trên $38.902$ điểm ban ngày}
+\label{tab:doi_chieu_pvlib}
+\small
+\begin{tabular}{@{}l r r r r@{}}
+\toprule
+\textbf{Cách quy đổi múi giờ} & \textbf{Góc cao p99} & \textbf{Góc cao max} &
+\textbf{Phương vị p99} & \textbf{Phương vị max} \\
+\midrule
+Quy ước theo nguyên tháng (bản trước) & $8{,}5403^\circ$ & $12{,}3542^\circ$ &
+$11{,}6713^\circ$ & $26{,}6711^\circ$ \\
+\textbf{Lịch giờ mùa hè thật (hiện hành)} & $\mathbf{0{,}0000^\circ}$ &
+$\mathbf{0{,}0000^\circ}$ & $\mathbf{0{,}0000^\circ}$ & $\mathbf{0{,}0000^\circ}$ \\
+\bottomrule
+\end{tabular}
+
+
+\end{table}
+
+Dòng thứ hai bằng $0$ ở mọi cột nghĩa là phần hình học Mặt Trời của báo cáo này tái lập
+đúng \texttt{pvlib}, không phải một bản cài đặt riêng chạy song song.
 
 \subsubsection{Bức xạ trời quang theo mô hình Haurwitz}
 
@@ -5499,6 +5538,11 @@ F.~Pedregosa et~al.,
 Tableau Software (Salesforce),
 \newblock \textit{Visual Analysis Best Practices: A Guide to Creating Meaningful Dashboards},
 \newblock Seattle, WA, 2023.
+
+\bibitem{holmgren2018pvlib}
+W.~F. Holmgren, C.~W. Hansen, and M.~A. Mikofski,
+\newblock ``pvlib python: a python package for modeling solar energy systems,''
+\newblock \textit{Journal of Open Source Software}, vol.~3, no.~29, p.~884, 2018.
 
 \bibitem{noaa_solar}
 NOAA Global Monitoring Laboratory,
