@@ -115,3 +115,5 @@ là điều nên chủ động nêu ra kèm con số.
 | Fold 1 ít dữ liệu thế có sao không? | Do đội trạm ban đầu chỉ 13/42; là đặc điểm dữ liệu, và cũng là lý do mỗi fold phải suy ngưỡng cắt riêng |
 | Test 15% có đủ không? | 510.468 dòng thô, sau lọc còn ~229.000 dòng đo thật ban ngày cho mỗi tầm — thừa đủ |
 | Có chồng lấn giữa train và val không? | Có ở ranh giới, đã đo: 30–42 dòng (h1), 120–168 dòng (h4), tức 0,005–0,03% |
+
+Bước tiếp theo: Chuyển sang Notebook 03 để tiến hành trích xuất đặc trưng (Feature Engineering) dựa trên ranh giới của các fold đã chia này.
