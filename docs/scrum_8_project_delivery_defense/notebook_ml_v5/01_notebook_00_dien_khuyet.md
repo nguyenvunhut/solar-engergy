@@ -145,3 +145,5 @@ với dòng bình thường), và ba cột khóa thời tiết của 218 mốc k
 Hai dòng "nếu ra... → bản cũ" là chốt chống nhầm phiên bản dữ liệu — bài học xương máu ngày
 20/08: một lần chạy đã đọc nhầm bản cũ do đường dẫn trong một cell chưa được cập nhật, và
 chính hai con số này tố cáo điều đó.
+
+*Ghi chú: Luồng quy tắc điền khuyết đã được thống nhất và chốt hạ để phục vụ cho các notebook ML phía sau.*
