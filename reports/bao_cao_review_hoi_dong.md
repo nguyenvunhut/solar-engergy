@@ -26,7 +26,7 @@ Từ các vấn đề trên, nhóm đã đặt ra các câu hỏi kinh doanh s�
 2. **(Q2) Phân loại sự cố:** Làm sao thuật toán có thể phân biệt được sự sụt giảm sản lượng do mây bay ngang qua (sự cố tạm thời) với việc Inverter bị hỏng hoặc tấm pin bám bẩn (sự cố vật lý cần bảo trì)?
 3. **(Q3) Tối ưu vận hành:** Khung giờ nào và mùa nào trong năm các trạm đạt hiệu suất tối đa để hỗ trợ lên lịch bảo trì mà ít ảnh hưởng đến doanh thu nhất?
 4. **(Q4) Dự báo tương lai:** Làm thế nào để dùng dữ liệu lịch sử dự báo được sản lượng điện cho ngày tiếp theo?
-
+ 
 ---
 
 ## II. GIẢI PHÁP TỔNG THỂ (SOLUTION)
