@@ -1,0 +1,108 @@
+<mxfile host="Electron" modified="2026-08-22T14:12:00.000Z" agent="Mozilla/5.0" version="21.6.8" type="device">
+  <diagram id="diag_bi_mart_hourly_flow" name="BI Mart Hourly Flow">
+    <mxGraphModel dx="1422" dy="820" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1500" pageHeight="1350" background="#F8FAFC" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        
+        <!-- HEADER BANNER -->
+        <mxCell id="t0" value="SƠ ĐỒ KIẾN TRÚC TẦNG BI DATA MART (HOURLY STREAMLINED)&#xa;Chuyển đổi tối ưu DWH sang Materialized View Cấp Giờ (mv_bi_mart_hourly_measures) phục vụ Tableau (&lt; 100 ms)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#1E293B;fontColor=#FFFFFF;fontSize=13.5;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="20" y="20" width="1440" height="65" as="geometry" />
+        </mxCell>
+
+        <!-- ==================== KHỐI 1: SCHEMA DATAWAREHOUSE (TOP) ==================== -->
+        <mxCell id="dwh_container" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EFF6FF;strokeColor=#3B82F6;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="20" y="105" width="1440" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="dwh_hdr" value="SCHEMA: datawarehouse (LƯỢC ĐỒ THIÊN HÀ — GALAXY SCHEMA | 3.5M DÒNG)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1D4ED8;strokeColor=#3B82F6;fontColor=#FFFFFF;fontSize=12;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="30" y="115" width="1420" height="35" as="geometry" />
+        </mxCell>
+
+        <!-- Fact Solar Gen -->
+        <mxCell id="box_fgen" value="fact_solar_energy_gen (Chu kỳ 15 Phút — 2.731.946 Dòng)&#xa;============================================================&#xa;• Khóa chính / Khóa ngoại: PK gen_id | FK site_id, geo_id, date_id, time_id&#xa;• Đo lường: energy_generated_kwh (Sản lượng điện 15m)&#xa;• Giám sát dị thường: gmm_if_outlier_flag, fill_null_algorithm" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#93C5FD;strokeWidth=1.5;fontSize=10;fontColor=#1E3A8A;align=left;spacingLeft=10;verticalAlign=top;spacingTop=6;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry x="40" y="160" width="670" height="125" as="geometry" />
+        </mxCell>
+
+        <!-- Fact Weather & Dims -->
+        <mxCell id="box_fw" value="fact_weather (Chu kỳ 1 Giờ — 850.752 Dòng) &amp; 5 Conformed Dimensions&#xa;============================================================&#xa;• Khóa chính / Khóa ngoại: PK weather_id | FK geo_id, date_id, time_id, weather_type_id&#xa;• Khí tượng ERA5-Land: shortwave_radiation (GHI), temperature_c, cloud_cover, wind_speed&#xa;• Bảng chiều dùng chung: dim_solar_site, dim_geography, dim_date, dim_time, dim_weather_type" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#93C5FD;strokeWidth=1.5;fontSize=10;fontColor=#1E3A8A;align=left;spacingLeft=10;verticalAlign=top;spacingTop=6;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry x="740" y="160" width="710" height="125" as="geometry" />
+        </mxCell>
+
+
+        <!-- ==================== KHỐI 2: SCHEMA BI_MART (MIDDLE) ==================== -->
+        <mxCell id="bi_container" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F0FDF4;strokeColor=#16A34A;strokeWidth=2.2;" vertex="1" parent="1">
+          <mxGeometry x="20" y="375" width="1440" height="570" as="geometry" />
+        </mxCell>
+        <mxCell id="bi_hdr" value="SCHEMA: bi_mart (TẦNG BI DATA MART — MATERIALIZED VIEW CẤP GIỜ TỐI ƯU HÓA)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#15803D;strokeColor=#16A34A;fontColor=#FFFFFF;fontSize=12.5;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="30" y="385" width="1420" height="35" as="geometry" />
+        </mxCell>
+
+        <!-- Main Card inside BI Mart: mv_bi_mart_hourly_measures -->
+        <mxCell id="mv_hourly_card" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#22C55E;strokeWidth=1.8;" vertex="1" parent="1">
+          <mxGeometry x="40" y="430" width="1400" height="495" as="geometry" />
+        </mxCell>
+        <mxCell id="mv_hourly_hdr" value="bi_mart.mv_bi_mart_hourly_measures (Materialized View Cấp Giờ — 1h Granularity)  |  UNIQUE INDEX: idx_mv_hourly_unique (date_id, site_id, hourly_bucket)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCFCE7;strokeColor=#22C55E;fontColor=#14532D;fontSize=11.5;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="40" y="430" width="1400" height="35" as="geometry" />
+        </mxCell>
+
+        <!-- 4 Detailed Panels inside Materialized View (2x2 Grid) -->
+        <!-- Panel 1: Physical Measures -->
+        <mxCell id="p1_measures" value="1. ĐO LƯỜNG VẬT LÝ, THỜI TIẾT &amp; THÔNG SỐ TRẠM&#xa;============================================================&#xa;• e_hourly (kWh) : Tổng sản lượng phát thực tế theo giờ (SUM 4 mốc 15 phút)&#xa;• shortwave_radiation (W/m²) : Bức xạ sóng ngắn mặt phẳng ngang (GHI)&#xa;• temperature_c (°C), wind_speed (m/s), precipitation_mm, sunshine_duration&#xa;• is_day (BOOLEAN) : Cờ phân định ban ngày (true khi hourly_bucket từ 6h–18h)&#xa;• p_stc (kWp) : Công suất danh định chuẩn của 42 trạm phát PV&#xa;• t_cell (°C) = temperature_c + (shortwave_radiation * 0.035) (Nhiệt độ ô pin thực tế)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1.2;fontSize=9.8;fontColor=#0F172A;align=left;spacingLeft=10;verticalAlign=top;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="60" y="475" width="660" height="195" as="geometry" />
+        </mxCell>
+
+        <!-- Panel 2: Technical Performance -->
+        <mxCell id="p2_performance" value="2. HIỆU SUẤT KỸ THUẬT &amp; SUY HAO NHIỆT ĐỘ&#xa;============================================================&#xa;• e_stc_hourly = p_stc * (GHI / 1000.0) [khi GHI &gt;= 100 W/m²] (Sản lượng STC)&#xa;• loss_temp = (t_cell - 25) * 0.004 [khi t_cell &gt; 25°C] (Suy hao do quá nhiệt)&#xa;• pr_actual = e_hourly / e_stc_hourly (Hệ số hiệu suất thực tế trạm)&#xa;• pr_adjusted = 0.78 * (1 - loss_temp) (Hiệu suất đã bù trừ tổn thất nhiệt)&#xa;• e_expected = e_stc_hourly * pr_adjusted (Sản lượng mục tiêu kỳ vọng)&#xa;• delta_baseline = e_hourly - e_expected (Chênh lệch thực tế so với kỳ vọng)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1.2;fontSize=9.8;fontColor=#0F172A;align=left;spacingLeft=10;verticalAlign=top;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="750" y="475" width="670" height="195" as="geometry" />
+        </mxCell>
+
+        <!-- Panel 3: Financial & Environmental -->
+        <mxCell id="p3_financial" value="3. CHỈ SỐ KINH DOANH, TÀI CHÍNH &amp; MÔI TRƯỜNG&#xa;============================================================&#xa;• fit_rate = 1.938 VNĐ/kWh (Biểu giá mua điện mặt trời FiT chuẩn hóa)&#xa;• estimated_revenue = e_hourly * fit_rate (Doanh thu thương mại ước tính)&#xa;• cost_of_underperformance = (e_expected - e_hourly) * fit_rate [khi thiếu hụt]&#xa;• co2_avoided_kg = e_hourly * 0.533 kg (Khối lượng CO2 giảm phát thải)&#xa;• equivalent_trees_planted = co2_avoided_kg / 21.8 kg (Cây xanh tương đương)&#xa;• Tự động cập nhật định kỳ qua REFRESH MATERIALIZED VIEW CONCURRENTLY" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1.2;fontSize=9.8;fontColor=#0F172A;align=left;spacingLeft=10;verticalAlign=top;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="60" y="695" width="660" height="210" as="geometry" />
+        </mxCell>
+
+        <!-- Panel 4: Anomaly Detection -->
+        <mxCell id="p4_anomaly" value="4. GIÁM SÁT BẤT THƯỜNG GMM-IF &amp; PHÂN LOẠI LỖI O&amp;M&#xa;============================================================&#xa;• gmm_if_outlier_flag (BOOLEAN) : Cờ phát hiện dị thường từ mô hình GMM-IF&#xa;• gmm_if_outlier_reason (VARCHAR) : 6 mã lý do kỹ thuật chuẩn hóa:&#xa;  1. GMM_IF_CONSENSUS (Đồng thuận ML) | 2. PHYSICAL_OVER_CAPACITY (Vượt trần)&#xa;  3. PHYSICAL_HIGH_ENERGY_NO_SUN (Phát đêm) | 4. HIGH_ENERGY_LOW_RAD&#xa;  5. LOW_ENERGY_STRONG_SUN (Mất phát trưa) | 6. PHYSICAL_DISTRIBUTION_JUMP&#xa;• Cung cấp dữ liệu trực tiếp cho hệ thống cảnh báo sớm và bảo trì O&amp;M" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1.2;fontSize=9.8;fontColor=#0F172A;align=left;spacingLeft=10;verticalAlign=top;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="750" y="695" width="670" height="210" as="geometry" />
+        </mxCell>
+
+
+        <!-- ==================== KHỐI 3: TẦNG ỨNG DỤNG TABLEAU (BOTTOM) ==================== -->
+        <mxCell id="tab_container" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FAF5FF;strokeColor=#8B5CF6;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="20" y="1020" width="1440" height="260" as="geometry" />
+        </mxCell>
+        <mxCell id="tab_hdr" value="TẦNG ỨNG DỤNG TRỰC QUAN HÓA &amp; PHÂN TÍCH TABLEAU DASHBOARDS (PHẢN HỒI &lt; 100 MS)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#6D28D9;strokeColor=#8B5CF6;fontColor=#FFFFFF;fontSize=12.5;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="30" y="1030" width="1420" height="35" as="geometry" />
+        </mxCell>
+
+        <!-- Dashboard 1 -->
+        <mxCell id="db1" value="Dashboard 1: Executive Overview&#xa;====================================&#xa;• Thẻ chỉ số BANs: Tổng sản lượng, PR, CF&#xa;• Bản đồ Campus Map phân bố 42 trạm phát&#xa;• Xếp hạng công suất &amp; Doanh thu lũy kế FiT&#xa;• Khối lượng CO2 giảm phát thải &amp; Cây xanh" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#3B82F6;strokeWidth=1.5;fontSize=9.6;fontColor=#1E40AF;align=left;spacingLeft=10;verticalAlign=top;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1080" width="445" height="180" as="geometry" />
+        </mxCell>
+
+        <!-- Dashboard 2 -->
+        <mxCell id="db2" value="Dashboard 2: Efficiency &amp; Loss&#xa;====================================&#xa;• Biểu đồ 2 trục: Sản lượng vs GHI vs Nhiệt độ&#xa;• Bản đồ nhiệt Heatmap tổn thất nhiệt theo tháng&#xa;• Xếp hạng hiệu suất thiết bị Inverter/Optimizer&#xa;• Nhận diện trạm bị che bóng hoặc sụt giảm PR" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#F59E0B;strokeWidth=1.5;fontSize=9.6;fontColor=#B45309;align=left;spacingLeft=10;verticalAlign=top;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="515" y="1080" width="450" height="180" as="geometry" />
+        </mxCell>
+
+        <!-- Dashboard 3 -->
+        <mxCell id="db3" value="Dashboard 3: Anomaly &amp; O&amp;M&#xa;====================================&#xa;• Chuỗi thời gian đánh dấu điểm dị thường GMM-IF&#xa;• Heatmap rò rỉ điện ban đêm (E &gt; 0 lúc 18h30-5h30)&#xa;• Phân loại danh mục sự cố kỹ thuật 6 mã O&amp;M&#xa;• Hỗ trợ kỹ sư khoanh vùng vị trí thiết bị lỗi" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#EC4899;strokeWidth=1.5;fontSize=9.6;fontColor=#9D174D;align=left;spacingLeft=10;verticalAlign=top;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="995" y="1080" width="445" height="180" as="geometry" />
+        </mxCell>
+
+
+        <!-- ==================== MŨI TÊN KẾT NỐI DATA FLOW ==================== -->
+        <!-- Mũi tên 1: DWH -> BI Mart -->
+        <mxCell id="arr1" value="Nén 15m -&gt; 1h (hourly_bucket) &amp; Ghép nối Causal Join khí tượng" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#15803D;strokeWidth=3;endArrow=classic;endFill=1;fontSize=10.5;fontStyle=1;fontColor=#14532D;" edge="1" parent="1" source="dwh_container" target="bi_container">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Mũi tên 2: BI Mart -> Tableau -->
+        <mxCell id="arr2" value="Tableau Relationships (1:N) &amp; PostgreSQL Native Query (&lt; 100 ms)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2563EB;strokeWidth=3;endArrow=classic;endFill=1;fontSize=10.5;fontStyle=1;fontColor=#1D4ED8;" edge="1" parent="1" source="bi_container" target="tab_container">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
