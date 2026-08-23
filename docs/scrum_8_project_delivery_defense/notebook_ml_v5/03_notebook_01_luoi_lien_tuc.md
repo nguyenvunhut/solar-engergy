@@ -1,6 +1,6 @@
 # Notebook 01 — Dựng lưới 15 phút và gắn nhãn nguồn gốc (chi tiết đầy đủ)
 
-> ⚠️ **Về các con số trong file này:** một số giá trị mô tả lượt chạy trước. Giá trị hiện
+>  **Về các con số trong file này:** một số giá trị mô tả lượt chạy trước. Giá trị hiện
 > hành và lý do từng con số thay đổi: [`20_GIAI_THICH_SO_MAU_THUAN.md`](20_GIAI_THICH_SO_MAU_THUAN.md).
 
 
