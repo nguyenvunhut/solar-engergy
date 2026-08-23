@@ -1,6 +1,6 @@
 # Notebook 00b — Kiểm tra độc lập việc điền khuyết (`00b_recheck_fill_null.ipynb`)
 
-> ⚠️ **Về các con số trong file này:** một số giá trị mô tả lượt chạy trước. Giá trị hiện
+>  **Về các con số trong file này:** một số giá trị mô tả lượt chạy trước. Giá trị hiện
 > hành và lý do từng con số thay đổi: [`20_GIAI_THICH_SO_MAU_THUAN.md`](20_GIAI_THICH_SO_MAU_THUAN.md).
 
 
