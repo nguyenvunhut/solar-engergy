@@ -368,10 +368,10 @@ Thiết lập đường truyền kết nối trực tiếp PostgreSQL bảo mậ
 \end{itemize}
 
 \textbf{4. Khai phá Dữ liệu và Dự báo Sản lượng Học máy (Machine Learning):}
-Xây dựng quy trình học máy tuân thủ nguyên lý nhân quả nghiêm ngặt (chống rò rỉ dữ liệu), trích xuất 39 đặc trưng chọn lọc (mở rộng thành 52 đặc trưng sau khi thêm các biến trễ mục tiêu $T+h$ cho mô hình dự báo trực tiếp H1) từ chuỗi thời gian, bức xạ quang học và góc chiếu mặt trời tất định Haurwitz/NOAA:
+Xây dựng quy trình học máy tuân thủ ràng buộc nhân quả theo trục thời gian (chống rò rỉ dữ liệu), trích xuất 39 đặc trưng chọn lọc (mở rộng thành 52 đặc trưng sau khi thêm các biến trễ mục tiêu $T+h$ cho mô hình dự báo trực tiếp H1) từ chuỗi thời gian, bức xạ quang học và góc chiếu mặt trời tất định tính bằng pvlib SPA kèm mô hình trời quang Haurwitz:
 \begin{itemize}[noitemsep]
-    \item Đánh giá trên sơ đồ kiểm tra chéo chuỗi thời gian 3-Fold Expanding Window; tối ưu hóa siêu tham số mô hình LightGBM hồi quy L1/Huber bằng thuật toán Bayesian TPE qua 20 Trials Optuna.
-    \item Mô hình đạt sai số phần trăm tuyệt đối gia quyền WAPE $17{,}46\%$ ở tầm ngắn H1 ($T + 15$ phút) và $21{,}60\%$ ở tầm trung H4 ($T + 60$ phút) trên tập kiểm thử (Test) niêm phong đo thật ban ngày, cải thiện vượt trội so với mô hình cơ sở Facebook Prophet (Skill Score đạt $+50{,}09\%$ ở H1 và $+37{,}80\%$ ở H4).
+    \item Đánh giá trên sơ đồ kiểm tra chéo chuỗi thời gian 3-Fold Expanding Window; tối ưu hóa siêu tham số mô hình LightGBM hồi quy L1, Huber và L2 bằng thuật toán Bayesian TPE qua 20 Trials Optuna.
+    \item Mô hình đạt sai số phần trăm tuyệt đối gia quyền WAPE $17{,}46\%$ ở tầm ngắn H1 ($T + 15$ phút) và $21{,}60\%$ ở tầm trung H4 ($T + 60$ phút) trên tập kiểm thử (Test) niêm phong đo thật ban ngày, cải thiện so với mô hình đối chứng Facebook Prophet (Skill Score đạt $+50{,}09\%$ ở H1 và $+37{,}80\%$ ở H4).
     \item Ứng dụng kỹ thuật SHAP TreeExplainer để giải thích mức độ đóng góp toàn cục và cục bộ của các đặc trưng vào kết quả dự báo.
     \item Đóng gói sản phẩm thành dịch vụ dự báo độc lập (\texttt{forecast\_service.py}) và ứng dụng giao diện trực quan tương tác bằng Streamlit (\texttt{app.py}).
 \end{itemize}
@@ -2314,7 +2314,7 @@ vỏn vẹn $0{,}03$ điểm phần trăm.
 
 Hai quan sát trên dẫn tới một kết luận: dù chọn hệ số nào trong khoảng
 $1{,}5$--$6$, lượng dữ liệu bị loại đều không vượt quá một phần nghìn của bộ dữ liệu, nên
-lựa chọn hệ số không đủ sức làm thay đổi kết quả mô hình. Mức $4$ đang dùng là một
+lựa chọn hệ số ít ảnh hưởng tới kết quả mô hình. Mức $4$ đang dùng là một
 quyết định nằm trong vùng an toàn, không phải một mức tối ưu đã được chứng minh.
 
 % Mục này gồm sơ đồ 8 bước và bảng ánh xạ, hai float lớn không nhét vừa cuối trang
@@ -2442,7 +2442,7 @@ nghĩa. Quy trình đặt năm rào chắn, mỗi rào chắn gắn với một 
 
     \item \textbf{Không chồng lấn khi chia dữ liệu} (bước $3$). Dữ liệu được cắt theo
     trục thời gian, không xáo trộn ngẫu nhiên. Tập test được tách ra trước mọi bước
-    khác và chỉ được mở đúng một lần ở bước $7$.
+    khác, và trong quy trình này chỉ được đọc ở bước $7$.
 
     \item \textbf{Thống kê tính riêng theo từng fold} (bước $5$). Các đại lượng tổng
     hợp như \texttt{site\_scale} hay \texttt{cs\_factor} được ước lượng riêng trong
@@ -2487,7 +2487,7 @@ và bị loại khỏi phạm vi chấm điểm, nhưng vẫn giữ trong lướ
 
 Hai điểm nữa cũng chi phối các bước sau: dữ liệu khí tượng chỉ có độ hạt một giờ nên mỗi giá trị
 bức xạ lặp bốn lần và cần một bước hạ độ hạt riêng; và $42$ vị trí lắp đặt chênh nhau nhiều về
-quy mô nên mục tiêu phải chuẩn hoá theo từng trạm, nếu không mô hình sẽ dồn sức phân biệt trạm
+quy mô nên mục tiêu phải chuẩn hoá theo từng trạm, nếu không phần lớn sức mô tả của mô hình dành cho việc phân biệt trạm
 lớn với trạm nhỏ thay vì học quan hệ giữa thời tiết và sản lượng.
 
 \FloatBarrier
@@ -2830,7 +2830,7 @@ phép mô hình học từ dữ liệu của tháng sau rồi đi dự báo thá
 xáo trộn.
 
 Trước hết, $15\%$ số mốc thời gian cuối cùng được tách ra làm tập test niêm
-phong và cất đi. Phần còn lại, gọi là tập Phát triển, mới được dùng để sinh đặc trưng,
+phong và tách khỏi quy trình. Phần còn lại, gọi là tập Phát triển, mới được dùng để sinh đặc trưng,
 chọn đặc trưng, tinh chỉnh siêu tham số (\textit{hyperparameter}) và chọn hàm mất mát. Tập test chỉ được mở đúng
 một lần ở bước đánh giá cuối, sau khi mọi quyết định đã khoá.
 
@@ -3031,7 +3031,9 @@ Cửa sổ trượt &
 
 \end{table}
 
-Hai nhóm sau tạo ra $2$ cột trễ cộng $8$ cột cửa sổ trượt, bằng $10$ cột suy từ chuỗi mục
+Nhóm lịch và chu kỳ sinh ra $10$ cột ở bước này, nhưng chỉ $5$ cột đi tiếp vào bộ đặc trưng
+cuối sau bước chọn ở Mục~\ref{subsec:chan_doan_dac_trung}. Hai nhóm sau tạo ra $2$ cột trễ cộng
+$8$ cột cửa sổ trượt, bằng $10$ cột suy từ chuỗi mục
 tiêu, đúng con số notebook in ra khi khai báo hàm sinh đặc trưng.
 
 Mã hoá lịch bằng sin và cos. Nếu để giờ trong ngày ở dạng số nguyên, mốc $23{:}45$
@@ -3309,7 +3311,7 @@ xạ. Trong dữ liệu của dự án, hai đại lượng này nằm ở hai c
 lẫn:
 
 \begin{itemize}
-    \item \texttt{shortwave\_radiation} --- GHI \textbf{đo được thực tế}, do Open-Meteo cung cấp.
+    \item \texttt{shortwave\_radiation} --- GHI lấy từ Open-Meteo, tức sản phẩm tái phân tích khí tượng chứ không phải cảm biến đặt tại trạm.
     \item \texttt{ghi\_cs} --- $GHI_{cs}$, giá trị lý thuyết khi trời hoàn toàn quang, do nhóm
     tự tính bằng mô hình Haurwitz từ góc cao Mặt Trời.
 \end{itemize}
@@ -3355,7 +3357,7 @@ Phần huấn luyện fold $3$ & $1{,}559$ & $1{,}538$ & $1{,}800$ \\
 
 \end{table}
 
-Giá trị đổi rõ giữa các fold, trung vị từ $1{,}450$ lên $1{,}559$, nên việc dùng chung
+Giá trị đổi giữa các fold, trung vị từ $1{,}450$ lên $1{,}559$, nên việc dùng chung
 một bộ thống kê cho cả ba fold sẽ đưa thông tin của giai đoạn sau vào fold sớm. Notebook ghi
 thẳng nguyên tắc này ở ô kết quả: \textit{mỗi fold dùng thống kê quy mô tính riêng từ tập
 train của chính fold đó}.
@@ -3395,8 +3397,8 @@ Hình~\ref{fig:downscale} cho thấy hiệu quả trên một cửa sổ sáu gi
 \subsubsection{Chuẩn hoá quy mô theo trạm}
 
 Bốn mươi hai dàn quang điện có quy mô rất khác nhau, nên quy mô được ước lượng từ chính dữ
-liệu và chỉ từ phần huấn luyện: \texttt{site\_scale} là phân vị $99$ của sản lượng ban
-ngày, \texttt{tran\_cong\_suat} là phân vị $99{,}9$. Bảng~\ref{tab:quy_mo} trích tám trạm đầu
+liệu và chỉ từ phần huấn luyện: \texttt{site\_scale}, ước lượng chỉ từ phần huấn luyện, là phân vị $99$ của sản lượng ban
+ngày, \texttt{tran\_cong\_suat} là phân vị $99{,}9$. Hai mức phân vị này đặt theo quy ước, chưa qua phép quét riêng như cận cắt $k$. Bảng~\ref{tab:quy_mo} trích tám trạm đầu
 trong bảng notebook in ra.
 
 \begin{table}[htbp]
@@ -3581,7 +3583,7 @@ ra chính là đường Mặt Trời bị trễ đúng $h$ bước. Đây là h�
 Cách xử lý. Quy trình khai báo một danh sách $21$ cột tất định hình học
 Mặt Trời cùng các đại lượng suy ra từ nó, và toàn bộ nhãn thời gian theo lịch rồi sinh thêm
 bản của chúng tại $T{+}h$ với hậu tố \texttt{\_mt}, đồng thời giữ nguyên bản tại $T$. Ở
-tầm H1 sinh được $13$ cột, nâng tổng số đặc trưng vào mô hình từ $39$ lên $52$.
+tầm H1 sinh được $13$ cột, nâng tổng số đặc trưng vào mô hình từ $39$ lên $52$. Nhóm $13$ cột này chỉ gồm vị trí Mặt Trời và nhãn lịch tại $T{+}h$, không chứa sản lượng hay biến khí tượng tại mốc đó.
 
 Ranh giới hợp lệ của phép dịch. Vị trí Mặt Trời và nhãn lịch tại
 $T{+}h$ là kết quả tính toán thiên văn và lịch thuần tuý; đứng ở thời điểm $T$ đã biết chính
@@ -3645,7 +3647,7 @@ Hai mức chênh nhau $13$ điểm mà cả hai đều được công bố, vì 
 hằng số vật lý mượn được từ tài liệu. Mức của dự án vì vậy phải được biện minh bằng thực
 nghiệm trên chính dữ liệu của dự án.
 
-Cận cắt suy từ dữ liệu, không đặt tay. Tham số $k_{\max}$ không được gán một hằng số
+Cận cắt suy từ dữ liệu. Tham số $k_{\max}$ không được gán một hằng số
 trong tệp cấu hình. Notebook huấn luyện đặt \texttt{CLIP\_K = None} rồi gọi hàm
 \texttt{tinh\_clip\_tu\_train()} để tính nó bằng phân vị $99$ của $k$ trên chính tập huấn luyện.
 Giá trị thu được và ghi vào \texttt{model\_config.json} là $1{,}3686$, tính trên
@@ -3677,8 +3679,8 @@ $1{,}000$ & $6{,}5246$ & $0{,}00$ & $22{,}5039$ \\
 Đường cong WAPE phẳng từ mức $0{,}99$ trở lên, ba mức cuối chỉ chênh nhau $0{,}0000$ điểm
 phần trăm. Bên dưới mức đó thì sai số xấu dần, tới $22{,}6884\%$ ở phân vị $0{,}90$ vì cắt mất
 $10\%$ dữ liệu. Dòng cuối cùng cho thấy phép cắt vẫn cần thiết: bỏ hẳn nó thì ngưỡng nhảy
-lên $6{,}5246$, tức đuôi phân bố có những điểm gấp gần năm lần phần thân. Mức $0{,}99$ là
-điểm mà đường cong bắt đầu phẳng mà vẫn chặn được đuôi đó.
+lên $6{,}5246$, tức đuôi phân bố có những điểm gấp gần năm lần phần thân. Mức $0{,}99$ nằm ở chỗ đường cong bắt đầu phẳng mà vẫn chặn được đuôi đó; các mức từ $0{,}99$
+trở lên chênh nhau không đáng kể nên đây là lựa chọn theo quy ước hơn là một điểm tối ưu tách bạch.
 
 Ngưỡng trong bảng và trong cấu hình là một. Phép quét ở Bảng~\ref{tab:quet_phan_vi}
 đo WAPE trên tập kiểm định, nhưng ngưỡng cắt của từng mức đều được suy từ phân vị của $k$
@@ -3704,7 +3706,7 @@ Kết quả. Hai cách dựng mẫu số được so trực tiếp trên cùng d
 số và cùng tập dòng chấm điểm. Mẫu số tại $T+h$ cho WAPE tốt hơn $0{,}008$ điểm ở tầm H$1$ và
 $0{,}237$ điểm ở tầm H$4$ --- khoảng cách nới rộng đúng ở tầm xa, nơi Mặt Trời dịch chuyển
 nhiều. Đáng kể hơn con số sai lệch là điều này: phân vị $99$ của $k$ nay bằng nhau ở hai tầm,
-cùng bằng $1{,}3686$, nên mỗi tầm tự suy ngưỡng của mình mà không phải mượn ngưỡng của tầm kia.
+cùng bằng $1{,}3686$, nên mỗi tầm suy được ngưỡng từ chính dữ liệu của tầm đó.
 
 Phạm vi đánh giá đi kèm. Vì mẫu số lấy tại $T+h$, điều kiện ban ngày cũng xét tại
 $T+h$: một quan sát được đưa vào khi $\sin h$ tại $T+h$ vượt $\varepsilon$. So với cách xét
@@ -3719,8 +3721,9 @@ Các tham số cố định được kiểm chứng trong hai notebook
 \texttt{05b\_thuc\_nghiem\_tham\_so} và \texttt{05f\_hop\_le\_hoa\_tham\_so}: sàn mẫu số
 $\varepsilon$ được quét trực tiếp (Bảng~\ref{tab:quet_tham_so}), cận cắt qua phép quét mức
 phân vị (Bảng~\ref{tab:quet_phan_vi}), hệ số nới trần bằng đo phân bố tỷ lệ sản lượng trên
-trần, và chính sách trọng số bằng thực nghiệm bù trừ. Mỗi phép quét giữ nguyên mọi thứ còn
-lại, rồi huấn luyện và chấm lại trên tập kiểm định.
+trần, và chính sách trọng số bằng thực nghiệm bù trừ. Mỗi phép quét chỉ đổi một tham số và giữ nguyên phần còn
+lại, rồi huấn luyện và chấm lại trên tập kiểm định. Cách quét từng tham số một không dò được
+tương tác giữa chúng, nên kết quả chỉ nói lên độ nhạy của riêng tham số đang xét.
 
 \begin{table}[htbp]
 \centering
@@ -3744,7 +3747,7 @@ lại, rồi huấn luyện và chấm lại trên tập kiểm định.
 
 Bảng này phải đọc trung thực, vì không phải tham số nào cũng có tác động như nhau.
 
-Sàn mẫu số $\varepsilon$ \textbf{không quyết định độ chính xác.} Toàn dải từ $0{,}00$ tới
+Sàn mẫu số $\varepsilon$ ít ảnh hưởng tới độ chính xác. Toàn dải từ $0{,}00$ tới
 $0{,}10$ chỉ chênh nhau $0{,}0265$ điểm phần trăm WAPE. Cái mà $\varepsilon$ thực sự điều
 khiển là số dòng còn lại để huấn luyện: từ $604.136$ xuống $580.195$, mất $4{,}0\%$. Hai
 con số này là hai đầu của dải quét, ứng với $\varepsilon = 0{,}00$ và $\varepsilon = 0{,}10$,
@@ -3772,11 +3775,11 @@ $99{,}9$ của $k$ từ $2{,}845$ xuống $2{,}812$). Mức $0{,}05$ vì vậy l
 vùng chia-cho-số-gần-không và giữ dữ liệu huấn luyện. Mọi con số trong đoạn này đọc từ tệp kết
 quả \texttt{05\_selected/\allowbreak quet\_eps\_mau\_chuan\_hoa.csv}.
 
-Cận cắt là tham số có tác động rõ, và không còn là hằng số đặt tay. Nó được suy từ
+Cận cắt là tham số có tác động rõ, và được suy từ dữ liệu thay vì gán sẵn. Nó lấy từ
 mức phân vị \texttt{clip\_phan\_vi} của tập huấn luyện, và phép quét mức phân vị đã trình bày ở
 Bảng~\ref{tab:quet_phan_vi}: hạ mức xuống $0{,}90$ làm WAPE kiểm định xấu đi $0{,}18$ điểm vì
 cắt vào phần thân của phân bố; nới lên $1{,}000$ không đổi thêm điểm nào nhưng ngưỡng nhảy lên
-$6{,}5246$, tức phép cắt gần như mất tác dụng chặn các điểm đo bất thường. Giá trị dùng thật
+$6{,}5246$, tức phép cắt gần như mất tác dụng chặn các điểm đo bất thường. Giá trị áp dụng
 là $1{,}3686$ tại mức phân vị $0{,}99$.
 
 Hệ số nới trần được kiểm bằng đo trực tiếp phân bố. Trên $636.138$ dòng đo thật ban
@@ -4072,7 +4075,7 @@ nhưng mô hình cần chúng để không coi ngày $31/12$ và ngày $01/01$ l
 
 \subsubsection{Kết quả áp cho mười tập}
 
-Ba mươi chín đặc trưng cơ bản đã chọn (mở rộng thành $52$ đặc trưng khi thêm các biến trễ mục tiêu $T+h$ cho mô hình H1) được áp đồng loạt cho mười tập dữ liệu bốn tập chính và sáu phần
+Ba mươi chín đặc trưng cơ bản đã chọn~--- mở rộng thành $52$ ở cả hai tầm sau khi thêm $13$ cột thiên văn và lịch tính sẵn tại $T{+}h$~--- được áp đồng loạt cho mười tập dữ liệu bốn tập chính và sáu phần
 của ba fold:
 
 % Khoi ket xuat notebook. Khong boc trong minipage nua: minipage la mot hop lien
@@ -4125,7 +4128,7 @@ Bảng~\ref{tab:bo_dac_trung} tổng hợp toàn bộ $39$ đặc trưng cơ b�
 
 \begin{table}[htbp]
 \centering
-\caption{Danh mục 39 đặc trưng cơ bản được lựa chọn vào mô hình}
+\caption{Danh mục $39$ đặc trưng cơ bản chọn ở bước $05$, trước khi thêm $13$ cột tại $T{+}h$}
 \label{tab:bo_dac_trung}
 \footnotesize
 \renewcommand{\arraystretch}{1.08}
@@ -4259,7 +4262,7 @@ mát vì vậy được trao cơ hội ngang nhau để tự tìm mức điều 
 
 \begin{table}[htbp]
 \centering
-\caption{Bộ siêu tham số tối ưu do Optuna lựa chọn theo từng cấu hình}
+\caption{Bộ siêu tham số Optuna chọn được trong miền tìm kiếm, theo từng cấu hình}
 \label{tab:sieu_tham_so}
 \scriptsize
 \resizebox{\textwidth}{!}{\begin{tabular}{l r r r r r r r r}
@@ -4371,7 +4374,7 @@ quả đã sinh ra chúng: sáu cấu hình huấn luyện, sáu tệp \texttt{m
 \section{Đánh giá trên tập test niêm phong}
 \label{sec:danh_gia_tren_tap_test}
 
-Tập test tách từ đầu và chỉ mở đúng một lần ở đây, sau khi hàm mất mát và siêu tham số
+Tập test tách từ đầu và chỉ được đọc ở bước này, sau khi hàm mất mát và siêu tham số
 (\textit{hyperparameter}) đã khoá. Mục này đi qua sáu bước: thước đo, phạm vi chấm điểm, kết
 quả, chênh lệch giữa test và kiểm định, đối chứng Prophet, và kiểm chứng độ trễ pha.
 
@@ -4480,8 +4483,10 @@ trạm vẫn để lại phần khác biệt riêng của từng trạm mà đ�
 \FloatBarrier
 \subsection{Chênh lệch giữa sai số trên test và trên kiểm định}
 
-Bảng~\ref{tab:ba_pham_vi} đặt cạnh nhau ba con số của cùng một mô hình ở ba phạm vi đánh giá
-khác nhau. Chúng không so trực tiếp được với nhau, phải đọc kèm phạm vi.
+Bảng~\ref{tab:ba_pham_vi} đặt cạnh nhau bốn con số của cùng một mô hình ở bốn phạm vi khác
+nhau: WAPE gộp ba fold kiểm định dùng để xếp hạng cấu hình, hai phạm vi trên tập test dùng để
+báo chỉ số, và phạm vi chung với Prophet dùng để tính chỉ số kỹ năng. Bốn con số này không so
+trực tiếp được với nhau, phải đọc kèm phạm vi.
 
 \begin{table}[htbp]
 \centering
@@ -4513,7 +4518,7 @@ trước khi tập test được mở.
 \FloatBarrier
 \subsection{Đối chứng với Prophet}
 
-\subsubsection{Chỉ số dự báo vượt trội}
+\subsubsection{Chỉ số kỹ năng dự báo}
 
 Một con số WAPE đứng một mình không nói lên chất lượng. Nó cần được đặt cạnh một mô hình đối
 chứng. Chỉ số Forecast Skill Score đo phần sai số cắt giảm được so với đối chứng. Dạng chuẩn của
@@ -4533,7 +4538,7 @@ SS = \left(1 - \frac{WAPE_{\text{mô hình}}}{WAPE_{\text{đối chứng}}}\righ
 \end{equation}
 
 Chỉ số này do Marquez và Coimbra~\cite{marquez2013skill} đưa vào lĩnh vực dự báo điện mặt trời:
-thay vì đọc một con số sai số tuyệt đối, ta đo phần sai số cắt giảm được so với một mô hình đối
+thay vì đọc một con số sai số riêng lẻ, ta đo phần sai số cắt giảm được so với một mô hình đối
 chứng.
 
 Lợi ích của cách đọc này được nêu rõ ngay trong các nguồn gốc. Sổ tay kiểm định dự báo của Nhóm công
@@ -4611,7 +4616,7 @@ sổ thời gian Phát triển với mô hình chính, rồi dự báo tại đ�
 
 Khi chấm điểm, hai mô hình dùng cùng một tập dòng, cùng tử số và cùng mẫu số. Phạm vi
 này yêu cầu cả giá trị tại $T$ lẫn nhãn tại $T{+}h$ đều là số đo thật, đồng thời dòng tại $T$
-là ban ngày, chặt hơn phạm vi đo thật ban ngày của mô hình chính, nên số dòng nhỏ hơn:
+là ban ngày. Đây là tập dòng chung mà cả hai mô hình đều có dự báo hợp lệ, chặt hơn phạm vi đo thật ban ngày của mô hình chính, nên số dòng nhỏ hơn:
 $220.114$ ở H1 và $202.908$ ở H4. Kết quả ở Bảng~\ref{tab:prophet}.
 
 \begin{table}[htbp]
@@ -4708,9 +4713,9 @@ cột tất định tại $T{+}h$ nào.
 
 Hai điểm rút ra. Thứ nhất, thông tin tương hỗ đo quan hệ của một đặc trưng với mục tiêu khi
 đứng riêng, còn SHAP đo phần đóng góp của nó trong mô hình đã huấn luyện, nơi các đặc
-trưng chia nhau thông tin; hai thước đo trả lời hai câu hỏi khác nhau nên không buộc phải trùng
+trưng cùng mang thông tin chồng lấn; hai thước đo trả lời hai câu hỏi khác nhau nên không buộc phải trùng
 thứ hạng. Thứ hai, nhóm đặc trưng tất định tại $T{+}h$ ở Mục~\ref{subsec:khu_tre_mt} tuy không
-lọt nhóm mười đầu nhưng vẫn được mô hình dùng thật: \texttt{ghi\_cs\_mt} đứng hạng $12$,
+lọt nhóm mười đầu nhưng vẫn có đóng góp đo được: \texttt{ghi\_cs\_mt} đứng hạng $12$,
 \texttt{solar\_elevation\_mt} hạng $15$, và bốn trong mười ba cột \texttt{\_mt} nằm trong nhóm hai
 mươi đầu, cộng lại chiếm $6{,}2\%$ tổng giá trị SHAP. Chúng đóng vai trò bổ trợ chứ không thay thế
 các biến khí tượng đo được.
@@ -4847,13 +4852,13 @@ Mục này tổng kết ba phần: kết quả đạt được, giới hạn c�
 
 Quy trình dựng được một mô hình LightGBM dùng chung cho $40$ trạm quang điện, đạt WAPE
 $17{,}46\%$ ở tầm $15$ phút và $21{,}60\%$ ở tầm một giờ trên tập test niêm phong, phạm vi đo
-thật ban ngày. So với đối chứng Prophet trên cùng tập dòng, chỉ số vượt trội đạt $+50{,}09\%$
+thật ban ngày. So với đối chứng Prophet trên cùng tập dòng, chỉ số kỹ năng đạt $+50{,}09\%$
 và $+37{,}80\%$.
 
-Điều đáng nói hơn con số là cách các con số đó được bảo vệ. Năm rào chắn ở Mục~\ref{subsec:nam_rao_chan} được kiểm
+Năm rào chắn ở Mục~\ref{subsec:nam_rao_chan} được kiểm
 chứng bằng số liệu chứ không bằng lập luận: phép ghép thời tiết nhân quả đưa số dòng dùng thời
 tiết tương lai về $0$; thống kê quy mô tính riêng theo từng fold; cận cắt suy từ phân vị của
-tập huấn luyện; tập test mở đúng một lần. Hàm mất mát cho cả hai tầm được chốt trên tập kiểm
+tập huấn luyện; tập test chỉ được đọc ở bước đánh giá cuối. Hàm mất mát cho cả hai tầm được chốt trên tập kiểm
 định trước khi tập test được mở, và mọi chỉ số báo cáo ở Mục~\ref{sec:danh_gia_tren_tap_test} đều là kết quả của lần mở
 duy nhất đó.
 
@@ -4918,7 +4923,7 @@ Dự án đã hoàn thành toàn diện các mục tiêu nghiên cứu và kỹ 
 \begin{itemize}
     \item \textbf{Kiến trúc kho dữ liệu chuẩn hóa và hiệu năng cao:} Thiết kế và vận hành thành công kho dữ liệu (Data Warehouse) trên nền tảng Supabase PostgreSQL theo mô hình Galaxy Schema kết nối 2 bảng Fact và 4 bảng Dimension. Hệ thống tích hợp cơ chế Connection Pooling qua \texttt{pg8000}, quy trình nạp dữ liệu tuần tự an toàn giao dịch (Explicit DB Transaction) và cơ chế kiểm tra đối chiếu vân tay dữ liệu (MD5 Fingerprint), bảo toàn trọn vẹn tính toàn vẹn tham chiếu cho hơn 2,73 triệu bản ghi quan trắc từ 42 trạm PV.
     \item \textbf{Quy trình tiền xử lý và kỹ thuật đặc trưng chuyên sâu:} Xây dựng pipeline tự động hóa xử lý triệt để $1.536.301$ ô dữ liệu khuyết thiếu (đạt $100{,}0\%$) thông qua chiến lược nội suy lai kết hợp quy tắc vật lý ban đêm \& ngưỡng bức xạ khởi động Inverter và nội suy phân cấp (Linear, PCHIP Spline, Multivariate Regression) có kẹp trần công suất vật lý $1{,}20\times P_{\text{stc}}$. Đồng thời, dự án giải quyết thành công bài toán lệch pha tần suất ghi nhận (đồng bộ chu kỳ 15 phút lên 1 giờ) và trích xuất các đặc trưng thời gian kết hợp lịch trình vận hành học xá (\texttt{is\_semester}, \texttt{is\_exam}, \texttt{is\_holiday}) nhằm loại bỏ triệt để hiện tượng rò rỉ dữ liệu (Data Leakage).
-    \item \textbf{Mô hình học máy phát hiện dị thường và dự báo sản lượng:} Triển khai thành công kiến trúc phân lớp lai 3 tầng GMM--IF (Gaussian Mixture Model kết hợp Isolation Forest) trên các phân đoạn cây quyết định, kết hợp bộ 6 mã rào chắn vật lý để gắn cờ chính xác $7.431$ bản ghi ngoại lai (tỷ lệ $0{,}27\%$) phục vụ chẩn đoán bảo trì. Đồng thời, xây dựng và tối ưu hóa mô hình học máy (LightGBM kết hợp Optuna) dự báo sản lượng điện theo giờ, tích hợp phân tích SHAP nhằm giải thích định lượng mức độ đóng góp của các yếu tố khí tượng và nhiệt độ.
+    \item \textbf{Mô hình học máy phát hiện dị thường và dự báo sản lượng:} Triển khai thành công kiến trúc phân lớp lai 3 tầng GMM--IF (Gaussian Mixture Model kết hợp Isolation Forest) trên các phân đoạn cây quyết định, kết hợp bộ 6 mã rào chắn vật lý để gắn cờ chính xác $7.431$ bản ghi ngoại lai (tỷ lệ $0{,}27\%$) phục vụ chẩn đoán bảo trì. Đồng thời, xây dựng và tối ưu hóa mô hình học máy (LightGBM kết hợp Optuna) dự báo sản lượng điện ở tầm $15$ phút và $60$ phút, tích hợp phân tích SHAP nhằm giải thích định lượng mức độ đóng góp của các yếu tố khí tượng và nhiệt độ.
     \item \textbf{Hệ thống trực quan hóa hỗ trợ ra quyết định:} Thiết kế bộ 3 Dashboard quản trị hoàn chỉnh trên Tableau Desktop (Executive Overview, Operational Efficiency \& Loss Analysis, Anomaly Detection \& Predictive Maintenance) với cấu trúc UI/UX nhất quán, giúp chuyển đổi dữ liệu kỹ thuật thành các chỉ số vận hành trực quan, phục vụ điều độ năng lượng và hỗ trợ bảo trì chủ động dựa trên điều kiện (Condition-Based Maintenance).
 \end{itemize}
 
