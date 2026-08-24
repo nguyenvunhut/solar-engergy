@@ -1,6 +1,6 @@
 <div align="center">
 
-# HỆ THỐNG XỬ LÝ DỮ LIỆU, NHẬN DIỆN DỊ THƯỜNG VẬN HÀNH VÀ DỰ BÁO SẢN LƯỢNG 42 TRẠM ĐIỆN MẶT TRỜI TẠI ÚC
+# PHÂN TÍCH HIỆU SUẤT VÀ DỰ BÁO SẢN LƯỢNG HỆ THỐNG ĐIỆN MẶT TRỜI
 ### Distributed Rooftop Solar Telemetry, Causal Imputation, Hybrid Anomaly Detection & Machine Learning Forecasting Platform
 
 **Đồ án Tốt nghiệp Chuyên ngành Phân tích & Xử lý Dữ liệu (Data Analytics) — Trường Cao đẳng FPT Polytechnic**  
