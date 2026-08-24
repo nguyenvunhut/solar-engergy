@@ -114,7 +114,7 @@ Từ 20/08, cơ chế trọng số chuyển sang `che_do_trong_so = 'mau_so'`. T
 `w = 1 + α·k` nằm sau điều kiện `if che_do == 'theo_nhan'` — nhánh này **không bao giờ chạy
 nữa**. Nên đổi α từ 0 đến 2 không ảnh hưởng gì.
 
-⚠️ **Cách đọc đúng:** TN4 ở lượt C là **bằng chứng cơ chế cũ đã được gỡ bỏ hoàn toàn khỏi
+ **Cách đọc đúng:** TN4 ở lượt C là **bằng chứng cơ chế cũ đã được gỡ bỏ hoàn toàn khỏi
 đường tính**, không phải bằng chứng "α không quan trọng".
 
 Bằng chứng thật cho việc **chọn cơ chế trọng số** nằm ở **TN11**, nơi ba cơ chế được cài đặt
@@ -124,7 +124,7 @@ trực tiếp và so sánh:
 |---|---|---|---|---|
 | A: `w = 1 + k` | 22,7428 | **12,36** | 100,45 | **+0,4532** ⚠ |
 | B: `w = 1` | 22,2789 | 13,95 | 88,18 | +0,1696 |
-| **C: `w = mẫu_số`** ✅ | **22,1273** | 14,23 | **85,87** | **+0,1070** |
+| **C: `w = mẫu_số`**  | **22,1273** | 14,23 | **85,87** | **+0,1070** |
 
 Đang dùng là **C** — tốt nhất ở WAPE tổng, vùng thấp, và thiên lệch. Đổi lại kém nhất ở vùng
 đỉnh (14,23 so với 12,36) — đây là đánh đổi được công bố, không giấu.

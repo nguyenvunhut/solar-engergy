@@ -112,12 +112,18 @@ def _weather_label(code: object, is_day: object) -> tuple[str, str]:
         return "Partly Cloudy", "Troi co may rai rac. Hieu suat cao, co dao dong nhe khi may di chuyen qua tam pin."
     if code == 3 and is_day:
         return "Overcast", "Troi am u, may che phu hoan toan. San luong sut giam manh, chu yeu thu duoc buc xa tan xa."
+    if code in (45, 48):
+        return "Fog / Mist", "Suong mu hoac suong mu rime dong bang. Suy giam buc xa truc tiep, co the gay dong nuoc tren mat pin."
     if code in (51, 53, 61, 80):
         return "Light Rain / Drizzle", "Mua phun hoac mua rao nhe. Giam san luong, co the rua troi bui ban tren tam pin."
     if code in (55, 63, 65, 81, 82):
         return "Moderate to Heavy Rain", "Mua vua den mua to hoac mua rao xoi xa. San luong tiem can 0, may thuong che phu cao."
+    if code in (56, 57, 66, 67):
+        return "Freezing Rain", "Mua dong bang. Nguy co tao lop bang tren tam pin, ngan can hap thu quang hoc."
     if code in (71, 73, 75, 77, 85, 86):
         return "Snowfall", "Tuyet roi. Nguy hiem cho van hanh, mang pin co the bi che phu boi tuyet."
+    if code in (95, 96, 99):
+        return "Thunderstorm / Hail", "Giong bao, sam set hoac mua da. Thoi tiet cuc doan, rui ro ve dien ap va hong hoc vat ly."
     raise ForecastDomainError(f"Open-Meteo weather_code={code} chưa có category pipeline")
 
 
@@ -345,11 +351,27 @@ class DichVuDuBao:
         if site_code is None:
             raise ForecastDomainError(f"Category map thiếu site_id={site_id}")
         d["site_id_enc"] = int(site_code)
+        # Nhan thoi tiet ngoai bang ma hoa -> ve __MISSING__, KHONG nem loi.
+        # Ly do: bang ma hoa chi chua 7 nhom that su xuat hien trong 28 thang du lieu
+        # huan luyen (2020-2021, Melbourne). Bang goc cua ETL co 10 nhom; ba nhom
+        # Fog / Mist, Freezing Rain, Thunderstorm / Hail chua tung xay ra nen khong co
+        # ma. Khi Open-Meteo tra ve mot trong ba nhom do luc du bao, ban cu nem
+        # ForecastDomainError lam sap ca trang. Ma __MISSING__ = 0 von da co trong bang
+        # va mo hinh da hoc no, nen day la duong lui dung: coi nhu "khong ro thoi tiet"
+        # thay vi doan bua theo mot nhom chua tung thay.
         for raw in ("weather_description", "weather_condition"):
-            encoded = d[raw].astype("string").map(self.category_maps[raw])
+            bang = self.category_maps[raw]
+            encoded = d[raw].astype("string").map(bang)
             if encoded.isna().any():
-                bad = d.loc[encoded.isna(), raw].iloc[0]
-                raise ForecastDomainError(f"Category map thiếu weather {raw}={bad}")
+                if "__MISSING__" not in bang:
+                    bad = d.loc[encoded.isna(), raw].iloc[0]
+                    raise ForecastDomainError(
+                        f"Category map thiếu weather {raw}={bad} và không có __MISSING__"
+                    )
+                la = sorted(set(d.loc[encoded.isna(), raw].astype(str)))
+                print(f"[CANH BAO] {raw}: {len(la)} nhan ngoai bang huan luyen "
+                      f"-> dung __MISSING__: {la}")
+                encoded = encoded.fillna(bang["__MISSING__"])
             d[f"{raw}_enc"] = encoded.astype("int32")
 
         # Dac trung TAT DINH tai moc muc tieu T+h: dich len h buoc. Khong phai leakage —
