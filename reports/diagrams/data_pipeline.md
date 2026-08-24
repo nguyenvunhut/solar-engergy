@@ -21,13 +21,13 @@
 
 ```mermaid
 flowchart LR
-    %% Bảng màu trực quan chuẩn hóa cho 6 tầng kiến trúc
+    %% Bảng màu trực quan chuẩn hóa cho các tầng kiến trúc
     classDef l1 fill:#E1F5FE,stroke:#0288D1,stroke-width:1.5px,color:#01579B,rx:6px,ry:6px;
     classDef l2 fill:#F1F5F9,stroke:#64748B,stroke-width:1.5px,color:#0F172A,rx:6px,ry:6px;
     classDef l3 fill:#EDE7F6,stroke:#5E35B1,stroke-width:1.5px,color:#311B92,rx:6px,ry:6px;
     classDef l4 fill:#E8F5E9,stroke:#2E7D32,stroke-width:1.5px,color:#1B5E20,rx:6px,ry:6px;
-    classDef l5 fill:#FFF3E0,stroke:#EF6C00,stroke-width:1.5px,color:#BF360C,rx:6px,ry:6px;
-    classDef l6 fill:#FCE4EC,stroke:#C2185B,stroke-width:1.5px,color:#880E4F,rx:6px,ry:6px;
+    classDef bi fill:#FCE4EC,stroke:#C2185B,stroke-width:1.5px,color:#880E4F,rx:6px,ry:6px;
+    classDef ml fill:#FFF3E0,stroke:#EF6C00,stroke-width:1.5px,color:#BF360C,rx:6px,ry:6px;
     classDef db fill:#FFFFFF,stroke:#37474F,stroke-width:1.5px,color:#263238,rx:4px,ry:4px;
 
     %% 1. INGESTION LAYER
@@ -35,7 +35,7 @@ flowchart LR
         direction TB
         S1["<b>IoT 42 Sites</b><br/>2.73M dòng • 15p"]:::l1
         S2["<b>ERA5 Weather</b><br/>850k dòng • 1h"]:::l1
-        S3[("<b>S3 Lake</b><br/>DVC Storage")]:::db
+        S3[("<b>Raw S3 Lake</b><br/>DVC Storage")]:::db
         S1 --> S3
         S2 --> S3
     end
@@ -59,29 +59,29 @@ flowchart LR
     end
 
     %% 4. DWH CORE (GALAXY SCHEMA)
-    subgraph L4 ["<b>4. DWH CORE</b>"]
+    subgraph L4 ["<b>4. DWH CORE (GALAXY)</b>"]
         direction TB
-        D1[("<b>fact_gen (15p)</b><br/>9.06 GWh")]:::l4
-        D2[("<b>fact_weather (1h)</b><br/>850k dòng")]:::l4
-        D3[("<b>5 Dimensions</b><br/>Site•Geo•Date•Time•WMO")]:::db
+        D1[("<b>fact_solar_energy_gen</b><br/>2.73M dòng • 15 phút")]:::l4
+        D2[("<b>fact_weather</b><br/>850k dòng • 1 giờ")]:::l4
+        D3[("<b>5 Dim Tables</b><br/>Site • Geo • Date<br/>Time • WeatherType")]:::db
         D3 -.-> D1
         D3 -.-> D2
     end
 
-    %% 5. DATA MARTS LAYER
-    subgraph L5 ["<b>5. DATA MARTS</b>"]
+    %% NHÁNH 1: BI DATA MART & TABLEAU
+    subgraph BI_Branch ["<b>NHÁNH BI DATA MART & DASHBOARDS</b>"]
         direction TB
-        M1[("<b>mv_hourly</b><br/>Pre-calc PR & Loss")]:::l5
-        M2[("<b>mv_daily</b><br/>BANs, CF, ESG")]:::l5
-        M3[("<b>Feature Store</b><br/>52 đặc trưng ML")]:::l5
-        M1 --> M2
+        M_BI[("<b>bi_mart.mv_bi_mart_hourly_measures</b><br/>Nén 1h • Tiền tính PR & Loss Temp")]:::bi
+        A_BI["<b>Tableau Dashboard Suite</b><br/>DB1 Executive • DB2 Loss • DB3 CBM"]:::bi
+        M_BI ==> A_BI
     end
 
-    %% 6. SERVING & APPLICATIONS
-    subgraph L6 ["<b>6. SERVING</b>"]
+    %% NHÁNH 2: ML DATA MART & MACHINE LEARNING
+    subgraph ML_Branch ["<b>NHÁNH ML DATA MART & MACHINE LEARNING</b>"]
         direction TB
-        A1["<b>Tableau DB Suite</b><br/>Exec • Loss • CBM"]:::l6
-        A2["<b>LightGBM ML</b><br/>H1 (17.5%) • H4 (21.6%)"]:::l6
+        M_ML[("<b>ml_mart.ml_mart_base</b><br/>Feature Store 52 biến trễ & vật lý")]:::ml
+        A_ML["<b>LightGBM Regressor</b><br/>Dự báo Đa bước H1 (15p) &rarr; H4 (60p)"]:::ml
+        M_ML ==> A_ML
     end
 
     %% PIPELINE FLOW CONNECTIONS
@@ -89,11 +89,13 @@ flowchart LR
     ST3 ==> T1
     T3 ==> D1
     T2 ==> D2
-    D1 ==> M1
-    D1 ==> M3
-    M2 ==> A1
-    M1 ==> A1
-    M3 ==> A2
+
+    %% TÁCH NHÁNH SONG SONG TỪ DWH CORE
+    D1 ==>|Aggregate & Pre-calc| M_BI
+    D2 ==>|Join Weather 1h| M_BI
+
+    D1 ==>|Lag Features & Normalization| M_ML
+    D2 ==>|Weather Features| M_ML
 ```
 
 ---
