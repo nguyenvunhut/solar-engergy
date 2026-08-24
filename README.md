@@ -97,18 +97,22 @@ flowchart LR
 
 ## 2. KIẾN TRÚC HỆ THỐNG LUỒNG DỮ LIỆU 6 LỚP (6-LAYER ARCHITECTURE)
 
+<p align="center">
+  <img src="reports/diagrams/pipeline_sodo_kientruc.png" alt="Kiến trúc Tổng thể 6 Lớp Data Pipeline" width="100%">
+</p>
+
 ```mermaid
 flowchart LR
-    %% Định nghĩa bảng màu trực quan cho từng tầng
+    %% Bảng màu trực quan chuẩn hóa cho 6 tầng kiến trúc
     classDef l1 fill:#E1F5FE,stroke:#0288D1,stroke-width:1.5px,color:#01579B,rx:6px,ry:6px;
-    classDef l2 fill:#EDE7F6,stroke:#5E35B1,stroke-width:1.5px,color:#311B92,rx:6px,ry:6px;
-    classDef l3 fill:#E8F5E9,stroke:#2E7D32,stroke-width:1.5px,color:#1B5E20,rx:6px,ry:6px;
-    classDef l4 fill:#FFF3E0,stroke:#EF6C00,stroke-width:1.5px,color:#BF360C,rx:6px,ry:6px;
-    classDef l5 fill:#FCE4EC,stroke:#C2185B,stroke-width:1.5px,color:#880E4F,rx:6px,ry:6px;
-    classDef l6 fill:#E0F2F1,stroke:#00897B,stroke-width:1.5px,color:#004D40,rx:6px,ry:6px;
+    classDef l2 fill:#F1F5F9,stroke:#64748B,stroke-width:1.5px,color:#0F172A,rx:6px,ry:6px;
+    classDef l3 fill:#EDE7F6,stroke:#5E35B1,stroke-width:1.5px,color:#311B92,rx:6px,ry:6px;
+    classDef l4 fill:#E8F5E9,stroke:#2E7D32,stroke-width:1.5px,color:#1B5E20,rx:6px,ry:6px;
+    classDef l5 fill:#FFF3E0,stroke:#EF6C00,stroke-width:1.5px,color:#BF360C,rx:6px,ry:6px;
+    classDef l6 fill:#FCE4EC,stroke:#C2185B,stroke-width:1.5px,color:#880E4F,rx:6px,ry:6px;
     classDef db fill:#FFFFFF,stroke:#37474F,stroke-width:1.5px,color:#263238,rx:4px,ry:4px;
 
-    %% 1. INGESTION
+    %% 1. INGESTION LAYER
     subgraph L1 ["<b>1. INGESTION</b>"]
         direction TB
         S1["<b>IoT 42 Sites</b><br/>2.73M dòng • 15p"]:::l1
@@ -118,65 +122,60 @@ flowchart LR
         S2 --> S3
     end
 
-    %% 2. ETL & IMPUTATION
-    subgraph L2 ["<b>2. ETL & IMPUTE</b>"]
+    %% 2. STAGING LAYER
+    subgraph L2 ["<b>2. STAGING</b>"]
         direction TB
-        I1["<b>Cắt đêm</b> (90.05%)"]:::l2
-        I2["<b>Nội suy</b> (3.49%)"]:::l2
-        I3["<b>PCHIP</b> (3.30%)"]:::l2
-        I4["<b>KNN Lịch sử</b> (3.16%)"]:::l2
-        I5["<b>Floor-Hour</b>"]:::l2
-        I1 --> I2 --> I3 --> I4 --> I5
+        ST1["<b>Staging Tables</b><br/>VARCHAR Buffer"]:::l2
+        ST2["<b>Grid Resampling</b><br/>Lưới chuẩn 15p"]:::l2
+        ST3["<b>QA/QC Integrity</b><br/>MD5 Checksum"]:::l2
+        ST1 --> ST2 --> ST3
     end
 
-    %% 3. GALAXY DWH
-    subgraph L3 ["<b>3. GALAXY DWH</b>"]
+    %% 3. TRANSFORM & CLEANING
+    subgraph L3 ["<b>3. TRANSFORM</b>"]
         direction TB
-        D1[("<b>fact_gen</b><br/>Chu kỳ 15p")]:::l3
-        D2[("<b>fact_weather</b><br/>Chu kỳ 1h")]:::l3
-        D3[("<b>4 Dims</b><br/>Site•Geo•Date•Time")]:::db
+        T1["<b>Cascade Impute</b><br/>4 cấp (1.54M ô)"]:::l3
+        T2["<b>Floor-Hour</b><br/>Khớp nối nhân quả"]:::l3
+        T3["<b>GMM-IF + 5 Rules</b><br/>Lọc dị thường O&M"]:::l3
+        T1 --> T2 --> T3
+    end
+
+    %% 4. DWH CORE (GALAXY SCHEMA)
+    subgraph L4 ["<b>4. DWH CORE</b>"]
+        direction TB
+        D1[("<b>fact_gen (15p)</b><br/>9.06 GWh")]:::l4
+        D2[("<b>fact_weather (1h)</b><br/>850k dòng")]:::l4
+        D3[("<b>5 Dimensions</b><br/>Site•Geo•Date•Time•WMO")]:::db
         D3 -.-> D1
         D3 -.-> D2
     end
 
-    %% 4. ANOMALY DETECTION
-    subgraph L4 ["<b>4. GMM-IF ANOMALY</b>"]
+    %% 5. DATA MARTS LAYER
+    subgraph L5 ["<b>5. DATA MARTS</b>"]
         direction TB
-        A1["<b>CART Split</b>"]:::l4
-        A2["<b>GMM Cluster</b>"]:::l4
-        A3["<b>Isolation Forest</b>"]:::l4
-        A4["<b>5 Physical Rules</b>"]:::l4
-        A1 --> A2 --> A3 --> A4
-    end
-
-    %% 5. SERVING MARTS
-    subgraph L5 ["<b>5. SERVING MARTS</b>"]
-        direction TB
-        M1[("<b>mv_hourly</b><br/>PR & Loss")]:::l5
-        M2[("<b>mv_daily</b><br/>KPIs & ESG")]:::l5
-        M3[("<b>Feature Store</b><br/>40 biến trễ")]:::l5
+        M1[("<b>mv_hourly</b><br/>Pre-calc PR & Loss")]:::l5
+        M2[("<b>mv_daily</b><br/>BANs, CF, ESG")]:::l5
+        M3[("<b>Feature Store</b><br/>52 đặc trưng ML")]:::l5
         M1 --> M2
     end
 
-    %% 6. APPLICATIONS
-    subgraph L6 ["<b>6. APPLICATIONS</b>"]
+    %% 6. SERVING & APPLICATIONS
+    subgraph L6 ["<b>6. SERVING</b>"]
         direction TB
-        T1["<b>Tableau Executive</b>"]:::l6
-        T2["<b>Tableau O&M / CBM</b>"]:::l6
-        T3["<b>LightGBM 15-60p</b>"]:::l6
+        A1["<b>Tableau DB Suite</b><br/>Exec • Loss • CBM"]:::l6
+        A2["<b>LightGBM ML</b><br/>H1 (17.5%) • H4 (21.6%)"]:::l6
     end
 
-    %% PIPELINE INTER-LAYER FLOW
-    S3 ==> I1
-    I5 ==> D1
-    I5 ==> D2
-    D1 ==> A1
-    D2 ==> A1
-    A4 ==> M1
-    A4 ==> M3
-    M2 ==> T1
-    M1 ==> T2
-    M3 ==> T3
+    %% PIPELINE FLOW CONNECTIONS
+    S3 ==> ST1
+    ST3 ==> T1
+    T3 ==> D1
+    T2 ==> D2
+    D1 ==> M1
+    D1 ==> M3
+    M2 ==> A1
+    M1 ==> A1
+    M3 ==> A2
 ```
 
 > *Tài liệu chi tiết toàn bộ các sơ đồ hệ thống: [`reports/diagrams/data_pipeline.md`](reports/diagrams/data_pipeline.md)*

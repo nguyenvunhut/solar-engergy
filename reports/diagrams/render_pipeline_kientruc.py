@@ -213,15 +213,15 @@ cols_info = [
                 "bi_mart.mv_bi_mart_hourly_measures",
                 "Tiền tính toán toàn bộ Metrics:",
                 "  • PR actual, PR adjusted, PR correct",
-                "  • Loss_temp (14.8%), Clipping (2.3%)",
+                "  • Loss_temp (14.8% - 17.5%)",
                 "  • Doanh thu FiT & Giảm thải CO2"
             ]),
             ("ML Mart (Học máy LightGBM)", [
-                "v4_cleaned.parquet (Snappy)",
-                "Feature Store 40 đặc trưng:",
+                "Feature Store 52 đặc trưng:",
                 "  • Solar Geometry (Zenith, Azimuth)",
                 "  • Biến trễ Lags (t-1, t-4, t-96)",
-                "  • Thống kê trượt Rolling Windows"
+                "  • Thống kê trượt Rolling Windows",
+                "  • 13 đặc trưng mục tiêu T+h"
             ])
         ]
     },
@@ -238,16 +238,17 @@ cols_info = [
                 "Kết nối Supabase Pooler Port 6543",
                 "Tài khoản Read-only: tableau_user",
                 "Dashboard 1: Executive Overview",
-                "  (CF, Sản lượng 74.98 GWh, ESG)",
+                "  (CF, Sản lượng 7.50 - 9.06 GWh, ESG)",
                 "Dashboard 2: Efficiency & Loss",
                 "  (Dual-Axis, Heatmap suy hao nhiệt)",
                 "Dashboard 3: Anomaly & CBM",
                 "  (Cảnh báo O&M, Rò rỉ điện ban đêm)"
             ]),
             ("Machine Learning (AI Serving)", [
-                "LightGBM Regressor (Huber Loss)",
+                "LightGBM Regressor (Huber/MAE)",
                 "Tầm dự báo: 15 phút & 1 giờ tới",
-                "WAPE = 17.74% (15p), 22.62% (1h)",
+                "WAPE: 17.46% (15p), 21.60% (1h)",
+                "Skill Score: +50.09% so với Prophet",
                 "Giải thích mô hình: SHAP Values"
             ])
         ]
