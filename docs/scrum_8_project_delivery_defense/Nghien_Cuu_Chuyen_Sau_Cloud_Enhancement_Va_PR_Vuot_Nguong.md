@@ -360,6 +360,8 @@ Ngoài Cloud Enhancement, hệ thống giám sát quang điện còn chịu tác
 
 ## 5. BẢNG MA TRẬN TỔNG HỢP: QUY MÔ THỜI GIAN TÁC ĐỘNG & GIẢI PHÁP KỸ THUẬT DỮ LIỆU
 
+![Diagram 5.1: Ma trận Quy mô Thời gian và Giải pháp Xử lý Dữ liệu đối với các Hiện tượng PR vượt ngưỡng 100%](diagrams/diagram_5_1_time_scale_matrix_and_data_solutions.svg)
+
 | Hiện tượng | Bản chất Gốc | Quy mô Thời gian | Mức $PR$ Tức thời Tối đa | Tác động Lên $P_{\text{actual}}$ vs $P_{\text{stc}}$ | Quy tắc Xử lý Data Engineering & BI Mart |
 | :--- | :--- | :---: | :---: | :---: | :--- |
 | **Cloud Enhancement** | Quang học Khí quyển (Mép mây) | Ngắn hạn ($< 30\text{p}$) | **$105\% - 120\%$** | Có thể đạt hoặc vượt nhẹ $P_{\text{stc}}$ danh định trong chốc lát | **Bảo toàn $100\%$ dữ liệu:** Tuyệt đối không lọc bỏ coi là ngoại lai; đây là hiện tượng vật lý thật cần cho ML dự báo phụ tải đỉnh [1]. |
@@ -371,7 +373,7 @@ Ngoài Cloud Enhancement, hệ thống giám sát quang điện còn chịu tác
 
 ---
 
-## 6. HỆ THỐNG TOÀN BỘ 7 SƠ ĐỒ TRỰC QUAN (DRAW.IO / SVG DIAGRAMS)
+## 6. HỆ THỐNG TOÀN BỘ 8 SƠ ĐỒ TRỰC QUAN (DRAW.IO / SVG DIAGRAMS)
 
 Toàn bộ các sơ đồ dưới đây đã được thiết kế chuẩn vector SVG độ nét cao và đóng gói kèm tệp nguồn Draw.io trong thư mục [`docs/scrum_8_project_delivery_defense/diagrams/`](file:///D:/Learning/FPT_polytechnic/Sem6/datn_outlier_hs_nlmt/docs/scrum_8_project_delivery_defense/diagrams/):
 
@@ -402,6 +404,10 @@ Toàn bộ các sơ đồ dưới đây đã được thiết kế chuẩn vecto
 7. **Sơ đồ 4.0 - Hệ thống 6 Hiện tượng Làm PR & Sản lượng Vượt Công suất Đỉnh ($P_{\text{stc}}$):**  
    ![Diagram 4.0: 6 Hiện tượng Vượt Công suất Đỉnh](diagrams/diagram_pr_over_100_mechanisms.svg)  
    *(Tệp nguồn Draw.io: [`diagram_pr_over_100_mechanisms.drawio`](file:///D:/Learning/FPT_polytechnic/Sem6/datn_outlier_hs_nlmt/docs/scrum_8_project_delivery_defense/diagrams/diagram_pr_over_100_mechanisms.drawio))*
+
+8. **Sơ đồ 5.1 - Ma trận Quy mô Thời gian và Giải pháp Xử lý Dữ liệu đối với PR Vượt ngưỡng 100%:**  
+   ![Diagram 5.1: Ma trận Quy mô Thời gian và Giải pháp](diagrams/diagram_5_1_time_scale_matrix_and_data_solutions.svg)  
+   *(Tệp nguồn Draw.io: [`diagram_5_1_time_scale_matrix_and_data_solutions.drawio`](file:///D:/Learning/FPT_polytechnic/Sem6/datn_outlier_hs_nlmt/docs/scrum_8_project_delivery_defense/diagrams/diagram_5_1_time_scale_matrix_and_data_solutions.drawio))*
 
 ---
 

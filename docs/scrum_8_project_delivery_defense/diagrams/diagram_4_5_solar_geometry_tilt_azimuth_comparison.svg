@@ -1,0 +1,251 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 660" width="100%" height="100%">
+  <defs>
+    <style>
+      .hdr { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 14.5px; font-weight: 800; fill: #F8FAFC; letter-spacing: 0.5px; }
+      .subhdr { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; fill: #94A3B8; }
+      .col-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11.5px; font-weight: 700; }
+      .txt { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 9.5px; fill: #334155; }
+      .txt-bold { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 9.5px; font-weight: 700; fill: #0F172A; }
+      .txt-small { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 8.5px; fill: #64748B; }
+      .formula { font-family: "Courier New", Courier, monospace; font-size: 9.5px; font-weight: 700; }
+      .kpi-big { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 14px; font-weight: 800; }
+    </style>
+
+    <!-- Filters -->
+    <filter id="boxShadow" x="-2%" y="-2%" width="104%" height="104%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.08" />
+    </filter>
+
+    <!-- Markers -->
+    <marker id="arrSun" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto">
+      <polygon points="0 0, 6 2, 0 4" fill="#EA580C" />
+    </marker>
+    <marker id="arrWater" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto">
+      <polygon points="0 0, 6 2, 0 4" fill="#0284C7" />
+    </marker>
+
+    <!-- Gradients -->
+    <linearGradient id="hdrGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0F172A" />
+      <stop offset="100%" stop-color="#1E293B" />
+    </linearGradient>
+    <linearGradient id="skyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#E0F2FE" />
+      <stop offset="100%" stop-color="#F8FAFC" />
+    </linearGradient>
+    <linearGradient id="sunGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FEF08A" />
+      <stop offset="100%" stop-color="#EA580C" />
+    </linearGradient>
+    <linearGradient id="panelGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#1E293B" />
+      <stop offset="100%" stop-color="#334155" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1080" height="660" fill="#F8FAFC" rx="10" />
+
+  <!-- Header Banner -->
+  <rect x="20" y="14" width="1040" height="48" rx="8" fill="url(#hdrGrad)" />
+  <text x="540" y="34" text-anchor="middle" class="hdr">QUY CHUẨN HÌNH HỌC QUANG ĐIỆN &amp; ĐỐI CHIẾU GÓC NGHIÊNG TẤM PIN (BANG VICTORIA, ÚC)</text>
+  <text x="540" y="50" text-anchor="middle" class="subhdr">Giải mã Hướng Chính Bắc (0° Azimuth), Góc nghiêng bằng vĩ độ (30° - 35°) và Cơ chế tự rửa trôi nước mưa theo chuẩn CEC</text>
+
+  <!-- 3 COLUMNS COMPARISON -->
+  <g transform="translate(20, 70)">
+
+    <!-- ==================== COLUMN 1: AZIMUTH ORIENTATION (BÁN CẦU NAM) ==================== -->
+    <g transform="translate(0, 0)" filter="url(#boxShadow)">
+      <rect width="335" height="570" rx="8" fill="#FFFFFF" stroke="#0284C7" stroke-width="1.8" />
+      <rect width="335" height="32" rx="8" fill="#F0F9FF" />
+      <text x="167" y="21" text-anchor="middle" class="col-title" fill="#0369A1">1. HƯỚNG LA BÀN: CHÍNH BẮC (0° AZIMUTH)</text>
+
+      <!-- Visual Graphic 1: Celestial Orbit in Southern Hemisphere -->
+      <g transform="translate(15, 42)">
+        <rect width="305" height="175" rx="6" fill="url(#skyGrad)" stroke="#BAE6FD" />
+
+        <!-- Compass Arc / Celestial Orbit -->
+        <path d="M 30 140 C 30 50, 275 50, 275 140" fill="none" stroke="#94A3B8" stroke-width="1.5" stroke-dasharray="3 3" />
+        
+        <!-- Horizon Ground -->
+        <line x1="20" y1="140" x2="285" y2="140" stroke="#475569" stroke-width="2" />
+        <rect x="20" y="140" width="265" height="18" fill="#E2E8F0" />
+        <text x="35" y="152" font-size="8.5px" font-weight="700" fill="#047857">ĐÔNG (06:00)</text>
+        <text x="152" y="152" text-anchor="middle" font-size="9px" font-weight="800" fill="#DC2626">CHÍNH BẮC (0°)</text>
+        <text x="270" y="152" text-anchor="end" font-size="8.5px" font-weight="700" fill="#047857">TÂY (18:00)</text>
+
+        <!-- Summer Solar Path & Noon Sun -->
+        <circle cx="152" cy="55" r="12" fill="url(#sunGrad)" />
+        <text x="152" y="38" text-anchor="middle" font-size="7.5px" font-weight="700" fill="#EA580C">Hạ Chí (h = 77°)</text>
+        <path d="M 152 68 L 152 110" stroke="#EA580C" stroke-width="1.8" marker-end="url(#arrSun)" />
+
+        <!-- Winter Solar Path & Noon Sun -->
+        <circle cx="105" cy="85" r="9" fill="#FBBF24" />
+        <text x="80" y="76" font-size="7px" font-weight="700" fill="#D97706">Đông Chí (h=30°)</text>
+
+        <!-- PV Panel Oriented North -->
+        <polygon points="125,125 180,125 170,140 135,140" fill="url(#panelGrad)" stroke="#0284C7" stroke-width="1.2" />
+        <text x="152" y="136" text-anchor="middle" font-size="7px" font-weight="700" fill="#F8FAFC">QUAY MẶT VỀ HƯỚNG BẮC</text>
+
+        <text x="152" y="170" text-anchor="middle" class="txt-bold" fill="#0369A1">Vị trí: Bán Cầu Nam (34°S - 38°S)</text>
+      </g>
+
+      <!-- Explanation & Metrics (Col 1) -->
+      <g transform="translate(15, 226)">
+        <rect width="305" height="330" rx="6" fill="#F8FAFC" stroke="#E2E8F0" />
+        <text x="12" y="20" class="txt-bold" fill="#0369A1">Quy Luật Bán Cầu Nam (Southern Hemisphere):</text>
+        
+        <text x="12" y="38" class="txt">• Ở Nam bán cầu (Úc), Mặt Trời luôn</text>
+        <text x="12" y="52" class="txt">  di chuyển trên bầu trời phía BẮC.</text>
+        <text x="12" y="66" class="txt">• Vào thời điểm trưa quang học (Solar Noon),</text>
+        <text x="12" y="80" class="txt">  bức xạ trực xạ DNI chiếu thẳng từ hướng Bắc.</text>
+
+        <rect x="10" y="92" width="285" height="85" rx="4" fill="#FFFFFF" stroke="#BAE6FD" />
+        <text x="14" y="108" class="txt-bold" fill="#0F172A">So Sánh Năng Suất Riêng Theo Hướng:</text>
+        <text x="14" y="124" class="txt-bold" fill="#047857">• Hướng Chính Bắc (0°): 100% (1.520 kWh/kWp)</text>
+        <text x="14" y="138" class="txt">• Hướng Tây (270°) / Đông (90°): 86% - 88%</text>
+        <text x="14" y="152" class="txt-bold" fill="#DC2626">• Hướng Nam (180°): Chỉ đạt 65% - 72%</text>
+        <text x="14" y="168" class="formula" fill="#DC2626">Lệch Nam mất 35% - 50% sản lượng năm!</text>
+
+        <rect x="10" y="186" width="285" height="130" rx="4" fill="#F0FDF4" stroke="#BBF7D0" />
+        <text x="14" y="204" class="txt-bold" fill="#15803D">Thiết Kế Mái Đông - Tây (Dual-Pitch):</text>
+        <text x="14" y="220" class="txt">• Hướng Đông đón nắng sớm 07:30 - 11:00</text>
+        <text x="14" y="234" class="txt">• Hướng Tây đón nắng chiều 13:00 - 17:30</text>
+        <text x="14" y="248" class="txt">• Dù tổng năm giảm 10-12% so với Bắc,</text>
+        <text x="14" y="262" class="txt">  nhưng tạo đồ thị phát vòm rộng (Broad Peak),</text>
+        <text x="14" y="276" class="txt-bold" fill="#047857">  khớp hoàn hảo phụ tải giờ làm việc trường học.</text>
+        <text x="14" y="298" class="formula" fill="#15803D">Tối ưu tự tiêu thụ tránh mua điện lưới</text>
+      </g>
+    </g>
+
+    <!-- ==================== COLUMN 2: TILT ANGLE BY LATITUDE ==================== -->
+    <g transform="translate(350, 0)" filter="url(#boxShadow)">
+      <rect width="335" height="570" rx="8" fill="#FFFFFF" stroke="#059669" stroke-width="1.8" />
+      <rect width="335" height="32" rx="8" fill="#ECFDF5" />
+      <text x="167" y="21" text-anchor="middle" class="col-title" fill="#047857">2. GÓC NGHIÊNG BẰNG VĨ ĐỘ (30° - 35° TILT)</text>
+
+      <!-- Visual Graphic 2: Tilt Angle Physics -->
+      <g transform="translate(15, 42)">
+        <rect width="305" height="175" rx="6" fill="#F0FDF4" stroke="#BBF7D0" />
+
+        <!-- Ground Line -->
+        <line x1="20" y1="140" x2="285" y2="140" stroke="#475569" stroke-width="2" />
+        
+        <!-- Tilted Panel (35 deg) -->
+        <g transform="translate(110, 140)">
+          <!-- Triangle Standoff Rack -->
+          <polygon points="0,0 80,0 80,-48" fill="#94A3B8" stroke="#475569" />
+          <!-- PV Panel Slab at 35 deg -->
+          <line x1="-15" y1="10" x2="95" y2="-58" stroke="#0F172A" stroke-width="6" stroke-linecap="round" />
+          <line x1="-15" y1="8" x2="95" y2="-60" stroke="#38BDF8" stroke-width="2" stroke-linecap="round" />
+          <!-- Angle Arc -->
+          <path d="M 35 0 A 35 35 0 0 0 28 -20" fill="none" stroke="#DC2626" stroke-width="1.8" />
+          <text x="42" y="-8" font-size="9px" font-weight="800" fill="#DC2626">β ≈ 35°</text>
+        </g>
+
+        <!-- Sun Beam Normal to Panel in Equinox -->
+        <path d="M 220 30 L 165 95" stroke="#EA580C" stroke-width="2" marker-end="url(#arrSun)" />
+        <text x="235" y="42" font-size="7.5px" font-weight="700" fill="#EA580C">Tia Bức Xạ Vuông Góc</text>
+
+        <!-- Summer Sun High -->
+        <circle cx="160" cy="22" r="10" fill="url(#sunGrad)" />
+        <text x="160" y="10" text-anchor="middle" font-size="7px" fill="#EA580C">Mùa Hè (h=77°)</text>
+
+        <text x="152" y="165" text-anchor="middle" class="txt-bold" fill="#047857">Cứu Vãn +18% - 24% Sản Lượng Mùa Đông</text>
+      </g>
+
+      <!-- Explanation & Metrics (Col 2) -->
+      <g transform="translate(15, 226)">
+        <rect width="305" height="330" rx="6" fill="#F8FAFC" stroke="#E2E8F0" />
+        <text x="12" y="20" class="txt-bold" fill="#047857">Quy Luật "Góc Nghiêng Bằng Vĩ Độ":</text>
+        
+        <text x="12" y="38" class="txt">• Bang Victoria nằm ở vĩ độ 34,2°S - 37,7°S.</text>
+        <text x="12" y="52" class="txt">• Trục Trái Đất nghiêng 23,45° khiến góc chiếu</text>
+        <text x="12" y="66" class="txt">  mùa hè rất cao (77°) và mùa đông rất thấp (30°).</text>
+
+        <rect x="10" y="80" width="285" height="105" rx="4" fill="#FFFFFF" stroke="#A7F3D0" />
+        <text x="14" y="98" class="txt-bold" fill="#0F172A">Ý Nghĩa Sống Còn Vào Mùa Đông:</text>
+        <text x="14" y="114" class="txt">• Mùa đông ngày ngắn (9h) và nắng xiên thấp.</text>
+        <text x="14" y="128" class="txt">• Nếu đặt mái bằng (&lt;8°), tia nắng chiếu sượt</text>
+        <text x="14" y="142" class="txt">  qua kính gây phản xạ quang học cực lớn.</text>
+        <text x="14" y="156" class="txt-bold" fill="#047857">• Góc nghiêng 35° đón vuông góc tia nắng thấp,</text>
+        <text x="14" y="172" class="formula" fill="#047857">Tăng +22% sản lượng tháng 6 - 7!</text>
+
+        <rect x="10" y="196" width="285" height="120" rx="4" fill="#ECFDF5" stroke="#6EE7B7" />
+        <text x="14" y="214" class="txt-bold" fill="#047857">Định Lượng Nâng Giá Đỡ Chữ A 15°:</text>
+        <text x="14" y="230" class="txt">• Áp dụng cho 970 kWp trạm mái bằng</text>
+        <text x="14" y="244" class="txt-bold" fill="#047857">• Thu hồi: +53.350 kWh / Năm (4.446 kWh/th)</text>
+        <text x="14" y="258" class="txt-bold" fill="#047857">• Tiết kiệm: +10.670 AUD / Năm</text>
+        <text x="14" y="272" class="txt">• Chi phí CapEx khung chữ A: 18.000 AUD</text>
+        <text x="14" y="296" class="formula" fill="#047857">HOÀN VỐN ĐẦU TƯ: 1,68 NĂM (~20 THÁNG)</text>
+      </g>
+    </g>
+
+    <!-- ==================== COLUMN 3: SELF-CLEANING MECHANISM ==================== -->
+    <g transform="translate(700, 0)" filter="url(#boxShadow)">
+      <rect width="340" height="570" rx="8" fill="#FFFFFF" stroke="#D97706" stroke-width="1.8" />
+      <rect width="340" height="32" rx="8" fill="#FFFBEB" />
+      <text x="170" y="21" text-anchor="middle" class="col-title" fill="#B45309">3. CƠ CHẾ TỰ LÀM SẠCH KHI MƯA (CEC RULE ≥10°)</text>
+
+      <!-- Visual Graphic 3: Self-Cleaning vs Bottom-Edge Soiling -->
+      <g transform="translate(15, 42)">
+        <rect width="310" height="175" rx="6" fill="#FFFBEB" stroke="#FDE68A" />
+
+        <!-- Left: Low Tilt Trap (<8 deg) -->
+        <g transform="translate(10, 15)">
+          <text x="65" y="12" text-anchor="middle" font-size="8px" font-weight="700" fill="#DC2626">Mái Bằng (&lt;8°): ĐỌNG BÙN</text>
+          <!-- Flat Panel -->
+          <line x1="10" y1="50" x2="120" y2="40" stroke="#0F172A" stroke-width="5" stroke-linecap="round" />
+          <!-- Bottom-edge Mud Dam -->
+          <circle cx="120" cy="38" r="6" fill="#78350F" />
+          <text x="120" y="55" text-anchor="middle" font-size="6.5px" font-weight="700" fill="#78350F">Vệt Bùn Đọng</text>
+          <!-- Bypass diode activation -->
+          <rect x="25" y="58" width="90" height="18" rx="2" fill="#FEF2F2" stroke="#F87171" />
+          <text x="70" y="70" text-anchor="middle" font-size="6.5px" font-weight="700" fill="#DC2626">Mất -33% CS Chuỗi!</text>
+        </g>
+
+        <!-- Right: Tilted Clean Panel (>= 15 deg) -->
+        <g transform="translate(160, 15)">
+          <text x="70" y="12" text-anchor="middle" font-size="8px" font-weight="700" fill="#047857">Nghiêng ≥15°: TỰ RỬA SẠCH</text>
+          <!-- Tilted Panel -->
+          <line x1="10" y1="25" x2="115" y2="70" stroke="#0F172A" stroke-width="5" stroke-linecap="round" />
+          <!-- Water Rain Drops Flowing Down -->
+          <path d="M 20 20 L 50 40 M 60 35 L 90 55 M 95 58 L 125 78" stroke="#0284C7" stroke-width="2" stroke-dasharray="4 2" marker-end="url(#arrWater)" />
+          <!-- Water Flush Flush Droplets -->
+          <circle cx="125" cy="80" r="3" fill="#0284C7" />
+          <circle cx="132" cy="85" r="2" fill="#0284C7" />
+          <rect x="20" y="80" width="105" height="18" rx="2" fill="#ECFDF5" stroke="#6EE7B7" />
+          <text x="72" y="92" text-anchor="middle" font-size="6.5px" font-weight="700" fill="#047857">Cuốn Trôi 98% Bụi Bẩn</text>
+        </g>
+
+        <text x="155" y="165" text-anchor="middle" class="txt-bold" fill="#B45309">Quy Chuẩn CEC: Góc Nghiêng Bắt Buộc ≥ 10°</text>
+      </g>
+
+      <!-- Explanation & Metrics (Col 3) -->
+      <g transform="translate(15, 226)">
+        <rect width="310" height="330" rx="6" fill="#F8FAFC" stroke="#E2E8F0" />
+        <text x="12" y="20" class="txt-bold" fill="#B45309">Động Lực Học Màng Nước Mưa (Water Sheeting):</text>
+        
+        <text x="12" y="38" class="txt">• Khi góc nghiêng ≥ 10° - 15°, trọng lực kéo</text>
+        <text x="12" y="52" class="txt">  các giọt nước mưa thành màng chảy xiết,</text>
+        <text x="12" y="66" class="txt">  tự động cuốn trôi 95% - 98% cặn bẩn bề mặt.</text>
+
+        <rect x="10" y="80" width="290" height="105" rx="4" fill="#FEF2F2" stroke="#FECACA" />
+        <text x="14" y="98" class="txt-bold" fill="#DC2626">Hiểm Họa Khi Lắp Mái Bằng (&lt; 8°):</text>
+        <text x="14" y="114" class="txt">• Lực căng bề mặt giữ nước đọng ở gờ nhôm đáy.</text>
+        <text x="14" y="128" class="txt">• Nước bốc hơi tạo thành vệt bùn đen dày,</text>
+        <text x="14" y="142" class="txt">  che bóng vĩnh viễn hàng tế bào quang điện dưới.</text>
+        <text x="14" y="156" class="txt-bold" fill="#DC2626">• Kích hoạt Bypass Diode ➔ Giảm 33% công suất</text>
+        <text x="14" y="172" class="formula" fill="#DC2626">và tích tụ nhiệt sinh ra điểm nóng Hot-spot!</text>
+
+        <rect x="10" y="196" width="290" height="120" rx="4" fill="#FFFBEB" stroke="#FDE68A" />
+        <text x="14" y="214" class="txt-bold" fill="#B45309">Lợi Ích Vận Hành &amp; Chi Phí O&amp;M:</text>
+        <text x="14" y="230" class="txt">• Tự phục hồi 100% chỉ số PR sau mưa rào &gt;10mm</text>
+        <text x="14" y="244" class="txt">• Giảm 80% tần suất phải rửa pin thủ công</text>
+        <text x="14" y="258" class="txt-bold" fill="#B45309">• Tiết kiệm chi phí O&amp;M: 6.000 AUD / Năm</text>
+        <text x="14" y="272" class="txt">• Kéo dài tuổi thọ tấm pin thêm 8-10 năm</text>
+        <text x="14" y="296" class="formula" fill="#B45309">TRIỆT TIÊU NGUY CƠ CHÁY HỎNG DIODE</text>
+      </g>
+    </g>
+  </g>
+</svg>

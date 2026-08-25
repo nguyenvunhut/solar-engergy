@@ -1,0 +1,35 @@
+<mxfile host="app.diagrams.net" modified="2026-08-24T22:17:00.000Z" agent="Mozilla/5.0" version="21.0.0" type="device">
+  <diagram id="diag-1-4" name="1.4 Solar Orientation &amp; Tilt Geometry">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        
+        <!-- Header -->
+        <mxCell id="hdr" value="&lt;b&gt;QUY CHUẨN HÌNH HỌC QUANG ĐIỆN &amp;amp; CƠ CHẾ VẬN HÀNH TẤM PIN MẶT TRỜI (BÁN CẦU NAM - ÚC)&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#0F172A;fontColor=#F8FAFC;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="20" y="15" width="1020" height="46" as="geometry" />
+        </mxCell>
+
+        <!-- Column 1: Azimuth -->
+        <mxCell id="col1" value="&lt;b&gt;1. HƯỚNG LA BÀN: CHÍNH BẮC (0° AZIMUTH)&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;b&gt;• Bản chất Bán cầu Nam (Úc: 34°S - 38°S):&lt;/b&gt;&lt;br&gt;Mặt Trời luôn đi qua bầu trời &lt;b&gt;phía BẮC&lt;/b&gt;. Đỉnh trưa quang học nằm ở hướng Bắc.&lt;br&gt;(Ngược hoàn toàn với Việt Nam: quay hướng Nam 180°).&lt;br&gt;&lt;br&gt;&lt;b&gt;• Bức xạ Trực xạ DNI Đỉnh:&lt;/b&gt;&lt;br&gt;Quay Chính Bắc giúp đón lượng quang năng lớn nhất và thời gian chiếu dài nhất 12 tháng.&lt;br&gt;&lt;br&gt;&lt;b&gt;• Cảnh báo Lệch Hướng:&lt;/b&gt;&lt;br&gt;Lắp sai hướng Nam: Mất &lt;font color=&quot;#DC2626&quot;&gt;&lt;b&gt;35% - 50% sản lượng năm&lt;/b&gt;&lt;/font&gt;.&lt;br&gt;Thiết kế Đông-Tây: Giảm 10-12% tổng kWh nhưng san phẳng đỉnh phát tự dùng.&lt;br&gt;&lt;br&gt;&lt;b&gt;➔ Chuẩn vàng: Azimuth = 0° (Chính Bắc)&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F0F9FF;strokeColor=#0284C7;align=left;spacingLeft=12;spacingRight=12;fontSize=11;fontColor=#0F172A;" vertex="1" parent="1">
+          <mxGeometry x="20" y="75" width="326" height="475" as="geometry" />
+        </mxCell>
+
+        <!-- Column 2: Tilt Angle -->
+        <mxCell id="col2" value="&lt;b&gt;2. GÓC NGHIÊNG: 30° - 35° (BẰNG VĨ ĐỘ)&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;b&gt;• Quy luật Vĩ độ (Latitude Rule):&lt;/b&gt;&lt;br&gt;Vĩ độ Victoria: &lt;b&gt;Mildura 34°S ➔ Melbourne 38°S&lt;/b&gt;.&lt;br&gt;Nghiêng bằng vĩ độ tạo góc vuông 90° vào Xuân phân &amp;amp; Thu phân ➔ Cân bằng năng lượng 4 mùa.&lt;br&gt;&lt;br&gt;&lt;b&gt;• Cứu vãn Sản lượng Mùa đông:&lt;/b&gt;&lt;br&gt;Mùa đông mặt trời sát chân trời (h ≈ 28°-32°).&lt;br&gt;Góc 30°-35° dựng đón tia nắng chiếu xiên,&lt;br&gt;&lt;font color=&quot;#15803D&quot;&gt;&lt;b&gt;tăng +18% đến +25% sản lượng mùa đông&lt;/b&gt;&lt;/font&gt;.&lt;br&gt;&lt;br&gt;&lt;b&gt;• Hạn chế khi Lắp Quá Phẳng (&amp;lt; 10°):&lt;/b&gt;&lt;br&gt;Tia nắng mùa đông bị phản xạ trượt, suy giảm sâu Specific Yield (chỉ đạt 2.8-3.1 kWh/kWp).&lt;br&gt;&lt;br&gt;&lt;b&gt;➔ Tối đa hóa kWh tích lũy toàn năm (365 ngày)&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFBEB;strokeColor=#D97706;align=left;spacingLeft=12;spacingRight=12;fontSize=11;fontColor=#0F172A;" vertex="1" parent="1">
+          <mxGeometry x="366" y="75" width="326" height="475" as="geometry" />
+        </mxCell>
+
+        <!-- Column 3: Self Cleaning -->
+        <mxCell id="col3" value="&lt;b&gt;3. TỰ LÀM SẠCH &amp;amp; TẢN NHIỆT MÁI TÔN&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;b&gt;• Cơ chế Tự Làm Sạch (Water Sheeting):&lt;/b&gt;&lt;br&gt;Độ nghiêng ≥ 30° (hoặc ≥ 10° theo CEC):&lt;br&gt;&lt;font color=&quot;#15803D&quot;&gt;&lt;b&gt;Nước mưa chảy xiết cuốn trôi 98% cặn bẩn&lt;/b&gt;&lt;/font&gt;,&lt;br&gt;phấn hoa và tro bụi sau các đợt khô hạn.&lt;br&gt;&lt;br&gt;&lt;b&gt;• Cảnh báo Mái Bằng Dốc Kém (&amp;lt; 8°):&lt;/b&gt;&lt;br&gt;Lực căng bề mặt gây đọng bùn viền dưới&lt;br&gt;➔ Che bóng cell đáy ➔ &lt;font color=&quot;#DC2626&quot;&gt;&lt;b&gt;Tụt 33% CS chuỗi&lt;/b&gt;&lt;/font&gt;&lt;br&gt;và sinh Hot-spot phá hủy tấm pin.&lt;br&gt;&lt;br&gt;&lt;b&gt;• Khoảng Hở Gió Mái (AS/NZS 5033):&lt;/b&gt;&lt;br&gt;Nâng chân hở &lt;b&gt;≥ 150mm so với mái tôn&lt;/b&gt;&lt;br&gt;tạo đối lưu tự nhiên, cứu 3.5% - 4.5% sản lượng.&lt;br&gt;&lt;br&gt;&lt;b&gt;➔ Giảm 80% chi phí bảo trì O&amp;amp;M định kỳ&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ECFDF5;strokeColor=#059669;align=left;spacingLeft=12;spacingRight=12;fontSize=11;fontColor=#0F172A;" vertex="1" parent="1">
+          <mxGeometry x="712" y="75" width="326" height="475" as="geometry" />
+        </mxCell>
+
+        <!-- Footer -->
+        <mxCell id="footer" value="&lt;b&gt;🔍 ĐÚC KẾT QUY CHUẨN THIẾT KẾ &amp;amp; VẬN HÀNH O&amp;amp;M TỐI ƯU (THE OUTLIERS BENCHMARK):&lt;/b&gt;&lt;br&gt;1. &lt;b&gt;Hướng Đặt:&lt;/b&gt; Bắt buộc quay &lt;b&gt;Chính Bắc (0° Azimuth)&lt;/b&gt; để đón trọn bức xạ trực xạ đỉnh trưa tại Nam Bán Cầu (Úc).&lt;br&gt;2. &lt;b&gt;Góc Nghiêng:&lt;/b&gt; Cố định ở mức &lt;b&gt;30° - 35° (Bằng Vĩ độ địa phương)&lt;/b&gt; nhằm tối đa hóa sản lượng mùa đông (+18-25%) và tối ưu kWh/năm.&lt;br&gt;3. &lt;b&gt;Tự Làm Sạch &amp;amp; Tản Nhiệt:&lt;/b&gt; Duy trì độ dốc ≥ 10°-15° chống đọng bùn viền nhôm, kết hợp nâng chân hở mái &lt;b&gt;≥ 150mm&lt;/b&gt; để tản nhiệt đối lưu." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEF9C3;strokeColor=#FDE047;align=left;spacingLeft=15;fontSize=11;fontColor=#854D0E;" vertex="1" parent="1">
+          <mxGeometry x="20" y="565" width="1020" height="75" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

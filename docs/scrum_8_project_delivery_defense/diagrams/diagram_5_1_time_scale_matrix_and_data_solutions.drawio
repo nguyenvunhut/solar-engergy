@@ -1,0 +1,11 @@
+<mxfile host="app.diagrams.net" modified="2026-08-25T16:14:00.000Z" agent="Mozilla/5.0" version="21.0.0" type="device">
+  <diagram id="diag-5-1" name="5.1 Time Scale Matrix">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850">
+      <root>
+        <mxCell id="0" /><mxCell id="1" parent="0" />
+        <mxCell id="hdr" value="&lt;b&gt;MA TRẬN QUY MÔ THỜI GIAN &amp;amp; GIẢI PHÁP XỬ LÝ DỮ LIỆU ĐỐI VỚI CÁC HIỆN TƯỢNG PR &amp;gt; 100%&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#0F172A;fontColor=#F8FAFC;fontSize=14;" vertex="1" parent="1"><mxGeometry x="20" y="15" width="1040" height="46" as="geometry" /></mxCell>
+        <mxCell id="tbl" value="&lt;b&gt;6 HIỆN TƯỢNG VẬT LÝ &amp;amp; KỸ THUẬT LÀM PR &amp;gt; 100%:&lt;/b&gt;&lt;br&gt;&lt;br&gt;1. &lt;b&gt;Cloud Enhancement&lt;/b&gt; (&amp;lt;30p, PR 105%-120%): Bảo toàn 100% dữ liệu cho ML dự báo đỉnh.&lt;br&gt;2. &lt;b&gt;Pin Lạnh Quán Tính Nhiệt&lt;/b&gt; (1-2h, PR 108%-115%): Áp dụng chuẩn hóa nhiệt độ IEC 61724-1 PR_corr.&lt;br&gt;3. &lt;b&gt;Mái Tôn Trắng Albedo&lt;/b&gt; (Dài hạn, PR 102%-110%): Hiệu chỉnh hệ số mô hình Perez POA.&lt;br&gt;4. &lt;b&gt;Pin Hai Mặt Bifacial&lt;/b&gt; (Dài hạn, PR 105%-120%): Khai báo công suất P_stc_bifacial hai mặt.&lt;br&gt;5. &lt;b&gt;Nhiễu Mẫu Số Nhỏ&lt;/b&gt; (&amp;lt;15p, PR 130%-300%): Rào chắn Cut-off filter khi GHI &amp;lt; 100 W/m².&lt;br&gt;6. &lt;b&gt;Dồn Gói SCADA Modbus&lt;/b&gt; (Dị thường, PR &amp;gt; 200%): Gắn nhãn PHYSICAL_OVER_CAPACITY &amp;amp; Clamping 115%." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#CBD5E1;align=left;spacingLeft=15;" vertex="1" parent="1"><mxGeometry x="20" y="75" width="1040" height="525" as="geometry" /></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -1,0 +1,14 @@
+<mxfile host="app.diagrams.net" modified="2026-08-25T14:50:00.000Z" agent="Mozilla/5.0" version="21.0.0" type="device">
+  <diagram id="diag-4-3" name="4.3 CBM Anomaly Closed Loop">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850">
+      <root>
+        <mxCell id="0" /><mxCell id="1" parent="0" />
+        <mxCell id="hdr" value="&lt;b&gt;QUY TRÌNH BẢO TRÌ DỰA TRÊN ĐIỀU KIỆN (CBM) &amp;amp; VÒNG LẶP PHÁT HIỆN DỊ THƯỜNG AI GMM-IF&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#0F172A;fontColor=#F8FAFC;fontSize=14;" vertex="1" parent="1"><mxGeometry x="20" y="15" width="1020" height="46" as="geometry" /></mxCell>
+        <mxCell id="step1" value="&lt;b&gt;TẦNG 1: THU NHẬN VIỄN THÁM&lt;/b&gt;&lt;br&gt;• SCADA 15-phút (2.731.946 dòng)&lt;br&gt;• Open-Meteo ERA5 (GHI, DNI, T_amb)&lt;br&gt;• Causal Floor-Hour &amp;amp; is_day NOAA&lt;br&gt;• Lọc trôi điểm 0 cảm biến CT" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F0F9FF;strokeColor=#0284C7;align=left;spacingLeft=12;" vertex="1" parent="1"><mxGeometry x="20" y="75" width="235" height="525" as="geometry" /></mxCell>
+        <mxCell id="step2" value="&lt;b&gt;TẦNG 2: ĐỘNG CƠ PHÂN LỚP DỊ THƯỜNG&lt;/b&gt;&lt;br&gt;• Mô hình lai GMM-IF + 5 Rào chắn&lt;br&gt;• Định danh 33.280 bản ghi lỗi (1,22%)&lt;br&gt;• Bóc tách 6 mã lỗi kỹ thuật&lt;br&gt;• Rút ngắn MTTD từ 30 ngày xuống &amp;lt; 1 GIỜ" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFBEB;strokeColor=#D97706;align=left;spacingLeft=12;" vertex="1" parent="1"><mxGeometry x="275" y="75" width="245" height="525" as="geometry" /></mxCell>
+        <mxCell id="step3" value="&lt;b&gt;TẦNG 3: CẢNH BÁO THỜI GIAN THỰC&lt;/b&gt;&lt;br&gt;• LightGBM 15-phút đối soát (WAPE 12,48%)&lt;br&gt;• Cảnh báo Telegram khi sai lệch &amp;gt; ±20%&lt;br&gt;• MTTR giảm từ 14 ngày xuống 1-3 ngày&lt;br&gt;&lt;b&gt;• Thu hồi: +70.330 kWh/NĂM (+29.066 AUD)&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ECFDF5;strokeColor=#059669;align=left;spacingLeft=12;" vertex="1" parent="1"><mxGeometry x="540" y="75" width="245" height="525" as="geometry" /></mxCell>
+        <mxCell id="step4" value="&lt;b&gt;TẦNG 4: CAN THIỆP HIỆN TRƯỜNG CHÍNH XÁC&lt;/b&gt;&lt;br&gt;• Drone camera nhiệt quét Hot-spots&lt;br&gt;• Khắc phục ngắt Inverter &amp;amp; Diode hỏng&lt;br&gt;• Tiết kiệm 120h công O&amp;M (+15.000 AUD)&lt;br&gt;&lt;b&gt;• HOÀN VỐN ĐẦU TƯ: &amp;lt; 4 THÁNG!&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EEF2FF;strokeColor=#6366F1;align=left;spacingLeft=12;" vertex="1" parent="1"><mxGeometry x="805" y="75" width="235" height="525" as="geometry" /></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

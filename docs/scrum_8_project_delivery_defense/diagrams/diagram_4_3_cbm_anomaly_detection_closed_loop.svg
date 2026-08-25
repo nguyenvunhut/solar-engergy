@@ -1,0 +1,346 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 660" width="100%" height="100%">
+  <defs>
+    <style>
+      .hdr { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 14.5px; font-weight: 800; fill: #F8FAFC; letter-spacing: 0.5px; }
+      .subhdr { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; fill: #94A3B8; }
+      .stage-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; font-weight: 700; }
+      .txt { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 9px; fill: #334155; }
+      .txt-bold { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 9.5px; font-weight: 700; fill: #0F172A; }
+      .txt-small { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 8px; fill: #64748B; }
+      .formula { font-family: "Courier New", Courier, monospace; font-size: 9px; font-weight: 700; }
+      .kpi-big { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 14px; font-weight: 800; }
+    </style>
+
+    <!-- Filters -->
+    <filter id="cardShadow" x="-2%" y="-2%" width="104%" height="104%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.08" />
+    </filter>
+
+    <!-- Markers -->
+    <marker id="arrLoop" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto">
+      <polygon points="0 0, 6 2, 0 4" fill="#6366F1" />
+    </marker>
+    <marker id="arrGreen" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto">
+      <polygon points="0 0, 6 2, 0 4" fill="#059669" />
+    </marker>
+
+    <!-- Gradients -->
+    <linearGradient id="hdrGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0F172A" />
+      <stop offset="100%" stop-color="#1E293B" />
+    </linearGradient>
+    <linearGradient id="thermalGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3B82F6" />
+      <stop offset="40%" stop-color="#10B981" />
+      <stop offset="75%" stop-color="#F59E0B" />
+      <stop offset="100%" stop-color="#EF4444" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1080" height="660" fill="#F8FAFC" rx="10" />
+
+  <!-- Header Banner -->
+  <rect x="20" y="14" width="1040" height="48" rx="8" fill="url(#hdrGrad)" />
+  <text x="540" y="34" text-anchor="middle" class="hdr">QUY TRÌNH BẢO TRÌ DỰA TRÊN ĐIỀU KIỆN (CBM) &amp; VÒNG LẶP PHÁT HIỆN DỊ THƯỜNG AI GMM-IF</text>
+  <text x="540" y="50" text-anchor="middle" class="subhdr">Chu trình khép kín 4 tầng: Viễn thám SCADA ➔ Phân lớp lai GMM-IF ➔ Cảnh báo thời gian thực ➔ Can thiệp chính xác bằng Drone &amp; O&amp;M</text>
+
+  <!-- TOP CONNECTING FLOW LINE -->
+  <g transform="translate(20, 68)">
+    <line x1="120" y1="0" x2="920" y2="0" stroke="#6366F1" stroke-width="2.5" stroke-dasharray="6 3" />
+    <polygon points="920 -4, 930 0, 920 4" fill="#6366F1" />
+  </g>
+
+  <!-- 4 STAGE COLUMNS -->
+  <g transform="translate(20, 75)">
+
+    <!-- ==================== STAGE 1: TELEMETRY & INGESTION ==================== -->
+    <g transform="translate(0, 0)" filter="url(#cardShadow)">
+      <rect width="248" height="565" rx="8" fill="#FFFFFF" stroke="#0284C7" stroke-width="1.5" />
+      <rect width="248" height="30" rx="8" fill="#F0F9FF" />
+      <text x="124" y="20" text-anchor="middle" class="stage-title" fill="#0369A1">TẦNG 1: THU NHẬN VIỄN THÁM</text>
+
+      <!-- Visual Graphic: IoT Gateway & Solar Telemetry -->
+      <g transform="translate(15, 38)">
+        <rect width="218" height="110" rx="6" fill="#F8FAFC" stroke="#BAE6FD" />
+        
+        <!-- Solar Panel Icon -->
+        <polygon points="20,40 50,25 90,25 60,40" fill="#1E293B" stroke="#0284C7" stroke-width="1.2" />
+        <polygon points="20,40 60,40 60,44 20,44" fill="#334155" />
+        
+        <!-- IoT Smart Meter Icon -->
+        <rect x="100" y="20" width="36" height="30" rx="3" fill="#0F172A" stroke="#38BDF8" stroke-width="1.2" />
+        <text x="118" y="32" text-anchor="middle" font-size="6px" fill="#4ADE80" font-weight="700">15-MIN</text>
+        <text x="118" y="42" text-anchor="middle" font-size="6px" fill="#38BDF8">SCADA</text>
+
+        <!-- Wireless Telemetry Waves -->
+        <path d="M 142 30 A 10 10 0 0 1 150 40" fill="none" stroke="#0284C7" stroke-width="1.5" />
+        <path d="M 145 26 A 15 15 0 0 1 156 42" fill="none" stroke="#0284C7" stroke-width="1.5" />
+
+        <!-- Weather Satellite / Cloud Icon -->
+        <g transform="translate(165, 18)">
+          <path d="M 10 20 A 8 8 0 0 1 25 15 A 12 12 0 0 1 42 22 A 6 6 0 0 1 40 28 L 10 28 Z" fill="#E2E8F0" stroke="#64748B" stroke-width="1" />
+          <text x="25" y="24" text-anchor="middle" font-size="5.5px" fill="#0284C7" font-weight="700">ERA5</text>
+        </g>
+
+        <!-- Summary Label -->
+        <text x="109" y="66" text-anchor="middle" class="txt-bold" fill="#0369A1">2.731.946 Bản Ghi Chuỗi Thời Gian</text>
+        <text x="109" y="80" text-anchor="middle" class="txt-small">42 Trạm (5 Campus) • 8 Biến Khí Tượng</text>
+        <text x="109" y="96" text-anchor="middle" class="formula" fill="#0284C7">Causal Floor-Hour &amp; is_day NOAA</text>
+      </g>
+
+      <!-- Stage 1 Details -->
+      <g transform="translate(15, 158)">
+        <rect width="218" height="392" rx="6" fill="#F8FAFC" stroke="#E2E8F0" />
+        
+        <text x="10" y="18" class="txt-bold" fill="#0369A1">Quy Chuẩn Kỹ Thuật Viễn Thám:</text>
+        <text x="10" y="34" class="txt">• Tần suất lấy mẫu: 15 phút (0,25h)</text>
+        <text x="10" y="48" class="txt">• Đo đếm: Sản lượng, điện áp AC/DC</text>
+        <text x="10" y="62" class="txt">• Khí quyển: GHI, DNI, DHI, T_amb</text>
+
+        <rect x="8" y="76" width="202" height="75" rx="4" fill="#FFFFFF" stroke="#BAE6FD" />
+        <text x="14" y="92" class="txt-bold" fill="#0F172A">Rào Chắn Vật Lý Tiền Xử Lý:</text>
+        <text x="14" y="108" class="txt">• Lọc trôi điểm 0 cảm biến CT đêm</text>
+        <text x="14" y="122" class="txt">• Khắc phục 100% Lookahead Bias</text>
+        <text x="14" y="138" class="formula" fill="#0284C7">Độ chính xác dữ liệu: 99,98%</text>
+
+        <rect x="8" y="160" width="202" height="110" rx="4" fill="#F0FDF4" stroke="#BBF7D0" />
+        <text x="14" y="178" class="txt-bold" fill="#15803D">Vai Trò Đối Với CBM:</text>
+        <text x="14" y="194" class="txt">• Cung cấp dữ liệu sạch không nhiễu</text>
+        <text x="14" y="208" class="txt">• Đồng bộ thời gian thực 24/7</text>
+        <text x="14" y="222" class="txt">• Nền tảng phát hiện lỗi chính xác</text>
+        <text x="14" y="240" class="txt-bold" fill="#15803D">MTTD TRUYỀN THỐNG: 30 NGÀY</text>
+        <text x="14" y="256" class="txt-bold" fill="#059669">➔ GIẢM XUỐNG: &lt; 1 GIỜ</text>
+
+        <rect x="8" y="280" width="202" height="100" rx="4" fill="#EFF6FF" stroke="#93C5FD" />
+        <text x="101" y="302" text-anchor="middle" class="txt-bold" fill="#1D4ED8">NGUYÊN LÝ VẬN HÀNH:</text>
+        <text x="101" y="322" text-anchor="middle" class="txt">Dữ liệu telemetry liên tục</text>
+        <text x="101" y="336" text-anchor="middle" class="txt">được nạp vào động cơ phân lớp</text>
+        <text x="101" y="356" text-anchor="middle" class="formula" fill="#1D4ED8">PIPELINE MODULAR PYTHON</text>
+      </g>
+    </g>
+
+    <!-- ==================== STAGE 2: GMM-IF ANOMALY CLASSIFIER ==================== -->
+    <g transform="translate(262, 0)" filter="url(#cardShadow)">
+      <rect width="258" height="565" rx="8" fill="#FFFFFF" stroke="#D97706" stroke-width="1.5" />
+      <rect width="258" height="30" rx="8" fill="#FFFBEB" />
+      <text x="129" y="20" text-anchor="middle" class="stage-title" fill="#B45309">TẦNG 2: PHÂN LỚP DỊ THƯỜNG GMM-IF</text>
+
+      <!-- Visual Graphic: 6 Reason Waveforms Matrix -->
+      <g transform="translate(12, 38)">
+        <rect width="234" height="195" rx="6" fill="#FEF2F2" stroke="#FECACA" />
+        <text x="117" y="16" text-anchor="middle" class="txt-bold" fill="#DC2626">Bóc Tách 6 Dạng Sóng Dị Thường Kỹ Thuật</text>
+
+        <!-- Waveform 1: Midday Trip -->
+        <g transform="translate(8, 24)">
+          <rect width="105" height="48" rx="3" fill="#FFFFFF" stroke="#FCA5A5" />
+          <text x="5" y="11" font-size="7.5px" font-weight="700" fill="#991B1B">1. Mất Phát Trưa (8,6%)</text>
+          <path d="M 5 40 Q 25 18, 45 15 L 45 40 L 65 40 Q 85 18, 100 40" fill="none" stroke="#DC2626" stroke-width="1.5" />
+          <text x="55" y="26" font-size="6.5px" fill="#DC2626" font-weight="700">Trip = 0</text>
+        </g>
+
+        <!-- Waveform 2: String Fault -->
+        <g transform="translate(120, 24)">
+          <rect width="105" height="48" rx="3" fill="#FFFFFF" stroke="#FCA5A5" />
+          <text x="5" y="11" font-size="7.5px" font-weight="700" fill="#991B1B">2. Đứt Chuỗi (14,5%)</text>
+          <!-- Normal Curve (Dotted) -->
+          <path d="M 5 40 Q 52 10, 100 40" fill="none" stroke="#94A3B8" stroke-width="1" stroke-dasharray="2 2" />
+          <!-- Fault Curve (-33%) -->
+          <path d="M 5 40 Q 52 24, 100 40" fill="none" stroke="#DC2626" stroke-width="1.5" />
+          <text x="52" y="22" font-size="6px" fill="#DC2626" font-weight="700">-33% CS</text>
+        </g>
+
+        <!-- Waveform 3: Thermal Derating -->
+        <g transform="translate(8, 78)">
+          <rect width="105" height="48" rx="3" fill="#FFFFFF" stroke="#FCA5A5" />
+          <text x="5" y="11" font-size="7.5px" font-weight="700" fill="#991B1B">3. Quá Nhiệt (4,8%)</text>
+          <path d="M 5 40 Q 30 18, 45 28 Q 55 30, 65 28 Q 80 18, 100 40" fill="none" stroke="#D97706" stroke-width="1.5" />
+          <text x="52" y="24" font-size="6px" fill="#D97706" font-weight="700">Heatsink &gt;85°</text>
+        </g>
+
+        <!-- Waveform 4: Inverter Clipping -->
+        <g transform="translate(120, 78)">
+          <rect width="105" height="48" rx="3" fill="#FFFFFF" stroke="#FCA5A5" />
+          <text x="5" y="11" font-size="7.5px" font-weight="700" fill="#991B1B">4. Cắt Ngọn (2,1%)</text>
+          <path d="M 5 40 Q 30 18, 40 18 L 65 18 Q 75 18, 100 40" fill="none" stroke="#0284C7" stroke-width="1.5" />
+          <text x="68" y="26" font-size="6.5px" fill="#0284C7" font-weight="700">P_AC Trần</text>
+        </g>
+
+        <!-- Waveform 5: Night Tare Loss -->
+        <g transform="translate(8, 132)">
+          <rect width="105" height="48" rx="3" fill="#FFFFFF" stroke="#FCA5A5" />
+          <text x="5" y="11" font-size="7.5px" font-weight="700" fill="#991B1B">5. Dòng Rò Đêm (23,2%)</text>
+          <path d="M 5 35 Q 25 35, 30 28 Q 45 28, 50 35 L 100 35" fill="none" stroke="#64748B" stroke-width="1.5" />
+          <text x="40" y="25" font-size="6px" fill="#64748B">3-8W Tự Dùng</text>
+        </g>
+
+        <!-- Waveform 6: CT Zero Drift -->
+        <g transform="translate(120, 132)">
+          <rect width="105" height="48" rx="3" fill="#FFFFFF" stroke="#FCA5A5" />
+          <text x="5" y="11" font-size="7.5px" font-weight="700" fill="#991B1B">6. Trôi Điểm 0 (46,8%)</text>
+          <line x1="5" y1="32" x2="100" y2="32" stroke="#64748B" stroke-width="1.5" stroke-dasharray="3 2" />
+          <text x="52" y="28" font-size="6px" fill="#64748B">Lệch V_offset</text>
+        </g>
+
+        <text x="117" y="188" text-anchor="middle" font-size="8px" font-weight="700" fill="#DC2626">Tổng cộng: 33.280 Bản ghi lỗi (1,22%)</text>
+      </g>
+
+      <!-- Stage 2 Details -->
+      <g transform="translate(12, 242)">
+        <rect width="234" height="308" rx="6" fill="#F8FAFC" stroke="#E2E8F0" />
+        <text x="10" y="18" class="txt-bold" fill="#B45309">Đặc Quyền Của Mô Hình Lai GMM-IF:</text>
+        <text x="10" y="34" class="txt">• GMM: Ước lượng phân bố mật độ đa chiều</text>
+        <text x="10" y="48" class="txt">• Isolation Forest: Cách ly điểm bất thường</text>
+        <text x="10" y="62" class="txt">• 5 Rào chắn vật lý (Physical Barriers)</text>
+
+        <rect x="8" y="74" width="218" height="98" rx="4" fill="#FEF3C7" stroke="#FDE68A" />
+        <text x="14" y="90" class="txt-bold" fill="#B45309">Cơ Chế Định Danh Tức Thời:</text>
+        <text x="14" y="106" class="txt">Tự động gắn cờ phân loại lý do</text>
+        <text x="14" y="120" class="txt">thay vì chỉ báo nhị phân Outlier/Normal</text>
+        <text x="14" y="136" class="txt-bold" fill="#B45309">➔ Giúp kỹ sư O&amp;M biết chính xác</text>
+        <text x="14" y="152" class="txt-bold" fill="#DC2626">nguyên nhân để xử lý đúng trọng tâm</text>
+
+        <rect x="8" y="180" width="218" height="116" rx="4" fill="#F0FDF4" stroke="#BBF7D0" />
+        <text x="109" y="200" text-anchor="middle" class="txt-bold" fill="#15803D">HIỆU QUẢ PHÁT HIỆN SỰ CỐ:</text>
+        <text x="109" y="222" text-anchor="middle" class="kpi-big" fill="#15803D">98,5% Độ Chính Xác</text>
+        <text x="109" y="240" text-anchor="middle" class="txt-small">Phát hiện lỗi ẩn đứt chuỗi</text>
+        <text x="109" y="254" text-anchor="middle" class="txt-small">mà Inverter không hề báo đèn đỏ</text>
+        <text x="109" y="274" text-anchor="middle" class="formula" fill="#15803D">TIẾT KIỆM HÀNG TRĂM GIỜ ĐO ĐẠC</text>
+      </g>
+    </g>
+
+    <!-- ==================== STAGE 3: REAL-TIME AI ALERT ENGINE ==================== -->
+    <g transform="translate(534, 0)" filter="url(#cardShadow)">
+      <rect width="258" height="565" rx="8" fill="#FFFFFF" stroke="#059669" stroke-width="1.5" />
+      <rect width="258" height="30" rx="8" fill="#ECFDF5" />
+      <text x="129" y="20" text-anchor="middle" class="stage-title" fill="#047857">TẦNG 3: CẢNH BÁO THỜI GIAN THỰC</text>
+
+      <!-- Visual Graphic: Smart Alert Popup & Forecast Comparison -->
+      <g transform="translate(12, 38)">
+        <rect width="234" height="195" rx="6" fill="#F0FDF4" stroke="#BBF7D0" />
+
+        <!-- Smartphone / Alert Screen Mockup -->
+        <g transform="translate(15, 10)">
+          <rect width="204" height="85" rx="5" fill="#0F172A" stroke="#334155" stroke-width="1.2" />
+          <!-- Alert Header -->
+          <circle cx="15" cy="15" r="4" fill="#EF4444" />
+          <text x="25" y="18" font-size="8px" fill="#F8FAFC" font-weight="700">🚨 CẢNH BÁO KHẨN O&amp;M (TELEGRAM BOT)</text>
+          <!-- Alert Body -->
+          <rect x="8" y="26" width="188" height="52" rx="3" fill="#1E293B" />
+          <text x="14" y="38" font-size="7.5px" fill="#FCA5A5" font-weight="700">Mã trạm: SITE_14 (Mildura Sports)</text>
+          <text x="14" y="50" font-size="7px" fill="#F8FAFC">Lỗi: Mất phát giữa trưa (GHI = 920 W/m²)</text>
+          <text x="14" y="62" font-size="7px" fill="#FDE047">Đo: 0,0 kWh | LightGBM Dự báo: 48,2 kWh</text>
+          <text x="14" y="73" font-size="6.5px" fill="#38BDF8">MTTD: 18 Phút • Ngắt quá áp AS 4777.2</text>
+        </g>
+
+        <!-- Model Comparison Mini Curve -->
+        <g transform="translate(15, 105)">
+          <rect width="204" height="78" rx="4" fill="#FFFFFF" stroke="#A7F3D0" />
+          <text x="10" y="14" class="txt-bold" fill="#047857">📊 LightGBM Optuna vs Naive:</text>
+          
+          <!-- Curve Forecast -->
+          <path d="M 20 60 Q 100 20, 180 60" fill="none" stroke="#0284C7" stroke-width="2" />
+          <!-- Curve Actual (Tripped to 0) -->
+          <path d="M 20 60 Q 60 40, 80 32 L 80 60 L 120 60 Q 140 40, 180 60" fill="none" stroke="#DC2626" stroke-width="2" />
+          
+          <text x="100" y="30" font-size="7px" font-weight="700" fill="#DC2626">Sai lệch &gt; 20%</text>
+          <text x="10" y="72" class="formula" fill="#047857">WAPE = 12,48% (Skill +58,2%)</text>
+        </g>
+      </g>
+
+      <!-- Stage 3 Details -->
+      <g transform="translate(12, 242)">
+        <rect width="234" height="308" rx="6" fill="#F8FAFC" stroke="#E2E8F0" />
+        <text x="10" y="18" class="txt-bold" fill="#047857">Quy Trình Tự Động Hóa Cảnh Báo:</text>
+        <text x="10" y="34" class="txt">• So sánh tức thời: |Actual - Forecast|</text>
+        <text x="10" y="48" class="txt">• Kích hoạt cảnh báo khi lệch &gt; ±20%</text>
+        <text x="10" y="62" class="txt">• Duy trì 3 chu kỳ liên tiếp (45 phút)</text>
+
+        <rect x="8" y="74" width="218" height="100" rx="4" fill="#ECFDF5" stroke="#6EE7B7" />
+        <text x="14" y="90" class="txt-bold" fill="#047857">Rút Ngắn Thời Gian Xử Lý (MTTR):</text>
+        <text x="14" y="106" class="txt">• Tự động xuất phiếu công tác (Work Order)</text>
+        <text x="14" y="120" class="txt">• Định vị sẵn tủ điện &amp; biến tần cần sửa</text>
+        <text x="14" y="136" class="txt-bold" fill="#047857">• MTTR giảm từ 14 ngày ➔ 1-3 ngày</text>
+        <text x="14" y="152" class="txt-bold" fill="#059669">Cứu 85% tổn thất sản lượng</text>
+
+        <rect x="8" y="182" width="218" height="114" rx="4" fill="#F0FDF4" stroke="#BBF7D0" />
+        <text x="109" y="200" text-anchor="middle" class="txt-bold" fill="#15803D">SẢN LƯỢNG THU HỒI CBM:</text>
+        <text x="109" y="218" text-anchor="middle" class="txt">• Mất phát trưa: +32.130 kWh (6.426 $)</text>
+        <text x="109" y="232" text-anchor="middle" class="txt">• Đứt chuỗi pin: +19.750 kWh (3.950 $)</text>
+        <text x="109" y="246" text-anchor="middle" class="txt">• Quá nhiệt Inverter: +18.450 kWh (3.690 $)</text>
+        <text x="109" y="266" text-anchor="middle" class="kpi-big" fill="#15803D">+70.330 kWh / NĂM</text>
+        <text x="109" y="284" text-anchor="middle" class="formula" fill="#15803D">+29.066 AUD / NĂM GIÁ TRỊ</text>
+      </g>
+    </g>
+
+    <!-- ==================== STAGE 4: TARGETED DRONE & O&M ACTION ==================== -->
+    <g transform="translate(806, 0)" filter="url(#cardShadow)">
+      <rect width="234" height="565" rx="8" fill="#FFFFFF" stroke="#6366F1" stroke-width="1.5" />
+      <rect width="234" height="30" rx="8" fill="#EEF2FF" />
+      <text x="117" y="20" text-anchor="middle" class="stage-title" fill="#4F46E5">TẦNG 4: CAN THIỆP CHÍNH XÁC</text>
+
+      <!-- Visual Graphic: Thermal Drone & Repair Van -->
+      <g transform="translate(12, 38)">
+        <rect width="210" height="195" rx="6" fill="#EEF2FF" stroke="#C7D2FE" />
+        <text x="105" y="16" text-anchor="middle" class="txt-bold" fill="#4F46E5">Quét Camera Nhiệt Bằng Drone</text>
+
+        <!-- Drone Graphic -->
+        <g transform="translate(60, 22)">
+          <!-- Drone Body -->
+          <rect x="25" y="15" width="40" height="18" rx="4" fill="#0F172A" />
+          <!-- Rotors Arms -->
+          <line x1="10" y1="10" x2="80" y2="38" stroke="#475569" stroke-width="2" />
+          <line x1="10" y1="38" x2="80" y2="10" stroke="#475569" stroke-width="2" />
+          <!-- Rotor Blades -->
+          <ellipse cx="10" cy="10" rx="10" ry="3" fill="#38BDF8" opacity="0.7" />
+          <ellipse cx="80" cy="10" rx="10" ry="3" fill="#38BDF8" opacity="0.7" />
+          <ellipse cx="10" cy="38" rx="10" ry="3" fill="#38BDF8" opacity="0.7" />
+          <ellipse cx="80" cy="38" rx="10" ry="3" fill="#38BDF8" opacity="0.7" />
+          <!-- Camera Lens -->
+          <circle cx="45" cy="33" r="5" fill="#EF4444" stroke="#DC2626" />
+          <!-- Infrared Thermal Beam Rays -->
+          <polygon points="45,38 10,75 80,75" fill="#F43F5E" opacity="0.25" />
+        </g>
+
+        <!-- Thermal Heatmap Solar Panel Output -->
+        <g transform="translate(25, 105)">
+          <rect width="160" height="50" rx="3" fill="url(#thermalGrad)" stroke="#334155" />
+          <!-- Normal Cells in Cool Blue/Green -->
+          <rect x="5" y="5" width="32" height="40" fill="#3B82F6" stroke="#1E40AF" />
+          <rect x="42" y="5" width="32" height="40" fill="#3B82F6" stroke="#1E40AF" />
+          <rect x="79" y="5" width="32" height="40" fill="#10B981" stroke="#047857" />
+          <!-- Hot-spot Cell in Red -->
+          <rect x="116" y="5" width="38" height="40" fill="#DC2626" stroke="#7F1D1D" stroke-width="2" />
+          <text x="135" y="28" text-anchor="middle" font-size="7px" font-weight="800" fill="#FEF2F2">HOT</text>
+          <text x="135" y="38" text-anchor="middle" font-size="6px" font-weight="700" fill="#FEF2F2">85°C</text>
+        </g>
+
+        <text x="105" y="172" text-anchor="middle" class="txt-bold" fill="#4F46E5">Phát Hiện Diode Chập / Nứt Cell</text>
+        <text x="105" y="186" text-anchor="middle" class="txt-small">Định vị điểm lỗi chính xác 100%</text>
+      </g>
+
+      <!-- Stage 4 Details -->
+      <g transform="translate(12, 242)">
+        <rect width="210" height="308" rx="6" fill="#F8FAFC" stroke="#E2E8F0" />
+        <text x="10" y="18" class="txt-bold" fill="#4F46E5">Hành Động Khắc Phục O&amp;M:</text>
+        <text x="10" y="34" class="txt">• Thay cầu chì DC chuỗi hỏng trong 24h</text>
+        <text x="10" y="48" class="txt">• Reset &amp; chỉnh nấc phân áp AC</text>
+        <text x="10" y="62" class="txt">• Vệ sinh quạt heatsink Inverter</text>
+
+        <rect x="8" y="74" width="194" height="98" rx="4" fill="#EEF2FF" stroke="#C7D2FE" />
+        <text x="12" y="90" class="txt-bold" fill="#4F46E5">Cắt Giảm Chi Phí Nhân Công:</text>
+        <text x="12" y="106" class="txt">• Bỏ kiểm tra định kỳ mò mẫm</text>
+        <text x="12" y="120" class="txt">• Giảm 120 giờ công kỹ thuật viên</text>
+        <text x="12" y="136" class="txt-bold" fill="#4F46E5">• Tiết kiệm OPEX: +15.000 AUD/Năm</text>
+        <text x="12" y="152" class="txt-small">(Đơn giá 125 AUD/giờ công)</text>
+
+        <rect x="8" y="180" width="194" height="116" rx="4" fill="#ECFDF5" stroke="#6EE7B7" />
+        <text x="97" y="200" text-anchor="middle" class="txt-bold" fill="#047857">TỔNG KẾT TÀI CHÍNH CBM:</text>
+        <text x="97" y="222" text-anchor="middle" class="kpi-big" fill="#047857">HOÀN VỐN &lt; 4 THÁNG</text>
+        <text x="97" y="240" text-anchor="middle" class="txt-small">Chi phí Cloud/Drone: 8.000 $/năm</text>
+        <text x="97" y="254" text-anchor="middle" class="txt-bold" fill="#047857">Lợi nhuận ròng: +21.066 AUD/Năm</text>
+        <text x="97" y="274" text-anchor="middle" class="formula" fill="#047857">ROI NĂM ĐẦU ĐẠT 263%</text>
+      </g>
+    </g>
+  </g>
+</svg>

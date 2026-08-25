@@ -1,0 +1,260 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 660" width="100%" height="100%">
+  <defs>
+    <style>
+      .hdr { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 14.5px; font-weight: 800; fill: #F8FAFC; letter-spacing: 0.5px; }
+      .subhdr { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; fill: #94A3B8; }
+      .tbl-hdr { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 9px; font-weight: 700; fill: #FFFFFF; letter-spacing: 0.3px; }
+      .txt { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 9px; fill: #334155; }
+      .txt-bold { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 9px; font-weight: 700; fill: #0F172A; }
+      .txt-small { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 8px; fill: #64748B; }
+      .formula { font-family: "Courier New", Courier, monospace; font-size: 9px; font-weight: 700; }
+      .kpi-num { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 16px; font-weight: 800; }
+      .kpi-lbl { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 8.5px; font-weight: 700; fill: #64748B; letter-spacing: 0.5px; }
+    </style>
+
+    <!-- Filters -->
+    <filter id="cardShadow" x="-2%" y="-2%" width="104%" height="104%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.08" />
+    </filter>
+
+    <!-- Gradients -->
+    <linearGradient id="hdrGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0F172A" />
+      <stop offset="100%" stop-color="#1E293B" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1080" height="660" fill="#F8FAFC" rx="10" />
+
+  <!-- Header Banner -->
+  <rect x="20" y="14" width="1040" height="48" rx="8" fill="url(#hdrGrad)" />
+  <text x="540" y="34" text-anchor="middle" class="hdr">MA TRẬN ĐỊNH LƯỢNG GIÁ TRỊ TÀI CHÍNH &amp; THU HỒI NĂNG LƯỢNG TOÀN DIỆN DỰ ÁN</text>
+  <text x="540" y="50" text-anchor="middle" class="subhdr">Tổng hợp 7 trụ cột đề xuất: Thu hồi +1.072.220 kWh/năm ➔ Tiết kiệm +416.169 AUD/năm ➔ Hoàn vốn bình quân 3,15 Năm</text>
+
+  <!-- 4 TOP EXECUTIVE KPI CARDS -->
+  <g transform="translate(20, 70)">
+    <!-- KPI 1 -->
+    <g transform="translate(0, 0)" filter="url(#cardShadow)">
+      <rect width="250" height="68" rx="6" fill="#FFFFFF" stroke="#93C5FD" stroke-width="1.2" />
+      <rect width="5" height="68" rx="3" fill="#0284C7" />
+      <circle cx="225" cy="34" r="16" fill="#EFF6FF" stroke="#38BDF8" stroke-width="1" />
+      <text x="225" y="38" text-anchor="middle" font-size="12px">⚡</text>
+      <text x="16" y="20" class="kpi-lbl">TỔNG ĐIỆN NĂNG THU HỒI</text>
+      <text x="16" y="44" class="kpi-num" fill="#0284C7">+1.072.220 kWh / Năm</text>
+      <text x="16" y="58" class="txt-small" fill="#0369A1">(Bình quân +89.349 kWh / Tháng)</text>
+    </g>
+
+    <!-- KPI 2 -->
+    <g transform="translate(263, 0)" filter="url(#cardShadow)">
+      <rect width="250" height="68" rx="6" fill="#FFFFFF" stroke="#86EFAC" stroke-width="1.2" />
+      <rect width="5" height="68" rx="3" fill="#16A34A" />
+      <circle cx="225" cy="34" r="16" fill="#F0FDF4" stroke="#4ADE80" stroke-width="1" />
+      <text x="225" y="38" text-anchor="middle" font-size="12px">💰</text>
+      <text x="16" y="20" class="kpi-lbl">TỔNG GIÁ TRỊ TIẾT KIỆM (TB)</text>
+      <text x="16" y="44" class="kpi-num" fill="#15803D">+416.169 AUD / Năm</text>
+      <text x="16" y="58" class="txt-small" fill="#166534">(Bình quân +34.680 AUD / Tháng)</text>
+    </g>
+
+    <!-- KPI 3 -->
+    <g transform="translate(526, 0)" filter="url(#cardShadow)">
+      <rect width="250" height="68" rx="6" fill="#FFFFFF" stroke="#FDE047" stroke-width="1.2" />
+      <rect width="5" height="68" rx="3" fill="#CA8A04" />
+      <circle cx="225" cy="34" r="16" fill="#FEFCE8" stroke="#FACC15" stroke-width="1" />
+      <text x="225" y="38" text-anchor="middle" font-size="12px">⏱️</text>
+      <text x="16" y="20" class="kpi-lbl">THỜI GIAN HOÀN VỐN (PAYBACK)</text>
+      <text x="16" y="44" class="kpi-num" fill="#B45309">3,15 Năm (~38 Tháng)</text>
+      <text x="16" y="58" class="txt-small" fill="#854D0E">(CapEx: ~1.312.780 AUD | IRR: 28,4%)</text>
+    </g>
+
+    <!-- KPI 4 -->
+    <g transform="translate(790, 0)" filter="url(#cardShadow)">
+      <rect width="250" height="68" rx="6" fill="#FFFFFF" stroke="#C7D2FE" stroke-width="1.2" />
+      <rect width="5" height="68" rx="3" fill="#4F46E5" />
+      <circle cx="225" cy="34" r="16" fill="#EEF2FF" stroke="#818CF8" stroke-width="1" />
+      <text x="225" y="38" text-anchor="middle" font-size="12px">🌱</text>
+      <text x="16" y="20" class="kpi-lbl">ĐÓNG GÓP GIẢM PHÁT THẢI ESG</text>
+      <text x="16" y="44" class="kpi-num" fill="#6366F1">-986 Tấn CO2 / Năm</text>
+      <text x="16" y="58" class="txt-small" fill="#4338CA">(Tương đương trồng ~45.000 cây xanh)</text>
+    </g>
+  </g>
+
+  <!-- MASTER TABLE INFOGRAPHIC -->
+  <g transform="translate(20, 148)" filter="url(#cardShadow)">
+    <rect width="1040" height="495" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2" />
+
+    <!-- Table Header Row -->
+    <rect width="1040" height="32" rx="8" fill="#1E293B" />
+    <text x="25" y="20" text-anchor="middle" class="tbl-hdr">#</text>
+    <text x="135" y="20" text-anchor="middle" class="tbl-hdr">HẠNG MỤC ĐỀ XUẤT</text>
+    <text x="345" y="20" text-anchor="middle" class="tbl-hdr">CƠ SỞ KỸ THUẬT &amp; TIÊU CHUẨN</text>
+    <text x="475" y="20" text-anchor="middle" class="tbl-hdr">MỨC CẢI THIỆN</text>
+    <text x="575" y="20" text-anchor="middle" class="tbl-hdr">ĐIỆN THU HỒI</text>
+    <text x="715" y="20" text-anchor="middle" class="tbl-hdr">GIÁ TRỊ TIẾT KIỆM (AUD)</text>
+    <text x="835" y="20" text-anchor="middle" class="tbl-hdr">DỰ TOÁN ĐẦU TƯ</text>
+    <text x="960" y="20" text-anchor="middle" class="tbl-hdr">HOÀN VỐN (PAYBACK)</text>
+
+    <!-- Row 1: BESS -->
+    <g transform="translate(0, 32)">
+      <rect width="1040" height="52" fill="#F8FAFC" stroke="#F1F5F9" />
+      <circle cx="25" cy="26" r="11" fill="#EFF6FF" stroke="#38BDF8" />
+      <text x="25" y="30" text-anchor="middle" class="txt-bold" fill="#0284C7">1</text>
+      <text x="48" y="22" class="txt-bold" fill="#0284C7">Hệ Thống Pin Lưu Trữ BESS</text>
+      <text x="48" y="37" class="txt-small">(1.000 kW / 2.500 kWh LiFePO4)</text>
+      <text x="245" y="22" class="txt">Thu hồi Clipping, dịch chuyển TOU tối</text>
+      <text x="245" y="37" class="txt">Gọt đỉnh Demand Charge 800 kW</text>
+      <text x="475" y="30" text-anchor="middle" class="txt-bold" fill="#0284C7">+20,6% hữu ích</text>
+      <text x="575" y="22" text-anchor="middle" class="txt-bold">712.182 kWh/năm</text>
+      <text x="575" y="37" text-anchor="middle" class="txt-small">(59.348/tháng)</text>
+      <text x="715" y="22" text-anchor="middle" class="txt-bold" fill="#15803D">+323.164 AUD/NĂM</text>
+      <text x="715" y="37" text-anchor="middle" class="txt-small">(26.930 AUD/tháng)</text>
+      <text x="835" y="30" text-anchor="middle" class="txt">1.250.000 AUD</text>
+      <rect x="915" y="16" width="90" height="20" rx="3" fill="#ECFDF5" stroke="#6EE7B7" />
+      <text x="960" y="30" text-anchor="middle" class="txt-bold" fill="#047857">3,87 Năm</text>
+    </g>
+
+    <!-- Row 2: Roof Ventilation Gap -->
+    <g transform="translate(0, 84)">
+      <rect width="1040" height="52" fill="#FFFFFF" stroke="#F1F5F9" />
+      <circle cx="25" cy="26" r="11" fill="#ECFDF5" stroke="#34D399" />
+      <text x="25" y="30" text-anchor="middle" class="txt-bold" fill="#059669">2</text>
+      <text x="48" y="22" class="txt-bold" fill="#059669">Khoảng Hở Thông Gió Mái</text>
+      <text x="48" y="37" class="txt-small">(Nâng chân giá đỡ 100 - 150mm)</text>
+      <text x="245" y="22" class="txt">AS/NZS 5033:2021 &amp; Sandia Model</text>
+      <text x="245" y="37" class="txt">Hạ ΔT_cell = -9,0°C nhờ đối lưu tự nhiên</text>
+      <text x="475" y="30" text-anchor="middle" class="txt-bold" fill="#059669">+3,40% tổng năm</text>
+      <text x="575" y="22" text-anchor="middle" class="txt-bold">117.224 kWh/năm</text>
+      <text x="575" y="37" text-anchor="middle" class="txt-small">(9.769/tháng)</text>
+      <text x="715" y="22" text-anchor="middle" class="txt-bold" fill="#15803D">+23.445 AUD/NĂM</text>
+      <text x="715" y="37" text-anchor="middle" class="txt-small">(1.954 AUD/tháng)</text>
+      <text x="835" y="30" text-anchor="middle" class="txt">24.280 AUD</text>
+      <rect x="915" y="16" width="90" height="20" rx="3" fill="#ECFDF5" stroke="#6EE7B7" />
+      <text x="960" y="30" text-anchor="middle" class="txt-bold" fill="#047857">1,04 Năm (12,4 th)</text>
+    </g>
+
+    <!-- Row 3: CBM & AI Anomaly Detection -->
+    <g transform="translate(0, 136)">
+      <rect width="1040" height="52" fill="#F8FAFC" stroke="#F1F5F9" />
+      <circle cx="25" cy="26" r="11" fill="#FFFBEB" stroke="#FBBF24" />
+      <text x="25" y="30" text-anchor="middle" class="txt-bold" fill="#D97706">3</text>
+      <text x="48" y="22" class="txt-bold" fill="#D97706">Bảo Trì CBM &amp; AI Anomaly</text>
+      <text x="48" y="37" class="txt-small">(GMM-IF + LightGBM Alert)</text>
+      <text x="245" y="22" class="txt">Rút ngắn MTTD &lt; 1h, MTTR 1-3 ngày</text>
+      <text x="245" y="37" class="txt">Khắc phục mất phát trưa &amp; hỏng chuỗi</text>
+      <text x="475" y="30" text-anchor="middle" class="txt-bold" fill="#D97706">+2,04% tổng năm</text>
+      <text x="575" y="22" text-anchor="middle" class="txt-bold">70.330 kWh/năm</text>
+      <text x="575" y="37" text-anchor="middle" class="txt-small">(5.861/tháng)</text>
+      <text x="715" y="22" text-anchor="middle" class="txt-bold" fill="#15803D">+29.066 AUD/NĂM</text>
+      <text x="715" y="37" text-anchor="middle" class="txt-small">(Gồm 15.000$ nhân công)</text>
+      <text x="835" y="30" text-anchor="middle" class="txt">8.000 AUD/năm</text>
+      <rect x="915" y="16" width="90" height="20" rx="3" fill="#ECFDF5" stroke="#6EE7B7" />
+      <text x="960" y="30" text-anchor="middle" class="txt-bold" fill="#047857">&lt; 4 Tháng</text>
+    </g>
+
+    <!-- Row 4: Flat Roof Tilt 15° A-Frame -->
+    <g transform="translate(0, 188)">
+      <rect width="1040" height="52" fill="#FFFFFF" stroke="#F1F5F9" />
+      <circle cx="25" cy="26" r="11" fill="#EEF2FF" stroke="#818CF8" />
+      <text x="25" y="30" text-anchor="middle" class="txt-bold" fill="#6366F1">4</text>
+      <text x="48" y="22" class="txt-bold" fill="#6366F1">Khung Nghiêng Chữ A 15°</text>
+      <text x="48" y="37" class="txt-small">(Cải tạo 970 kWp trạm mái bằng)</text>
+      <text x="245" y="22" class="txt">Chuẩn CEC Australia &gt; 10°, hướng Bắc</text>
+      <text x="245" y="37" class="txt">Tăng sản lượng mùa đông &amp; tự làm sạch</text>
+      <text x="475" y="30" text-anchor="middle" class="txt-bold" fill="#6366F1">+3,90% nhóm này</text>
+      <text x="575" y="22" text-anchor="middle" class="txt-bold">53.350 kWh/năm</text>
+      <text x="575" y="37" text-anchor="middle" class="txt-small">(4.446/tháng)</text>
+      <text x="715" y="22" text-anchor="middle" class="txt-bold" fill="#15803D">+10.670 AUD/NĂM</text>
+      <text x="715" y="37" text-anchor="middle" class="txt-small">(889 AUD/tháng)</text>
+      <text x="835" y="30" text-anchor="middle" class="txt">18.000 AUD</text>
+      <rect x="915" y="16" width="90" height="20" rx="3" fill="#ECFDF5" stroke="#6EE7B7" />
+      <text x="960" y="30" text-anchor="middle" class="txt-bold" fill="#047857">1,68 Năm</text>
+    </g>
+
+    <!-- Row 5: N-type TOPCon Upgrade (Repowering) -->
+    <g transform="translate(0, 240)">
+      <rect width="1040" height="52" fill="#F8FAFC" stroke="#F1F5F9" />
+      <circle cx="25" cy="26" r="11" fill="#F1F5F9" stroke="#94A3B8" />
+      <text x="25" y="30" text-anchor="middle" class="txt-bold" fill="#0F172A">5</text>
+      <text x="48" y="22" class="txt-bold" fill="#0F172A">Nâng Cấp N-type TOPCon</text>
+      <text x="48" y="37" class="txt-small">(Kỳ Repowering sau 12-15 năm)</text>
+      <text x="245" y="22" class="txt">Hệ số nhiệt γ = -0,30%/°C, η = 22,5%</text>
+      <text x="245" y="37" class="txt">Zero LID, suy thoái chỉ 0,40%/năm</text>
+      <text x="475" y="30" text-anchor="middle" class="txt-bold" fill="#0F172A">+6,20% tổng năm</text>
+      <text x="575" y="22" text-anchor="middle" class="txt-bold">213.761 kWh/năm</text>
+      <text x="575" y="37" text-anchor="middle" class="txt-small">(17.813/tháng)</text>
+      <text x="715" y="22" text-anchor="middle" class="txt-bold" fill="#15803D">+42.752 AUD/NĂM</text>
+      <text x="715" y="37" text-anchor="middle" class="txt-small">(3.563 AUD/tháng)</text>
+      <text x="835" y="30" text-anchor="middle" class="txt">Tích hợp đại tu</text>
+      <rect x="915" y="16" width="90" height="20" rx="3" fill="#F1F5F9" stroke="#CBD5E1" />
+      <text x="960" y="30" text-anchor="middle" class="txt-small" fill="#475569">Kỳ Đại Tu</text>
+    </g>
+
+    <!-- Row 6: Inverter Sunshade & Optimizers -->
+    <g transform="translate(0, 292)">
+      <rect width="1040" height="52" fill="#FFFFFF" stroke="#F1F5F9" />
+      <circle cx="25" cy="26" r="11" fill="#FEF2F2" stroke="#F87171" />
+      <text x="25" y="30" text-anchor="middle" class="txt-bold" fill="#DC2626">6</text>
+      <text x="48" y="22" class="txt-bold" fill="#DC2626">Tấm Chắn Nắng &amp; DC Optimizer</text>
+      <text x="48" y="37" class="txt-small">(Mildura, Bendigo &amp; Shaded)</text>
+      <text x="245" y="22" class="txt">Hạ nhiệt heatsink &lt; 72°C, triệt tiêu derating</text>
+      <text x="245" y="37" class="txt">Trang bị DC Optimizer cho trạm bị bóng che</text>
+      <text x="475" y="30" text-anchor="middle" class="txt-bold" fill="#DC2626">+1,65% tổng năm</text>
+      <text x="575" y="22" text-anchor="middle" class="txt-bold">57.074 kWh/năm</text>
+      <text x="575" y="37" text-anchor="middle" class="txt-small">(4.756/tháng)</text>
+      <text x="715" y="22" text-anchor="middle" class="txt-bold" fill="#15803D">+11.415 AUD/NĂM</text>
+      <text x="715" y="37" text-anchor="middle" class="txt-small">(Tránh hỏng tụ 16.000$)</text>
+      <text x="835" y="30" text-anchor="middle" class="txt">12.500 AUD</text>
+      <rect x="915" y="16" width="90" height="20" rx="3" fill="#ECFDF5" stroke="#6EE7B7" />
+      <text x="960" y="30" text-anchor="middle" class="txt-bold" fill="#047857">1,10 Năm</text>
+    </g>
+
+    <!-- Row 7: Smart Soiling Schedule -->
+    <g transform="translate(0, 344)">
+      <rect width="1040" height="52" fill="#F8FAFC" stroke="#F1F5F9" />
+      <circle cx="25" cy="26" r="11" fill="#CCFBF1" stroke="#2DD4BF" />
+      <text x="25" y="30" text-anchor="middle" class="txt-bold" fill="#0D9488">7</text>
+      <text x="48" y="22" class="txt-bold" fill="#0D9488">Lịch Rửa Pin Theo Lượng Mưa</text>
+      <text x="48" y="37" class="txt-small">(Precipitation &amp; Hạn hán kéo dài)</text>
+      <text x="245" y="22" class="txt">Tận dụng mưa tự nhiên &gt; 10mm tự rửa sạch</text>
+      <text x="245" y="37" class="txt">Chỉ rửa pin khi suy hao PR kéo dài &gt; 40 ngày</text>
+      <text x="475" y="30" text-anchor="middle" class="txt-bold" fill="#0D9488">+1,80% mùa khô</text>
+      <text x="575" y="22" text-anchor="middle" class="txt-bold">62.060 kWh/năm</text>
+      <text x="575" y="37" text-anchor="middle" class="txt-small">(5.171/tháng)</text>
+      <text x="715" y="22" text-anchor="middle" class="txt-bold" fill="#15803D">+18.412 AUD/NĂM</text>
+      <text x="715" y="37" text-anchor="middle" class="txt-small">(Tiết kiệm 6.000$ rửa thừa)</text>
+      <text x="835" y="30" text-anchor="middle" class="txt">0 AUD (Quy trình)</text>
+      <rect x="915" y="16" width="90" height="20" rx="3" fill="#ECFDF5" stroke="#6EE7B7" />
+      <text x="960" y="30" text-anchor="middle" class="txt-bold" fill="#047857">Tức thì (0 Ngày)</text>
+    </g>
+
+    <!-- SUMMARY MASTER ROW -->
+    <g transform="translate(0, 396)">
+      <rect width="1040" height="95" rx="6" fill="#0F172A" />
+      <circle cx="25" cy="47" r="14" fill="#38BDF8" />
+      <text x="25" y="52" text-anchor="middle" font-size="14px" font-weight="900" fill="#0F172A">Σ</text>
+      <text x="48" y="38" font-size="13px" font-weight="800" fill="#38BDF8">TỔNG HỢP TOÀN BỘ GIẢI PHÁP</text>
+      <text x="48" y="56" font-size="10px" fill="#94A3B8">(Không tính Repowering thay mới tấm pin)</text>
+      <text x="48" y="72" font-size="9px" fill="#64748B">Tối ưu hóa toàn diện 6 lớp: Vật lý, Lưu trữ, Dữ liệu lớn &amp; AI</text>
+      
+      <text x="245" y="44" font-size="9.5px" fill="#94A3B8">• Tổng CS: 2.428 kWp (42 Trạm)</text>
+      <text x="245" y="60" font-size="9.5px" fill="#94A3B8">• Giảm phát thải: 986 Tấn CO2/Năm</text>
+
+      <text x="475" y="50" text-anchor="middle" font-size="13px" font-weight="800" fill="#4ADE80">—</text>
+
+      <!-- Col 5: Clear separated center x=575 -->
+      <text x="575" y="40" text-anchor="middle" font-size="12px" font-weight="800" fill="#38BDF8">+1.072.220 kWh / Năm</text>
+      <text x="575" y="58" text-anchor="middle" font-size="9.5px" fill="#94A3B8">(+89.349 kWh / Tháng)</text>
+
+      <!-- Col 6: Clear separated center x=715 -->
+      <text x="715" y="40" text-anchor="middle" font-size="12.5px" font-weight="800" fill="#4ADE80">+416.169 AUD / NĂM</text>
+      <text x="715" y="58" text-anchor="middle" font-size="9.5px" fill="#94A3B8">(+34.680 AUD / Tháng)</text>
+
+      <text x="835" y="48" text-anchor="middle" font-size="11px" font-weight="700" fill="#F8FAFC">~1.312.780 AUD</text>
+      <text x="835" y="64" text-anchor="middle" font-size="8.5px" fill="#64748B">(BESS chiếm 95% CapEx)</text>
+
+      <rect x="915" y="32" width="90" height="30" rx="4" fill="#042F2E" stroke="#10B981" stroke-width="1.5" />
+      <text x="960" y="51" text-anchor="middle" font-size="13px" font-weight="900" fill="#FACC15">3,15 NĂM</text>
+      <text x="960" y="78" text-anchor="middle" font-size="8px" fill="#6EE7B7">IRR: 28,4%</text>
+    </g>
+  </g>
+</svg>

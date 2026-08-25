@@ -1,124 +1,145 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1060 580" width="100%" height="100%">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 620" width="100%" height="100%">
   <defs>
     <style>
-      .hdr { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13.5px; font-weight: 700; fill: #F8FAFC; }
-      .subhdr { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; fill: #94A3B8; }
+      .hdr { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 14px; font-weight: 800; fill: #F8FAFC; letter-spacing: 0.5px; }
+      .subhdr { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 10.5px; fill: #94A3B8; }
       .box-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11.5px; font-weight: 700; }
       .txt { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 9.5px; fill: #334155; }
       .txt-bold { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 9.5px; font-weight: 700; fill: #0F172A; }
       .axis-lbl { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 9px; fill: #64748B; }
-      .formula { font-family: "Courier New", Courier, monospace; font-size: 9.5px; font-weight: 700; }
+      .formula { font-family: "Courier New", Courier, monospace; font-size: 9px; font-weight: 700; }
     </style>
+    <filter id="shadow" x="-2%" y="-2%" width="104%" height="104%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.08" />
+    </filter>
   </defs>
 
   <!-- Background -->
-  <rect width="1060" height="580" fill="#F8FAFC" rx="10" />
+  <rect width="1100" height="620" fill="#F8FAFC" rx="10" />
 
   <!-- Header Banner -->
-  <rect x="20" y="15" width="1020" height="46" rx="8" fill="#0F172A" />
-  <text x="530" y="34" text-anchor="middle" class="hdr">ĐỐI CHIẾU BẢN CHẤT: PERFORMANCE RATIO (PR) TỨC THỜI 15 PHÚT VÀ PR TÍCH LŨY DÀI HẠN (IEC 61724-1)</text>
-  <text x="530" y="50" text-anchor="middle" class="subhdr">Giải thích vì sao PR 15 phút có thể vượt 100% (105% – 120%) nhưng PR năm luôn bị chặn trong dải 78% – 85%</text>
+  <rect x="20" y="14" width="1060" height="48" rx="8" fill="#0F172A" />
+  <text x="550" y="34" text-anchor="middle" class="hdr">ĐỐI CHIẾU BẢN CHẤT: PERFORMANCE RATIO (PR) TỨC THỜI 15 PHÚT VÀ PR TÍCH LŨY DÀI HẠN (IEC 61724-1)</text>
+  <text x="550" y="50" text-anchor="middle" class="subhdr">Giải thích vì sao PR 15 phút có thể vượt 100% (105% – 120%) nhưng PR năm luôn bị chặn trong dải 78% – 85%</text>
 
   <!-- Left: Timeline Comparison Graph -->
-  <g transform="translate(20, 75)">
-    <rect width="660" height="485" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.5" />
-    <rect width="660" height="32" rx="8" fill="#F0F9FF" />
-    <text x="330" y="21" text-anchor="middle" class="box-title" fill="#0369A1">ĐỒ THỊ DAO ĐỘNG PR TỨC THỜI (15 PHÚT) VS ĐƯỜNG PR TÍCH LŨY NĂM</text>
+  <g transform="translate(20, 72)" filter="url(#shadow)">
+    <rect width="675" height="525" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2" />
+    <rect width="675" height="32" rx="8" fill="#F0F9FF" />
+    <text x="337" y="21" text-anchor="middle" class="box-title" fill="#0369A1">ĐỒ THỊ DAO ĐỘNG PR TỨC THỜI (15 PHÚT) VS ĐƯỜNG PR TÍCH LŨY NĂM</text>
 
     <!-- Graph Canvas -->
-    <g transform="translate(55, 45)">
+    <g transform="translate(65, 48)">
       <!-- Gridlines -->
-      <line x1="0" y1="330" x2="570" y2="330" stroke="#CBD5E1" stroke-width="1.5" />
-      <line x1="0" y1="264" x2="570" y2="264" stroke="#F1F5F9" stroke-width="1" />
-      <line x1="0" y1="198" x2="570" y2="198" stroke="#F1F5F9" stroke-width="1" />
-      <line x1="0" y1="132" x2="570" y2="132" stroke="#F1F5F9" stroke-width="1" />
-      <line x1="0" y1="66" x2="570" y2="66" stroke="#F1F5F9" stroke-width="1" />
-      <line x1="0" y1="0" x2="570" y2="0" stroke="#F1F5F9" stroke-width="1" />
+      <line x1="0" y1="360" x2="585" y2="360" stroke="#94A3B8" stroke-width="1.5" />
+      <line x1="0" y1="288" x2="585" y2="288" stroke="#F1F5F9" stroke-width="1" />
+      <line x1="0" y1="216" x2="585" y2="216" stroke="#F1F5F9" stroke-width="1" />
+      <line x1="0" y1="144" x2="585" y2="144" stroke="#F1F5F9" stroke-width="1" />
+      <line x1="0" y1="72" x2="585" y2="72" stroke="#F1F5F9" stroke-width="1" />
+      <line x1="0" y1="0" x2="585" y2="0" stroke="#F1F5F9" stroke-width="1" />
 
       <!-- Y-Axis Labels -->
-      <text x="-10" y="334" text-anchor="end" class="axis-lbl">0%</text>
-      <text x="-10" y="268" text-anchor="end" class="axis-lbl">30%</text>
-      <text x="-10" y="202" text-anchor="end" class="axis-lbl">60%</text>
-      <text x="-10" y="154" text-anchor="end" class="axis-lbl" font-weight="700" fill="#059669">81,5%</text>
-      <text x="-10" y="114" text-anchor="end" class="axis-lbl" font-weight="700" fill="#DC2626">100%</text>
-      <text x="-10" y="68" text-anchor="end" class="axis-lbl" font-weight="700" fill="#EA580C">120%</text>
-      <text x="-10" y="4" text-anchor="end" class="axis-lbl" font-weight="700" fill="#B91C1C">150%</text>
+      <text x="-12" y="364" text-anchor="end" class="axis-lbl">0%</text>
+      <text x="-12" y="292" text-anchor="end" class="axis-lbl">30%</text>
+      <text x="-12" y="220" text-anchor="end" class="axis-lbl">60%</text>
+      <text x="-12" y="168" text-anchor="end" class="axis-lbl" font-weight="700" fill="#059669">81,5%</text>
+      <text x="-12" y="124" text-anchor="end" class="axis-lbl" font-weight="700" fill="#DC2626">100%</text>
+      <text x="-12" y="76" text-anchor="end" class="axis-lbl" font-weight="700" fill="#EA580C">120%</text>
+      <text x="-12" y="4" text-anchor="end" class="axis-lbl" font-weight="700" fill="#B91C1C">150%</text>
 
       <!-- 100% Benchmark Line -->
-      <line x1="0" y1="110" x2="570" y2="110" stroke="#DC2626" stroke-width="1.5" stroke-dasharray="4 4" />
-      <rect x="400" y="96" width="165" height="18" rx="3" fill="#FEF2F2" stroke="#FECACA" />
-      <text x="482" y="109" text-anchor="middle" class="txt-bold" font-size="8.5" fill="#DC2626">Ngưỡng danh định chuẩn 100%</text>
+      <line x1="0" y1="120" x2="585" y2="120" stroke="#DC2626" stroke-width="1.8" stroke-dasharray="5 3" />
+      <rect x="390" y="105" width="185" height="20" rx="3" fill="#FEF2F2" stroke="#FECACA" />
+      <text x="482" y="119" text-anchor="middle" class="txt-bold" font-size="8.5px" fill="#DC2626">Ngưỡng danh định chuẩn 100%</text>
 
       <!-- Long-term Cumulative PR Line (Flat Green Line ~81.5%) -->
-      <line x1="0" y1="150" x2="570" y2="150" stroke="#059669" stroke-width="3" />
-      <rect x="365" y="156" width="200" height="18" rx="3" fill="#ECFDF5" stroke="#A7F3D0" />
-      <text x="465" y="169" text-anchor="middle" class="txt-bold" font-size="8.5" fill="#047857">PR Dài hạn Tích lũy (81,5% ± 3,5%)</text>
+      <line x1="0" y1="164" x2="585" y2="164" stroke="#059669" stroke-width="3.2" />
+      <rect x="350" y="172" width="225" height="20" rx="3" fill="#ECFDF5" stroke="#A7F3D0" />
+      <text x="462" y="186" text-anchor="middle" class="txt-bold" font-size="8.5px" fill="#047857">PR Dài hạn Tích lũy (81,5% ± 3,5%)</text>
 
       <!-- Shaded Over-100% Region -->
-      <path d="M 180 110 L 220 55 L 260 110 Z" fill="#FEE2E2" opacity="0.6" />
-      <path d="M 330 110 L 370 45 L 410 110 Z" fill="#FEE2E2" opacity="0.6" />
+      <path d="M 185 120 L 225 60 L 265 120 Z" fill="#FEE2E2" opacity="0.6" />
+      <path d="M 345 120 L 385 48 L 425 120 Z" fill="#FEE2E2" opacity="0.6" />
 
       <!-- Instantaneous 15-min PR Curve (Fluctuating Blue Line) -->
-      <path d="M 20 220 
-               L 50 180 L 80 250 L 110 160 L 140 210 L 170 140 
-               L 190 90 L 220 55 L 245 80 L 270 170 L 300 240 
-               L 330 120 L 370 45 L 400 95 L 430 190 L 460 270 
-               L 490 180 L 520 210 L 550 240" 
-            fill="none" stroke="#2563EB" stroke-width="2.2" />
+      <path d="M 20 240 
+               L 55 195 L 85 270 L 115 175 L 145 230 L 175 150 
+               L 195 100 L 225 60 L 250 90 L 275 185 L 310 260 
+               L 345 130 L 385 48 L 415 105 L 445 210 L 480 290 
+               L 510 195 L 545 230 L 575 260" 
+            fill="none" stroke="#2563EB" stroke-width="2.5" />
 
       <!-- High PR Marker 1 -->
-      <circle cx="220" cy="55" r="4.5" fill="#EF4444" />
-      <rect x="145" y="24" width="145" height="22" rx="4" fill="#FEF2F2" stroke="#EF4444" stroke-width="1.2" />
-      <text x="217" y="38" text-anchor="middle" class="txt-bold" font-size="8" fill="#B91C1C">PR = 116% (Pin lạnh 16°C)</text>
+      <circle cx="225" cy="60" r="5" fill="#EF4444" stroke="#FFFFFF" stroke-width="1.5" />
+      <rect x="135" y="24" width="165" height="24" rx="4" fill="#FEF2F2" stroke="#EF4444" stroke-width="1.2" />
+      <text x="217" y="40" text-anchor="middle" class="txt-bold" font-size="8.5px" fill="#B91C1C">PR = 116% (Pin Lạnh 16°C)</text>
 
       <!-- High PR Marker 2 -->
-      <circle cx="370" cy="45" r="4.5" fill="#EF4444" />
-      <rect x="300" y="14" width="145" height="22" rx="4" fill="#FEF2F2" stroke="#EF4444" stroke-width="1.2" />
-      <text x="372" y="28" text-anchor="middle" class="txt-bold" font-size="8" fill="#B91C1C">PR = 119% (Mép mây Cloud)</text>
+      <circle cx="385" cy="48" r="5" fill="#EF4444" stroke="#FFFFFF" stroke-width="1.5" />
+      <rect x="310" y="12" width="165" height="24" rx="4" fill="#FEF2F2" stroke="#EF4444" stroke-width="1.2" />
+      <text x="392" y="28" text-anchor="middle" class="txt-bold" font-size="8.5px" fill="#B91C1C">PR = 119% (Mép Mây Cloud)</text>
 
       <!-- X-Axis Labels -->
-      <text x="50" y="354" text-anchor="middle" class="axis-lbl">08:00</text>
-      <text x="150" y="354" text-anchor="middle" class="axis-lbl">10:00</text>
-      <text x="250" y="354" text-anchor="middle" class="axis-lbl">12:00 (Trưa)</text>
-      <text x="350" y="354" text-anchor="middle" class="axis-lbl">14:00</text>
-      <text x="450" y="354" text-anchor="middle" class="axis-lbl">16:00</text>
-      <text x="550" y="354" text-anchor="middle" class="axis-lbl">18:00</text>
+      <text x="55" y="386" text-anchor="middle" class="axis-lbl">08:00</text>
+      <text x="160" y="386" text-anchor="middle" class="axis-lbl">10:00</text>
+      <text x="265" y="386" text-anchor="middle" class="axis-lbl" font-weight="700" fill="#0F172A">12:00 (Trưa)</text>
+      <text x="370" y="386" text-anchor="middle" class="axis-lbl">14:00</text>
+      <text x="475" y="386" text-anchor="middle" class="axis-lbl">16:00</text>
+      <text x="575" y="386" text-anchor="middle" class="axis-lbl">18:00</text>
     </g>
+
+    <!-- Bottom summary label -->
+    <rect x="15" y="468" width="645" height="42" rx="5" fill="#F8FAFC" stroke="#E2E8F0" />
+    <text x="337" y="485" text-anchor="middle" class="txt-bold" fill="#0F172A">KẾT LUẬN: ĐỈNH PR &gt; 100% LÀ HIỆN TƯỢNG VẬT LÝ THẬT (KHÔNG PHẢI NGOẠI LAI LỖI CẢM BIẾN)</text>
+    <text x="337" y="500" text-anchor="middle" class="txt-small" fill="#64748B">Pipeline Data Engineering bảo toàn 100% các đỉnh này để mô hình ML học chính xác các xung phụ tải đỉnh</text>
   </g>
 
   <!-- Right: Key Architectural Comparison Table -->
-  <g transform="translate(695, 75)">
-    <rect width="345" height="485" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.5" />
-    <rect width="345" height="32" rx="8" fill="#F8FAFC" />
-    <text x="172" y="21" text-anchor="middle" class="box-title" fill="#0F172A">SO SÁNH 2 LOẠI CHỈ SỐ PR</text>
+  <g transform="translate(710, 72)" filter="url(#shadow)">
+    <rect width="370" height="525" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2" />
+    <rect width="370" height="32" rx="8" fill="#F8FAFC" />
+    <text x="185" y="21" text-anchor="middle" class="box-title" fill="#0F172A">SO SÁNH 2 LOẠI CHỈ SỐ PR</text>
 
     <!-- Card 1: Instantaneous PR -->
     <g transform="translate(15, 45)">
-      <rect width="315" height="195" rx="6" fill="#EFF6FF" stroke="#BFDBFE" />
-      <text x="12" y="20" class="txt-bold" fill="#1E40AF">1. PR TỨC THỜI (15 PHÚT / 1 GIỜ):</text>
-      <text x="12" y="38" class="txt">• <tspan class="txt-bold">Mục đích:</tspan> Giám sát vi mô, phát hiện sự cố</text>
-      <text x="12" y="52" class="txt">  ngắt biến tần và dị thường tức thời real-time.</text>
-      <text x="12" y="70" class="txt">• <tspan class="txt-bold">Biên độ dao động:</tspan> Cực rộng (0% đến 125%).</text>
-      <text x="12" y="88" class="txt">• <tspan class="txt-bold" fill="#B91C1C">Khả năng &gt; 100%:</tspan> <tspan class="txt-bold" fill="#16A34A">CÓ THỂ VƯỢT (105% – 120%)</tspan></text>
-      <text x="12" y="104" class="txt">  khi xảy ra Cloud Enhancement và pin lạnh.</text>
-      <text x="12" y="122" class="txt">• <tspan class="txt-bold">Quy tắc lọc dữ liệu:</tspan> Bỏ mốc GHI &lt; 100 W/m²</text>
-      <text x="12" y="138" class="txt">  để tránh sai số mẫu số nhỏ tiệm cận 0.</text>
-      <text x="12" y="156" class="txt">• <tspan class="txt-bold">Tầng DWH:</tspan> Lưu tại <tspan class="formula">fact_solar_energy_gen</tspan>.</text>
+      <rect width="340" height="225" rx="6" fill="#EFF6FF" stroke="#BFDBFE" />
+      <text x="14" y="22" class="txt-bold" fill="#1E40AF">1. PR TỨC THỜI (15 PHÚT / 1 GIỜ):</text>
+      
+      <text x="14" y="42" class="txt">• <tspan class="txt-bold">Mục đích:</tspan> Giám sát vi mô, phát hiện sự cố</text>
+      <text x="24" y="56" class="txt">ngắt biến tần và dị thường tức thời real-time.</text>
+      
+      <text x="14" y="78" class="txt">• <tspan class="txt-bold">Biên độ dao động:</tspan> Cực rộng (0% đến 125%).</text>
+      
+      <text x="14" y="100" class="txt">• <tspan class="txt-bold" fill="#B91C1C">Khả năng &gt; 100%:</tspan> <tspan class="txt-bold" fill="#16A34A">CÓ THỂ VƯỢT (105% – 120%)</tspan></text>
+      <text x="24" y="114" class="txt">khi xảy ra Cloud Enhancement và pin lạnh.</text>
+      
+      <text x="14" y="136" class="txt">• <tspan class="txt-bold">Quy tắc lọc dữ liệu:</tspan> Bỏ mốc GHI &lt; 100 W/m²</text>
+      <text x="24" y="150" class="txt">để tránh sai số mẫu số nhỏ tiệm cận 0.</text>
+      
+      <rect x="12" y="168" width="316" height="42" rx="4" fill="#DBEAFE" stroke="#93C5FD" />
+      <text x="170" y="184" text-anchor="middle" font-size="8.5px" font-weight="700" fill="#1E40AF">LƯU TRỮ TRONG DATA WAREHOUSE:</text>
+      <text x="170" y="200" text-anchor="middle" class="formula" fill="#1E3A8A">fact_solar_energy_gen (Granularity: 15m)</text>
     </g>
 
     <!-- Card 2: Long-term Cumulative PR -->
-    <g transform="translate(15, 255)">
-      <rect width="315" height="215" rx="6" fill="#F0FDF4" stroke="#BBF7D0" />
-      <text x="12" y="20" class="txt-bold" fill="#166534">2. PR TÍCH LŨY DÀI HẠN (THÁNG / NĂM):</text>
-      <text x="12" y="38" class="txt">• <tspan class="txt-bold">Mục đích:</tspan> Đánh giá hiệu quả đầu tư tài chính,</text>
-      <text x="12" y="52" class="txt">  tốc độ thoái hóa suy giảm chất lượng vật liệu.</text>
-      <text x="12" y="70" class="txt">• <tspan class="txt-bold">Giá trị thực tế:</tspan> Luôn nằm trong dải 78% – 85%.</text>
-      <text x="12" y="88" class="txt">• <tspan class="txt-bold" fill="#B91C1C">Khả năng &gt; 100%:</tspan> <tspan class="txt-bold" fill="#DC2626">KHÔNG BAO GIỜ VƯỢT 100%</tspan></text>
-      <text x="12" y="104" class="txt">  do tổng hòa toàn bộ cây suy hao tích lũy.</text>
-      <text x="12" y="122" class="txt">• <tspan class="txt-bold">Chuẩn hóa nhiệt độ:</tspan> Dùng PR_corr (25°C)</text>
-      <text x="12" y="138" class="txt">  theo IEC 61724-1 Annex B để loại bỏ mùa vụ.</text>
-      <text x="12" y="156" class="txt">• <tspan class="txt-bold">Tầng DWH:</tspan> Nén sẵn trong Materialized View</text>
-      <text x="12" y="172" class="txt">  <tspan class="formula">mv_bi_mart_daily_summary</tspan> phục vụ Tableau.</text>
+    <g transform="translate(15, 282)">
+      <rect width="340" height="225" rx="6" fill="#F0FDF4" stroke="#BBF7D0" />
+      <text x="14" y="22" class="txt-bold" fill="#166534">2. PR TÍCH LŨY DÀI HẠN (THÁNG / NĂM):</text>
+      
+      <text x="14" y="42" class="txt">• <tspan class="txt-bold">Mục đích:</tspan> Đánh giá hiệu quả đầu tư tài chính,</text>
+      <text x="24" y="56" class="txt">tốc độ thoái hóa suy giảm chất lượng vật liệu.</text>
+      
+      <text x="14" y="78" class="txt">• <tspan class="txt-bold">Giá trị thực tế:</tspan> Luôn nằm trong dải 78% – 85%.</text>
+      
+      <text x="14" y="100" class="txt">• <tspan class="txt-bold" fill="#B91C1C">Khả năng &gt; 100%:</tspan> <tspan class="txt-bold" fill="#DC2626">KHÔNG BAO GIỜ VƯỢT 100%</tspan></text>
+      <text x="24" y="114" class="txt">do tổng hòa toàn bộ cây suy hao tích lũy.</text>
+      
+      <text x="14" y="136" class="txt">• <tspan class="txt-bold">Chuẩn hóa nhiệt độ:</tspan> Dùng PR_corr (25°C)</text>
+      <text x="24" y="150" class="txt">theo IEC 61724-1 Annex B để loại bỏ mùa vụ.</text>
+      
+      <rect x="12" y="168" width="316" height="42" rx="4" fill="#DCFCE7" stroke="#86EFAC" />
+      <text x="170" y="184" text-anchor="middle" font-size="8.5px" font-weight="700" fill="#166534">NÉN TRONG MATERIALIZED VIEW BI MART:</text>
+      <text x="170" y="200" text-anchor="middle" class="formula" fill="#14532D">mv_bi_mart_daily_summary (Tableau)</text>
     </g>
   </g>
 </svg>

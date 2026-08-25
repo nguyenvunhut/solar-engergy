@@ -1,0 +1,195 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 660" width="100%" height="100%">
+  <defs>
+    <style>
+      .hdr { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 14px; font-weight: 800; fill: #F8FAFC; letter-spacing: 0.5px; }
+      .subhdr { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 10.5px; fill: #94A3B8; }
+      .tbl-hdr { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 9.5px; font-weight: 700; fill: #FFFFFF; }
+      .txt { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 9px; fill: #334155; }
+      .txt-bold { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 9px; font-weight: 700; fill: #0F172A; }
+      .txt-small { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 8px; fill: #64748B; }
+      .formula { font-family: "Courier New", Courier, monospace; font-size: 8.5px; font-weight: 700; }
+    </style>
+    <filter id="shadow" x="-2%" y="-2%" width="104%" height="104%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.08" />
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1080" height="660" fill="#F8FAFC" rx="10" />
+
+  <!-- Header Banner -->
+  <rect x="20" y="14" width="1040" height="48" rx="8" fill="#0F172A" />
+  <text x="540" y="34" text-anchor="middle" class="hdr">MA TRẬN QUY MÔ THỜI GIAN &amp; GIẢI PHÁP XỬ LÝ DỮ LIỆU ĐỐI VỚI CÁC HIỆN TƯỢNG PR &gt; 100%</text>
+  <text x="540" y="50" text-anchor="middle" class="subhdr">Bóc tách 6 cơ chế vật lý &amp; viễn thám: Thời gian tác động ➔ Đỉnh PR ➔ Xử lý Data Engineering, DWH &amp; Tableau BI</text>
+
+  <!-- Master Matrix Table -->
+  <g transform="translate(20, 72)" filter="url(#shadow)">
+    <rect width="1040" height="570" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2" />
+
+    <!-- Table Header Row -->
+    <rect width="1040" height="32" rx="8" fill="#1E293B" />
+    <text x="25" y="20" text-anchor="middle" class="tbl-hdr">#</text>
+    <text x="140" y="20" text-anchor="middle" class="tbl-hdr">HIỆN TƯỢNG VẬT LÝ / KỸ THUẬT</text>
+    <text x="290" y="20" text-anchor="middle" class="tbl-hdr">BẢN CHẤT GỐC</text>
+    <text x="395" y="20" text-anchor="middle" class="tbl-hdr">QUY MÔ THỜI GIAN</text>
+    <text x="495" y="20" text-anchor="middle" class="tbl-hdr">MỨC PR TỐI ĐA</text>
+    <text x="615" y="20" text-anchor="middle" class="tbl-hdr">TÁC ĐỘNG CÔNG SUẤT P</text>
+    <text x="840" y="20" text-anchor="middle" class="tbl-hdr">QUY TẮC XỬ LÝ TRONG PIPELINE DỮ LIỆU &amp; BI</text>
+
+    <!-- Row 1: Cloud Enhancement -->
+    <g transform="translate(0, 32)">
+      <rect width="1040" height="85" fill="#EFF6FF" stroke="#DBEAFE" />
+      <circle cx="25" cy="42" r="11" fill="#3B82F6" />
+      <text x="25" y="46" text-anchor="middle" font-size="10px" font-weight="700" fill="#FFFFFF">1</text>
+      <text x="48" y="32" class="txt-bold" fill="#1E40AF">Cloud Enhancement</text>
+      <text x="48" y="48" class="txt-small">(Hội tụ mép mây tích Cumulus)</text>
+      <text x="48" y="62" class="txt-small">Nắng chiếu qua khe mây rực rỡ</text>
+
+      <text x="290" y="38" text-anchor="middle" class="txt">Quang học khí quyển</text>
+      <text x="290" y="52" text-anchor="middle" class="txt-small">Tán xạ Mie + Phản xạ 3D</text>
+
+      <rect x="355" y="30" width="80" height="24" rx="3" fill="#DBEAFE" stroke="#93C5FD" />
+      <text x="395" y="45" text-anchor="middle" class="txt-bold" fill="#1E40AF">Ngắn (&lt;30p)</text>
+
+      <text x="495" y="45" text-anchor="middle" font-size="12px" font-weight="800" fill="#2563EB">105% – 120%</text>
+
+      <text x="615" y="38" text-anchor="middle" class="txt-bold" fill="#047857">Có thể vượt P_stc</text>
+      <text x="615" y="52" text-anchor="middle" class="txt-small">Đỉnh tức thời chốc lát</text>
+
+      <rect x="695" y="12" width="330" height="60" rx="4" fill="#FFFFFF" stroke="#93C5FD" />
+      <text x="705" y="28" class="txt-bold" fill="#1E40AF">BẢO TOÀN DỮ LIỆU 100% (KHÔNG LỌC BỎ):</text>
+      <text x="705" y="44" class="txt">• Là hiện tượng vật lý thật, không phải lỗi cảm biến</text>
+      <text x="705" y="58" class="txt">• Gắn cờ <tspan class="formula">is_cloud_enhancement = TRUE</tspan> phục vụ dự báo ML</text>
+    </g>
+
+    <!-- Row 2: Cold-Cell Thermal Inertia -->
+    <g transform="translate(0, 117)">
+      <rect width="1040" height="85" fill="#FFFFFF" stroke="#F1F5F9" />
+      <circle cx="25" cy="42" r="11" fill="#0284C7" />
+      <text x="25" y="46" text-anchor="middle" font-size="10px" font-weight="700" fill="#FFFFFF">2</text>
+      <text x="48" y="32" class="txt-bold" fill="#0369A1">Pin Lạnh Quán Tính Nhiệt</text>
+      <text x="48" y="48" class="txt-small">(Sáng mùa đông hoặc sau bóng mây)</text>
+      <text x="48" y="62" class="txt-small">T_cell = 12°C - 16°C &lt; 25°C</text>
+
+      <text x="290" y="38" text-anchor="middle" class="txt">Vật lý bán dẫn</text>
+      <text x="290" y="52" text-anchor="middle" class="txt-small">Hệ số nhiệt γ = -0,38%/°C</text>
+
+      <rect x="355" y="30" width="80" height="24" rx="3" fill="#E0F2FE" stroke="#BAE6FD" />
+      <text x="395" y="45" text-anchor="middle" class="txt-bold" fill="#0369A1">Ngắn/Trung (1-2h)</text>
+
+      <text x="495" y="45" text-anchor="middle" font-size="12px" font-weight="800" fill="#0284C7">108% – 115%</text>
+
+      <text x="615" y="38" text-anchor="middle" class="txt">P_actual ≤ P_stc</text>
+      <text x="615" y="52" text-anchor="middle" class="txt-small">Do bức xạ sáng chưa cực đại</text>
+
+      <rect x="695" y="12" width="330" height="60" rx="4" fill="#F8FAFC" stroke="#BAE6FD" />
+      <text x="705" y="28" class="txt-bold" fill="#0369A1">CHUẨN HÓA NHIỆT ĐỘ IEC 61724-1 ANNEX B:</text>
+      <text x="705" y="44" class="txt">• Áp dụng công thức hiệu chỉnh <tspan class="formula">PR_corr</tspan> về mốc chuẩn 25°C</text>
+      <text x="705" y="58" class="txt">• Nén vào Data Mart để theo dõi độ suy thoái vật liệu thực</text>
+    </g>
+
+    <!-- Row 3: High Albedo Colorbond Roof -->
+    <g transform="translate(0, 202)">
+      <rect width="1040" height="85" fill="#F8FAFC" stroke="#F1F5F9" />
+      <circle cx="25" cy="42" r="11" fill="#059669" />
+      <text x="25" y="46" text-anchor="middle" font-size="10px" font-weight="700" fill="#FFFFFF">3</text>
+      <text x="48" y="32" class="txt-bold" fill="#047857">Mái Tôn Trắng Albedo Cao</text>
+      <text x="48" y="48" class="txt-small">(Colorbond Surfmist Off-White)</text>
+      <text x="48" y="62" class="txt-small">Hệ số phản xạ Albedo = 0,55 - 0,70</text>
+
+      <text x="290" y="38" text-anchor="middle" class="txt">Quang học phản xạ</text>
+      <text x="290" y="52" text-anchor="middle" class="txt-small">Bức xạ đáy POA tăng +15%</text>
+
+      <rect x="355" y="30" width="80" height="24" rx="3" fill="#ECFDF5" stroke="#A7F3D0" />
+      <text x="395" y="45" text-anchor="middle" class="txt-bold" fill="#047857">Dài hạn (Cố định)</text>
+
+      <text x="495" y="45" text-anchor="middle" font-size="12px" font-weight="800" fill="#059669">102% – 110%</text>
+
+      <text x="615" y="38" text-anchor="middle" class="txt-bold" fill="#047857">Tăng +10% đến +18%</text>
+      <text x="615" y="52" text-anchor="middle" class="txt-small">Tổng sản lượng năm</text>
+
+      <rect x="695" y="12" width="330" height="60" rx="4" fill="#FFFFFF" stroke="#A7F3D0" />
+      <text x="705" y="28" class="txt-bold" fill="#047857">HIỆU CHỈNH MÔ HÌNH BỨC XẠ MẶT NGHIÊNG PEREZ:</text>
+      <text x="705" y="44" class="txt">• Bổ sung hệ số Albedo địa phương theo từng mã trạm</text>
+      <text x="705" y="58" class="txt">• Giúp đường cong dự báo LightGBM khớp chính xác thực tế</text>
+    </g>
+
+    <!-- Row 4: Bifacial Rear Gain -->
+    <g transform="translate(0, 287)">
+      <rect width="1040" height="85" fill="#FFFFFF" stroke="#F1F5F9" />
+      <circle cx="25" cy="42" r="11" fill="#D97706" />
+      <text x="25" y="46" text-anchor="middle" font-size="10px" font-weight="700" fill="#FFFFFF">4</text>
+      <text x="48" y="32" class="txt-bold" fill="#B45309">Độ Lợi Pin Hai Mặt (Bifacial)</text>
+      <text x="48" y="48" class="txt-small">(Hấp thụ ánh sáng cả 2 mặt)</text>
+      <text x="48" y="62" class="txt-small">Mặt sau nhận tán xạ + phản xạ</text>
+
+      <text x="290" y="38" text-anchor="middle" class="txt">Công nghệ module</text>
+      <text x="290" y="52" text-anchor="middle" class="txt-small">Bifaciality = 70% - 85%</text>
+
+      <rect x="355" y="30" width="80" height="24" rx="3" fill="#FFFBEB" stroke="#FDE68A" />
+      <text x="395" y="45" text-anchor="middle" class="txt-bold" fill="#B45309">Dài hạn (Thiết bị)</text>
+
+      <text x="495" y="45" text-anchor="middle" font-size="12px" font-weight="800" fill="#D97706">105% – 120%</text>
+
+      <text x="615" y="38" text-anchor="middle" class="txt-bold" fill="#B45309">Vượt Nameplate</text>
+      <text x="615" y="52" text-anchor="middle" class="txt-small">Công suất mặt trước</text>
+
+      <rect x="695" y="12" width="330" height="60" rx="4" fill="#F8FAFC" stroke="#FDE68A" />
+      <text x="705" y="28" class="txt-bold" fill="#B45309">KHAI BÁO CÔNG SUẤT STC HAI MẶT TRONG DWH:</text>
+      <text x="705" y="44" class="txt">• Dùng <tspan class="formula">P_stc_total = P_front + (Gain × P_rear)</tspan> làm mẫu số</text>
+      <text x="705" y="58" class="txt">• Đưa chỉ số PR về dải chuẩn 78% - 85% tránh hiểu nhầm ảo</text>
+    </g>
+
+    <!-- Row 5: Low GHI Small Denominator Singularity -->
+    <g transform="translate(0, 372)">
+      <rect width="1040" height="85" fill="#F8FAFC" stroke="#F1F5F9" />
+      <circle cx="25" cy="42" r="11" fill="#EA580C" />
+      <text x="25" y="46" text-anchor="middle" font-size="10px" font-weight="700" fill="#FFFFFF">5</text>
+      <text x="48" y="32" class="txt-bold" fill="#C2410C">Nhiễu Mẫu Số Nhỏ &amp; Cosine Error</text>
+      <text x="48" y="48" class="txt-small">(Bình minh sớm &amp; Hoàng hôn muộn)</text>
+      <text x="48" y="62" class="txt-small">GHI &lt; 100 W/m², góc chiếu xiên</text>
+
+      <text x="290" y="38" text-anchor="middle" class="txt">Sai số đo cảm biến</text>
+      <text x="290" y="52" text-anchor="middle" class="txt-small">Mẫu số tiệm cận về 0</text>
+
+      <rect x="355" y="30" width="80" height="24" rx="3" fill="#FFEDD5" stroke="#FED7AA" />
+      <text x="395" y="45" text-anchor="middle" class="txt-bold" fill="#C2410C">Rất ngắn (&lt;15p)</text>
+
+      <text x="495" y="45" text-anchor="middle" font-size="12px" font-weight="800" fill="#EA580C">130% – 300% (Ảo)</text>
+
+      <text x="615" y="38" text-anchor="middle" class="txt">Không vượt P_stc</text>
+      <text x="615" y="52" text-anchor="middle" class="txt-small">Sản lượng thực rất bé</text>
+
+      <rect x="695" y="12" width="330" height="60" rx="4" fill="#FFFFFF" stroke="#FED7AA" />
+      <text x="705" y="28" class="txt-bold" fill="#C2410C">RÀO CHẮN NGƯỠNG LỌC (CUT-OFF FILTER):</text>
+      <text x="705" y="44" class="txt">• Tự động gán <tspan class="formula">PR = NULL</tspan> khi <tspan class="formula">GHI &lt; 100 W/m²</tspan> trên Tableau BI</text>
+      <text x="705" y="58" class="txt">• Triệt tiêu 100% các điểm cực trị ảo làm méo mó biểu đồ</text>
+    </g>
+
+    <!-- Row 6: SCADA Modbus Buffering Spike -->
+    <g transform="translate(0, 457)">
+      <rect width="1040" height="80" rx="6" fill="#FEF2F2" stroke="#FECACA" />
+      <circle cx="25" cy="40" r="11" fill="#DC2626" />
+      <text x="25" y="44" text-anchor="middle" font-size="10px" font-weight="700" fill="#FFFFFF">6</text>
+      <text x="48" y="30" class="txt-bold" fill="#DC2626">Dồn Gói Viễn Thám SCADA</text>
+      <text x="48" y="46" class="txt-small">(Modbus Buffering Spike / Nghẽn mạng)</text>
+      <text x="48" y="60" class="txt-small">2 chu kỳ xả dồn vào 1 chu kỳ</text>
+
+      <text x="290" y="36" text-anchor="middle" class="txt-bold" fill="#DC2626">Lỗi truyền thông</text>
+      <text x="290" y="50" text-anchor="middle" class="txt-small">Vi phạm trần vật lý</text>
+
+      <rect x="355" y="28" width="80" height="24" rx="3" fill="#FEE2E2" stroke="#FCA5A5" />
+      <text x="395" y="43" text-anchor="middle" class="txt-bold" fill="#DC2626">Dị thường Cứng</text>
+
+      <text x="495" y="43" text-anchor="middle" font-size="12px" font-weight="800" fill="#DC2626">&gt; 200% (Lỗi)</text>
+
+      <text x="615" y="36" text-anchor="middle" class="txt-bold" fill="#DC2626">E &gt; P_stc × 0.25h</text>
+      <text x="615" y="50" text-anchor="middle" class="txt-small">Vượt quá công suất cực đại</text>
+
+      <rect x="695" y="10" width="330" height="58" rx="4" fill="#FFFFFF" stroke="#FCA5A5" />
+      <text x="705" y="26" class="txt-bold" fill="#DC2626">GẮN NHÃN PHYSICAL_OVER_CAPACITY &amp; CLAMPING:</text>
+      <text x="705" y="40" class="txt">• Thuật toán GMM-IF cách ly điểm lỗi và kẹp trần vật lý 115%</text>
+      <text x="705" y="54" class="txt">• Phân bổ lại sản lượng cho chu kỳ thiếu liền kề trước đó</text>
+    </g>
+  </g>
+</svg>

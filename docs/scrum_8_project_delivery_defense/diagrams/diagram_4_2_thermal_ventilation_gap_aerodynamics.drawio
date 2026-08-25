@@ -1,0 +1,12 @@
+<mxfile host="app.diagrams.net" modified="2026-08-25T16:19:00.000Z" agent="Mozilla/5.0" version="21.0.0" type="device">
+  <diagram id="diag-4-2" name="4.2 Thermal Ventilation Gap">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850">
+      <root>
+        <mxCell id="0" /><mxCell id="1" parent="0" />
+        <mxCell id="hdr" value="&lt;b&gt;CƠ CHẾ TẢN NHIỆT ĐỐI LƯU TỰ NHIÊN &amp;amp; KHOẢNG HỞ THÔNG GIÓ MÁI 10 - 15 CM (AS/NZS 5033:2021)&lt;/b&gt;&lt;br&gt;Áp dụng cho mọi cấu trúc mái tòa nhà: Mái kim loại / Mái bằng bê tông / Mái ngói" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#0F172A;fontColor=#F8FAFC;fontSize=14;" vertex="1" parent="1"><mxGeometry x="20" y="15" width="1040" height="46" as="geometry" /></mxCell>
+        <mxCell id="left_side" value="&lt;b&gt;⚠️ HIỆN TRẠNG: LẮP ÁP SÁT MẶT MÁI TÒA NHÀ (KHE HỞ &amp;lt; 20mm)&lt;/b&gt;&lt;br&gt;• Mặt mái (kim loại/bê tông) hấp thụ &amp;amp; tích nhiệt 70°C - 75°C bức xạ ngược lên đáy pin&lt;br&gt;• Không khí nghẽn dưới đáy pin, T_cell vọt lên 68°C - 72°C&lt;br&gt;• Điện áp Voc sụt giảm mạnh (-16,34% công suất trưa hè)&lt;br&gt;• Mất 14,8% sản lượng năm (~102.060 AUD/Năm thiệt hại)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEF2F2;strokeColor=#DC2626;align=left;spacingLeft=15;" vertex="1" parent="1"><mxGeometry x="20" y="75" width="505" height="570" as="geometry" /></mxCell>
+        <mxCell id="right_side" value="&lt;b&gt;✨ ĐỀ XUẤT: NÂNG KHOẢNG HỞ THÔNG GIÓ 10 - 15 CM (AS/NZS 5033:2021)&lt;/b&gt;&lt;br&gt;• Luồng gió đối lưu tự nhiên (Chimney Effect) giải phóng nhiệt đáy pin&lt;br&gt;• Nhiệt độ cell pin hạ trung bình ΔT_cell = -9,0°C (từ 68°C ➔ 59°C)&lt;br&gt;• Điện áp Voc phục hồi, tăng +3,42% công suất tức thời&lt;br&gt;&lt;b&gt;• Thu hồi: +117.224 kWh/Năm | Tiết kiệm: +23.445 AUD/Năm&lt;br&gt;• Chi phí giá đỡ CapEx: 24.280 AUD ➔ Hoàn vốn sau 1,04 Năm (~12,4 tháng)!&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ECFDF5;strokeColor=#059669;align=left;spacingLeft=15;" vertex="1" parent="1"><mxGeometry x="555" y="75" width="505" height="570" as="geometry" /></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
