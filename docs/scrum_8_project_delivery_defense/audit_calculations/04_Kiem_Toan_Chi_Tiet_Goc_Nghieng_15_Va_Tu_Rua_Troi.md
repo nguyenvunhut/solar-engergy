@@ -9,8 +9,14 @@
 ## 1. Cơ Sở Hình Học Quang Điện & Diễn Giải Chi Tiết Các Công Thức
 
 ### 1.1. Phương trình Bức xạ Mặt phẳng Nghiêng Hay-Davies Transposition Model
-$$\cos(\theta_{15^\circ}(t)) = \sin(\alpha(t))\cos(15^\circ) + \cos(\alpha(t))\sin(15^\circ)\cos(\psi(t))$$
-$$POA_{15^\circ}(t) = DNI(t) \cdot \cos(\theta_{15^\circ}(t)) + DHI(t) \cdot \left(\frac{1 + \cos(15^\circ)}{2}\right) + GHI(t) \cdot \rho_{\text{ground}} \cdot \left(\frac{1 - \cos(15^\circ)}{2}\right)$$  
+
+$$
+\cos(\theta_{15^\circ}(t)) = \sin(\alpha(t))\cos(15^\circ) + \cos(\alpha(t))\sin(15^\circ)\cos(\psi(t))
+$$
+
+$$
+POA_{15^\circ}(t) = DNI(t) \cdot \cos(\theta_{15^\circ}(t)) + DHI(t) \cdot \left(\frac{1 + \cos(15^\circ)}{2}\right) + GHI(t) \cdot \rho_{\text{ground}} \cdot \left(\frac{1 - \cos(15^\circ)}{2}\right)
+$$
 
 **Diễn giải chi tiết:**
 * Bang Victoria nằm ở vĩ độ $37^\circ\text{S}$ (Bán cầu Nam), hướng đón nắng tối ưu là hướng Bắc chính xác ($0^\circ\text{ Azimuth}$).
@@ -21,7 +27,10 @@ $$POA_{15^\circ}(t) = DNI(t) \cdot \cos(\theta_{15^\circ}(t)) + DHI(t) \cdot \le
 ---
 
 ### 1.2. Công thức Thu hồi Tổn thất Đọng Bùn Viền Nhôm Đáy (Mud-Damming Self-Cleaning)
-$$\Delta e_{\text{self\_cleaning}}(t) = 0{,}0134 \times e\_hourly(t) \implies \mathbf{18.500\,\text{kWh/năm}}$$  
+
+$$
+\Delta e_{\text{self, cleaning}}(t) = 0{,}0134 \times e_{\text{hourly}}(t) \implies \mathbf{18.500\,\text{kWh/năm}}
+$$
 
 **Diễn giải cơ chế vật lý:**
 * Trên mái bằng độ dốc $<8^\circ$, lực căng bề mặt giữ nước mưa đọng lại ở gờ nhôm đáy tấm pin, tạo thành dải bùn đất tích tụ (Mud Damming).
@@ -57,4 +66,7 @@ $$\Delta e_{\text{self\_cleaning}}(t) = 0{,}0134 \times e\_hourly(t) \implies \m
 * **Tổng giá trị tài chính:** **$14.670\,\text{AUD/năm}$**.
 * **CapEx chân đế chữ A nhôm định hình:** **$18.000\,\text{AUD}$**.
 * **Thời gian hoàn vốn hòa vốn:**
-  $$\text{Payback} = \frac{18.000\,\text{AUD}}{14.670\,\text{AUD/năm}} = \mathbf{1{,}23\,\text{Năm}}$$
+
+$$
+\text{Payback} = \frac{18.000\,\text{AUD}}{14.670\,\text{AUD/năm}} = \mathbf{1{,}23\,\text{Năm}}
+$$

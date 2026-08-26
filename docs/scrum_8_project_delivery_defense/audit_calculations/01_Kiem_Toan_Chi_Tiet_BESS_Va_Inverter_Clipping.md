@@ -9,29 +9,38 @@
 ## 1. Cơ Sở Lý Thuyết & Diễn Giải Chi Tiết Các Công Thức Toán Học
 
 ### 1.1. Công thức Tỷ lệ Quá tải Thiết kế (Inverter Loading Ratio - ILR) & Công suất Trần Biến tần AC
-$$\text{ILR} = \frac{P_{\text{DC}}}{P_{\text{AC}}} \approx 1{,}25 \implies P_{\text{AC\_max}} = \frac{P_{\text{STC}}}{\text{ILR}} = \frac{P_{\text{STC}}}{1{,}25} = 0{,}80 \times P_{\text{STC}}$$  
+
+$$
+\text{ILR} = \frac{P_{\text{DC}}}{P_{\text{AC}}} \approx 1{,}25 \implies P_{\text{AC, max}} = \frac{P_{\text{STC}}}{\text{ILR}} = \frac{P_{\text{STC}}}{1{,}25} = 0{,}80 \times P_{\text{STC}}
+$$
 
 **Diễn giải chi tiết:**
 * $P_{\text{STC}}$ (kWp): Tổng công suất định danh một chiều cực đại của các chuỗi pin mặt trời ở điều kiện tiêu chuẩn STC ($1.000\,\text{W/m}^2$, $25^\circ\text{C}$).
-* $P_{\text{AC\_max}}$ (kW): Công suất xoay chiều tối đa mà bộ biến tần (Inverter) có thể hòa vào lưới điện nội bộ trường học.
-* $\text{ILR} = 1{,}25$: Trong thiết kế điện mặt trời thương mại, công suất DC luôn được lắp lớn hơn định mức AC từ $20\% - 30\%$ để tối ưu hóa hiệu suất Inverter trong các khung giờ nắng vừa ($400 - 700\,\text{W/m}^2$, chiếm $80\%$ thời gian trong năm). Tuy nhiên, vào các giờ trưa mùa hè nắng gắt ($GHI \ge 900 - 1.050\,\text{W/m}^2$), công suất DC sinh ra vượt quá $P_{\text{AC\_max}}$, biến tần bắt buộc phải tự dịch chuyển điểm làm việc MPPT về phía điện áp hở mạch $V_{\text{oc}}$ để xén bỏ phần công suất thừa, gây ra hiện tượng **Inverter Clipping Loss**.
+* $P_{\text{AC, max}}$ (kW): Công suất xoay chiều tối đa mà bộ biến tần (Inverter) có thể hòa vào lưới điện nội bộ trường học.
+* $\text{ILR} = 1{,}25$: Trong thiết kế điện mặt trời thương mại, công suất DC luôn được lắp lớn hơn định mức AC từ $20\% - 30\%$ để tối ưu hóa hiệu suất Inverter trong các khung giờ nắng vừa ($400 - 700\,\text{W/m}^2$, chiếm $80\%$ thời gian trong năm). Tuy nhiên, vào các giờ trưa mùa hè nắng gắt ($GHI \ge 900 - 1.050\,\text{W/m}^2$), công suất DC sinh ra vượt quá $P_{\text{AC, max}}$, biến tần bắt buộc phải tự dịch chuyển điểm làm việc MPPT về phía điện áp hở mạch $V_{\text{oc}}$ để xén bỏ phần công suất thừa, gây ra hiện tượng **Inverter Clipping Loss**.
 
 ---
 
 ### 1.2. Công thức Tích phân Xác định Năng lượng Cắt ngọn Tức thời
-$$\Delta e_{\text{clip}}(t) = \max\left(0,\, \left(e\_stc\_hourly(t) \times pr\_adjusted(t)\right) - 0{,}80 \times p\_stc \times 1{,}0\,\text{h}\right)$$  
+
+$$
+\Delta e_{\text{clip}}(t) = \max\left(0,\, \left(e_{\text{stc, hourly}}(t) \times pr_{\text{adjusted}}(t)\right) - 0{,}80 \times p_{\text{stc}} \times 1{,}0\,\text{h}\right)
+$$
 
 **Diễn giải chi tiết:**
-* $e\_stc\_hourly(t) = p\_stc \times \frac{GHI(t)}{1000}$ (kWh): Sản lượng điện DC lý thuyết nếu không có suy hao nhiệt.
-* $pr\_adjusted(t)$: Hệ số hiệu suất thực tế của hệ thống sau khi đã trừ đi tổn thất nhiệt độ cell ($pr\_adjusted \approx 0{,}85 \times (1 - loss\_temp)$).
-* $e\_stc\_hourly(t) \times pr\_adjusted(t)$ (kWh): Năng lượng DC thực tế sinh ra từ giàn pin có thể truyền tới đầu vào Inverter.
-* $0{,}80 \times p\_stc \times 1{,}0\,\text{h}$ (kWh): Ngưỡng năng lượng AC tối đa Inverter được phép chuyển đổi trong $1\,\text{giờ}$.
+* $e_{\text{stc, hourly}}(t) = p_{\text{stc}} \times \frac{GHI(t)}{1000}$ (kWh): Sản lượng điện DC lý thuyết nếu không có suy hao nhiệt.
+* $pr_{\text{adjusted}}(t)$: Hệ số hiệu suất thực tế của hệ thống sau khi đã trừ đi tổn thất nhiệt độ cell ($pr_{\text{adjusted}} \approx 0{,}85 \times (1 - loss_{\text{temp}})$).
+* $e_{\text{stc, hourly}}(t) \times pr_{\text{adjusted}}(t)$ (kWh): Năng lượng DC thực tế sinh ra từ giàn pin có thể truyền tới đầu vào Inverter.
+* $0{,}80 \times p_{\text{stc}} \times 1{,}0\,\text{h}$ (kWh): Ngưỡng năng lượng AC tối đa Inverter được phép chuyển đổi trong $1\,\text{giờ}$.
 * Hàm $\max(0, \cdot)$: Đảm bảo chỉ ghi nhận giá trị dương khi có hiện tượng quá tải cắt ngọn; nếu công suất DC nhỏ hơn trần biến tần thì $\Delta e_{\text{clip}}(t) = 0$.
 
 ---
 
 ### 1.3. Công thức Thu hồi Năng lượng bằng Cấu trúc BESS DC-Coupled
-$$\Delta e_{\text{recovered}}(t) = \Delta e_{\text{clip}}(t) \times \eta_{\text{RTE}} = \Delta e_{\text{clip}}(t) \times 0{,}88$$  
+
+$$
+\Delta e_{\text{recovered}}(t) = \Delta e_{\text{clip}}(t) \times \eta_{\text{RTE}} = \Delta e_{\text{clip}}(t) \times 0{,}88
+$$
 
 **Diễn giải chi tiết:**
 * **Cấu trúc BESS DC-Coupled:** Bộ lưu trữ pin Lithium LiFePO4 được đấu nối trực tiếp vào thanh cái DC Bus phía trước tầng nghịch lưu Inverter. Khi giàn pin phát công suất vượt trần AC, phần dòng điện DC thừa được nạp thẳng vào khối pin lưu trữ thay vì bị Inverter xén bỏ.
@@ -40,10 +49,13 @@ $$\Delta e_{\text{recovered}}(t) = \Delta e_{\text{clip}}(t) \times \eta_{\text{
 ---
 
 ### 1.4. Công thức Doanh thu Tối ưu hóa Giá trị Năng lượng (TOU Arbitrage & Demand Charge Shaving)
-$$\Delta \text{Revenue}(t) = \begin{cases}
-\Delta e_{\text{discharged}}(t) \times (P_{\text{Peak}} - P_{\text{FIT}}), & \text{khi } hourly\_bucket \in [17, 21] \\
+
+$$
+\Delta \text{Revenue}(t) = \begin{cases}
+\Delta e_{\text{discharged}}(t) \times (P_{\text{Peak}} - P_{\text{FIT}}), & \text{khi } \text{hour}(t) \in [17, 21] \\
 \Delta e_{\text{discharged}}(t) \times P_{\text{FIT}}, & \text{các khung giờ khác}
-\end{cases}$$  
+\end{cases}
+$$
 
 **Diễn giải chi tiết:**
 * $P_{\text{Peak}} = 0{,}320\,\text{AUD/kWh}$: Biểu giá mua điện lưới giờ cao điểm tối (17:00–21:00) theo biểu giá NEM Victoria.
@@ -98,4 +110,7 @@ Tổn thất cắt ngọn tập trung chủ yếu vào **5 tháng mùa hè và �
   * **Trung bình 3 năm:** **$323.164\,\text{AUD/năm}$**
 * **Tổng vốn đầu tư CapEx:** **$1.250.000\,\text{AUD}$** (Giá tham chiếu pin LiFePO4 công nghiệp $500\,\text{AUD/kWh}$).
 * **Thời gian hoàn vốn hòa vốn (Payback Period):**
-  $$\text{Payback} = \frac{1.250.000\,\text{AUD}}{323.164\,\text{AUD/năm}} = \mathbf{3{,}87\,\text{Năm}}$$
+
+$$
+\text{Payback} = \frac{1.250.000\,\text{AUD}}{323.164\,\text{AUD/năm}} = \mathbf{3{,}87\,\text{Năm}}
+$$

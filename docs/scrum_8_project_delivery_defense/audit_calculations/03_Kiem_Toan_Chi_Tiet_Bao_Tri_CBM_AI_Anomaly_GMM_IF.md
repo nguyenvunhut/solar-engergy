@@ -9,22 +9,31 @@
 ## 1. Cơ Sở Khoa Học & Diễn Giải Chi Tiết Các Công Thức AI CBM
 
 ### 1.1. Công thức Xác định Thiếu hụt Sản lượng Tức thời do Dị thường Vận hành
-$$\Delta e_{\text{anomaly\_loss}}(t) = \begin{cases}
-\max\left(0,\, e\_expected(t) - e\_hourly(t)\right), & \text{khi } gmm\_if\_outlier\_flag = \text{TRUE} \\
-0, & \text{khi } gmm\_if\_outlier\_flag = \text{FALSE}
-\end{cases}$$  
+
+$$
+\Delta e_{\text{anomaly, loss}}(t) = \begin{cases}
+\max\left(0,\, e_{\text{expected}}(t) - e_{\text{hourly}}(t)\right), & \text{khi } \text{flag}_{\text{outlier}}(t) = 1 \\
+0, & \text{khi } \text{flag}_{\text{outlier}}(t) = 0
+\end{cases}
+$$
 
 **Diễn giải chi tiết:**
-* `gmm_if_outlier_flag`: Nhãn boolean do mô hình học máy lai Gaussian Mixture Model kết hợp Isolation Forest (GMM-IF) dự đoán. Nhãn TRUE chỉ định thời điểm trạm pin gặp sự cố kỹ thuật vật lý chứ không phải do thời tiết xấu.
-* $e\_expected(t)$ (kWh): Sản lượng kỳ vọng bình thường của trạm ở điều kiện thời tiết thực tế tương ứng.
-* $e\_hourly(t)$ (kWh): Sản lượng thực tế bị suy giảm do sự cố.
-* $\Delta e_{\text{anomaly\_loss}}(t)$: Lượng điện năng bị bốc hơi tại chu kỳ $t$ do hư hỏng thiết bị.
+* `flag_outlier`: Nhãn boolean do mô hình học máy lai Gaussian Mixture Model kết hợp Isolation Forest (GMM-IF) dự đoán. Nhãn = 1 chỉ định thời điểm trạm pin gặp sự cố kỹ thuật vật lý chứ không phải do thời tiết xấu.
+* $e_{\text{expected}}(t)$ (kWh): Sản lượng kỳ vọng bình thường của trạm ở điều kiện thời tiết thực tế tương ứng.
+* $e_{\text{hourly}}(t)$ (kWh): Sản lượng thực tế bị suy giảm do sự cố.
+* $\Delta e_{\text{anomaly, loss}}(t)$: Lượng điện năng bị bốc hơi tại chu kỳ $t$ do hư hỏng thiết bị.
 
 ---
 
 ### 1.2. Công thức Hệ số Cứu vãn Năng lượng (CBM Energy Salvage Factor) theo MTTR
-$$f_{\text{cbm}} = 1 - \frac{\text{MTTR}_{\text{mới}}}{\text{MTTR}_{\text{cũ}}} = 1 - \frac{2\,\text{ngày}}{14\,\text{ngày}} = \mathbf{0{,}857 \; (85{,}7\%)}$$
-$$\Delta e_{\text{recovered, cbm}}(t) = \Delta e_{\text{anomaly\_loss}}(t) \times f_{\text{cbm}}$$  
+
+$$
+f_{\text{cbm}} = 1 - \frac{\text{MTTR}_{\text{mới}}}{\text{MTTR}_{\text{cũ}}} = 1 - \frac{2\,\text{ngày}}{14\,\text{ngày}} = \mathbf{0{,}857 \; (85{,}7\%)}
+$$
+
+$$
+\Delta e_{\text{recovered, cbm}}(t) = \Delta e_{\text{anomaly, loss}}(t) \times f_{\text{cbm}}
+$$
 
 **Diễn giải cơ chế vận hành:**
 * **Quy trình O&M truyền thống (Time-Based / Reactive):** Khi đứt cầu chì DC hoặc Inverter trip, không có cảnh báo vi mô. MTTD (phát hiện) mất $14 - 30\,\text{ngày}$, MTTR (sửa chữa) mất thêm $7 - 14\,\text{ngày}$. Tổng thời gian chết gián đoạn năng lượng kéo dài từ **$21 - 44\,\text{ngày}$**.

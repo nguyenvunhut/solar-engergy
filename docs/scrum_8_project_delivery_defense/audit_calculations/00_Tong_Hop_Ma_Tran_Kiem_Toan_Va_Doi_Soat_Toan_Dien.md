@@ -9,7 +9,10 @@
 ## 1. Cơ Sở Lý Thuyết & Diễn Giải Chi Tiết Các Công Thức Tổng Hợp Chỉ Số
 
 ### 1.1. Công thức Hệ số Hiệu suất Mô Phỏng Mới (Simulated Performance Ratio - PR)
-$$PR_{\text{simulated}} = \frac{E_{\text{simulated}}}{\sum_{t=1}^N e\_stc\_hourly(t)} \times 100\% = \frac{E_0 + \sum_{i \in S} \Delta E_i}{E_0} \times PR_0$$  
+
+$$
+PR_{\text{simulated}} = \frac{E_{\text{simulated}}}{\sum_{t=1}^N e_{\text{stc, hourly}}(t)} \times 100\% = \frac{E_0 + \sum_{i \in S} \Delta E_i}{E_0} \times PR_0
+$$
 
 **Diễn giải chi tiết:**
 * $E_0 = 3.447.760\,\text{kWh/năm}$: Sản lượng điện thực tế cơ sở hiện nay của 42 trạm.
@@ -20,7 +23,10 @@ $$PR_{\text{simulated}} = \frac{E_{\text{simulated}}}{\sum_{t=1}^N e\_stc\_hourl
 ---
 
 ### 1.2. Công thức Hệ số Công suất Tải Mô Phỏng Mới (Capacity Factor - CF)
-$$CF_{\text{simulated}} = \frac{E_{\text{simulated}}}{P_{\text{STC}} \times 8.760\,\text{h}} \times 100\%$$  
+
+$$
+CF_{\text{simulated}} = \frac{E_{\text{simulated}}}{P_{\text{STC}} \times 8.760\,\text{h}} \times 100\%
+$$
 
 **Diễn giải chi tiết:**
 * $P_{\text{STC}} = 2.428\,\text{kWp}$: Tổng công suất lắp đặt định danh của 42 trạm.
@@ -30,7 +36,10 @@ $$CF_{\text{simulated}} = \frac{E_{\text{simulated}}}{P_{\text{STC}} \times 8.76
 ---
 
 ### 1.3. Công thức Thời Gian Hoàn Vốn Đầu Tư Hòa Vốn (Payback Period)
-$$\text{Payback} = \frac{\sum_{i \in S} \text{CapEx}_i}{\sum_{i \in S} \Delta \text{Revenue}_i} \quad (\text{Năm})$$  
+
+$$
+\text{Payback} = \frac{\sum_{i \in S} \text{CapEx}_i}{\sum_{i \in S} \Delta \text{Revenue}_i} \quad (\text{Năm})
+$$
 
 **Diễn giải chi tiết:**
 * $\sum \text{CapEx}_i$: Tổng chi phí vốn đầu tư thiết bị phần cứng ban đầu (BESS, giá đỡ nhôm thông gió, chân đế nghiêng $15^\circ$, mái che Inverter, DC Optimizers).

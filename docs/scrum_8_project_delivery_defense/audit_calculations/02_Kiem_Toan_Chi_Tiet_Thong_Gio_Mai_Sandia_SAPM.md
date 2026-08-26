@@ -9,7 +9,10 @@
 ## 1. Cơ Sở Vật Lý & Diễn Giải Chi Tiết Các Công Thức Truyền Nhiệt
 
 ### 1.1. Phương trình Nhiệt Động Học Thực Nghiệm Sandia SAPM
-$$T_{\text{cell}}(t) = T_{\text{amb}}(t) + GHI(t) \cdot e^{a + b \cdot v_w(t)} + \frac{GHI(t)}{1000} \cdot \Delta T$$  
+
+$$
+T_{\text{cell}}(t) = T_{\text{amb}}(t) + GHI(t) \cdot e^{a + b \cdot v_w(t)} + \frac{GHI(t)}{1000} \cdot \Delta T
+$$
 
 **Diễn giải chi tiết từng tham số:**
 * $T_{\text{cell}}(t)$ ($^\circ\text{C}$): Nhiệt độ hoạt động thực tế của tế bào quang điện (Cell Temperature).
@@ -24,8 +27,14 @@ $$T_{\text{cell}}(t) = T_{\text{amb}}(t) + GHI(t) \cdot e^{a + b \cdot v_w(t)} +
 ---
 
 ### 1.2. Công thức Độ Hạ Nhiệt Cell & Giảm Tỷ Lệ Tổn Thất Nhiệt
-$$\Delta T_{\text{cell}}(t) = \max\left(0,\, T_{\text{flush}}(t) - T_{\text{open}}(t)\right)$$
-$$\Delta loss_{\text{temp}}(t) = \gamma \cdot \Delta T_{\text{cell}}(t) = 0{,}0038 \times \Delta T_{\text{cell}}(t)$$  
+
+$$
+\Delta T_{\text{cell}}(t) = \max\left(0,\, T_{\text{flush}}(t) - T_{\text{open}}(t)\right)
+$$
+
+$$
+\Delta loss_{\text{temp}}(t) = \gamma \cdot \Delta T_{\text{cell}}(t) = 0{,}0038 \times \Delta T_{\text{cell}}(t)
+$$
 
 **Diễn giải chi tiết:**
 * $\Delta T_{\text{cell}}(t)$ ($^\circ\text{C}$): Mức nhiệt độ cell hạ được nhờ dòng khí đối lưu mặt sau.
@@ -34,11 +43,14 @@ $$\Delta loss_{\text{temp}}(t) = \gamma \cdot \Delta T_{\text{cell}}(t) = 0{,}00
 ---
 
 ### 1.3. Công thức Sản Lượng Điện Năng Thu Hồi Cấp Dòng Dữ Liệu
-$$\Delta e(t) = e\_hourly(t) \times \frac{\Delta loss_{\text{temp}}(t)}{1 - loss\_temp(t)}$$  
+
+$$
+\Delta e(t) = e_{\text{hourly}}(t) \times \frac{\Delta loss_{\text{temp}}(t)}{1 - loss_{\text{temp}}(t)}
+$$
 
 **Diễn giải logic toán học:**
-* $e\_hourly(t)$ (kWh): Sản lượng điện thực tế đo được tại Inverter, vốn đã bị suy hao bởi tổn thất nhiệt độ $loss\_temp(t)$ ban đầu.
-* $\frac{e\_hourly(t)}{1 - loss\_temp(t)}$: Năng lượng tiềm năng lý thuyết của giàn pin nếu loại bỏ hoàn toàn suy hao nhiệt độ ở thời điểm $t$.
+* $e_{\text{hourly}}(t)$ (kWh): Sản lượng điện thực tế đo được tại Inverter, vốn đã bị suy hao bởi tổn thất nhiệt độ $loss_{\text{temp}}(t)$ ban đầu.
+* $\frac{e_{\text{hourly}}(t)}{1 - loss_{\text{temp}}(t)}$: Năng lượng tiềm năng lý thuyết của giàn pin nếu loại bỏ hoàn toàn suy hao nhiệt độ ở thời điểm $t$.
 * Phép nhân với $\Delta loss_{\text{temp}}(t)$ mang lại phần sản lượng điện ròng được thu hồi trực tiếp từ việc hạ nhiệt tấm pin.
 
 ---
@@ -73,4 +85,7 @@ $$\Delta e(t) = e\_hourly(t) \times \frac{\Delta loss_{\text{temp}}(t)}{1 - loss
   * **Trung bình 3 năm:** **$23.445\,\text{AUD/năm}$**
 * **Chi phí lắp đặt giá đỡ nhôm định hình nâng cao 150mm:** **$24.280\,\text{AUD}$** ($10\,\text{AUD/kWp}$ cho $2.428\,\text{kWp}$).
 * **Thời gian hoàn vốn chính xác:**
-  $$\text{Payback} = \frac{24.280\,\text{AUD}}{23.445\,\text{AUD/năm}} = \mathbf{1{,}035\,\text{Năm}} \approx \mathbf{12{,}4\,\text{Tháng}}$$
+
+$$
+\text{Payback} = \frac{24.280\,\text{AUD}}{23.445\,\text{AUD/năm}} = \mathbf{1{,}035\,\text{Năm}} \approx \mathbf{12{,}4\,\text{Tháng}}
+$$

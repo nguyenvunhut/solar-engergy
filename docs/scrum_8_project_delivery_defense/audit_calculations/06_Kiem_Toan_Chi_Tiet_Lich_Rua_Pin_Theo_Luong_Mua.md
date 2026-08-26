@@ -9,11 +9,17 @@
 ## 1. Cơ Sở Khí Tượng & Diễn Giải Chi Tiết Các Công Thức
 
 ### 1.1. Thuật toán Chuỗi Ngày Khô Liên Tục & Mô hình Tổn thất Bám Bụi
-$$DryStreak(d) = \begin{cases}
-0, & \text{khi } daily\_precipitation(d) \ge 5{,}0\,\text{mm} \\
-DryStreak(d-1) + 1, & \text{khi } daily\_precipitation(d) < 5{,}0\,\text{mm}
-\end{cases}$$
-$$Loss_{\text{soiling}}(d) = \min\left(12{,}0\%,\, DryStreak(d) \times 0{,}15\%\right)$$  
+
+$$
+DryStreak(d) = \begin{cases}
+0, & \text{khi } daily_{\text{precipitation}}(d) \ge 5{,}0\,\text{mm} \\
+DryStreak(d-1) + 1, & \text{khi } daily_{\text{precipitation}}(d) < 5{,}0\,\text{mm}
+\end{cases}
+$$
+
+$$
+Loss_{\text{soiling}}(d) = \min\left(12{,}0\%,\, DryStreak(d) \times 0{,}15\%\right)
+$$
 
 **Diễn giải chi tiết:**
 * $DryStreak(d)$ (ngày): Số ngày liên tiếp không có mưa đáng kể ($<5{,}0\,\text{mm}$).
@@ -23,7 +29,10 @@ $$Loss_{\text{soiling}}(d) = \min\left(12{,}0\%,\, DryStreak(d) \times 0{,}15\%\
 ---
 
 ### 1.2. Điều Kiện Kích Hoạt Lệnh Rửa Pin Thông Minh
-$$\text{Điều kiện điều động O&M: } DryStreak(d) \ge 21\,\text{ngày} \quad \wedge \quad \sum_{i=0}^{7} daily\_precipitation(d+i) < 2{,}0\,\text{mm}$$  
+
+$$
+\text{Điều kiện điều động O&M: } DryStreak(d) \ge 21\,\text{ngày} \quad \wedge \quad \sum_{i=0}^{7} daily_{\text{precipitation}}(d+i) < 2{,}0\,\text{mm}
+$$
 
 **Diễn giải cơ chế vận hành:**
 * **Ngưỡng kích hoạt:** Chỉ điều động đội nhân công rửa pin khi chuỗi khô kéo dài từ $21\,\text{ngày}$ trở lên (tổn thất bụi bám vượt $>3{,}15\%$) **VÀ** dự báo khí tượng trong $7\,\text{ngày}$ tới không có mưa tự nhiên.

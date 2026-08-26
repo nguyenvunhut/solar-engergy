@@ -9,9 +9,18 @@
 ## 1. Cơ Sở Công Nghệ Bán Dẫn & Diễn Giải Chi Tiết Các Công Thức
 
 ### 1.1. Công thức Cải thiện Hệ số Suy giảm Nhiệt độ (Temperature Coefficient)
-$$P(T_{\text{cell}}) = P_{\text{STC}} \cdot \left[1 + \gamma \cdot (T_{\text{cell}} - 25^\circ\text{C})\right]$$
-$$\Delta \gamma = |\gamma_{\text{PERC}}| - |\gamma_{\text{TOPCon}}| = |-0{,}38\%/^\circ\text{C}| - |-0{,}30\%/^\circ\text{C}| = \mathbf{+0{,}08\%/^\circ\text{C}}$$
-$$\Delta \eta_{\text{temp\_benefit}}(t) = 0{,}0008 \times \max(0,\, t\_cell(t) - 25^\circ\text{C})$$  
+
+$$
+P(T_{\text{cell}}) = P_{\text{STC}} \cdot \left[1 + \gamma \cdot (T_{\text{cell}} - 25^\circ\text{C})\right]
+$$
+
+$$
+\Delta \gamma = |\gamma_{\text{PERC}}| - |\gamma_{\text{TOPCon}}| = |-0{,}38\%/^\circ\text{C}| - |-0{,}30\%/^\circ\text{C}| = \mathbf{+0{,}08\%/^\circ\text{C}}
+$$
+
+$$
+\Delta \eta_{\text{temp, benefit}}(t) = 0{,}0008 \times \max(0,\, t_{\text{cell}}(t) - 25^\circ\text{C})
+$$
 
 **Diễn giải chi tiết:**
 * Tấm pin P-type PERC thế hệ cũ có hệ số nhiệt $\gamma = -0{,}38\%/^\circ\text{C}$.
@@ -21,11 +30,14 @@ $$\Delta \eta_{\text{temp\_benefit}}(t) = 0{,}0008 \times \max(0,\, t\_cell(t) -
 ---
 
 ### 1.2. Công thức Tổng Sản Lượng Tăng Thêm Toàn Diện
-$$\Delta e_{\text{repowering}}(t) = e\_hourly(t) \times \left[0{,}062 + \Delta \eta_{\text{temp\_benefit}}(t)\right]$$  
+
+$$
+\Delta e_{\text{repowering}}(t) = e_{\text{hourly}}(t) \times \left[0{,}062 + \Delta \eta_{\text{temp, benefit}}(t)\right]
+$$
 
 **Diễn giải chi tiết:**
 * $0{,}062$ ($+6{,}2\%$): Mức tăng sản lượng cơ bản nhờ hiệu suất chuyển đổi quang điện của tấm pin tăng từ $18{,}5\% \rightarrow 22{,}5\%$ trên cùng một diện tích mái nhà hiện hữu.
-* $\Delta \eta_{\text{temp\_benefit}}(t)$: Phần tăng thêm động lực nhiệt độ theo thời gian thực.
+* $\Delta \eta_{\text{temp, benefit}}(t)$: Phần tăng thêm động lực nhiệt độ theo thời gian thực.
 * Triệt tiêu hoàn toàn hiện tượng suy thoái quang học ban đầu (Light-Induced Degradation - Zero LID) và giảm tốc độ suy thoái hàng năm từ $0{,}55\%/\text{năm} \rightarrow 0{,}40\%/\text{năm}$.
 
 ---
@@ -45,7 +57,7 @@ $$\Delta e_{\text{repowering}}(t) = e\_hourly(t) \times \left[0{,}062 + \Delta \
 
 | Dải Nhiệt Độ Tấm Pin (°C) | Số Giờ Vận Hành Ban Ngày | Tổng Sản Lượng Đo Được (kWh) | Sản Lượng Tăng Thêm Nhờ Hệ Số Nhiệt TOPCon (kWh) |
 | :--- | :---: | :---: | :---: |
-| Dải ≤25°C | 123.329 giờ | 1.823.344 kWh | 0 kWh |
+| Dải <=25°C | 123.329 giờ | 1.823.344 kWh | 0 kWh |
 | Dải 25–35°C | 84.752 giờ | 2.456.067 kWh | 9.759 kWh |
 | Dải 35–45°C | 51.769 giờ | 2.129.465 kWh | 25.460 kWh |
 | Dải 45–55°C | 34.888 giờ | 1.871.801 kWh | 37.050 kWh |

@@ -9,10 +9,13 @@
 ## 1. Cơ Sở Kỹ Thuật & Diễn Giải Chi Tiết Các Công Thức
 
 ### 1.1. Công thức Giảm Tải Biến Tần do Quá Nhiệt Tản Nhiệt (Inverter Thermal Derating)
-$$\Delta e_{\text{inv\_derate}}(t) = \begin{cases}
-0{,}20 \times e\_expected(t), & \text{khi } temperature\_c(t) \ge 35^\circ\text{C} \text{ và } shortwave\_radiation(t) \ge 800\,\text{W/m}^2 \\
+
+$$
+\Delta e_{\text{inv, derate}}(t) = \begin{cases}
+0{,}20 \times e_{\text{expected}}(t), & \text{khi } temperature_{\text{c}}(t) \ge 35^\circ\text{C} \text{ và } shortwave_{\text{radiation}}(t) \ge 800\,\text{W/m}^2 \\
 0, & \text{ngược lại}
-\end{cases}$$  
+\end{cases}
+$$
 
 **Diễn giải chi tiết:**
 * Khi nhiệt độ không khí $\ge 35^\circ\text{C}$ kết hợp bức xạ trực xạ mạnh $\ge 800\,\text{W/m}^2$, vỏ kim loại và bộ tản nhiệt (Heatsink) của biến tần ngoài trời bị nung nóng vượt ngưỡng an toàn $72^\circ\text{C}$.
@@ -22,10 +25,13 @@ $$\Delta e_{\text{inv\_derate}}(t) = \begin{cases}
 ---
 
 ### 1.2. Công thức Tối ưu hóa Chuỗi Pin Che bóng Cục bộ bằng DC Optimizers
-$$\Delta e_{\text{dc\_opt}}(t) = \begin{cases}
-0{,}12 \times e\_hourly(t), & \text{khi } site\_id \in [6\text{ Shaded Sites}] \text{ và } hourly\_bucket \in [8, 10] \cup [15, 17] \\
+
+$$
+\Delta e_{\text{dc, opt}}(t) = \begin{cases}
+0{,}12 \times e_{\text{hourly}}(t), & \text{khi } site_{\text{id}} \in [6\text{ Shaded Sites}] \text{ và } hour(t) \in [8, 10] \cup [15, 17] \\
 0, & \text{ngược lại}
-\end{cases}$$  
+\end{cases}
+$$
 
 **Diễn giải chi tiết:**
 * Tại 6 trạm bị che bóng cục bộ do cây cối hoặc lan can tòa nhà vào đầu giờ sáng và cuối giờ chiều, các tấm pin bị bóng che làm sụt dòng điện toàn bộ chuỗi nối tiếp.
@@ -61,4 +67,7 @@ $$\Delta e_{\text{dc\_opt}}(t) = \begin{cases}
 * **Chi phí đầu tư CapEx:** **$12.500\,\text{AUD}$** (gồm $4.500\,\text{AUD}$ mái che $+ 8.000\,\text{AUD}$ bộ tối ưu DC).
 * **Giá trị kinh tế hàng năm:** **$11.415\,\text{AUD/năm}$**.
 * **Thời gian hoàn vốn:**
-  $$\text{Payback} = \frac{12.500\,\text{AUD}}{11.415\,\text{AUD/năm}} = \mathbf{1{,}10\,\text{Năm}}$$
+
+$$
+\text{Payback} = \frac{12.500\,\text{AUD}}{11.415\,\text{AUD/năm}} = \mathbf{1{,}10\,\text{Năm}}
+$$
