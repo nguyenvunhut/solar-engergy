@@ -6,7 +6,32 @@
 
 ---
 
-## 1. Thống Kê Khí Tượng 12 Tháng Lượng Mưa & Tỷ Lệ Ngày Khô Tại Victoria
+## 1. Cơ Sở Khí Tượng & Diễn Giải Chi Tiết Các Công Thức
+
+### 1.1. Thuật toán Chuỗi Ngày Khô Liên Tục & Mô hình Tổn thất Bám Bụi
+$$DryStreak(d) = \begin{cases}
+0, & \text{khi } daily\_precipitation(d) \ge 5{,}0\,\text{mm} \\
+DryStreak(d-1) + 1, & \text{khi } daily\_precipitation(d) < 5{,}0\,\text{mm}
+\end{cases}$$
+$$Loss_{\text{soiling}}(d) = \min\left(12{,}0\%,\, DryStreak(d) \times 0{,}15\%\right)$$  
+
+**Diễn giải chi tiết:**
+* $DryStreak(d)$ (ngày): Số ngày liên tiếp không có mưa đáng kể ($<5{,}0\,\text{mm}$).
+* Tốc độ tích tụ bụi bẩn trung bình tại bang Victoria là $0{,}15\%\,\text{tổn thất/ngày}$ trong mùa khô.
+* Một trận mưa tự nhiên $\ge 5{,}0\,\text{mm}$ tạo dòng chảy màng nước đủ lớn để tự rửa sạch $95\%$ bụi bám trên mặt kính, do đó biến đếm $DryStreak$ được tự động reset về $0$.
+
+---
+
+### 1.2. Điều Kiện Kích Hoạt Lệnh Rửa Pin Thông Minh
+$$\text{Điều kiện điều động O&M: } DryStreak(d) \ge 21\,\text{ngày} \quad \wedge \quad \sum_{i=0}^{7} daily\_precipitation(d+i) < 2{,}0\,\text{mm}$$  
+
+**Diễn giải cơ chế vận hành:**
+* **Ngưỡng kích hoạt:** Chỉ điều động đội nhân công rửa pin khi chuỗi khô kéo dài từ $21\,\text{ngày}$ trở lên (tổn thất bụi bám vượt $>3{,}15\%$) **VÀ** dự báo khí tượng trong $7\,\text{ngày}$ tới không có mưa tự nhiên.
+* **Cắt giảm lãng phí:** Triệt tiêu hoàn toàn các đợt rửa pin định kỳ thủ công cứng nhắc trước thềm các cơn mưa tự nhiên, tiết kiệm $6.000\,\text{AUD/năm}$ chi phí nhân công và dịch vụ.
+
+---
+
+## 2. Thống Kê Khí Tượng 12 Tháng Lượng Mưa & Tỷ Lệ Ngày Khô Tại Victoria
 
 | Tháng | Mùa Vụ | Lượng Mưa Trung Bình (mm/ngày) | Tỷ Lệ Ngày Khô Hạn (%) | Đánh Giá Tích Tụ Bụi Bẩn Mùa Vụ |
 | :--- | :--- | :---: | :---: | :--- |
@@ -26,7 +51,7 @@
 
 ---
 
-## 2. Định Lượng Lợi Ích Vận Hành & Tài Chính
+## 3. Định Lượng Lợi Ích Vận Hành & Tài Chính
 
 * **Thu hồi sản lượng bám bụi mùa khô:** **$+62.060\,\text{kWh/năm}$** ($+1{,}80\%$ trong các tháng khô hạn) $\implies$ Doanh thu tăng thêm **$12.412\,\text{AUD/năm}$**.
 * **Tiết kiệm chi phí nhân công rửa thừa:** Cắt giảm 3 đợt rửa không cần thiết vào mùa mưa $\implies$ **Tiết kiệm $6.000\,\text{AUD/năm}$**.

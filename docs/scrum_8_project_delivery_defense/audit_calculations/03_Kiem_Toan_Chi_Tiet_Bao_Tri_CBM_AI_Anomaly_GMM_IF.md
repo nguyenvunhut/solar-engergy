@@ -6,17 +6,30 @@
 
 ---
 
-## 1. Nguyên Lý Khắc Phục & Rút Ngắn Thời Gian Sửa Chữa (MTTR)
+## 1. Cơ Sở Khoa Học & Diễn Giải Chi Tiết Các Công Thức AI CBM
 
-* **Quy trình truyền thống (Reactive / Time-Based O&M):**
-  * MTTD (Mean Time to Detect): $14 - 30\,\text{ngày}$ mới phát hiện qua hóa đơn tiền điện hoặc báo cáo sản lượng quý.
-  * MTTR (Mean Time to Repair): $7 - 14\,\text{ngày}$ do kỹ sư phải đến kiểm tra thủ công 42 trạm.
-  * Tổng thời gian gián đoạn phát điện: **$21 - 44\,\text{ngày}$**.
-* **Quy trình AI CBM tự động hóa:**
-  * MTTD: $< 1\,\text{giờ}$ (phát hiện ngay trong chu kỳ $15\,\text{phút}$ của pipeline).
-  * MTTR: **$1 - 3\,\text{ngày}$** nhờ Work Order tự động chỉ đích danh: Mã trạm, vị trí tủ Combiner Box, loại sự cố.
-  * **Hệ số cứu vãn năng lượng:**
-    $$f_{\text{cbm}} = 1 - \frac{\text{MTTR}_{\text{mới}}}{\text{MTTR}_{\text{cũ}}} = 1 - \frac{2\,\text{ngày}}{14\,\text{ngày}} = \mathbf{85{,}7\%}$$
+### 1.1. Công thức Xác định Thiếu hụt Sản lượng Tức thời do Dị thường Vận hành
+$$\Delta e_{\text{anomaly\_loss}}(t) = \begin{cases}
+\max\left(0,\, e\_expected(t) - e\_hourly(t)\right), & \text{khi } gmm\_if\_outlier\_flag = \text{TRUE} \\
+0, & \text{khi } gmm\_if\_outlier\_flag = \text{FALSE}
+\end{cases}$$  
+
+**Diễn giải chi tiết:**
+* `gmm_if_outlier_flag`: Nhãn boolean do mô hình học máy lai Gaussian Mixture Model kết hợp Isolation Forest (GMM-IF) dự đoán. Nhãn TRUE chỉ định thời điểm trạm pin gặp sự cố kỹ thuật vật lý chứ không phải do thời tiết xấu.
+* $e\_expected(t)$ (kWh): Sản lượng kỳ vọng bình thường của trạm ở điều kiện thời tiết thực tế tương ứng.
+* $e\_hourly(t)$ (kWh): Sản lượng thực tế bị suy giảm do sự cố.
+* $\Delta e_{\text{anomaly\_loss}}(t)$: Lượng điện năng bị bốc hơi tại chu kỳ $t$ do hư hỏng thiết bị.
+
+---
+
+### 1.2. Công thức Hệ số Cứu vãn Năng lượng (CBM Energy Salvage Factor) theo MTTR
+$$f_{\text{cbm}} = 1 - \frac{\text{MTTR}_{\text{mới}}}{\text{MTTR}_{\text{cũ}}} = 1 - \frac{2\,\text{ngày}}{14\,\text{ngày}} = \mathbf{0{,}857 \; (85{,}7\%)}$$
+$$\Delta e_{\text{recovered, cbm}}(t) = \Delta e_{\text{anomaly\_loss}}(t) \times f_{\text{cbm}}$$  
+
+**Diễn giải cơ chế vận hành:**
+* **Quy trình O&M truyền thống (Time-Based / Reactive):** Khi đứt cầu chì DC hoặc Inverter trip, không có cảnh báo vi mô. MTTD (phát hiện) mất $14 - 30\,\text{ngày}$, MTTR (sửa chữa) mất thêm $7 - 14\,\text{ngày}$. Tổng thời gian chết gián đoạn năng lượng kéo dài từ **$21 - 44\,\text{ngày}$**.
+* **Quy trình AI CBM tự động hóa:** Pipeline phát hiện dị thường trong chu kỳ $15\,\text{phút}$ (MTTD $< 1\,\text{giờ}$). Hệ thống tự động đẩy Work Order tới thiết bị di động của kỹ sư chỉ rõ: Tên trạm, số tủ Combiner Box, nguyên nhân lỗi $\implies$ Kỹ sư mang đúng vật tư xử lý dứt điểm trong vòng **$1 - 3\,\text{ngày}$**.
+* Nhờ rút ngắn thời gian sửa chữa từ $14\,\text{ngày}$ xuống $2\,\text{ngày}$, hệ thống bảo toàn và thu hồi được **$85{,}7\%$** lượng điện năng lẽ ra bị mất.
 
 ---
 

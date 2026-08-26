@@ -6,18 +6,40 @@
 
 ---
 
-## 1. Cơ Sở Vật Lý & Phương Trình Nhiệt Động Học
+## 1. Cơ Sở Vật Lý & Diễn Giải Chi Tiết Các Công Thức Truyền Nhiệt
 
-Nhiệt độ cell quang điện $T_{\text{cell}}$ làm việc thực tế được mô hình hóa theo phương trình thực nghiệm Sandia Photovoltaic Array Performance Model (SAPM):
+### 1.1. Phương trình Nhiệt Động Học Thực Nghiệm Sandia SAPM
+$$T_{\text{cell}}(t) = T_{\text{amb}}(t) + GHI(t) \cdot e^{a + b \cdot v_w(t)} + \frac{GHI(t)}{1000} \cdot \Delta T$$  
 
-$$T_{\text{cell}}(t) = T_{\text{amb}}(t) + GHI(t) \cdot e^{a + b \cdot v_w(t)} + \frac{GHI(t)}{1000} \cdot \Delta T$$
+**Diễn giải chi tiết từng tham số:**
+* $T_{\text{cell}}(t)$ ($^\circ\text{C}$): Nhiệt độ hoạt động thực tế của tế bào quang điện (Cell Temperature).
+* $T_{\text{amb}}(t)$ ($^\circ\text{C}$): Nhiệt độ không khí môi trường đo được tại trạm khí tượng (`temperature_c`).
+* $GHI(t)$ ($\text{W/m}^2$): Bức xạ tổng cộng mặt phẳng ngang (`shortwave_radiation`).
+* $v_w(t)$ ($\text{m/s}$): Tốc độ gió đối lưu làm mát (`wind_speed`).
+* $a, b$: Bộ hệ số thực nghiệm truyền nhiệt của phòng thí nghiệm quốc gia Sandia (Mỹ) cho các cấu trúc lắp đặt:
+  * **Lắp áp sát mái (Flush Roof Mount):** $a = -2{,}98, b = -0{,}0471$. Dòng khí phía sau tấm pin bị cản trở bởi bề mặt mái tôn/bê tông, nhiệt lượng bị bẫy lại làm nhiệt độ cell tăng vọt lên tới $68 - 72^\circ\text{C}$ vào mùa hè.
+  * **Lắp có khe hở thông gió $10–15\,\text{cm}$ (Open Rack / Ventilated):** $a = -3{,}56, b = -0{,}0750$. Khoảng cách $150\,\text{mm}$ kích hoạt đối lưu không khí tự nhiên theo hiệu ứng ống khói (Chimney Effect) và đối lưu cưỡng bức khi có gió, giúp tản nhiệt liên tục ở mặt lưng.
+* $\Delta T = 3{,}0^\circ\text{C}$: Độ chênh lệch nhiệt độ dẫn truyền từ mặt kính/lưng module tới mối nối P-N silicon bên trong màng EVA ở bức xạ chuẩn $1.000\,\text{W/m}^2$.
 
-Trong đó:
-* **Lắp áp sát mái (Flush Roof):** $a = -2{,}98$, $b = -0{,}0471$, $\Delta T = 3{,}0^\circ\text{C}$.
-* **Lắp có khoảng hở thông gió $10–15\,\text{cm}$ (Open Rack / Ventilated):** $a = -3{,}56$, $b = -0{,}0750$, $\Delta T = 3{,}0^\circ\text{C}$.
-* **Độ chênh lệch nhiệt độ cell hạ được:** $\Delta T_{\text{cell}}(t) = \max(0,\, T_{\text{flush}}(t) - T_{\text{open}}(t))$.
-* **Phần trăm tổn thất nhiệt giảm được:** $\Delta loss_{\text{temp}}(t) = \gamma \cdot \Delta T_{\text{cell}}(t)$ với $\gamma = 0{,}0038\,\text{/}^\circ\text{C}$ ($0{,}38\%/^\circ\text{C}$).
-* **Sản lượng điện thu hồi:** $\Delta e(t) = e\_hourly(t) \times \frac{\Delta loss_{\text{temp}}(t)}{1 - loss\_temp(t)}$.
+---
+
+### 1.2. Công thức Độ Hạ Nhiệt Cell & Giảm Tỷ Lệ Tổn Thất Nhiệt
+$$\Delta T_{\text{cell}}(t) = \max\left(0,\, T_{\text{flush}}(t) - T_{\text{open}}(t)\right)$$
+$$\Delta loss_{\text{temp}}(t) = \gamma \cdot \Delta T_{\text{cell}}(t) = 0{,}0038 \times \Delta T_{\text{cell}}(t)$$  
+
+**Diễn giải chi tiết:**
+* $\Delta T_{\text{cell}}(t)$ ($^\circ\text{C}$): Mức nhiệt độ cell hạ được nhờ dòng khí đối lưu mặt sau.
+* $\gamma = 0{,}0038\,\text{/}^\circ\text{C}$ ($0{,}38\%/^\circ\text{C}$): Hệ số suy giảm công suất theo nhiệt độ của tấm pin Silicon đa tinh thể/đơn tinh thể P-type PERC. Cứ mỗi $1^\circ\text{C}$ nhiệt độ cell tăng trên $25^\circ\text{C}$ chuẩn STC, công suất phát điện bị mất đi $0{,}38\%$. Do đó, việc hạ nhiệt $\Delta T_{\text{cell}}$ sẽ thu hồi trực tiếp $\Delta loss_{\text{temp}} = 0{,}38\% \times \Delta T_{\text{cell}}$.
+
+---
+
+### 1.3. Công thức Sản Lượng Điện Năng Thu Hồi Cấp Dòng Dữ Liệu
+$$\Delta e(t) = e\_hourly(t) \times \frac{\Delta loss_{\text{temp}}(t)}{1 - loss\_temp(t)}$$  
+
+**Diễn giải logic toán học:**
+* $e\_hourly(t)$ (kWh): Sản lượng điện thực tế đo được tại Inverter, vốn đã bị suy hao bởi tổn thất nhiệt độ $loss\_temp(t)$ ban đầu.
+* $\frac{e\_hourly(t)}{1 - loss\_temp(t)}$: Năng lượng tiềm năng lý thuyết của giàn pin nếu loại bỏ hoàn toàn suy hao nhiệt độ ở thời điểm $t$.
+* Phép nhân với $\Delta loss_{\text{temp}}(t)$ mang lại phần sản lượng điện ròng được thu hồi trực tiếp từ việc hạ nhiệt tấm pin.
 
 ---
 

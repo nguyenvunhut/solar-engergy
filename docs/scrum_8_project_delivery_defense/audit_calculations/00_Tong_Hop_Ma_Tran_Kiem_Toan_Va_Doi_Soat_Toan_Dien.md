@@ -6,7 +6,39 @@
 
 ---
 
-## 1. Ma Trận Đối Soát Chi Tiết Toàn Bộ 7 Hạng Mục Cải Tiến
+## 1. Cơ Sở Lý Thuyết & Diễn Giải Chi Tiết Các Công Thức Tổng Hợp Chỉ Số
+
+### 1.1. Công thức Hệ số Hiệu suất Mô Phỏng Mới (Simulated Performance Ratio - PR)
+$$PR_{\text{simulated}} = \frac{E_{\text{simulated}}}{\sum_{t=1}^N e\_stc\_hourly(t)} \times 100\% = \frac{E_0 + \sum_{i \in S} \Delta E_i}{E_0} \times PR_0$$  
+
+**Diễn giải chi tiết:**
+* $E_0 = 3.447.760\,\text{kWh/năm}$: Sản lượng điện thực tế cơ sở hiện nay của 42 trạm.
+* $PR_0 = 75{,}40\%$: Hệ số hiệu suất thực tế ban đầu của toàn hệ thống La Trobe.
+* $\sum_{i \in S} \Delta E_i$: Tổng năng lượng thu hồi thêm khi người dùng kích hoạt tập hợp các hạng mục cải tiến $S$.
+* $PR_{\text{simulated}}$ phản ánh chính xác mức gia tăng hiệu suất quang điện trên cùng tổng lượng bức xạ mặt trời chiếu vào hệ thống.
+
+---
+
+### 1.2. Công thức Hệ số Công suất Tải Mô Phỏng Mới (Capacity Factor - CF)
+$$CF_{\text{simulated}} = \frac{E_{\text{simulated}}}{P_{\text{STC}} \times 8.760\,\text{h}} \times 100\%$$  
+
+**Diễn giải chi tiết:**
+* $P_{\text{STC}} = 2.428\,\text{kWp}$: Tổng công suất lắp đặt định danh của 42 trạm.
+* $8.760\,\text{h}$: Tổng số giờ trong $1\,\text{năm}$ ($365\,\text{ngày} \times 24\,\text{giờ}$).
+* $CF$ thể hiện tỷ lệ giữa sản lượng phát thực tế so với kịch bản lý tưởng phát điện liên tục $100\%$ công suất định danh $24/7$. Khi áp dụng 6 giải pháp kỹ thuật, $CF$ tăng vọt từ $16{,}21\% \rightarrow 21{,}34\%$.
+
+---
+
+### 1.3. Công thức Thời Gian Hoàn Vốn Đầu Tư Hòa Vốn (Payback Period)
+$$\text{Payback} = \frac{\sum_{i \in S} \text{CapEx}_i}{\sum_{i \in S} \Delta \text{Revenue}_i} \quad (\text{Năm})$$  
+
+**Diễn giải chi tiết:**
+* $\sum \text{CapEx}_i$: Tổng chi phí vốn đầu tư thiết bị phần cứng ban đầu (BESS, giá đỡ nhôm thông gió, chân đế nghiêng $15^\circ$, mái che Inverter, DC Optimizers).
+* $\sum \Delta \text{Revenue}_i$: Tổng dòng tiền thặng dư hàng năm tạo ra từ sản lượng điện thu hồi thêm, tiền tiết kiệm nhân công bảo trì O&M và gọt đỉnh công suất Demand Charge.
+
+---
+
+## 2. Ma Trận Đối Soát Chi Tiết Toàn Bộ 7 Hạng Mục Cải Tiến
 
 | STT | Hạng Mục Đề Xuất Cải Tiến | Mức Cải Thiện Hiệu Suất | Điện Thu Hồi (kWh/Năm) | Doanh Thu Năm 2020 | Doanh Thu Năm 2021 | Doanh Thu Năm 2022 | Doanh Thu TB 3 Năm | CapEx Đầu Tư (AUD) | Thời Gian Hoàn Vốn |
 | :---: | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
@@ -22,7 +54,7 @@
 
 ---
 
-## 2. Bảng So Sánh Chỉ Số Vận Hành Toàn Hệ Thống (Before vs After)
+## 3. Bảng So Sánh Chỉ Số Vận Hành Toàn Hệ Thống (Before vs After)
 
 | Chỉ Số Hệ Thống | Hiện Trạng (Baseline) | Sau 6 Hạng Mục Kỹ Thuật | Sau Toàn Bộ 7 Hạng Mục | Mức Cải Thiện Ròng |
 | :--- | :---: | :---: | :---: | :---: |
@@ -41,7 +73,7 @@
 
 ---
 
-## 3. Danh Mục Các Báo Cáo Thành Phần
+## 4. Danh Mục Các Báo Cáo Thành Phần
 
 Toàn bộ chi tiết tính toán, công thức toán học và bảng bóc tách 12 tháng được lưu trữ độc lập tại:
 1. [`01_Kiem_Toan_Chi_Tiet_BESS_Va_Inverter_Clipping.md`](01_Kiem_Toan_Chi_Tiet_BESS_Va_Inverter_Clipping.md)
