@@ -1,0 +1,53 @@
+# BÁO CÁO TỔNG HỢP MA TRẬN KIỂM TOÁN ĐỊNH LƯỢNG & ĐỐI SOÁT 7 HẠNG MỤC CẢI TIẾN
+
+> **Hệ thống:** 42 Trạm Điện Mặt Trời Áp Mái Đại Học La Trobe (2.428 kWp, 5 Khuôn Viên)  
+> **Dữ liệu phân tích:** `bi_mart.mv_bi_mart_hourly_measures` (683.665 bản ghi) và `bi_mart.mv_bi_mart_daily_kpis` (28.677 bản ghi)  
+> **Đối soát kiểm toán:** Khớp 100% với Báo cáo Kiểm toán Định lượng `2026_08_25_Bao_Cao_Dinh_Luong_Chi_Tiet_Insights_Va_De_Xuat_Cai_Tien_Audited.md`.
+
+---
+
+## 1. Ma Trận Đối Soát Chi Tiết Toàn Bộ 7 Hạng Mục Cải Tiến
+
+| STT | Hạng Mục Đề Xuất Cải Tiến | Mức Cải Thiện Hiệu Suất | Điện Thu Hồi (kWh/Năm) | Doanh Thu Năm 2020 | Doanh Thu Năm 2021 | Doanh Thu Năm 2022 | Doanh Thu TB 3 Năm | CapEx Đầu Tư (AUD) | Thời Gian Hoàn Vốn |
+| :---: | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| 1 | BESS 5 Campus (1MW/2,5MWh) | +20,6% h.ích | 712.182 kWh | 260.766 AUD | 304.818 AUD | 382.065 AUD | 323.164 AUD | 1.250.000 AUD | 3,87 Năm |
+| 2 | Khe hở thông gió mái 10–15cm | +3,40% tổng | 117.224 kWh | 21.100 AUD | 22.859 AUD | 27.548 AUD | 23.445 AUD | 24.280 AUD | 1,04 Năm |
+| 3 | Bảo trì CBM & AI Anomaly | +2,04% tổng | 70.330 kWh | 26.659 AUD | 28.714 AUD | 32.528 AUD | 29.066 AUD | 8.000 AUD/năm | < 4 Tháng |
+| 4 | Khung nghiêng chữ A 15° mái | +3,90% nhóm | 71.850 kWh | 13.183 AUD | 14.283 AUD | 17.217 AUD | 14.670 AUD | 18.000 AUD | 1,23 Năm |
+| 5 | Tấm chắn nắng & DC Optimizer | +1,65% tổng | 57.074 kWh | 10.273 AUD | 11.129 AUD | 13.412 AUD | 11.415 AUD | 12.500 AUD | 1,10 Năm |
+| 6 | Lịch rửa pin theo lượng mưa | +1,80% khô | 62.060 kWh | 16.671 AUD | 18.102 AUD | 21.084 AUD | 18.412 AUD | 0 AUD | Tức thì |
+| 7 | Nâng cấp TOPCon (Repowering) | +6,20% tổng | 213.761 kWh | 38.477 AUD | 41.683 AUD | 50.234 AUD | 42.752 AUD | Kỳ Đại Tu | Vòng đời pin |
+| **Σ6** | **TỔNG 6 HẠNG MỤC KỸ THUẬT** | **+31,6%** | **1.090.720 kWh** | **348.652 AUD** | **400.905 AUD** | **493.854 AUD** | **420.172 AUD** | **1.312.780 AUD** | **3,12 NĂM** |
+| **Σ7** | **TOÀN BỘ 7 HẠNG MỤC CẢI TIẾN** | **+37,8%** | **1.304.481 kWh** | **387.129 AUD** | **442.588 AUD** | **544.088 AUD** | **462.924 AUD** | **1.312.780 AUD** | **2,84 NĂM** |
+
+---
+
+## 2. Bảng So Sánh Chỉ Số Vận Hành Toàn Hệ Thống (Before vs After)
+
+| Chỉ Số Hệ Thống | Hiện Trạng (Baseline) | Sau 6 Hạng Mục Kỹ Thuật | Sau Toàn Bộ 7 Hạng Mục | Mức Cải Thiện Ròng |
+| :--- | :---: | :---: | :---: | :---: |
+| **Sản lượng phát điện hàng năm** | 3.447.760 kWh/năm | 4.538.480 kWh/năm | 4.752.241 kWh/năm | **+1.304.481 kWh (+37,84%)** |
+| **Năng suất riêng (Specific Yield)** | 1.420 kWh/kWp/năm | 1.869 kWh/kWp/năm | 1.957 kWh/kWp/năm | **+537 kWh/kWp (+37,84%)** |
+| **Hệ số hiệu suất thực tế (PR)** | 75,40% | 83,95% | 88,62% | **+13,22% điểm phần trăm** |
+| **Hệ số công suất tải (CF)** | 16,21% | 21,34% | 22,34% | **+6,13% điểm phần trăm** |
+| **Tổn thất nhiệt độ cell (Loss_temp)** | 14,80% | 11,40% | 11,40% | **Giảm -3,40% tổn thất** |
+| **Tổn thất cắt ngọn Inverter (Loss_clip)** | 2,30% | 0,28% | 0,28% | **Giảm -2,02% tổn thất (BESS)** |
+| **Tổn thất dị thường vận hành** | 2,04% | 0,00% | 0,00% | **Triệt tiêu 100% (GMM-IF)** |
+| **Tổn thất bám bụi & đọng bùn đáy** | 2,34% | 0,00% | 0,00% | **Triệt tiêu 100% (Mưa + 15°)** |
+| **Tổng doanh thu & tiết kiệm tài chính**| 700.000 AUD/năm | 1.120.172 AUD/năm | 1.162.924 AUD/năm | **+462.924 AUD/năm (+66,13%)**|
+| **Tổng vốn đầu tư CapEx** | 0 AUD | 1.312.780 AUD | 1.312.780 AUD | **Bao gồm BESS 1MW/2.5MWh** |
+| **Thời gian hoàn vốn hòa vốn** | — | **3,12 Năm (37 Tháng)** | **2,84 Năm (34 Tháng)** | **Tính khả thi tài chính rất cao** |
+| **Cắt giảm phát thải CO2** | 2.827 tấn/năm | 3.722 tấn/năm | 3.897 tấn/năm | **+1.070 tấn CO2/năm** |
+
+---
+
+## 3. Danh Mục Các Báo Cáo Thành Phần
+
+Toàn bộ chi tiết tính toán, công thức toán học và bảng bóc tách 12 tháng được lưu trữ độc lập tại:
+1. [`01_Kiem_Toan_Chi_Tiet_BESS_Va_Inverter_Clipping.md`](01_Kiem_Toan_Chi_Tiet_BESS_Va_Inverter_Clipping.md)
+2. [`02_Kiem_Toan_Chi_Tiet_Thong_Gio_Mai_Sandia_SAPM.md`](02_Kiem_Toan_Chi_Tiet_Thong_Gio_Mai_Sandia_SAPM.md)
+3. [`03_Kiem_Toan_Chi_Tiet_Bao_Tri_CBM_AI_Anomaly_GMM_IF.md`](03_Kiem_Toan_Chi_Tiet_Bao_Tri_CBM_AI_Anomaly_GMM_IF.md)
+4. [`04_Kiem_Toan_Chi_Tiet_Goc_Nghieng_15_Va_Tu_Rua_Troi.md`](04_Kiem_Toan_Chi_Tiet_Goc_Nghieng_15_Va_Tu_Rua_Troi.md)
+5. [`05_Kiem_Toan_Chi_Tiet_Mai_Che_Inverter_Va_DC_Optimizers.md`](05_Kiem_Toan_Chi_Tiet_Mai_Che_Inverter_Va_DC_Optimizers.md)
+6. [`06_Kiem_Toan_Chi_Tiet_Lich_Rua_Pin_Theo_Luong_Mua.md`](06_Kiem_Toan_Chi_Tiet_Lich_Rua_Pin_Theo_Luong_Mua.md)
+7. [`07_Kiem_Toan_Chi_Tiet_Repowering_TOPCon_HJT.md`](07_Kiem_Toan_Chi_Tiet_Repowering_TOPCon_HJT.md)
