@@ -136,7 +136,149 @@ Dashboard hiển thị **7 Checkbox tương tác độc lập** (hoặc tích ch
 
 ---
 
-## 4. MA TRẬN TỔNG HỢP VÀ BẢNG KẾT QUẢ CUỐI CÙNG (FINAL RESULTS TABLE)
+## 4. HỆ THỐNG CÔNG THỨC TOÁN HỌC TÍNH TOÁN TRỰC TIẾP TRÊN DỮ LIỆU NHÁNH BI (ROW-LEVEL & VECTORIZED FORMULAS)
+
+Bên cạnh các chỉ số tổng hợp hằng năm, hệ thống Streamlit hỗ trợ **tính toán động trực tiếp trên từng dòng dữ liệu (Row-Level Telemetry)** từ 2 Materialized Views của kho dữ liệu Supabase:
+- `bi_mart.mv_bi_mart_hourly_measures` (Dữ liệu cấp giờ: $87.600+$ dòng đo đạc khí tượng & điện năng).
+- `bi_mart.mv_bi_mart_daily_kpis` (Dữ liệu cấp ngày: $42$ trạm $\times 1.095$ ngày).
+
+---
+
+### 4.1. Bảng Ánh Xạ Biến Dữ Liệu BI Mart (Data Schema Mapping)
+
+```
+┌───────────────────────────┬──────────────────────────────────────────┬──────────────┬──────────────────────────────────────────┐
+│ Ký Hiệu Toán Học          │ Tên Cột Trong mv_bi_mart_hourly_measures │ Đơn Vị Tính  │ Giải Nghĩa Vật Lý / Kỹ Thuật             │
+├───────────────────────────┼──────────────────────────────────────────┼──────────────┼──────────────────────────────────────────┤
+│ E_actual(t)               │ e_hourly                                 │ kWh          │ Sản lượng điện xoay chiều AC đo thực tế  │
+│ E_stc(t)                  │ e_stc_hourly                             │ kWh          │ Sản lượng danh định chuẩn (P_stc * G/1k) │
+│ E_expected(t)             │ e_expected                               │ kWh          │ Sản lượng kỳ vọng sau hiệu chỉnh nhiệt   │
+│ GHI(t)                    │ shortwave_radiation                      │ W/m²         │ Bức xạ tổng cộng mặt ngang               │
+│ DNI(t), DHI(t)            │ direct_normal_irradiance, diffuse_solar  │ W/m²         │ Bức xạ trực xạ và tán xạ bầu trời        │
+│ T_amb(t)                  │ temperature_c                            │ °C           │ Nhiệt độ không khí môi trường xung quanh │
+│ T_cell(t)                 │ t_cell                                   │ °C           │ Nhiệt độ bề mặt tấm pin (Ross Model)     │
+│ v_w(t)                    │ wind_speed                               │ m/s          │ Tốc độ gió đối lưu làm mát               │
+│ P_rain(t)                 │ precipitation_mm                         │ mm           │ Lượng mưa quan trắc theo giờ             │
+│ Flag_outlier(t)           │ gmm_if_outlier_flag                      │ boolean      │ Cờ dị thường từ thuật toán lai GMM-IF    │
+│ Reason_outlier(t)         │ gmm_if_outlier_reason                    │ text         │ 6 mã nguyên nhân vật lý dị thường        │
+│ Loss_temp(t)              │ loss_temp                                │ float (0..1) │ Tỷ lệ tổn thất nhiệt ((T_cell-25)*0.004) │
+│ PR_actual(t)              │ pr_actual                                │ float (0..1) │ Hệ số hiệu suất thô (e_hourly / e_stc)   │
+│ PR_adjusted(t)            │ pr_adjusted                              │ float (0..1) │ Hiệu suất chuẩn hóa nhiệt (0.85*(1-Loss))│
+│ P_stc                     │ p_stc                                    │ kWp          │ Công suất định danh cực đại của trạm     │
+│ FiT                       │ fit_rate                                 │ AUD/kWh      │ Biểu giá mua bán điện quy định           │
+└───────────────────────────┴──────────────────────────────────────────┴──────────────┴──────────────────────────────────────────┘
+```
+
+---
+
+### 4.2. Chi Tiết Công Thức Toán Học Cho Từng Hạng Mục Cải Tiến
+
+#### 🔹 1. Hệ thống BESS 5 Campus & Thu hồi Inverter Clipping ($Loss_{\text{clip}}$)
+* **Nguyên lý**: Công suất định mức AC của Inverter là $P_{\text{AC\_max}} = \frac{p\_stc}{1{,}25} = 0{,}80 \times p\_stc$. Khi năng lượng tiềm năng DC vượt trần AC, phần năng lượng dư bị cắt ngọn.
+* **Công thức trên từng dòng $t$**:
+  $$\Delta e_{\text{clip}}(t) = \max\left(0,\, \left(e\_stc\_hourly(t) \times pr\_adjusted(t)\right) - \left(0{,}80 \times p\_stc \times 1{,}0\,\text{h}\right)\right)$$
+* **Năng lượng thu hồi sau hiệu suất sạc-xả ($\eta_{\text{RTE}} = 0{,}88$)**:
+  $$\Delta e_{\text{recovered, bess}}(t) = \Delta e_{\text{clip}}(t) \times 0{,}88$$
+* **Doanh thu gia tăng TOU Arbitrage & Cắt đỉnh phụ tải Demand**:
+  $$\Delta \text{Revenue}_{\text{bess}}(t) = \begin{cases}
+  \Delta e_{\text{recovered, bess}}(t) \times (P_{\text{Peak}} - P_{\text{FIT}}), & \text{khi } hourly\_bucket \in [17, 21] \\
+  \Delta e_{\text{recovered, bess}}(t) \times P_{\text{FIT}}, & \text{các khung giờ khác}
+  \end{cases}$$
+
+---
+
+#### 🔹 2. Khoảng hở Thông gió Mái 10–15 cm (Hạ nhiệt độ cell $T_{\text{cell}}$)
+* **Nguyên lý**: Thay đổi mô hình truyền nhiệt Sandia SAPM từ áp sát mái sang giàn thông gió tự nhiên:
+  $$T_{\text{cell, flush}}(t) = temperature\_c(t) + shortwave\_radiation(t) \cdot e^{-2{,}98 - 0{,}0471 \cdot wind\_speed(t)} + \frac{shortwave\_radiation(t)}{1000} \cdot 3{,}0^\circ\text{C}$$
+  $$T_{\text{cell, open}}(t) = temperature\_c(t) + shortwave\_radiation(t) \cdot e^{-3{,}56 - 0{,}0750 \cdot wind\_speed(t)} + \frac{shortwave\_radiation(t)}{1000} \cdot 3{,}0^\circ\text{C}$$
+* **Mức hạ nhiệt độ cell & Sản lượng thu hồi tức thời**:
+  $$\Delta T_{\text{cell}}(t) = \max\left(0,\, T_{\text{cell, flush}}(t) - T_{\text{cell, open}}(t)\right)$$
+  $$\Delta loss_{\text{temp}}(t) = 0{,}0038 \times \Delta T_{\text{cell}}(t)$$
+  $$\Delta e_{\text{ventilation}}(t) = e\_hourly(t) \times \frac{\Delta loss_{\text{temp}}(t)}{1 - loss\_temp(t)}$$
+  $$\Delta \text{Revenue}_{\text{ventilation}}(t) = \Delta e_{\text{ventilation}}(t) \times fit\_rate$$
+
+---
+
+#### 🔹 3. Chuyển đổi Bảo trì CBM & AI Anomaly GMM-IF (Khắc phục 6 mã lỗi)
+* **Nguyên lý**: Bù đắp lượng năng lượng bị sụt giảm bất thường tại các dòng dữ liệu bị đánh cờ `gmm_if_outlier_flag = TRUE`.
+* **Công thức trên từng dòng $t$**:
+  $$\Delta e_{\text{anomaly\_loss}}(t) = \begin{cases}
+  \max\left(0,\, e\_expected(t) - e\_hourly(t)\right), & \text{khi } gmm\_if\_outlier\_flag = \text{TRUE} \\
+  0, & \text{khi } gmm\_if\_outlier\_flag = \text{FALSE}
+  \end{cases}$$
+* **Sản lượng thu hồi khi rút ngắn $\text{MTTR}$ từ $14\,\text{ngày} \rightarrow 2\,\text{ngày}$ (Hệ số cứu vãn $\eta_{\text{cbm}} = 85{,}7\%$)**:
+  $$\Delta e_{\text{recovered, cbm}}(t) = \Delta e_{\text{anomaly\_loss}}(t) \times \left(1 - \frac{2}{14}\right) = \Delta e_{\text{anomaly\_loss}}(t) \times 0{,}857$$
+  $$\Delta \text{Revenue}_{\text{cbm}}(t) = \Delta e_{\text{recovered, cbm}}(t) \times fit\_rate$$
+
+---
+
+#### 🔹 4. Nâng Khung Nghiêng 15° Hướng Bắc Cho 970 kWp Mái Bằng
+* **Nguyên lý**: Tính toán bức xạ trên mặt nghiêng $POA_{15^\circ}(t)$ theo mô hình Hay-Davies cho các trạm mái bằng ($Tilt = 0^\circ$):
+  $$\cos(\theta_{15^\circ}(t)) = \sin(\alpha(t))\cos(15^\circ) + \cos(\alpha(t))\sin(15^\circ)\cos(\psi(t))$$
+  $$POA_{15^\circ}(t) = direct\_normal\_irradiance(t) \cdot \cos(\theta_{15^\circ}(t)) + diffuse\_solar(t) \cdot \left(\frac{1 + \cos(15^\circ)}{2}\right) + GHI(t) \cdot 0{,}20 \cdot \left(\frac{1 - \cos(15^\circ)}{2}\right)$$
+* **Sản lượng tăng thêm quang học + Thu hồi tổn thất đọng bùn viền đáy**:
+  $$\Delta e_{\text{tilt, optical}}(t) = e\_hourly(t) \times \max\left(-0{,}05,\, \left(\frac{POA_{15^\circ}(t)}{shortwave\_radiation(t)} - 1\right)\right)$$
+  $$\Delta e_{\text{self\_cleaning}}(t) = 0{,}0134 \times e\_hourly(t) \quad (\text{triệt tiêu dải bùn đọng kích hoạt Bypass Diode})$$
+  $$\Delta e_{\text{tilt, total}}(t) = \Delta e_{\text{tilt, optical}}(t) + \Delta e_{\text{self\_cleaning}}(t)$$
+
+---
+
+#### 🔹 5. Mái Che Nắng Biến Tần & Bộ Tối Ưu Hóa Công Suất DC Optimizers
+* **Công thức Inverter Derating do quá nhiệt heatsink ($>72^\circ\text{C}$)**:
+  $$\Delta e_{\text{inv\_derate}}(t) = \begin{cases}
+  0{,}20 \times e\_expected(t), & \text{khi } temperature\_c(t) \ge 35^\circ\text{C} \text{ và } shortwave\_radiation(t) \ge 800\,\text{W/m}^2 \\
+  0, & \text{ngược lại}
+  \end{cases}$$
+* **Công thức DC Optimizers cho 6 trạm che bóng cục bộ ($320\,\text{kWp}$)**:
+  $$\Delta e_{\text{dc\_opt}}(t) = \begin{cases}
+  0{,}12 \times e\_hourly(t), & \text{khi } site\_id \in [6\text{ Shaded Sites}] \text{ và } hourly\_bucket \in [8, 10] \cup [15, 17] \\
+  0, & \text{ngược lại}
+  \end{cases}$$
+* **Tổng thu hồi**: $\Delta e_{\text{inv\_opt}}(t) = \Delta e_{\text{inv\_derate}}(t) + \Delta e_{\text{dc\_opt}}(t)$.
+
+---
+
+#### 🔹 6. Lịch Rửa Pin Thông Minh Theo Lượng Mưa (`precipitation_mm`)
+* **Nguyên lý**: Theo dõi chuỗi ngày khô hạn liên tục $DryStreak(d)$ trên dữ liệu cấp ngày `mv_bi_mart_daily_kpis`:
+  $$DryStreak(d) = \begin{cases}
+  0, & \text{khi } daily\_precipitation(d) \ge 5{,}0\,\text{mm} \\
+  DryStreak(d-1) + 1, & \text{khi } daily\_precipitation(d) < 5{,}0\,\text{mm}
+  \end{cases}$$
+  $$Loss_{\text{soiling}}(d) = \min\left(12{,}0\%,\, DryStreak(d) \times 0{,}15\%\right)$$
+* **Thu hồi khi kích hoạt rửa pin thông minh ($DryStreak \ge 21\,\text{ngày}$)**:
+  $$\Delta e_{\text{smart\_cleaning}}(t) = e\_hourly(t) \times Loss_{\text{soiling}}(d)$$
+
+---
+
+#### 🔹 7. Nâng Cấp Tấm Pin TOPCon / HJT (Kỳ Repowering)
+* **Công thức chênh lệch hiệu suất & hệ số nhiệt**:
+  $$\Delta \eta_{\text{temp\_benefit}}(t) = (0{,}0038 - 0{,}0030) \times \max(0,\, t\_cell(t) - 25) = 0{,}0008 \times \max(0,\, t\_cell(t) - 25)$$
+  $$\Delta e_{\text{repowering}}(t) = e\_hourly(t) \times \left(0{,}062 + \Delta \eta_{\text{temp\_benefit}}(t)\right)$$
+
+---
+
+### 4.3. Công Thức Tích Phân & Tổng Hợp Thời Gian Thực (Time-Series Aggregation)
+
+Khi người dùng tích chọn tập hợp các checkbox $S \subseteq \{1, 2, 3, 4, 5, 6, 7\}$ trên giao diện Streamlit:
+
+1. **Tổng sản lượng mô phỏng mới**:
+   $$E_{\text{simulated}} = \sum_{t=1}^{N} \left[ e\_hourly(t) + \sum_{i \in S} \Delta e_i(t) \right]$$
+
+2. **Hệ số Performance Ratio mới**:
+   $$PR_{\text{simulated}} = \frac{E_{\text{simulated}}}{\sum_{t=1}^{N} e\_stc\_hourly(t)} \times 100\%$$
+
+3. **Hệ số Tổn thất nhiệt trung bình mới**:
+   $$Loss_{\text{temp, simulated}} = \frac{\sum_{t=1}^{N} \left( loss\_temp(t) - \mathbb{I}_{2 \in S} \cdot \Delta loss_{\text{temp}}(t) \right) \cdot e\_stc\_hourly(t)}{\sum_{t=1}^{N} e\_stc\_hourly(t)}$$
+
+4. **Tổng Doanh thu & Tiết kiệm tài chính mới**:
+   $$\text{Revenue}_{\text{simulated}} = \sum_{t=1}^{N} \left[ (e\_hourly(t) \times fit\_rate) + \sum_{i \in S} \Delta \text{Revenue}_i(t) \right]$$
+
+5. **Thời gian hoàn vốn hòa vốn ($\text{Payback Period}$)**:
+   $$\text{Payback Period} = \frac{\sum_{i \in S} \text{CapEx}_i}{\sum_{i \in S} \Delta \text{Revenue}_i} \quad (\text{Năm})$$
+
+---
+
+## 5. MA TRẬN TỔNG HỢP VÀ BẢNG KẾT QUẢ CUỐI CÙNG (FINAL RESULTS TABLE)
 
 Khi **tất cả 6 hạng mục kỹ thuật cốt lõi (1 $\rightarrow$ 6)** được kích hoạt (chưa gồm kỳ đại tu Repowering):
 
@@ -162,7 +304,7 @@ Khi **tất cả 6 hạng mục kỹ thuật cốt lõi (1 $\rightarrow$ 6)** đ
 
 ---
 
-## 5. ĐẶC TẢ GIAO DIỆN & CẤU TRÚC CODE STREAMLIT (UI/UX SPECIFICATION)
+## 6. ĐẶC TẢ GIAO DIỆN & CẤU TRÚC CODE STREAMLIT (UI/UX SPECIFICATION)
 
 ### 5.1. Bố cục Phân trang & Thành phần Giao diện
 
@@ -433,7 +575,7 @@ else:
 
 ---
 
-## 6. KẾ HOẠCH TRIỂN KHAI & TÍCH HỢP HỆ THỐNG
+## 7. KẾ HOẠCH TRIỂN KHAI & TÍCH HỢP HỆ THỐNG
 
 1. **Vị trí tệp mã nguồn:** `srcs/06_dashboard/streamlit_whatif_app.py`.
 2. **Thư viện phụ thuộc:** `streamlit`, `pandas`, `numpy`, `plotly`.
