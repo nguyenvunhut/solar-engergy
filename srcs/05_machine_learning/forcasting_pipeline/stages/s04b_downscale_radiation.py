@@ -53,7 +53,10 @@ def ap_he_so_troi_quang(df: pd.DataFrame, thong_ke: dict) -> pd.DataFrame:
     he_so = {int(k): v for k, v in (thong_ke.get("cs_factor") or {}).items()}
     out["cs_factor"] = out[SITE_COL].map(he_so).fillna(1.0).astype("float32")
     out["ghi_cs"] = (out["ghi_cs"] * out["cs_factor"]).astype("float32")
-    out["clearsky_proxy"] = (out["sin_elevation"] ** 1.2).astype("float32")
+    # clearsky_proxy (sin^1.2) DA XOA 2026-08-20 de dong bo notebook 03_2 cell 11:
+    # khong xuat xu, Spearman=1 voi sin_elevation (ho so: DENY notebook 05 +
+    # bang chan doan 04). Pipeline .py truoc day VAN sinh cot nay nen du lieu
+    # trung gian co 115 cot thay vi 114, va bang chan doan co 86 dong thay vi 85.
     return out
 
 

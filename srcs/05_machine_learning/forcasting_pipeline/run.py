@@ -75,6 +75,12 @@ STAGE = {
 }
 THU_TU = list(STAGE)
 
+# '--stage all' bo qua s00. Ly do: s00 chi dien khuyet mlmart_raw -> mlmart_base, chay
+# MOT LAN la du (cac stage sau chi doc mlmart_base), va ban than no co rao chan khong
+# cho ghi de - nen 'all' luon chet ngay o buoc dau voi FileExistsError. Muon chay rieng
+# thi go '--stage s00', va phai xoa tay tep cu truoc.
+THU_TU_ALL = [t for t in THU_TU if t != "s00"]
+
 
 def _nap(ten_stage: str):
     ten_module, ten_ham = STAGE[ten_stage]
@@ -154,7 +160,7 @@ def main() -> int:
         )
     print()
 
-    cac_stage = THU_TU if args.stage == "all" else [args.stage]
+    cac_stage = THU_TU_ALL if args.stage == "all" else [args.stage]
     for ten in cac_stage:
         kwargs = {}
         if ten == "s08":

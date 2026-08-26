@@ -22,7 +22,7 @@ from core.io import cot_co_san, read_parquet
 from core.lgbm import chuan_bi_X, fit_an_toan, kiem_tra_gpu, them_tham_so_gpu
 from core.metrics import compute_metrics, metrics_3_pham_vi
 from core.phase_lag import do_tre_theo_site, quet_do_tre
-from core.target import nguong_cat, du_bao_ve_kwh, them_muc_tieu
+from core.target import nguong_cat, du_bao_ve_kwh, k_target, them_muc_tieu
 from core.weights import scope_masks
 
 
@@ -48,25 +48,44 @@ def train(ctx: Ctx) -> Ctx:
     # chi de lay best_iteration_, pha 2 fit lai khong dung som voi dung so cay do.
     # Bat/tat bang early_stopping_rounds trong train.yaml.
     vong = int(cfg.train.get("early_stopping_rounds") or 0)
+    if ctx.loss_name not in LOSS_DUNG_SOM:
+        vong = 0        # xem ghi chu o LOSS_DUNG_SOM
     if vong:
-        val_h = doc_val_that(ctx)
-        X_val = chuan_bi_X(val_h, ctx.features, ctx.medians, dtype=cfg.runtime["dtype"])
-        y_val = val_h[TARGET_SHIFTED].to_numpy()
+        # HAI tap validation KHAC NHAU, khong duoc dung lan:
+        #   - Cham metric  -> doc_val_that() theo notebook 06_4 load_val_holdout:
+        #     chi loai 2 site khong dang tin + loc ban ngay, GIU moi dong con lai
+        #     (319.957 dong o H1). Day la ban dang cho metrics_val.json khop notebook.
+        #   - Early stopping -> notebook 06_1/06_2/06_3 doc_val_that() con loc them
+        #     w > 0 (288.216 dong). Dung nham ban 319.957 thi best_iteration lech:
+        #     do duoc H4 huber 813 thay vi 822, H4 mse 462 thay vi 582.
+        val_es = _val_cho_dung_som(ctx)
+        X_val = chuan_bi_X(val_es, ctx.features, ctx.medians, dtype=cfg.runtime["dtype"])
+        # Nhan cham early stopping o thang k, KHONG phai kWh: model du bao ty le k.
+        # Notebook 06_x cell 26/48: _y_val_es = val_h['k_target'].astype(DTYPE).
+        # Ban truoc dung val_h[TARGET_SHIFTED] (= y_true, thang kWh) nen loss lech thang
+        # do -> dung som kich hoat bay -> phai tat han bang early_stopping_rounds: 0.
+        y_val = k_target(val_es, cfg).astype(cfg.runtime["dtype"])
         m_do, _ = fit_an_toan(
             params, ctx.X_dev, ctx.y_dev, sample_weight=ctx.w_dev, cfg=cfg,
             eval_set=[(ctx.X_dev, ctx.y_dev), (X_val, y_val)], dung_som=vong,
         )
         so_cay_tot = int(m_do.best_iteration_ or params["n_estimators"])
-        print(f"Dung som {vong} vong tren {len(val_h):,} dong validation "
+        print(f"Dung som {vong} vong tren {len(val_es):,} dong validation "
               f"-> best_iteration = {so_cay_tot} (yeu cau {params['n_estimators']})")
         params = {**params, "n_estimators": so_cay_tot}
         ctx.best_params = params
-        del m_do
-
-    t0 = time.time()
-    ctx.model, ctx.da_lui_ve_cpu = fit_an_toan(
-        params, ctx.X_dev, ctx.y_dev, sample_weight=ctx.w_dev, cfg=cfg
-    )
+        # GIU luon model vua fit, KHONG fit lai. Notebook 06_x cell 26/48 chi fit MOT lan
+        # roi dung thang ket qua do (`model = fit_an_toan(..., _X_val_es, _y_val_es, ...)`).
+        # Fit lai cho ra dung cung bo cay va cung du bao (da do: 0/500 diem khac bit),
+        # nhung object thieu metadata early stopping nen model.pkl khac nen file. Giu lai
+        # thi .pkl trung bit voi notebook.
+        ctx.model, ctx.da_lui_ve_cpu = m_do, False
+        t0 = time.time()
+    else:
+        t0 = time.time()
+        ctx.model, ctx.da_lui_ve_cpu = fit_an_toan(
+            params, ctx.X_dev, ctx.y_dev, sample_weight=ctx.w_dev, cfg=cfg
+        )
     so_cay = ctx.model.booster_.num_trees()
     print(f"Train xong sau {(time.time() - t0) / 60:.1f} phut"
           + (" (da lui ve CPU)" if ctx.da_lui_ve_cpu else "")
@@ -126,6 +145,36 @@ def bang_8_pham_vi(ctx: Ctx, khung: pd.DataFrame) -> pd.DataFrame:
             "mae": round(m["mae"], 4), "r2": round(m["r2"], 4),
         })
     return pd.DataFrame(dong)
+
+
+# Loss nao fit mo hinh CUOI kem early stopping. Do trong artifact notebook:
+#   06_1 (mae)  : model = fit_an_toan(BEST_PARAMS, X_dev, y_dev, w_dev)          <- KHONG
+#   06_2 (huber): model = fit_an_toan(..., _X_val_es, _y_val_es, LICH_SU_...)    <- CO
+#   06_3 (mse)  : model = fit_an_toan(..., _X_val_es, _y_val_es, LICH_SU_...)    <- CO
+# Kiem lai bang chinh model.pkl cua notebook:
+#   mae/h1   _evals_result RONG, best_iteration_ = 0
+#   huber/h1 _evals_result CO,   best_iteration_ = 891
+#   mse/h1   _evals_result CO,   best_iteration_ = 337
+# Ba notebook viet khac nhau - day khong phai lua chon cua pipeline, chi la ghi lai cho
+# dung de tai lap. Ap early stopping cho mae thi model.pkl khong con trung bit voi
+# notebook (du so cay va moi metric van y het, vi best_iteration = n_estimators).
+LOSS_DUNG_SOM = ("huber", "mse")
+
+
+def _val_cho_dung_som(ctx: Ctx) -> pd.DataFrame:
+    """Tap validation dung RIENG cho early stopping - ban co loc w > 0.
+
+    Notebook 06_1/06_2/06_3, ham doc_val_that() (cell 16):
+        d['w'] = build_sample_weight(d)
+        return d[d['w'].gt(0)]
+    Ban nay CHI de chon so cay. Cham metric van dung doc_val_that() (khong loc w),
+    vi do la ban ma notebook 06_4 load_val_holdout dung va metrics_val.json dang khop.
+    """
+    from core.weights import build_sample_weight
+
+    d = doc_val_that(ctx).copy()
+    d["w"] = build_sample_weight(d, ctx.cfg)
+    return d[d["w"].gt(0)]
 
 
 def doc_val_that(ctx: Ctx) -> pd.DataFrame:

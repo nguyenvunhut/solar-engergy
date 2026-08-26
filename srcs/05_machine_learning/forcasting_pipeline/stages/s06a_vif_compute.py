@@ -42,9 +42,14 @@ def cot_so_can_chan_doan(duong_dan) -> tuple[list[str], list[str]]:
     Bo 19 cot chuoi (campus_name, weather_description...) von chiem phan lon RAM.
     """
     schema = pq.ParquetFile(str(duong_dan)).schema_arrow
+    # FIX 2026-08-20 (dong bo notebook 04_vif_diagnostics cell 4): cot category co kieu
+    # Arrow dictionary<values=string, indices=int8/int32> - so khop chuoi "int" se BAT NHAM
+    # cot chu thanh cot so, roi ep float32 se no ArrowInvalid ("Failed to parse string:
+    # 'Bundoora' as a scalar of type float"). Dung predicate cua pyarrow de loai han
+    # dictionary / string / bool.
     so = [
         ten for ten, kieu in zip(schema.names, schema.types)
-        if any(k in str(kieu) for k in ("double", "float", "int"))
+        if (pa.types.is_floating(kieu) or pa.types.is_integer(kieu))
         and ten not in LOAI_TRU and not ten.startswith(f"{VERSION}_")
     ]
     return so, [n for n in schema.names if n not in so]

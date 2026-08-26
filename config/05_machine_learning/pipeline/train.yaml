@@ -41,7 +41,12 @@ use_best_params_if_exists: true
 # trung byte. Nguyen nhan: eval_set o day gom ca (X_dev, y_dev), ma LightGBM dung khi
 # BAT KY tap nao ngung cai thien - tap train bao hoa rat nhanh. Notebook cau hinh khac
 # cho nay. Giu khoa lai de sau nay dung khi da do duoc dung cach notebook lam.
-early_stopping_rounds: 0
+# BAT LAI 2026-08-23 (= EARLY_STOPPING_ROUNDS trong notebook 06_1/06_2/06_3 cell 2).
+# Truoc day dat 0 vi dung som kich hoat bay - nguyen nhan da truy ra: s08c cham
+# early stopping bang nhan thang kWh (y_true) trong khi model du bao thang ty le k,
+# va khong truyen eval_metric nen LightGBM dung metric cua objective thay vi l1.
+# Da sua ca hai cho, nen bat lai duoc.
+early_stopping_rounds: 100
 
 # ── Chinh sach trong so mau (sample weight) ──
 # Lay dung tu srcs/05_machine_learning/Forcasting_v3: KHONG xoa dong outlier ma dat

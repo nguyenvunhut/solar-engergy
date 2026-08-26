@@ -155,5 +155,8 @@ def add_solar_geometry_features(df: pd.DataFrame, cfg: Cfg) -> pd.DataFrame:
     _zen = np.clip(90.0 - out["solar_elevation"].to_numpy(dtype="float64"), 0.0, 90.0)
     _ghi = clearsky.haurwitz(pd.Series(_zen))["ghi"].to_numpy()
     out["ghi_cs"] = np.where(out["sin_elevation"] > 0, _ghi, 0.0).astype("float32")
-    out["clearsky_proxy"] = (out["sin_elevation"] ** 1.2).astype("float32")
+    # clearsky_proxy (sin^1.2) DA XOA 2026-08-20 de dong bo notebook 03_2 cell 11:
+    # khong xuat xu, Spearman=1 voi sin_elevation (ho so: DENY notebook 05 +
+    # bang chan doan 04). Pipeline .py truoc day VAN sinh cot nay nen du lieu
+    # trung gian co 115 cot thay vi 114, va bang chan doan co 86 dong thay vi 85.
     return out

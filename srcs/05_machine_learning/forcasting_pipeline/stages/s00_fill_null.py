@@ -161,6 +161,25 @@ def _dien_khi_tuong(df: pd.DataFrame) -> pd.DataFrame:
     return df.reset_index()
 
 
+# Cot chu -> category (giam RAM). Dong bo TUNG DONG voi notebook 00_fill_null_imputation
+# (cell 1, COT_CHU_CATEGORY + convert_text_to_category). KHONG chuyen
+# gmm_if_outlier_reason (s01 con fillna("")) va weather_join_method (s01 gan nhan moi):
+# category thieu nhan se loi.
+#
+# Truoc day s00 bo han buoc nay nen ghi ra large_string, trong khi notebook ghi
+# dictionary<string>. Khac dtype ngay o tep dau vao cua s01 -> moi stage phia sau khong
+# the trung bit voi artifact notebook.
+COT_CHU_CATEGORY = ["campus_name", "panel", "inverter", "optimizers", "site_metric",
+                    "location_name", "weather_condition", "weather_description"]
+
+
+def _chu_sang_category(df):
+    for cot in COT_CHU_CATEGORY:
+        if cot in df.columns:
+            df[cot] = df[cot].astype("category")
+    return df
+
+
 def run_s00(cfg: Cfg | None = None):
     cfg = cfg or load_config()
     paths = Paths(cfg)
@@ -199,6 +218,8 @@ def run_s00(cfg: Cfg | None = None):
         raise AssertionError(
             f"So dong doi: vao {n_dong_vao:,} ra {len(df):,}. Stage nay chi duoc dien "
             f"gia tri, khong duoc them/bot dong.")
+
+    df = _chu_sang_category(df)
 
     paths.tao_thu_muc(duong_ra.parent)
     write_parquet(df, duong_ra)

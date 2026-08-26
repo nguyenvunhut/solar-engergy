@@ -137,13 +137,24 @@ def chuan_bi(ctx: Ctx) -> Ctx:
 
     from core.target import dat_nguong_cat, k_target, nguong_cat, tinh_nguong_cat
 
-    # Suy nguong cat tu chinh tap train, GIONG notebook 06 (CLIP_K = None ->
-    # tinh_clip_tu_train). Notebook tinh mot lan o H1 roi dung lai cho H4, nen o day
-    # cung chi tinh khi chua co - de hai ben ra dung cung mot con so.
+    # Nguong cat LUON suy tu tap train tai tam DAU TIEN trong horizon_steps (= H1), bat
+    # ke dang train tam nao - GIONG notebook 06: o 15 tinh mot lan cho H1, con o 48 (H4)
+    # khong tinh lai ma dung lai bien toan cuc CLIP_K.
+    #
+    # Ban truoc chi co 'if not cfg.train.get("clip_k")' nen ket qua PHU THUOC THU TU GOI
+    # LENH: chay 'run.py --stage s08' (h1 truoc) thi h4 ke thua nguong cua h1 va khop
+    # notebook; nhung chay rieng 'run.py --stage s08 --horizon 4' thi la tien trinh moi,
+    # cfg rong, h4 tu tinh nguong tu chinh no (1,36855096 thay vi 1,36855113) -> model.pkl
+    # khac notebook. Cung mot ma nguon ma go lenh khac nhau lai ra mo hinh khac nhau.
+    # Nay co dinh moc tinh o H1 nen moi cach goi deu ra cung mot con so.
     if not cfg.train.get("clip_k"):
-        dat_nguong_cat(cfg, tinh_nguong_cat(dev_h, cfg))
-        print(f"Nguong cat suy tu tap train: phan vi {cfg.train['clip_phan_vi']} "
-              f"cua k = {nguong_cat(cfg):.4f}")
+        h_goc = int(cfg.train["horizon_steps"][0])
+        dev_goc = dev_h if h == h_goc else _loc_ban_ngay(them_muc_tieu(dev, h_goc, cfg), eps)
+        dat_nguong_cat(cfg, tinh_nguong_cat(dev_goc, cfg))
+        print(f"Nguong cat suy tu tap train tai H{h_goc} (giong notebook 06): "
+              f"phan vi {cfg.train['clip_phan_vi']} cua k = {nguong_cat(cfg):.4f}")
+        if dev_goc is not dev_h:
+            del dev_goc
 
     dev_h["k_target"] = k_target(dev_h, cfg)
     dev_h["w"] = build_sample_weight(dev_h, cfg)

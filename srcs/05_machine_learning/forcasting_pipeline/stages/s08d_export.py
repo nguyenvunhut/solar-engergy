@@ -64,7 +64,10 @@ def ghi_model(ctx: Ctx) -> None:
     # nao bi loai) nen khong mat thong tin gi. Bam theo notebook de model_config.json
     # khop TUNG BYTE - day la ban ghi ma bao cao trich dan, lech mot khoa la phai giai
     # trinh truoc hoi dong.
-    if ctx.horizon_steps == 1:
+    # Do da: notebook 06_1 (mae) ghi khoa nay o CA h1 va h4; 06_2 (huber) va 06_3 (mse)
+    # chi ghi o h1, o export h4 thi sot. Gia tri la [] o moi truong hop nen khong mat
+    # thong tin - bam theo notebook de model_config.json khop tung byte.
+    if ctx.horizon_steps == 1 or ctx.loss_name == "mae":
         cau_hinh["excluded_features"] = ctx.bo_di
     cau_hinh.update({
         "lgb_objective": ctx.best_params.get("objective"),
@@ -89,7 +92,14 @@ def ghi_model(ctx: Ctx) -> None:
         # ten cot quy mo dang dung. Thieu khoa nay thi stage s09 va notebook 07 khong
         # biet ban ghi duoc chuan hoa bang mau so nao de nhan nguoc cho dung.
         "mau_so": COT_QUY_MO,
-        "model_params": {k: v for k, v in ctx.best_params.items() if k not in _KHOA_GPU},
+        # Notebook 06_x cell 44/52: dung model.get_params() chu KHONG dung bo tham so
+        # YEU CAU. get_params() la thu LightGBM THUC SU dung - gom ca khoa mac dinh ma
+        # Optuna khong dong toi (boosting_type, max_depth, subsample_for_bin...), va
+        # n_estimators la gia tri TRUYEN VAO constructor (929) chu khong phai so cay
+        # sau dung som (891). Ban truoc ghi ctx.best_params nen thieu 8 khoa mac dinh
+        # va ghi nham n_estimators -> model_config.json khong khop notebook.
+        "model_params": {k: v for k, v in ctx.model.get_params().items()
+                         if k not in _KHOA_GPU},
     })
     # KHONG them khoa nao khac vao day (truoc co 'train_tren_gpu' - da bo): notebook
     # khong ghi nen them vao la model_config.json khong con khop tung byte. Thiet bi

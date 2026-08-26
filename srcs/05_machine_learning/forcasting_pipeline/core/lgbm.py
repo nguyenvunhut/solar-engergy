@@ -137,7 +137,12 @@ def fit_an_toan(params: dict, X, y, sample_weight=None, cfg: Cfg | None = None,
         if cot_cat:
             kw["categorical_feature"] = cot_cat
         if eval_set and dung_som:
+            # eval_metric='l1' + eval_names: dong bo notebook 06_x fit_an_toan.
+            # Khong truyen eval_metric thi LightGBM cham bang metric CUA OBJECTIVE
+            # (huber / l2), con first_metric_only=True lai chi xet metric dau -> dung som
+            # theo thuoc khac han notebook, ra so cay khac.
             model.fit(X, y, eval_set=eval_set,
+                      eval_names=["train", "val"], eval_metric="l1",
                       callbacks=[early_stopping(dung_som, first_metric_only=True,
                                                 verbose=False),
                                  log_evaluation(0)], **kw)
