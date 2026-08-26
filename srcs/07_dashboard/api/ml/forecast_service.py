@@ -35,7 +35,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-GOC_REPO = Path(__file__).resolve().parents[2]
+GOC_REPO = Path(__file__).resolve().parents[4]
 
 # Doi phien ban bang bien moi truong DASHBOARD_VERSION, mac dinh v5.
 VERSION = os.environ.get("DASHBOARD_VERSION", "v5")

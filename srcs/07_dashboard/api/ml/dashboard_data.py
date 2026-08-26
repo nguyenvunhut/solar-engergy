@@ -28,7 +28,7 @@ import numpy as np
 import pandas as pd
 import streamlit as st
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
+PROJECT_ROOT = Path(__file__).resolve().parents[4]
 
 # Doi phien ban bang bien moi truong, vi du: DASHBOARD_VERSION=v4 streamlit run ...
 # Mac dinh v3 de khong doi hanh vi cua nhung phien dang mo.

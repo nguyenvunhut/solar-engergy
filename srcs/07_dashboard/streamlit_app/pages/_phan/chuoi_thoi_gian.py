@@ -15,8 +15,10 @@ import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
 
+
 from dashboard_common import header_bao_cao, load_shared_css
-from dashboard_data import (
+from api.ml.dashboard_data import (
+
     ACTUAL_COLOR, PRED_COLOR, PROPHET_COLOR, GRID_COLOR,
     audit_metrics, he_so_tre_phut, load_best_loss, load_metrics,
     load_outlier_group, load_prediction_audit, load_prophet_by_site,
@@ -24,7 +26,6 @@ from dashboard_data import (
     with_display_timestamp,
 )
 
-load_shared_css()
 
 
 def style_fig(fig: go.Figure, height: int = 380) -> go.Figure:
@@ -85,11 +86,6 @@ _nhan_chon = (
     f"(WAPE validation {_h4.get('val_wape', float('nan')):.2f}%). "
     "Quyết định chỉ dùng validation; các số dưới đây đo trên tập Test niêm phong."
 ) if _h1 else "Nguồn: 07_final_test — tập Test niêm phong."
-header_bao_cao(
-    "Dự báo sản lượng điện mặt trời 15 phút — kết quả trên tập test niêm phong",
-    _nhan_chon,
-    nhan_phai="TẬP TEST NIÊM PHONG",
-)
 
 # ══════════════════════════════════════════════════════════════════════════════
 #  Bo loc
@@ -187,29 +183,30 @@ _wape_common = _pro.get("wape_lightgbm_%")
 _ss = (skill_score(_wape_common, _pro["wape_prophet_%"])
        if _wape_common and _pro.get("wape_prophet_%") else None)
 
-k1, k2, k3, k4, k5, k6 = st.columns(6)
-with k1:
-    # Nguong WAPE: <20% tot (nganh du bao mat troi 15 phut thuong 15-35%).
-    _st = "up" if wape and wape < 20 else "down" if wape and wape > 30 else None
-    _note = (f"Skill Score common {_ss:+.1f}%" if _ss is not None
-             else "càng thấp càng tốt")
-    kpi("WAPE", f"{wape:.2f}%" if wape else "n/a", _note, status=_st)
-with k2:
-    _st = "up" if _tre_pha == _tre_pha and abs(_tre_pha) <= 2 else (
-        "down" if _tre_pha == _tre_pha and abs(_tre_pha) > 5 else None)
-    kpi("Trễ pha", f"{_tre_pha:+.2f} phút" if _tre_pha == _tre_pha else "n/a",
-        "dương = dự báo đi sau", status=_st)
-with k3:
-    kpi("Skill Score", f"{_ss:+.1f}%" if _ss is not None else "n/a",
-        "common scope với Prophet",
-        status="up" if _ss and _ss > 0 else "down" if _ss else None)
-with k4:
-    kpi("MAE", f"{mae:.4f} kWh" if mae else "n/a", "sai số tuyệt đối")
-with k5:
-    _st = "up" if r2 and r2 >= 0.85 else "down" if r2 and r2 < 0.6 else None
-    kpi("R²", f"{r2:.4f}" if r2 else "n/a", "độ khớp mô hình", status=_st)
-with k6:
-    kpi("RMSE", f"{rmse:.4f} kWh" if rmse else "n/a", f"{len(compare):,} dòng đang xem")
+with _KPI_TS:
+    k1, k2, k3, k4, k5, k6 = st.columns(6)
+    with k1:
+        # Nguong WAPE: <20% tot (nganh du bao mat troi 15 phut thuong 15-35%).
+        _st = "up" if wape and wape < 20 else "down" if wape and wape > 30 else None
+        _note = (f"Skill Score common {_ss:+.1f}%" if _ss is not None
+                 else "càng thấp càng tốt")
+        kpi("WAPE", f"{wape:.2f}%" if wape else "n/a", _note, status=_st)
+    with k2:
+        _st = "up" if _tre_pha == _tre_pha and abs(_tre_pha) <= 2 else (
+            "down" if _tre_pha == _tre_pha and abs(_tre_pha) > 5 else None)
+        kpi("Trễ pha", f"{_tre_pha:+.2f} phút" if _tre_pha == _tre_pha else "n/a",
+            "dương = dự báo đi sau", status=_st)
+    with k3:
+        kpi("Skill Score", f"{_ss:+.1f}%" if _ss is not None else "n/a",
+            "common scope với Prophet",
+            status="up" if _ss and _ss > 0 else "down" if _ss else None)
+    with k4:
+        kpi("MAE", f"{mae:.4f} kWh" if mae else "n/a", "sai số tuyệt đối")
+    with k5:
+        _st = "up" if r2 and r2 >= 0.85 else "down" if r2 and r2 < 0.6 else None
+        kpi("R²", f"{r2:.4f}" if r2 else "n/a", "độ khớp mô hình", status=_st)
+    with k6:
+        kpi("RMSE", f"{rmse:.4f} kWh" if rmse else "n/a", f"{len(compare):,} dòng đang xem")
 
 st.caption(
     f"KPI WAPE/RMSE/MAE/R² lấy từ phạm vi Test chính thức **measured + daylight** "
@@ -271,85 +268,7 @@ with t2_right:
             st.plotly_chart(style_fig(_f, 300), width='stretch')
         else:
             st.info("Chưa có dữ liệu xếp hạng trạm.")
-
-t2b_left, t2b_right = st.columns(2, gap="small")
-with t2b_left:
-    with st.container(border=True):
-        st.markdown("##### Phân bố sai số (residual)")
-        _f = px.histogram(compare, x="residual", nbins=40, color_discrete_sequence=[ACTUAL_COLOR])
-        _f.add_vline(x=0, line_dash="dot", line_color="#DC2626")
-        st.plotly_chart(style_fig(_f, 300), width='stretch')
         st.caption("Lệch quanh 0 và đối xứng nghĩa là mô hình không thiên vị theo một hướng.")
-with t2b_right:
-    with st.container(border=True):
-        st.markdown("##### Thực tế vs Dự báo (scatter)")
-        _f = px.scatter(compare, x="y_true", y="y_pred",
-                        color_discrete_sequence=[PRED_COLOR], render_mode="svg")
-        _f.add_shape(type="line", x0=compare["y_true"].min(), y0=compare["y_true"].min(),
-                     x1=compare["y_true"].max(), y1=compare["y_true"].max(),
-                     line=dict(color="#DC2626", dash="dot"))
-        _f.update_traces(marker=dict(size=5, opacity=0.5))
-        st.plotly_chart(style_fig(_f, 300), width='stretch')
-        st.caption("Điểm nằm trên đường chéo là dự báo khớp thực tế.")
-
 # ══════════════════════════════════════════════════════════════════════════════
 #  Tang 3 — bang chi tiet
 # ══════════════════════════════════════════════════════════════════════════════
-with st.container(border=True):
-    st.markdown("##### Chi tiết theo trạm")
-    _sty = site_metrics.style
-    for _col, _dao in [("wape", True), ("rmse", True), ("mae", True), ("r2", False)]:
-        if _col in site_metrics.columns:
-            _sty = _sty.background_gradient(subset=[_col], cmap="Blues_r" if _dao else "Blues",
-                                            low=0.05, high=0.55)
-    _fmt = {c: "{:.2f}" for c in ("wape", "rmse", "mae", "r2") if c in site_metrics.columns}
-    _fmt.update({c: "{:,.0f}" for c in ("n", "horizon") if c in site_metrics.columns})
-    if _fmt:
-        _sty = _sty.format(_fmt)
-    st.dataframe(_sty, width='stretch', hide_index=True, height=260)
-    st.caption("wape/rmse/mae: xanh = thấp = tốt. r2 ngược lại: xanh = gần 1 = tốt.")
-
-# ══════════════════════════════════════════════════════════════════════════════
-#  Tang 4 — doi chung Prophet
-# ══════════════════════════════════════════════════════════════════════════════
-with st.container(border=True):
-    st.markdown("##### Đối chứng với Prophet")
-    if not _pro:
-        st.info(
-            "Chưa có kết quả Prophet — chạy trước:\n\n"
-            "`python -u srcs/05_machine_learning/forcasting_pipeline/actions/baseline_prophet_test_set.py`"
-        )
-    else:
-        _bang = pd.DataFrame([
-            {"model": f"LightGBM · {_model_for_horizon} H{horizon}", "wape": _pro["wape_lightgbm_%"]},
-            {"model": "Prophet (không có đặc trưng thời tiết)", "wape": _pro["wape_prophet_%"]},
-        ]).sort_values("wape")
-        _f = go.Figure(go.Bar(
-            x=_bang["wape"], y=_bang["model"], orientation="h",
-            marker_color=[ACTUAL_COLOR if "LightGBM" in m else PROPHET_COLOR for m in _bang["model"]],
-            text=_bang["wape"].map(lambda v: f"{v:.2f}%"), textposition="outside",
-        ))
-        _f.update_layout(xaxis_title="WAPE (%) — càng thấp càng tốt", yaxis_title="")
-        st.plotly_chart(style_fig(_f, 220), width='stretch')
-        st.success(
-            f"**Skill Score = {_pro['skill_score_%']:+.2f}%** tại h{horizon} — "
-            f"đo trên **cùng {_pro['n_dong']:,} dòng** cho cả hai mô hình."
-        )
-        st.caption(
-            "Prophet học trên đúng phần dữ liệu mà LightGBM được học (tập development), rồi dự báo "
-            "tại đúng các mốc thời gian mục tiêu của tập test. Prophet chỉ dùng lịch sử sản lượng và "
-            "chu kỳ ngày/tuần, không có đặc trưng thời tiết, nên không biết trước ngày nhiều mây. "
-            "Chênh lệch giữa hai cột là phần giá trị mà đặc trưng thời tiết và downscale bức xạ mang lại."
-        )
-
-        _by_site = load_prophet_by_site()
-        _wc, _mc = f"wape_prophet_h{horizon}", f"wape_model_h{horizon}"
-        if not _by_site.empty and _wc in _by_site.columns:
-            with st.expander("Xem đối chứng theo từng trạm"):
-                _d = _by_site[["site_id", _mc, _wc]].copy()
-                _d["skill_score_%"] = (1 - _d[_mc] / _d[_wc]) * 100
-                _d = _d.rename(columns={_mc: "LightGBM WAPE %", _wc: "Prophet WAPE %"})
-                st.dataframe(_d.sort_values("skill_score_%", ascending=False).style.format(
-                    {"LightGBM WAPE %": "{:.2f}", "Prophet WAPE %": "{:.2f}",
-                     "skill_score_%": "{:+.1f}"}),
-                    width='stretch', hide_index=True, height=280)

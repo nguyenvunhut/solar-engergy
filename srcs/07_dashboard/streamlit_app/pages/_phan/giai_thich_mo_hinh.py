@@ -8,8 +8,10 @@ import json
 import os
 import pickle
 from pathlib import Path
+import sys
 
 import matplotlib
+
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
@@ -26,12 +28,10 @@ from dashboard_common import header_bao_cao, load_shared_css, nap_runtime_cpp
 # bang `streamlit run pages/2_SHAP.py`. CDLL nap lai cung tep la thao tac vo hai.
 nap_runtime_cpp()
 
-PROJECT_ROOT = Path(__file__).resolve().parents[3]
+PROJECT_ROOT = Path(__file__).resolve().parents[5]
 VERSION = os.environ.get("DASHBOARD_VERSION", "v5")
 DATA_DIR = PROJECT_ROOT / "data" / "model" / VERSION
 
-st.set_page_config(page_title="Model Explainability (XAI)", page_icon="🔬", layout="wide")
-load_shared_css()
 # Rieng trang SHAP: kpi-value nho hon mac dinh (nhieu KPI hon tren 1 hang).
 st.markdown("<style>.kpi-value { font-size: 1.15rem !important; }</style>", unsafe_allow_html=True)
 
@@ -43,11 +43,6 @@ def kpi(label: str, value: str, note: str = "") -> None:
         unsafe_allow_html=True,
     )
 
-header_bao_cao(
-    "Mô hình học được gì? — phân tích SHAP",
-    "Đóng góp của từng đặc trưng tới dự báo sản lượng quang điện.",
-    nhan_phai="GIẢI THÍCH MÔ HÌNH",
-)
 
 
 def _build_model_specs() -> dict[str, dict[str, Path | str]]:
@@ -346,18 +341,18 @@ df_imp["group"] = df_imp["feature"].apply(get_group)
 
 # ── TANG 1: KPI dang the (dong bo voi 2 trang kia, khong dung st.metric mac dinh) ──
 _top_grp = df_imp.groupby("group")["mean_abs_shap"].sum().idxmax()
-k1, k2, k3 = st.columns(3)
-with k1:
-    kpi("Số đặc trưng", f"{len(df_imp)}", "trong bộ đang chọn")
-with k2:
-    kpi("Đặc trưng quan trọng nhất", str(df_imp.iloc[0]["feature"]), f"SHAP {df_imp.iloc[0]['mean_abs_shap']:.4f}")
-with k3:
-    kpi("Nhóm đóng góp nhiều nhất", _top_grp, "theo tổng |SHAP|")
+with _KPI_XAI:
+    k1, k2, k3 = st.columns(3)
+    with k1:
+        kpi("Số đặc trưng", f"{len(df_imp)}", "trong bộ đang chọn")
+    with k2:
+        kpi("Đặc trưng quan trọng nhất", str(df_imp.iloc[0]["feature"]), f"SHAP {df_imp.iloc[0]['mean_abs_shap']:.4f}")
+    with k3:
+        kpi("Nhóm đóng góp nhiều nhất", _top_grp, "theo tổng |SHAP|")
 
-# ── TANG 2: 2 bieu do chinh trong container(border=True), gap="small" ──
-t2_left, t2_right = st.columns(2, gap="small")
-with t2_left:
-    with st.container(border=True):
+# ── TANG 2: bang Top dac trung ──
+with st.container(border=True):
+    if True:
         st.markdown("##### Top đặc trưng quan trọng nhất (Data Bars)")
         top_n = st.slider("Top N đặc trưng", 5, min(40, len(df_imp)), 15)
         df_top = df_imp.head(top_n)[["feature", "mean_abs_shap", "group"]].reset_index(drop=True)
@@ -369,20 +364,6 @@ with t2_left:
             .format({"mean_abs_shap": "{:.4f}"})
         )
         st.dataframe(_styler, use_container_width=True, hide_index=True, height=300)
-with t2_right:
-    with st.container(border=True):
-        st.markdown("##### Tỉ trọng đóng góp theo nhóm đặc trưng")
-        grp_df = df_imp.groupby("group", as_index=False)["mean_abs_shap"].sum().sort_values("mean_abs_shap", ascending=False)
-        fig_pie = px.pie(
-            grp_df, values="mean_abs_shap", names="group", hole=0.45,
-            color_discrete_sequence=["#6366F1", "#D9822B", "#38BDF8", "#94A3B8"],
-        )
-        fig_pie.update_layout(
-            template="plotly_white", paper_bgcolor="#FFFFFF", plot_bgcolor="#FFFFFF",
-            height=300, font=dict(color="#1F2937", size=12),
-            legend=dict(orientation="h", y=-0.1),
-        )
-        st.plotly_chart(fig_pie, use_container_width=True)
 
 # feature_cols dung chung cho ca Local Explanation va SHAP Dependence phia duoi -
 # phai dinh nghia TRUOC khi 2 phan do dung toi, tranh loi bien chua duoc gan.
@@ -546,123 +527,4 @@ if True:
             "Base value lấy trực tiếp từ TreeExplainer của mô hình đang chọn. "
             "Cộng dồn từ base value ra tới f(x) — giống shap.force_plot()/shap.plots.waterfall(). "
             "Chỉ hiện 6 đặc trưng ảnh hưởng mạnh nhất, phần còn lại đã gộp vào base value."
-        )
-
-
-# ── WHAT-IF: dat trong trang XAI de lien ket "model hoc gi" voi tac dong kinh doanh. ──
-st.markdown("<br>", unsafe_allow_html=True)
-with st.container(border=True):
-    st.markdown("##### What-if Analysis — thay đổi quy mô hệ thống")
-    st.caption(
-        f"Giữ nguyên thời tiết và thời điểm, thay đổi số lượng tấm pin để mô phỏng sản lượng "
-        f"{str(_model_spec['horizon']).upper()}. Kịch bản chạy lại {_model_spec['label']} đang chọn, "
-        "không nhân trực tiếp kết quả sau dự báo."
-    )
-
-    if not (
-        Path(_model_spec["model_path"]).exists()
-        and Path(_model_spec["config_path"]).exists()
-        and Path(_model_spec["x_test_path"]).exists()
-    ):
-        st.warning(f"Thiếu artifact của {_model_spec['label']} để chạy What-if Analysis.")
-    else:
-        _what_if_features, _site_metadata = load_what_if_data(str(_model_spec["x_test_path"]))
-        _what_if_model, _what_if_config = load_what_if_model(
-            str(_model_spec["model_path"]), str(_model_spec["config_path"])
-        )
-        # Kich ban What-if nhan theo SO TAM PIN nen chi chay duoc o tram co metadata cong
-        # suat. Tu ban trich v5, capacity_kw / number_of_panels khong con duoc dien bia:
-        # 17/42 tram giu nguyen khuyet (xem muc 6.1.1 bao cao), nen phai loc truoc khi
-        # dua vao o chon - neu khong int(NaN) se nem TypeError va sap ca trang.
-        _meta_du = _site_metadata.dropna(subset=["number_of_panels", "capacity_kw"])
-        _site_ids = sorted(
-            set(_what_if_features["site_id"].dropna().unique().tolist())
-            & set(_meta_du["site_id"].tolist())
-        )
-        _so_tram_thieu_meta = len(_site_metadata) - len(_meta_du)
-
-        if not _site_ids:
-            st.warning(
-                "Khong tram nao co du metadata so tam pin de chay What-if "
-                f"({_so_tram_thieu_meta}/{len(_site_metadata)} tram thieu)."
-            )
-            st.stop()
-
-        if _so_tram_thieu_meta:
-            st.caption(
-                f"Da an {_so_tram_thieu_meta}/{len(_site_metadata)} tram thieu metadata "
-                "so tam pin - kich ban What-if can con so nay de nhan ty le."
-            )
-
-        _ctl_site, _ctl_date, _ctl_time, _ctl_panels = st.columns([0.8, 1.2, 1.0, 1.2])
-        with _ctl_site:
-            _wi_site = st.selectbox("Site", _site_ids, key="wi_site")
-
-        _site_rows = _what_if_features[_what_if_features["site_id"].eq(_wi_site)].copy()
-        _site_rows["date"] = _site_rows["timestamp"].dt.date
-        _dates = sorted(_site_rows["date"].unique().tolist())
-        with _ctl_date:
-            _wi_date = st.selectbox("Ngày", _dates, index=len(_dates) // 2, key="wi_date")
-
-        _day_rows = _site_rows[_site_rows["date"].eq(_wi_date)].sort_values("timestamp")
-        _daylight_rows = _day_rows[_day_rows["is_daylight"].fillna(False)]
-        if not _daylight_rows.empty:
-            _day_rows = _daylight_rows
-        _time_labels = _day_rows["timestamp"].dt.strftime("%H:%M").tolist()
-        with _ctl_time:
-            _wi_time = st.selectbox(
-                "Thời điểm nguồn", _time_labels, index=len(_time_labels) // 2, key="wi_time"
-            )
-
-        _meta_row = _site_metadata[_site_metadata["site_id"].eq(_wi_site)].iloc[0]
-        _base_panels = int(_meta_row["number_of_panels"])
-        with _ctl_panels:
-            _new_panels = st.number_input(
-                "Số lượng tấm pin", min_value=1, max_value=5000,
-                value=_base_panels, step=max(1, _base_panels // 20), key="wi_panels",
-            )
-
-        _selected_ts = pd.Timestamp(f"{_wi_date} {_wi_time}")
-        _row = _day_rows[_day_rows["timestamp"].eq(_selected_ts)].iloc[0]
-        _ratio = float(_new_panels) / _base_panels
-        _baseline_kwh, _scenario_kwh = predict_what_if(
-            _row, _what_if_model, _what_if_config, _ratio
-        )
-        _delta_kwh = _scenario_kwh - _baseline_kwh
-        _delta_pct = (_delta_kwh / _baseline_kwh * 100) if _baseline_kwh else 0.0
-        _new_capacity = float(_meta_row["capacity_kw"]) * _ratio
-
-        _m1, _m2, _m3, _m4 = st.columns(4)
-        with _m1:
-            kpi("Dự báo gốc", f"{_baseline_kwh:.2f} kWh", f"{_base_panels:,} tấm pin")
-        with _m2:
-            kpi("Dự báo kịch bản", f"{_scenario_kwh:.2f} kWh", f"{int(_new_panels):,} tấm pin")
-        with _m3:
-            kpi("Thay đổi sản lượng", f"{_delta_kwh:+.2f} kWh", f"{_delta_pct:+.1f}%")
-        with _m4:
-            kpi("Công suất kịch bản", f"{_new_capacity:.2f} kWp", f"gốc {float(_meta_row['capacity_kw']):.2f} kWp")
-
-        _comparison = pd.DataFrame(
-            {
-                "Kịch bản": ["Hiện tại", "What-if"],
-                f"Sản lượng {str(_model_spec['horizon']).upper()} (kWh)": [_baseline_kwh, _scenario_kwh],
-            }
-        )
-        _fig_what_if = go.Figure(
-            go.Bar(
-                x=_comparison["Kịch bản"], y=_comparison[f"Sản lượng {str(_model_spec['horizon']).upper()} (kWh)"],
-                marker_color=["#6366F1", "#D9822B"],
-                text=[f"{v:.2f} kWh" for v in _comparison[f"Sản lượng {str(_model_spec['horizon']).upper()} (kWh)"]],
-                textposition="outside",
-            )
-        )
-        _fig_what_if.update_layout(
-            template="plotly_white", height=280, margin=dict(l=20, r=20, t=30, b=20),
-            yaxis_title=f"Sản lượng dự báo {str(_model_spec['horizon']).upper()} (kWh)",
-            xaxis_title=None, showlegend=False,
-        )
-        st.plotly_chart(_fig_what_if, width="stretch")
-        st.caption(
-            f"Nguồn tại {_selected_ts:%d/%m/%Y %H:%M}, dự báo cho {(_selected_ts + pd.Timedelta(minutes=15)):%H:%M}. "
-            "Weather và hình học mặt trời được giữ nguyên; lag/rolling, kỳ vọng và trần công suất được scale theo số tấm pin."
         )

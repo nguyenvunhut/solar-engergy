@@ -1,6 +1,6 @@
 """FastAPI phuc vu dashboard va cac he thong ngoai.
 
-    uvicorn api:app --port 8000 --app-dir srcs/07_dashboard
+    uvicorn ml.api.main:app --port 8000 --app-dir srcs/07_dashboard
     # tai lieu tu sinh: http://127.0.0.1:8000/docs
 
 HAI NHOM ENDPOINT
@@ -44,7 +44,7 @@ app = FastAPI(
     version="3.0.0",
 )
 
-GOC_REPO = Path(__file__).resolve().parents[2]
+GOC_REPO = Path(__file__).resolve().parents[4]
 VERSION = os.environ.get("DASHBOARD_VERSION", "v5")
 DATA_DIR = GOC_REPO / "data" / "model" / VERSION
 FINAL_DIR = DATA_DIR / "07_final_test"
@@ -208,7 +208,7 @@ def shap_quan_trong():
 #  Du bao truc tiep
 # ══════════════════════════════════════════════════════════════════════════════
 def _dich_vu():
-    from forecast_service import lay_dich_vu  # noqa: PLC0415 — nap tre, tranh cham khoi dong
+    from ml.api.forecast_service import lay_dich_vu  # noqa: PLC0415 — nap tre, tranh cham khoi dong
 
     return lay_dich_vu()
 

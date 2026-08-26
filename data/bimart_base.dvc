@@ -1,0 +1,6 @@
+outs:
+- md5: 46026daca46e176e5fae7a345dff4072.dir
+  size: 157377314
+  nfiles: 4
+  hash: md5
+  path: bimart_base
