@@ -89,17 +89,17 @@ CAMPUS = {
 # `ty_le_nhom` la ty le ghi trong tai lieu khi tinh rieng cho nhom tram lien quan —
 # vi du goc nghieng tinh tren cum 970 kWp mai bang, khong phai tren ca 2.428 kWp.
 TON_THAT_CO_SO = {
-    "temp":    {"ten": "Nhiệt độ cell", "kwh": 510_268, "sau": 0.1140,
+    "temp":    {"ten": "Tấm pin bị nóng", "kwh": 510_268, "sau": 0.1140,
                 "ty_le_nhom": 0.1480, "nhom": None},
-    "clip":    {"ten": "Cắt ngọn inverter", "kwh": 79_298, "sau": 0.0028,
+    "clip":    {"ten": "Inverter cắt ngọn giờ nắng gắt", "kwh": 79_298, "sau": 0.0028,
                 "ty_le_nhom": 0.0230, "nhom": None},
-    "anomaly": {"ten": "Dị thường vận hành", "kwh": 70_330, "sau": 0.0,
+    "anomaly": {"ten": "Sự cố, hỏng hóc", "kwh": 70_330, "sau": 0.0,
                 "ty_le_nhom": 0.0204, "nhom": None},
-    "tilt":    {"ten": "Góc nghiêng + bùn đáy", "kwh": 71_850, "sau": 0.0,
+    "tilt":    {"ten": "Mái phẳng, đọng bùn mép dưới", "kwh": 71_850, "sau": 0.0,
                 "ty_le_nhom": 0.0390, "nhom": "cụm 970 kWp mái bằng"},
-    "shade":   {"ten": "Che bóng + quá nhiệt inverter", "kwh": 57_074, "sau": 0.0,
+    "shade":   {"ten": "Bóng che và inverter quá nóng", "kwh": 57_074, "sau": 0.0,
                 "ty_le_nhom": 0.0165, "nhom": None},
-    "soiling": {"ten": "Bụi bẩn mùa khô", "kwh": 62_060, "sau": 0.0,
+    "soiling": {"ten": "Bụi bám mùa khô", "kwh": 62_060, "sau": 0.0,
                 "ty_le_nhom": 0.0180, "nhom": None},
 }
 for _v in TON_THAT_CO_SO.values():
@@ -110,39 +110,39 @@ for _v in TON_THAT_CO_SO.values():
 # ═════════════════════════════════════════════════════════════════════════════
 HANG_MUC_CAI_TIEN = {
     "bess": {
-        "stt": 1, "ten": "Hệ thống BESS 5 Campus (1MW/2.5MWh)",
-        "hieu_suat": "+20,6% hiệu ích", "kwh": 712_182, "aud": 323_164,
+        "stt": 1, "ten": "Lắp pin lưu trữ cho 5 khu (BESS 1MW/2,5MWh)",
+        "hieu_suat": "+20,6% điện cắt ngọn lấy lại được", "kwh": 712_182, "aud": 323_164,
         "capex_aud": 1_250_000, "payback": "3,87 năm", "ton_that": "clip",
     },
     "ventilation": {
         "stt": 2, "ten": "Khe hở thông gió mái 10–15 cm",
-        "hieu_suat": "+3,40% toàn trạm", "kwh": 117_224, "aud": 23_445,
+        "hieu_suat": "+3,40% toàn hệ thống", "kwh": 117_224, "aud": 23_445,
         "capex_aud": 24_280, "payback": "1,04 năm", "ton_that": "temp",
     },
     "cbm": {
-        "stt": 3, "ten": "Bảo trì CBM & AI Anomaly (GMM-IF)",
-        "hieu_suat": "+2,04% toàn trạm", "kwh": 70_330, "aud": 29_066,
-        "capex_aud": 8_000, "payback": "< 4 tháng", "ton_that": "anomaly",
+        "stt": 3, "ten": "Máy tự báo hỏng để sửa sớm (CBM + AI)",
+        "hieu_suat": "+2,04% toàn hệ thống", "kwh": 70_330, "aud": 29_066,
+        "capex_aud": 8_000, "payback": "Dưới 4 tháng", "ton_that": "anomaly",
     },
     "tilt": {
-        "stt": 4, "ten": "Nâng khung nghiêng chữ A 15° mái bằng",
-        "hieu_suat": "+3,90% nhóm 970 kWp", "kwh": 71_850, "aud": 14_670,
+        "stt": 4, "ten": "Kê khung nghiêng 15° cho mái bằng",
+        "hieu_suat": "+3,90% ở nhóm mái 970 kWp", "kwh": 71_850, "aud": 14_670,
         "capex_aud": 18_000, "payback": "1,23 năm", "ton_that": "tilt",
     },
     "inverter": {
-        "stt": 5, "ten": "Mái che Inverter & DC Optimizers",
-        "hieu_suat": "+1,65% toàn trạm", "kwh": 57_074, "aud": 11_415,
+        "stt": 5, "ten": "Che nắng bộ inverter, gắn bộ tối ưu DC",
+        "hieu_suat": "+1,65% toàn hệ thống", "kwh": 57_074, "aud": 11_415,
         "capex_aud": 12_500, "payback": "1,10 năm", "ton_that": "shade",
     },
     "washing": {
         "stt": 6, "ten": "Lịch rửa pin thông minh theo mưa",
-        "hieu_suat": "+1,80% mùa khô", "kwh": 62_060, "aud": 18_412,
-        "capex_aud": 0, "payback": "Tức thì", "ton_that": "soiling",
+        "hieu_suat": "+1,80% trong mùa khô", "kwh": 62_060, "aud": 18_412,
+        "capex_aud": 0, "payback": "Ngay lập tức", "ton_that": "soiling",
     },
     "topcon": {
-        "stt": 7, "ten": "Nâng cấp TOPCon (kỳ Repowering)",
-        "hieu_suat": "+6,20% toàn trạm", "kwh": 213_761, "aud": 42_752,
-        "capex_aud": None, "payback": "Kỳ đại tu", "ton_that": None,
+        "stt": 7, "ten": "Thay tấm pin đời mới TOPCon",
+        "hieu_suat": "+6,20% toàn hệ thống", "kwh": 213_761, "aud": 42_752,
+        "capex_aud": None, "payback": "Khi thay tấm pin (15–20 năm)", "ton_that": None,
     },
 }
 
@@ -210,6 +210,12 @@ CHI_TIET_HANG_MUC = {
             "Δe_thu_hồi(t) = Δe_clip(t) × 0,88",
             "ΔRevenue = Δe × (P_Peak − P_FIT) nếu 17≤h≤21, ngược lại × P_FIT",
         ],
+        "cong_thuc_tex": [
+            r"P_{AC,\max} \;=\; \frac{p_{stc}}{ILR} \;=\; \frac{p_{stc}}{1{,}25}",
+            r"\Delta e_{clip}(t) \;=\; \max\!\Bigl(0,\; e_{stc}(t)\cdot PR_{adj}(t) \;-\; 0{,}80\,p_{stc}\Bigr)",
+            r"\Delta e_{\text{thu hồi}}(t) \;=\; \eta_{RTE}\cdot\Delta e_{clip}(t),\qquad \eta_{RTE}=0{,}88",
+            r"\Delta R \;=\; \Delta e_{\text{thu hồi}}\cdot\begin{cases}P_{peak}-P_{FIT} & 17\le h\le 21\\[2pt] P_{FIT} & \text{giờ còn lại}\end{cases}",
+        ],
     },
     "ventilation": {
         "tieu_de": "Khoảng hở Thông gió Mái 10–15 cm (chuẩn AS/NZS 5033)",
@@ -224,6 +230,12 @@ CHI_TIET_HANG_MUC = {
             "Δloss_temp = 0,0038 × max(0, T_flush − T_open)",
             "Δe = e_hourly × Δloss_temp / (1 − loss_temp)",
         ],
+        "cong_thuc_tex": [
+            r"T_{cell} \;=\; T_{air} \;+\; G\cdot e^{\,a\,+\,b\,v} \;+\; \frac{G}{1000}\,\Delta T,\qquad \Delta T = 3{,}0\;^\circ C",
+            r"(a,b)_{\text{mái sát}} = (-2{,}98;\,-0{,}0471) \qquad(a,b)_{\text{có khe hở}} = (-3{,}56;\,-0{,}0750)",
+            r"\Delta L_{temp} \;=\; \gamma\cdot\max\!\bigl(0,\; T_{\text{mái sát}}-T_{\text{có khe hở}}\bigr),\qquad \gamma = 0{,}0038\;^\circ C^{-1}",
+            r"\Delta e \;=\; e_{hourly}\cdot\frac{\Delta L_{temp}}{1-L_{temp}}",
+        ],
     },
     "cbm": {
         "tieu_de": "Chuyển đổi Bảo trì CBM & AI Anomaly (GMM-IF)",
@@ -236,6 +248,10 @@ CHI_TIET_HANG_MUC = {
             "Δe(t) = max(0, e_expected − e_hourly) khi gmm_if_outlier_flag = TRUE",
             "Δe(t) = 0 khi FALSE",
         ],
+        "cong_thuc_tex": [
+            r"\Delta e(t) \;=\; \begin{cases}\max\bigl(0,\; e_{\text{kỳ vọng}}(t)-e_{hourly}(t)\bigr) & \text{dòng bị gắn cờ dị thường}\\[2pt]0 & \text{dòng bình thường}\end{cases}",
+            r"\Delta E_{\text{khắc phục}} \;=\; f\cdot\sum_{t}\Delta e(t),\qquad f = 0{,}857\ \ (\text{rút thời gian sửa }14\to 2\text{ ngày})",
+        ],
     },
     "tilt": {
         "tieu_de": "Nâng Khung Nghiêng chữ A 15° Hướng Bắc cho 970 kWp Mái Bằng",
@@ -246,6 +262,10 @@ CHI_TIET_HANG_MUC = {
         "tac_dong": "ΔE = +71.850 kWh · PR trạm mái bằng +3,90% · PR toàn hệ thống +1,57% · "
                     "CapEx 18.000 AUD · hoàn vốn 1,23 năm.",
         "cong_thuc": [],
+        "cong_thuc_tex": [
+            r"\Delta E \;=\; \Delta E_{\text{góc nghiêng}} \;+\; \Delta E_{\text{thoát bùn}}\;=\; 53{.}350 \;+\; 18{.}500 \;=\; 71{.}850\ \text{kWh/năm}",
+            r"\Delta E_{\text{góc nghiêng}} \;=\; \underbrace{+44{.}436}_{\text{mùa đông}}\;+\;\underbrace{-8{.}924}_{\text{mùa hè}}",
+        ],
     },
     "inverter": {
         "tieu_de": "Mái Che Nắng Biến Tần & Bộ Tối Ưu Hoá Công Suất DC Optimizers",
@@ -256,6 +276,10 @@ CHI_TIET_HANG_MUC = {
         "tac_dong": "ΔE = +57.074 kWh · Loss_shade_inv giảm 1,65% → 0,0% · "
                     "CapEx 12.500 AUD · hoàn vốn 1,10 năm.",
         "cong_thuc": [],
+        "cong_thuc_tex": [
+            r"\Delta E \;=\; \Delta E_{\text{hết giảm tải}} \;+\; \Delta E_{\text{tối ưu DC}}\;=\; 18{.}450 \;+\; 38{.}624 \;=\; 57{.}074\ \text{kWh/năm}",
+            r"\text{Điều kiện giảm tải: } T_{\text{tản nhiệt}} > 72\;^\circ C",
+        ],
     },
     "washing": {
         "tieu_de": "Lịch Rửa Pin Thông minh Dựa trên Lượng Mưa",
@@ -265,15 +289,24 @@ CHI_TIET_HANG_MUC = {
         "tac_dong": "ΔE = +62.060 kWh · Loss_soiling giảm 1,80% → 0,0% · "
                     "CapEx 0 AUD (tối ưu quy trình) · hoàn vốn tức thì.",
         "cong_thuc": [],
+        "cong_thuc_tex": [
+            r"\text{Rửa khi: } n_{\text{ngày khô liên tục}} \ge 21\;\;\wedge\;\; \textstyle\sum P_{\text{mưa}} < 2\ \text{mm}",
+            r"\Delta E \;=\; \sum_{t} e_{\text{bụi bám}}(t) \;=\; 62{.}060\ \text{kWh/năm}",
+        ],
     },
     "topcon": {
         "tieu_de": "Nâng Cấp Công nghệ Tấm Pin TOPCon / HJT (Kỳ Đại tu Repowering)",
         "co_che": "Thay P-type PERC bằng N-type TOPCon, hiệu suất tăng 18,5% → 22,5%, hệ số nhiệt "
                   "cải thiện −0,38%/°C → −0,30%/°C, triệt tiêu suy thoái quang học Zero LID, "
                   "tỷ lệ lão hoá giảm 0,55% → 0,40%/năm.",
-        "tac_dong": "ΔE = +213.761 kWh · PR tăng +4,67% · CapEx tích hợp vào ngân sách đại tu "
+        "tac_dong": "ΔE = +213.761 kWh · PR tăng +4,67% · tiền đầu tư gộp vào đợt thay tấm pin "
                     "định kỳ vòng đời 15–20 năm.",
         "cong_thuc": [],
+        "cong_thuc_tex": [
+            r"P \;=\; P_{STC}\bigl[\,1 + \gamma\,(T_{cell}-25)\,\bigr]",
+            r"\Delta\gamma \;=\; |{-0{,}38}| - |{-0{,}30}| \;=\; 0{,}08\ \%/^\circ C",
+            r"\Delta e(t) \;=\; \Delta\gamma\cdot\max\bigl(0,\;T_{cell}(t)-25\bigr)\cdot e_{hourly}(t)",
+        ],
     },
 }
 
@@ -284,8 +317,8 @@ CHI_TIET_HANG_MUC = {
 # Moi con so goc trong tai lieu tinh bang AUD. Cac don vi khac quy doi tu AUD.
 # Ty gia dat o day de doi mot cho la doi toan trang.
 TIEN_TE = {
-    "AUD": {"ten": "Đô la Úc", "ky_hieu": "A$", "ty_gia": 1.0, "so_le": 0},
-    "USD": {"ten": "Đô la Mỹ", "ky_hieu": "US$", "ty_gia": 0.65, "so_le": 0},
+    "AUD": {"ten": "Đô la Úc", "ky_hieu": "AUD", "ty_gia": 1.0, "so_le": 0},
+    "USD": {"ten": "Đô la Mỹ", "ky_hieu": "USD", "ty_gia": 0.65, "so_le": 0},
     "VND": {"ten": "Việt Nam đồng", "ky_hieu": "₫", "ty_gia": 16_500.0, "so_le": 0},
 }
 TIEN_MAC_DINH = "AUD"
@@ -297,6 +330,20 @@ def quy_doi(aud: float, ma_tien: str = TIEN_MAC_DINH) -> float:
 
 
 def dinh_dang_tien(aud: float, ma_tien: str = TIEN_MAC_DINH) -> str:
-    """Chuoi hien thi kem ky hieu, vi du 'A$ 462.924' hoac '₫ 7.638.246.000'."""
+    """Ky hieu dat SAU con so theo thong le Viet Nam: '462.924 AUD', '7.638.246.000 ₫'."""
     t = TIEN_TE.get(ma_tien, TIEN_TE[TIEN_MAC_DINH])
-    return f"{t['ky_hieu']} {quy_doi(aud, ma_tien):,.{t['so_le']}f}"
+    return f"{quy_doi(aud, ma_tien):,.{t['so_le']}f} {t['ky_hieu']}"
+
+
+# ── Anh xa tram -> khuon vien ─────────────────────────────────────────────────
+# 42 tram thuoc 5 khuon vien. Lay tu datawarehouse (cot campus_name), khong phai
+# suy tu cong suat: materialized view cua bi_mart khong mang cot nay.
+TRAM_THEO_CAMPUS = {
+    "Albury-Wodonga": [1, 2, 3, 4, 5],
+    "Bendigo": [6, 7, 8, 9, 10, 11, 12, 13],
+    "Bundoora": [14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40],
+    "Mildura": [41],
+    "Shepparton": [42],
+}
+
+SITE_TOI_CAMPUS = {s: c for c, ds in TRAM_THEO_CAMPUS.items() for s in ds}
