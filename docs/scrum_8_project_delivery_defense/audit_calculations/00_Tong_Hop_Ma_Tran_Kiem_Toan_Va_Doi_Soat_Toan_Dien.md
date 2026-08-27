@@ -91,8 +91,8 @@ def chay_kich_ban(bat: list[str] | None = None,
 | 5 | Tấm chắn nắng & DC Optimizer | +1,65% tổng | 57.074 kWh | 10.273 AUD | 11.129 AUD | 13.412 AUD | 11.415 AUD | 12.500 AUD | 1,10 Năm |
 | 6 | Lịch rửa pin theo lượng mưa | +1,80% khô | 62.060 kWh | 16.671 AUD | 18.102 AUD | 21.084 AUD | 18.412 AUD | 0 AUD | Tức thì |
 | 7 | Nâng cấp TOPCon (Repowering) | +6,20% tổng | 213.761 kWh | 38.477 AUD | 41.683 AUD | 50.234 AUD | 42.752 AUD | Kỳ Đại Tu | Vòng đời pin |
-| **Σ6** | **TỔNG 6 HẠNG MỤC KỸ THUẬT** | **+31,6%** | **1.090.720 kWh** | **348.652 AUD** | **400.905 AUD** | **493.854 AUD** | **420.172 AUD** | **1.312.780 AUD** | **3,12 NĂM** |
-| **Σ7** | **TOÀN BỘ 7 HẠNG MỤC CẢI TIẾN** | **+37,8%** | **1.304.481 kWh** | **387.129 AUD** | **442.588 AUD** | **544.088 AUD** | **462.924 AUD** | **1.312.780 AUD** | **2,84 NĂM** |
+| **Σ6** | **TỔNG 6 HẠNG MỤC KỸ THUẬT** | **+31,6%** | **1.090.720 kWh** | **348.652 AUD** | **399.905 AUD** | **493.854 AUD** | **420.172 AUD** | **1.312.780 AUD** | **3,12 NĂM** |
+| **Σ7** | **TOÀN BỘ 7 HẠNG MỤC CẢI TIẾN** | **+37,8%** | **1.304.481 kWh** | **387.129 AUD** | **441.588 AUD** | **544.088 AUD** | **462.924 AUD** | **1.312.780 AUD** | **2,84 NĂM** |
 
 ---
 
