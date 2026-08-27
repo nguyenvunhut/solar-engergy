@@ -1,0 +1,12 @@
+<mxfile host="app.diagrams.net" modified="2026-08-27T16:10:00.000Z" agent="Mozilla/5.0" version="21.0.0" type="device">
+  <diagram id="bess-mechanism-white" name="BESS Dispatch Mechanism">
+    <mxGraphModel dx="1200" dy="700" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1000" pageHeight="600" background="#FFFFFF">
+      <root>
+        <mxCell id="0" /><mxCell id="1" parent="0" />
+        <mxCell id="hdr" value="&lt;b&gt;CƠ CHẾ TÁC ĐỘNG 1: THU HỒI CÔNG SUẤT CẮT NGỌN VÀ DỊCH CHUYỂN PHỤ TẢI BẰNG BESS DC-COUPLED&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#CBD5E1;fontColor=#0F172A;fontSize=14;" vertex="1" parent="1"><mxGeometry x="20" y="15" width="940" height="42" as="geometry" /></mxCell>
+        <mxCell id="box1" value="&lt;b&gt;1. ĐẶC TUYẾN CÔNG SUẤT THEO THỜI GIAN P(t)&lt;/b&gt;&lt;br&gt;&lt;br&gt;• 11:30 - 14:00: Nắng mạnh, công suất giàn pin DC vượt quá trần biến tần P_AC_max (ILR = 1,25)&lt;br&gt;• Phần công suất vượt trần (Clipping) được nạp trực tiếp qua thanh cái DC Bus vào bộ pin lưu trữ&lt;br&gt;• 17:00 - 21:00: Xả năng lượng đã tích trữ để bù đắp vào đỉnh tiêu thụ phụ tải khuôn viên trường học" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#0284C7;align=left;spacingLeft=12;fontColor=#0F172A;" vertex="1" parent="1"><mxGeometry x="20" y="75" width="450" height="440" as="geometry" /></mxCell>
+        <mxCell id="box2" value="&lt;b&gt;2. CẤU TRÚC KẾT NỐI VẬT LÝ VÀ DÒNG NĂNG LƯỢNG&lt;/b&gt;&lt;br&gt;&lt;br&gt;• Giàn pin PV kết nối vào DC Bus chung (600V - 1000V)&lt;br&gt;• Nhánh Inverter AC: Chuyển đổi hòa lưới cung cấp cho phụ tải trường học (bị giới hạn định mức P_AC_max)&lt;br&gt;• Nhánh BESS: Nối DC-Coupled nạp xả 2 chiều, giảm thiểu tổn hao chuyển đổi AC/DC&lt;br&gt;• Tác động: Triệt tiêu hiện tượng xén bớt công suất trưa và giảm đỉnh công suất nhận từ lưới điện vào ban tối" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#059669;align=left;spacingLeft=12;fontColor=#0F172A;" vertex="1" parent="1"><mxGeometry x="500" y="75" width="460" height="440" as="geometry" /></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

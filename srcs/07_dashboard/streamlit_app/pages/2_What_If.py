@@ -227,6 +227,12 @@ for h in sorted(kq["hang_muc"], key=lambda x: x["stt"]):
             st.markdown(f"**Cơ chế.** {ct['co_che']}")
             st.markdown(f"**Tác động chỉ số.** {ct['tac_dong']}")
 
+            so_do_tep = _THU_MUC / "assets" / "diagrams" / f"diagram_popover_{h['stt']:02d}_{ma}.svg"
+            if so_do_tep.exists():
+                st.markdown("---")
+                st.markdown("**Sơ đồ trực quan cơ chế tác động:**")
+                st.image(str(so_do_tep), use_container_width=True)
+
         if ma == "bess":
             cp = phan_ra.theo_campus("bess")
             c_l, c_r = st.columns([1.15, 1], vertical_alignment="top")

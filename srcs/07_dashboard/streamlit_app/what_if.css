@@ -69,3 +69,9 @@ details summary p, div[data-testid="stExpander"] summary p{
              white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .kpi-cot-tri.sim{color:#4F46E5}
 .kpi-delta{font-size:.98rem;font-weight:700;margin-top:4px;color:#16A34A}
+
+/* Mo rong khung Popover de hien thi so do truc quan ky thuat ro net */
+div[data-testid="stPopoverBody"]{
+  max-width:min(900px, 92vw)!important;
+  width:880px!important;
+}

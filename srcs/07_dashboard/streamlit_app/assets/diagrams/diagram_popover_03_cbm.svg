@@ -1,0 +1,119 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 540" width="100%" height="100%" style="background:#FFFFFF;font-family:'Segoe UI',Arial,sans-serif;">
+  <defs>
+    <filter id="shadowW3" x="-2%" y="-2%" width="104%" height="104%"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000000" flood-opacity="0.07"/></filter>
+  </defs>
+
+  <!-- Title Header -->
+  <rect x="20" y="14" width="940" height="44" rx="6" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.5"/>
+  <text x="40" y="41" fill="#0F172A" font-size="14.5" font-weight="700">CƠ CHẾ TÁC ĐỘNG 3: CHU TRÌNH BẢO TRÌ DỰ BÁO CBM DỰA TRÊN AI GMM-IF VÀ RÚT NGẮN MTTR</text>
+
+  <!-- Timeline 1: Reactive / Time-based (Manual) -->
+  <g transform="translate(20, 70)" filter="url(#shadowW3)">
+    <rect width="940" height="200" rx="8" fill="#FFFFFF" stroke="#EF4444" stroke-width="1.5"/>
+    <rect x="15" y="12" width="460" height="26" rx="4" fill="#FEF2F2"/>
+    <text x="25" y="30" fill="#B91C1C" font-size="12" font-weight="700">QUY TRÌNH BẢO TRÌ TRUYỀN THỐNG (REACTIVE O&amp;M - THỤ ĐỘNG)</text>
+
+    <!-- Stage 1: Fault -->
+    <rect x="25" y="48" width="170" height="135" rx="6" fill="#F8FAFC" stroke="#E2E8F0"/>
+    <rect x="35" y="58" width="150" height="22" rx="4" fill="#FEE2E2"/>
+    <text x="110" y="73" fill="#B91C1C" font-size="11" font-weight="700" text-anchor="middle">SỰ CỐ VẬT LÝ</text>
+    <text x="35" y="100" fill="#334155" font-size="10.5">• Đứt cầu chì chuỗi DC</text>
+    <text x="35" y="120" fill="#334155" font-size="10.5">• Hỏng Bypass Diode</text>
+    <text x="35" y="140" fill="#334155" font-size="10.5">• Ngắt quá áp biến tần</text>
+    <text x="35" y="166" fill="#DC2626" font-size="10" font-weight="600">Sản lượng sụt giảm ngay</text>
+
+    <!-- Arrow 1 -->
+    <line x1="195" y1="115" x2="230" y2="115" stroke="#EF4444" stroke-width="2"/>
+    <polygon points="235,115 227,111 227,119" fill="#EF4444"/>
+
+    <!-- Stage 2: MTTD -->
+    <rect x="240" y="48" width="210" height="135" rx="6" fill="#F8FAFC" stroke="#EF4444"/>
+    <rect x="250" y="58" width="190" height="22" rx="4" fill="#FEE2E2"/>
+    <text x="345" y="73" fill="#B91C1C" font-size="11" font-weight="700" text-anchor="middle">PHÁT HIỆN: MTTD = 14-30 NGÀY</text>
+    <text x="250" y="100" fill="#334155" font-size="10.5">• Không có giám sát vi mô</text>
+    <text x="250" y="120" fill="#334155" font-size="10.5">• Lỗi bị che lấp bởi thời tiết</text>
+    <text x="250" y="140" fill="#334155" font-size="10.5">• Chỉ biết khi kiểm toán định kỳ</text>
+    <text x="250" y="166" fill="#DC2626" font-size="10" font-weight="700">Mất điện âm thầm kéo dài</text>
+
+    <!-- Arrow 2 -->
+    <line x1="450" y1="115" x2="485" y2="115" stroke="#EF4444" stroke-width="2"/>
+    <polygon points="490,115 482,111 482,119" fill="#EF4444"/>
+
+    <!-- Stage 3: MTTR -->
+    <rect x="495" y="48" width="210" height="135" rx="6" fill="#F8FAFC" stroke="#EF4444"/>
+    <rect x="505" y="58" width="190" height="22" rx="4" fill="#FEE2E2"/>
+    <text x="600" y="73" fill="#B91C1C" font-size="11" font-weight="700" text-anchor="middle">SỬA CHỮA: MTTR = 7-14 NGÀY</text>
+    <text x="505" y="100" fill="#334155" font-size="10.5">• Kỹ sư đi kiểm tra ngẫu nhiên</text>
+    <text x="505" y="120" fill="#334155" font-size="10.5">• Dò thủ công từng hộp gom dây</text>
+    <text x="505" y="140" fill="#334155" font-size="10.5">• Phải quay về lấy vật tư thay thế</text>
+    <text x="505" y="166" fill="#DC2626" font-size="10" font-weight="700">Tốn nhiều thời gian xử lý</text>
+
+    <!-- Arrow 3 -->
+    <line x1="705" y1="115" x2="740" y2="115" stroke="#EF4444" stroke-width="2"/>
+    <polygon points="745,115 737,111 737,119" fill="#EF4444"/>
+
+    <!-- Impact Result -->
+    <rect x="750" y="48" width="165" height="135" rx="6" fill="#FEF2F2" stroke="#EF4444" stroke-width="1.5"/>
+    <text x="832" y="78" fill="#7F1D1D" font-size="11" font-weight="800" text-anchor="middle">TỔNG THỜI GIAN CHẾT</text>
+    <text x="832" y="102" fill="#B91C1C" font-size="15" font-weight="900" text-anchor="middle">21 - 44 NGÀY</text>
+    <text x="832" y="128" fill="#7F1D1D" font-size="10.5" text-anchor="middle">Năng lượng tổn thất</text>
+    <text x="832" y="150" fill="#DC2626" font-size="12.5" font-weight="800" text-anchor="middle">MẤT 100%</text>
+  </g>
+
+  <!-- Timeline 2: Predictive CBM (Closed Loop) -->
+  <g transform="translate(20, 285)" filter="url(#shadowW3)">
+    <rect width="940" height="235" rx="8" fill="#FFFFFF" stroke="#059669" stroke-width="1.5"/>
+    <rect x="15" y="12" width="510" height="26" rx="4" fill="#F0FDF4"/>
+    <text x="25" y="30" fill="#166534" font-size="12" font-weight="700">QUY TRÌNH BẢO TRÌ DỰ BÁO CBM DỰA TRÊN AI GMM-IF (CHỦ ĐỘNG KHÉP KÍN)</text>
+
+    <!-- Step 1: Telemetry Analysis -->
+    <rect x="25" y="48" width="190" height="170" rx="6" fill="#F8FAFC" stroke="#059669"/>
+    <rect x="35" y="58" width="170" height="22" rx="4" fill="#DCFCE7"/>
+    <text x="120" y="73" fill="#166534" font-size="11" font-weight="700" text-anchor="middle">PHÁT HIỆN: MTTD &lt; 1 GIỜ</text>
+    <text x="35" y="100" fill="#0284C7" font-size="10.5" font-weight="700">• AI GMM-IF quét chuỗi 15p</text>
+    <text x="35" y="120" fill="#334155" font-size="10.5">• So khớp E_actual vs E_pred</text>
+    <text x="35" y="140" fill="#334155" font-size="10.5">• Tách biệt dị thường vật lý</text>
+    <text x="35" y="160" fill="#334155" font-size="10.5">  khỏi biến động thời tiết</text>
+    <text x="35" y="195" fill="#059669" font-size="10" font-weight="700">Cảnh báo tự động tức thời</text>
+
+    <!-- Arrow 1 -->
+    <line x1="215" y1="133" x2="245" y2="133" stroke="#059669" stroke-width="2"/>
+    <polygon points="250,133 242,129 242,137" fill="#059669"/>
+
+    <!-- Step 2: Root Cause Classification & Dispatch -->
+    <rect x="255" y="48" width="225" height="170" rx="6" fill="#F8FAFC" stroke="#059669"/>
+    <rect x="265" y="58" width="205" height="22" rx="4" fill="#DCFCE7"/>
+    <text x="367" y="73" fill="#166534" font-size="11" font-weight="700" text-anchor="middle">PHÂN LOẠI &amp; ĐIỀU PHỐI TỰ ĐỘNG</text>
+    <text x="265" y="100" fill="#334155" font-size="10.5">• Gán 1 trong 6 mã cờ sự cố</text>
+    <text x="265" y="120" fill="#334155" font-size="10.5">• Chỉ rõ: Tên trạm, tủ gom dây</text>
+    <text x="265" y="140" fill="#334155" font-size="10.5">• Xuất lệnh Work Order điện tử</text>
+    <text x="265" y="160" fill="#334155" font-size="10.5">• Đề xuất linh kiện cần mang</text>
+    <text x="265" y="195" fill="#0284C7" font-size="10" font-weight="700">Thông tin đích danh chính xác</text>
+
+    <!-- Arrow 2 -->
+    <line x1="480" y1="133" x2="510" y2="133" stroke="#059669" stroke-width="2"/>
+    <polygon points="515,133 507,129 507,137" fill="#059669"/>
+
+    <!-- Step 3: Targeted Repair -->
+    <rect x="520" y="48" width="205" height="170" rx="6" fill="#F8FAFC" stroke="#059669"/>
+    <rect x="530" y="58" width="185" height="22" rx="4" fill="#DCFCE7"/>
+    <text x="622" y="73" fill="#166534" font-size="11" font-weight="700" text-anchor="middle">KHẮC PHỤC: MTTR = 1-2 NGÀY</text>
+    <text x="530" y="100" fill="#334155" font-size="10.5">• Kỹ sư đến đúng vị trí trạm</text>
+    <text x="530" y="120" fill="#334155" font-size="10.5">• Thay đúng cầu chì / diode</text>
+    <text x="530" y="140" fill="#334155" font-size="10.5">• Reset rơ-le / hiệu chỉnh CT</text>
+    <text x="530" y="160" fill="#334155" font-size="10.5">• Đóng chu trình bảo trì</text>
+    <text x="530" y="195" fill="#059669" font-size="10" font-weight="700">Xử lý dứt điểm nhanh</text>
+
+    <!-- Arrow 3 -->
+    <line x1="725" y1="133" x2="755" y2="133" stroke="#059669" stroke-width="2"/>
+    <polygon points="760,133 752,129 752,137" fill="#059669"/>
+
+    <!-- Impact Result -->
+    <rect x="765" y="48" width="150" height="170" rx="6" fill="#F0FDF4" stroke="#059669" stroke-width="1.5"/>
+    <text x="840" y="78" fill="#065F46" font-size="11" font-weight="800" text-anchor="middle">HIỆU QUẢ CỨU VÃN</text>
+    <text x="840" y="108" fill="#059669" font-size="20" font-weight="900" text-anchor="middle">85,7%</text>
+    <text x="840" y="134" fill="#047857" font-size="11" font-weight="700" text-anchor="middle">HỆ SỐ f_cbm</text>
+    <text x="840" y="156" fill="#334155" font-size="10" text-anchor="middle">f_cbm = 1 - (2 / 14)</text>
+    <text x="840" y="190" fill="#0284C7" font-size="10.5" font-weight="700" text-anchor="middle">Khôi phục vận hành</text>
+  </g>
+</svg>

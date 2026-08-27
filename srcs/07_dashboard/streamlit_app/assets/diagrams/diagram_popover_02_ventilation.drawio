@@ -1,0 +1,12 @@
+<mxfile host="app.diagrams.net" modified="2026-08-27T16:10:00.000Z" agent="Mozilla/5.0" version="21.0.0" type="device">
+  <diagram id="ventilation-mechanism-white" name="Aerodynamic Thermal Cooling">
+    <mxGraphModel dx="1200" dy="700" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1000" pageHeight="600" background="#FFFFFF">
+      <root>
+        <mxCell id="0" /><mxCell id="1" parent="0" />
+        <mxCell id="hdr" value="&lt;b&gt;CƠ CHẾ TÁC ĐỘNG 2: ĐỐI LƯU KHÍ ĐỘNG HỌC KHOẢNG HỞ 150mm VÀ PHỤC HỒI ĐẶC TUYẾN I-V&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#CBD5E1;fontColor=#0F172A;fontSize=14;" vertex="1" parent="1"><mxGeometry x="20" y="15" width="940" height="42" as="geometry" /></mxCell>
+        <mxCell id="box1" value="&lt;b&gt;1. ÁP SÁT MẶT MÁI 100% (KHE HỞ = 0 mm)&lt;/b&gt;&lt;br&gt;&lt;br&gt;• Tấm pin PV đặt dính trực tiếp lên mái tôn, không có dòng khí lưu thông mặt lưng (v_air = 0 m/s)&lt;br&gt;• Nhiệt độ tế bào quang điện tăng vọt lên 70°C vào các giờ nắng gắt&lt;br&gt;• Điện áp hở mạch V_oc sụt giảm mạnh, co rút đường đặc tuyến I-V và làm suy giảm công suất cực đại P_mpp" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#EF4444;align=left;spacingLeft=12;fontColor=#0F172A;" vertex="1" parent="1"><mxGeometry x="20" y="75" width="450" height="440" as="geometry" /></mxCell>
+        <mxCell id="box2" value="&lt;b&gt;2. NÂNG KHUNG THÔNG GIÓ (KHE HỞ = 150 mm)&lt;/b&gt;&lt;br&gt;&lt;br&gt;• Giá đỡ nâng module tạo khoảng thông khí 150 mm&lt;br&gt;• Không khí mát đi vào mặt dưới bị nung nóng bốc lên theo hiệu ứng ống khói (Chimney Effect), liên tục làm mát mặt lưng tấm pin&lt;br&gt;• Hạ nhiệt độ cell xuống 58°C (giảm -12°C vào mùa hè), giúp phục hồi điện áp V_oc và mở rộng đường đặc tuyến I-V về gần điểm công suất lý tưởng" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#059669;align=left;spacingLeft=12;fontColor=#0F172A;" vertex="1" parent="1"><mxGeometry x="500" y="75" width="460" height="440" as="geometry" /></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
