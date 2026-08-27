@@ -39,7 +39,28 @@ $$
 
 ---
 
-## 2. Thống Kê Số Giờ Chạm Ngưỡng Derating Biến Tần Trong Dữ Liệu Thực Tế
+## 2. Đoạn Mã Nguồn Thực Thi Tính Toán Trong Codebase
+
+Logic quét giờ Derating và tối ưu hóa Inverter được hiện thực hóa tại [`srcs/07_dashboard/api/bimart/services/phan_ra.py`](file:///D:/Learning/FPT_polytechnic/Sem6/datn_outlier_hs_nlmt/srcs/07_dashboard/api/bimart/services/phan_ra.py):
+
+```python
+# File: srcs/07_dashboard/api/bimart/services/phan_ra.py (Dong 141-151)
+def gio_derating_theo_thang() -> pd.DataFrame:
+    h = repo.doc_hourly()
+    d = h.assign(thang=h["date_id"] // 100 % 100)
+    # 1. Dieu kien Inverter bi Derating: Nhiet do >= 35C VA Buc xa >= 800 W/m2
+    d["nong"] = (d["temperature_c"] >= 35) & (d["shortwave_radiation"] >= 800)
+    # 2. Dieu kien canh bao som: Nhiet do >= 30C VA Buc xa >= 700 W/m2
+    d["cham_nguong"] = (d["temperature_c"] >= 30) & (d["shortwave_radiation"] >= 700)
+    g = (d.groupby("thang").agg(gio_derating=("nong", "sum"), gio_canh_bao=("cham_nguong", "sum"))
+           .reindex(range(1, 13)).fillna(0).reset_index())
+    g["ten"] = [TEN_THANG[i - 1] for i in g["thang"]]
+    return g
+```
+
+---
+
+## 3. Thống Kê Số Giờ Chạm Ngưỡng Derating Biến Tần Trong Dữ Liệu Thực Tế
 
 | Tháng | Mùa Vụ | Số Giờ Cảnh Báo (≥30°C & ≥700 W/m²) | Số Giờ Giảm Tải Derating (≥35°C & ≥800 W/m²) | Sản Lượng Thu Hồi Dự Kiến (kWh) |
 | :--- | :--- | :---: | :---: | :---: |
@@ -59,7 +80,7 @@ $$
 
 ---
 
-## 3. Hiệu Quả Thu Hồi Điện & Bảo Vệ Thiết Bị
+## 4. Hiệu Quả Thu Hồi Điện & Bảo Vệ Thiết Bị
 
 * **Thu hồi từ tấm che nắng Inverter:** **$+18.450\,\text{kWh/năm}$** và ngăn ngừa nguy cơ nổ tụ/hỏng sớm 2 bộ Inverter ($16.000\,\text{AUD}$).
 * **Thu hồi từ DC Optimizers cho 6 trạm che bóng ($320\,\text{kWp}$):** **$+38.624\,\text{kWh/năm}$**.

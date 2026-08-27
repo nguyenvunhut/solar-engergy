@@ -42,7 +42,46 @@ $$
 
 ---
 
-## 2. Bóc Tách 6 Mã Cờ Dị Thường Vật Lý Trong Dữ Liệu Thực Tế
+## 2. Đoạn Mã Nguồn Thực Thi Tính Toán Trong Codebase
+
+Logic bóc tách dị thường và cứu vãn năng lượng được hiện thực hóa tại [`srcs/07_dashboard/api/bimart/services/cbm.py`](file:///D:/Learning/FPT_polytechnic/Sem6/datn_outlier_hs_nlmt/srcs/07_dashboard/api/bimart/services/cbm.py) và [`srcs/07_dashboard/api/bimart/services/phan_ra.py`](file:///D:/Learning/FPT_polytechnic/Sem6/datn_outlier_hs_nlmt/srcs/07_dashboard/api/bimart/services/phan_ra.py):
+
+```python
+# File: srcs/07_dashboard/api/bimart/services/cbm.py (Dong 18-28)
+def tinh(h: pd.DataFrame, gia: dict | None = None) -> pd.DataFrame:
+    g = gia or cfg.GIA_TB_3_NAM
+    # 1. Loc cac dong bi gan co di thuong AI GMM-IF
+    co = h["gmm_if_outlier_flag"].fillna(False).to_numpy(dtype=bool)
+    # 2. Tinh do thieu hut san luong: max(0, e_expected - e_hourly)
+    thieu_hut = (h["e_expected"].fillna(0.0).to_numpy(dtype=float)
+                 - h["e_hourly"].fillna(0.0).to_numpy(dtype=float))
+    delta_e = np.where(co, np.maximum(0.0, thieu_hut), 0.0)
+    return pd.DataFrame({
+        "delta_kwh": delta_e,
+        "delta_revenue_aud": delta_e * g["fit"],
+    }, index=h.index)
+
+# File: srcs/07_dashboard/api/bimart/services/phan_ra.py (Dong 88-108)
+def outlier_theo_ma_loi() -> pd.DataFrame:
+    h = repo.doc_hourly()
+    d = h[h["gmm_if_outlier_flag"].fillna(False)].copy()
+    d["hut_kwh"] = (d["e_expected"].fillna(0.0) - d["e_hourly"].fillna(0.0)).clip(lower=0.0)
+    # Tach STRING_AGG cac ma loi vat ly: PHYSICAL_DISTRIBUTION_JUMP, v.v.
+    # Ap dung he so cuu van f_cbm = 0.857 khi xuat bao cao.
+```
+
+**Bảng đối chiếu biến số toán học và mã nguồn:**
+
+| Ký Hiệu Toán Học | Biến Trong Mã Nguồn Python | Cột Dữ Liệu Parquet View | Ý Nghĩa Kỹ Thuật |
+| :--- | :--- | :--- | :--- |
+| $\text{flag}_{\text{outlier}}(t)$ | `co` | `h['gmm_if_outlier_flag']` | Cờ dị thường AI phát hiện sự cố vật lý |
+| $\Delta e_{\text{anomaly, loss}}(t)$ | `thieu_hut` | `e_expected - e_hourly` | Lượng điện năng hao hụt do sự cố |
+| $f_{\text{cbm}} = 85{,}7\%$ | `0.857` | `1.0 - (2.0 / 14.0)` | Hệ số cứu vãn năng lượng nhờ rút ngắn MTTR |
+| $\Delta e_{\text{recovered, cbm}}$ | `khac_phuc` | `hut_kwh * 0.857` | Sản lượng điện phục hồi thực tế |
+
+---
+
+## 3. Bóc Tách 6 Mã Cờ Dị Thường Vật Lý Trong Dữ Liệu Thực Tế
 
 | STT | Mã Cờ Dị Thường Trong Code & DWH | Số Bản Ghi Gắn Cờ | Sản Lượng Hụt Đo Được (kWh) | Năng Lượng Cứu Vãn Qua CBM (kWh) | Hướng Dẫn Hành Động Kỹ Sư O&M |
 | :---: | :--- | :---: | :---: | :---: | :--- |
@@ -55,7 +94,7 @@ $$
 
 ---
 
-## 3. Tổng Hợp Năng Lượng & Hiệu Quả Tài Chính CBM
+## 4. Tổng Hợp Năng Lượng & Hiệu Quả Tài Chính CBM
 
 * **Tổng điện năng thu hồi cả năm:** **$70.330\,\text{kWh/năm}$** ($+2{,}04\%$ tổng sản lượng toàn hệ thống).
 * **Giá trị tài chính thu hồi hàng năm:**

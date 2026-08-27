@@ -39,7 +39,34 @@ $$
 
 ---
 
-## 2. Bảng Phân Tích Cân Bằng Năng Lượng 12 Tháng Chi Tiết
+## 2. Đoạn Mã Nguồn Thực Thi Tính Toán Trong Codebase
+
+Cơ chế bẻ góc nghiêng và tự làm sạch được cấu hình tại [`srcs/07_dashboard/api/bimart/services/phan_ra.py`](file:///D:/Learning/FPT_polytechnic/Sem6/datn_outlier_hs_nlmt/srcs/07_dashboard/api/bimart/services/phan_ra.py) và [`srcs/07_dashboard/api/bimart/core/config.py`](file:///D:/Learning/FPT_polytechnic/Sem6/datn_outlier_hs_nlmt/srcs/07_dashboard/api/bimart/core/config.py):
+
+```python
+# File: srcs/07_dashboard/api/bimart/services/phan_ra.py (Dong 66-73)
+def tilt_theo_mua() -> pd.DataFrame:
+    """Hang muc 4: Mua dong tang quang hoc, mua he giam nhe, tu rua troi bun."""
+    return pd.DataFrame([
+        {"mua": "Mùa đông (T6–T8)", "kwh": 44_436, "ghi_chu": "Góc 15° đón nắng thấp"},
+        {"mua": "Mùa hè (T12–T2)", "kwh": -8_924, "ghi_chu": "Giảm nhẹ do nắng đứng"},
+        {"mua": "Tự rửa trôi bùn",   "kwh": 18_500, "ghi_chu": "Dốc thoát nước viền đáy"},
+    ])
+
+# File: srcs/07_dashboard/api/bimart/core/config.py (Dong 135-148)
+"tilt": {
+    "stt": 4,
+    "ten": "Khung nghiêng chữ A 15° (970 kWp mái bằng)",
+    "kwh": 71850.0,      # = 53.350 (quang học) + 18.500 (tự làm sạch bùn)
+    "aud": 14670.0,      # = 10.670 (bán điện) + 4.000 (tiết kiệm nhân công rửa)
+    "capex": 18000.0,    # Giá đỡ chân đế chữ A nhôm định hình
+    "payback": 1.23,
+}
+```
+
+---
+
+## 3. Bảng Phân Tích Cân Bằng Năng Lượng 12 Tháng Chi Tiết
 
 | Tháng | Mùa Vụ | Góc Cao Mặt Trời Trưa (h) | Sản Lượng Cơ Sở (kWh/tháng) | Tỷ Lệ Tăng/Giảm (%) | Sản Lượng Tăng/Giảm (kWh/tháng) | Giá Trị Tài Chính (AUD) |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
@@ -59,7 +86,7 @@ $$
 
 ---
 
-## 3. Tổng Hợp Hiệu Quả Kinh Tế & Hoàn Vốn
+## 4. Tổng Hợp Hiệu Quả Kinh Tế & Hoàn Vốn
 
 * **Tổng năng lượng thu hồi:** **$71.850\,\text{kWh/năm}$** (gồm $53.350\,\text{kWh}$ quang học $+ 18.500\,\text{kWh}$ tự làm sạch).
 * **Tiết kiệm nhân công rửa pin:** **$4.000\,\text{AUD/năm}$** (giảm từ 4 lần xuống 1 lần rửa/năm).

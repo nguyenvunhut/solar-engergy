@@ -55,7 +55,59 @@ $$
 
 ---
 
-## 2. Bảng Phân Rã 12 Tháng Nhiệt Độ Cell & Sản Lượng Thu Hồi Thực Tế
+## 2. Đoạn Mã Nguồn Thực Thi Tính Toán Trong Codebase
+
+Mô hình Sandia SAPM và tính toán phục hồi nhiệt được hiện thực hóa tại [`srcs/07_dashboard/api/bimart/services/ventilation.py`](file:///D:/Learning/FPT_polytechnic/Sem6/datn_outlier_hs_nlmt/srcs/07_dashboard/api/bimart/services/ventilation.py):
+
+```python
+# File: srcs/07_dashboard/api/bimart/services/ventilation.py (Dong 28-57)
+def _t_cell_sapm(temp: np.ndarray, buc_xa: np.ndarray, gio: np.ndarray,
+                 he_so: dict) -> np.ndarray:
+    # Cong thuc SAPM: T_cell = T_amb + GHI * exp(a + b * v_w) + GHI/1000 * 3.0
+    return (temp + buc_xa * np.exp(he_so["a"] + he_so["b"] * gio)
+            + buc_xa / 1000.0 * cfg.SAPM_DELTA_T)
+
+def tinh(h: pd.DataFrame, gia: dict | None = None,
+         he_so_nhiet: float | None = None) -> pd.DataFrame:
+    g = gia or cfg.GIA_TB_3_NAM
+    k_nhiet = cfg.HE_SO_NHIET_BRIEF if he_so_nhiet is None else float(he_so_nhiet)
+
+    temp = h["temperature_c"].to_numpy(dtype=float)
+    buc_xa = h["shortwave_radiation"].to_numpy(dtype=float)
+    gio = h["wind_speed"].to_numpy(dtype=float)
+    loss = h["loss_temp"].to_numpy(dtype=float)
+    e = h["e_hourly"].fillna(0.0).to_numpy(dtype=float)
+
+    # 1. Tinh nhiet do cell theo 2 cau truc: Flush vs Open Rack
+    t_flush = _t_cell_sapm(temp, buc_xa, gio, cfg.SAPM_FLUSH)
+    t_open = _t_cell_sapm(temp, buc_xa, gio, cfg.SAPM_OPEN)
+    delta_t = np.maximum(0.0, t_flush - t_open)
+    delta_loss = k_nhiet * delta_t  # gamma = 0.0038 / degC
+
+    # 2. Thu hoi dien: delta_e = e_hourly * delta_loss / (1 - loss_temp)
+    hop_le = np.isfinite(loss) & (loss < 1.0) & np.isfinite(delta_t)
+    delta_e = np.where(hop_le, e * delta_loss / np.where(hop_le, 1.0 - loss, 1.0), 0.0)
+
+    return pd.DataFrame({
+        "delta_t_cell": np.where(hop_le, delta_t, 0.0),
+        "delta_kwh": delta_e,
+        "delta_revenue_aud": delta_e * g["fit"],
+    }, index=h.index)
+```
+
+**Bảng đối chiếu biến số toán học và mã nguồn:**
+
+| Ký Hiệu Toán Học | Biến Trong Mã Nguồn Python | Cột Dữ Liệu Parquet View | Ý Nghĩa Kỹ Thuật |
+| :--- | :--- | :--- | :--- |
+| $T_{\text{flush}}(t)$ | `t_flush` | `_t_cell_sapm(..., cfg.SAPM_FLUSH)` | Nhiệt độ cell khi lắp áp sát mái |
+| $T_{\text{open}}(t)$ | `t_open` | `_t_cell_sapm(..., cfg.SAPM_OPEN)` | Nhiệt độ cell khi có khe hở thông gió 150mm |
+| $\Delta T_{\text{cell}}(t)$ | `delta_t` | `np.maximum(0.0, t_flush - t_open)` | Mức hạ nhiệt độ cell (trung bình $-8{,}0^\circ\text{C}$) |
+| $\Delta loss_{\text{temp}}(t)$ | `delta_loss` | `k_nhiet * delta_t` | Độ giảm tỷ lệ tổn thất nhiệt ($\gamma = 0{,}0038$) |
+| $\Delta e(t)$ | `delta_e` | `e * delta_loss / (1.0 - loss)` | Sản lượng điện năng thu hồi cấp dòng giờ |
+
+---
+
+## 3. Bảng Phân Rã 12 Tháng Nhiệt Độ Cell & Sản Lượng Thu Hồi Thực Tế
 
 | Tháng | Mùa Vụ | T_amb TB (°C) | T_cell Áp Mái (°C) | T_cell Thông Gió (°C) | Mức Hạ Nhiệt ΔT (°C) | Tỷ Lệ Cải Thiện (%) | Sản Lượng Thu Hồi (kWh/tháng) | Tiết Kiệm (AUD/tháng) |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
@@ -75,7 +127,7 @@ $$
 
 ---
 
-## 3. Phân Tích Tài Chính & Hiệu Quả Đầu Tư
+## 4. Phân Tích Tài Chính & Hiệu Quả Đầu Tư
 
 * **Tổng điện năng thu hồi từ nhiệt:** **$117.224\,\text{kWh/năm}$** ($+3{,}40\%$ tổng sản lượng toàn hệ thống).
 * **Giá trị tiết kiệm điện hàng năm:**

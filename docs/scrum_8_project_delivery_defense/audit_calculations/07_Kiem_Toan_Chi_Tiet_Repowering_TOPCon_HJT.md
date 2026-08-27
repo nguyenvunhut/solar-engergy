@@ -42,7 +42,29 @@ $$
 
 ---
 
-## 2. So Sánh Thông Số Kỹ Thuật Công Nghệ Pin
+## 2. Đoạn Mã Nguồn Thực Thi Tính Toán Trong Codebase
+
+Mô hình lợi ích nhiệt TOPCon được hiện thực hóa tại [`srcs/07_dashboard/api/bimart/services/phan_ra.py`](file:///D:/Learning/FPT_polytechnic/Sem6/datn_outlier_hs_nlmt/srcs/07_dashboard/api/bimart/services/phan_ra.py):
+
+```python
+# File: srcs/07_dashboard/api/bimart/services/phan_ra.py (Dong 166-177)
+def loi_ich_nhiet_topcon() -> pd.DataFrame:
+    """Hang muc 7: Loi ich he so nhiet TOPCon theo dai nhiet do cell."""
+    h = repo.doc_hourly()
+    d = h[h["shortwave_radiation"] > 50].copy()
+    d["dai"] = pd.cut(d["t_cell"], [-10, 25, 35, 45, 55, 100],
+                      labels=["<=25°C", "25–35°C", "35–45°C", "45–55°C", ">55°C"])
+    # Cong thuc delta_gamma = 0.08%/C -> 0.0008 * max(0, t_cell - 25) * e_hourly
+    d["loi_ich"] = 0.0008 * np.maximum(0.0, d["t_cell"] - 25) * d["e_hourly"].fillna(0.0)
+    g = (d.groupby("dai", observed=True)
+           .agg(so_gio=("t_cell", "size"), kwh=("e_hourly", "sum"), loi_ich_kwh=("loi_ich", "sum"))
+           .reset_index())
+    return g
+```
+
+---
+
+## 3. So Sánh Thông Số Kỹ Thuật Công Nghệ Pin
 
 | Thông Số Kỹ Thuật | P-type PERC (Hiện Tại) | N-type TOPCon (Nâng Cấp) | Mức Cải Thiện Vượt Trội |
 | :--- | :---: | :---: | :---: |
@@ -53,7 +75,7 @@ $$
 
 ---
 
-## 3. Phân Rã Lợi Ích Hệ Số Nhiệt TOPCon Theo Dải Nhiệt Độ Tấm Pin Thực Tế
+## 4. Phân Rã Lợi Ích Hệ Số Nhiệt TOPCon Theo Dải Nhiệt Độ Tấm Pin Thực Tế
 
 | Dải Nhiệt Độ Tấm Pin (°C) | Số Giờ Vận Hành Ban Ngày | Tổng Sản Lượng Đo Được (kWh) | Sản Lượng Tăng Thêm Nhờ Hệ Số Nhiệt TOPCon (kWh) |
 | :--- | :---: | :---: | :---: |
@@ -66,7 +88,7 @@ $$
 
 ---
 
-## 4. Tổng Hợp Hiệu Quả Kỳ Đại Tu Repowering
+## 5. Tổng Hợp Hiệu Quả Kỳ Đại Tu Repowering
 
 * **Tổng sản lượng điện gia tăng:** **$+213.761\,\text{kWh/năm}$** ($+6{,}20\%$ tổng sản lượng toàn hệ thống).
 * **Giá trị kinh tế gia tăng hàng năm:** **$42.752\,\text{AUD/năm}$**.

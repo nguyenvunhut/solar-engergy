@@ -47,7 +47,40 @@ $$
 
 ---
 
-## 2. Ma Trận Đối Soát Chi Tiết Toàn Bộ 7 Hạng Mục Cải Tiến
+## 2. Đoạn Mã Nguồn Thực Thi Tính Toán Trong Codebase
+
+Động cơ tính toán kịch bản What-If thời gian thực được hiện thực hóa tại [`srcs/07_dashboard/api/bimart/services/whatif.py`](file:///D:/Learning/FPT_polytechnic/Sem6/datn_outlier_hs_nlmt/srcs/07_dashboard/api/bimart/services/whatif.py):
+
+```python
+# File: srcs/07_dashboard/api/bimart/services/whatif.py (Dong 26-68)
+def chay_kich_ban(bat: list[str] | None = None,
+                    nam: int | None = None,
+                    gia_tuy_chinh: dict | None = None) -> dict:
+    # 1. Xac dinh danh sach hang muc dang bat
+    danh_sach = list(cfg.HANG_MUC_CAI_TIEN.keys()) if bat is None else list(bat)
+    g = gia_tuy_chinh or (cfg.BIEU_GIA_NEM[nam] if nam in cfg.BIEU_GIA_NEM else cfg.GIA_TB_3_NAM)
+
+    # 2. Tong hop nang luong thu hoi va doanh thu delta
+    delta_e = sum(cfg.HANG_MUC_CAI_TIEN[m]["kwh"] for m in danh_sach if m in cfg.HANG_MUC_CAI_TIEN)
+    e1 = cfg.CO_SO["e_baseline_kwh"] + delta_e
+    ti_le = e1 / cfg.CO_SO["e_baseline_kwh"]
+
+    # 3. Tinh lai Performance Ratio (PR) va Capacity Factor (CF)
+    pr1 = cfg.CO_SO["pr_co_so_%"] * ti_le
+    cf1 = cfg.CO_SO["cf_co_so_%"] * ti_le
+    co2_kg = e1 * cfg.CO_SO["he_so_co2_kg_kwh"]
+
+    # 4. CapEx va thoi gian hoan von Payback
+    capex_tong = sum(cfg.HANG_MUC_CAI_TIEN[m]["capex"] for m in danh_sach if m in cfg.HANG_MUC_CAI_TIEN)
+    rev_delta = sum(cfg.doanh_thu_theo_nam(m, nam) for m in danh_sach if m in cfg.HANG_MUC_CAI_TIEN)
+    payback = (capex_tong / rev_delta) if rev_delta > 0 else 0.0
+
+    return { ... }
+```
+
+---
+
+## 3. Ma Trận Đối Soát Chi Tiết Toàn Bộ 7 Hạng Mục Cải Tiến
 
 | STT | Hạng Mục Đề Xuất Cải Tiến | Mức Cải Thiện Hiệu Suất | Điện Thu Hồi (kWh/Năm) | Doanh Thu Năm 2020 | Doanh Thu Năm 2021 | Doanh Thu Năm 2022 | Doanh Thu TB 3 Năm | CapEx Đầu Tư (AUD) | Thời Gian Hoàn Vốn |
 | :---: | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
@@ -63,7 +96,7 @@ $$
 
 ---
 
-## 3. Bảng So Sánh Chỉ Số Vận Hành Toàn Hệ Thống (Before vs After)
+## 4. Bảng So Sánh Chỉ Số Vận Hành Toàn Hệ Thống (Before vs After)
 
 | Chỉ Số Hệ Thống | Hiện Trạng (Baseline) | Sau 6 Hạng Mục Kỹ Thuật | Sau Toàn Bộ 7 Hạng Mục | Mức Cải Thiện Ròng |
 | :--- | :---: | :---: | :---: | :---: |
@@ -82,7 +115,7 @@ $$
 
 ---
 
-## 4. Danh Mục Các Báo Cáo Thành Phần
+## 5. Danh Mục Các Báo Cáo Thành Phần
 
 Toàn bộ chi tiết tính toán, công thức toán học và bảng bóc tách 12 tháng được lưu trữ độc lập tại:
 1. [`01_Kiem_Toan_Chi_Tiet_BESS_Va_Inverter_Clipping.md`](01_Kiem_Toan_Chi_Tiet_BESS_Va_Inverter_Clipping.md)

@@ -40,7 +40,29 @@ $$
 
 ---
 
-## 2. Thống Kê Khí Tượng 12 Tháng Lượng Mưa & Tỷ Lệ Ngày Khô Tại Victoria
+## 2. Đoạn Mã Nguồn Thực Thi Tính Toán Trong Codebase
+
+Thuật toán phân tích ngày khô và lượng mưa được hiện thực hóa tại [`srcs/07_dashboard/api/bimart/services/phan_ra.py`](file:///D:/Learning/FPT_polytechnic/Sem6/datn_outlier_hs_nlmt/srcs/07_dashboard/api/bimart/services/phan_ra.py):
+
+```python
+# File: srcs/07_dashboard/api/bimart/services/phan_ra.py (Dong 153-164)
+def chuoi_kho_theo_thang() -> pd.DataFrame:
+    """Hang muc 6: Luong mua va ty le ngay kho theo thang (nguong 5.0 mm/ngay)."""
+    d = repo.doc_daily().copy()
+    d["thang"] = d["date_id"] // 100 % 100
+    # Ngay kho neu luong mua < 5.0 mm
+    d["ngay_kho"] = d["daily_precipitation"].fillna(0.0) < 5.0
+    g = (d.groupby("thang").agg(mua_mm=("daily_precipitation", "mean"),
+                                ty_le_ngay_kho=("ngay_kho", "mean"))
+           .reindex(range(1, 13)).fillna(0.0).reset_index())
+    g["ten"] = [TEN_THANG[i - 1] for i in g["thang"]]
+    g["ty_le_ngay_kho"] *= 100.0
+    return g
+```
+
+---
+
+## 3. Thống Kê Khí Tượng 12 Tháng Lượng Mưa & Tỷ Lệ Ngày Khô Tại Victoria
 
 | Tháng | Mùa Vụ | Lượng Mưa Trung Bình (mm/ngày) | Tỷ Lệ Ngày Khô Hạn (%) | Đánh Giá Tích Tụ Bụi Bẩn Mùa Vụ |
 | :--- | :--- | :---: | :---: | :--- |
@@ -60,7 +82,7 @@ $$
 
 ---
 
-## 3. Định Lượng Lợi Ích Vận Hành & Tài Chính
+## 4. Định Lượng Lợi Ích Vận Hành & Tài Chính
 
 * **Thu hồi sản lượng bám bụi mùa khô:** **$+62.060\,\text{kWh/năm}$** ($+1{,}80\%$ trong các tháng khô hạn) $\implies$ Doanh thu tăng thêm **$12.412\,\text{AUD/năm}$**.
 * **Tiết kiệm chi phí nhân công rửa thừa:** Cắt giảm 3 đợt rửa không cần thiết vào mùa mưa $\implies$ **Tiết kiệm $6.000\,\text{AUD/năm}$**.

@@ -65,7 +65,52 @@ $$
 
 ---
 
-## 2. Kết Quả Tính Toán & Bóc Tách 12 Tháng Tổn Thất Cắt Ngọn
+## 2. Đoạn Mã Nguồn Thực Thi Tính Toán Trong Codebase
+
+Các công thức toán học trên được hiện thực hóa trực tiếp trong module [`srcs/07_dashboard/api/bimart/services/bess.py`](file:///D:/Learning/FPT_polytechnic/Sem6/datn_outlier_hs_nlmt/srcs/07_dashboard/api/bimart/services/bess.py):
+
+```python
+# File: srcs/07_dashboard/api/bimart/services/bess.py (Dong 21-45)
+def tinh(h: pd.DataFrame, gia: dict | None = None) -> pd.DataFrame:
+    g = gia or cfg.GIA_TB_3_NAM
+    p_stc = h["p_stc"].fillna(0.0).to_numpy(dtype=float)
+    hop_le = p_stc > 0
+
+    # 1. Tinh tiem nang DC thuc te truoc nghich luu: E_STC * PR_adj
+    tiem_nang = (h["e_stc_hourly"].fillna(0.0).to_numpy(dtype=float)
+                 * h["pr_adjusted"].fillna(0.0).to_numpy(dtype=float))
+    # 2. Tran AC Inverter: P_AC_max = P_STC / ILR (ILR = 1.25 -> 0.80 * P_STC)
+    tran_ac = (1.0 / cfg.ILR) * p_stc
+
+    # 3. Tich phan cat ngon: delta_clip = max(0, tiem_nang - tran_ac)
+    delta_clip = np.where(hop_le, np.maximum(0.0, tiem_nang - tran_ac), 0.0)
+    # 4. Thu hoi qua BESS: delta_thu_hoi = delta_clip * ETA_RTE (0.88)
+    delta_thu_hoi = delta_clip * cfg.ETA_RTE
+
+    # 5. TOU Arbitrage gio cao diem 17h-21h: (P_Peak - P_FIT) vs P_FIT
+    lo, hi = cfg.GIO_CAO_DIEM
+    trong_khung = h["hourly_bucket"].between(lo, hi).to_numpy()
+    don_gia = np.where(trong_khung, g["tou_peak"] - g["fit"], g["fit"])
+
+    return pd.DataFrame({
+        "delta_clip_kwh": delta_clip,
+        "delta_kwh": delta_thu_hoi,
+        "delta_revenue_aud": delta_thu_hoi * don_gia,
+    }, index=h.index)
+```
+
+**Bảng đối chiếu biến số toán học và mã nguồn:**
+
+| Ký Hiệu Toán Học | Biến Trong Mã Nguồn Python | Cột Dữ Liệu Parquet View | Ý Nghĩa Kỹ Thuật |
+| :--- | :--- | :--- | :--- |
+| $P_{\text{AC, max}}$ | `tran_ac` | `(1.0 / cfg.ILR) * p_stc` | Trần công suất xoay chiều Inverter ($0{,}80 \times p\_stc$) |
+| $\Delta e_{\text{clip}}(t)$ | `delta_clip` | `np.maximum(0.0, tiem_nang - tran_ac)` | Năng lượng cắt ngọn tức thời |
+| $\Delta e_{\text{recovered}}(t)$ | `delta_thu_hoi` | `delta_clip * cfg.ETA_RTE` | Năng lượng nạp-xả qua pin lưu trữ ($\eta = 88\%$) |
+| $\Delta \text{Revenue}(t)$ | `delta_revenue_aud` | `delta_thu_hoi * don_gia` | Doanh thu tối ưu theo khung giờ cao điểm TOU |
+
+---
+
+## 3. Kết Quả Tính Toán & Bóc Tách 12 Tháng Tổn Thất Cắt Ngọn
 
 Tổn thất cắt ngọn tập trung chủ yếu vào **5 tháng mùa hè và đầu xuân (tháng 10 đến tháng 2)**, hoàn toàn biến mất vào mùa đông khi góc bức xạ Mặt Trời không vượt ngưỡng trần AC Inverter:
 
@@ -87,7 +132,7 @@ Tổn thất cắt ngọn tập trung chủ yếu vào **5 tháng mùa hè và �
 
 ---
 
-## 3. Ma Trận Cấu Hình Pin Lưu Trữ BESS 5 Khuôn Viên
+## 4. Ma Trận Cấu Hình Pin Lưu Trữ BESS 5 Khuôn Viên
 
 | STT | Khuôn Viên (Campus) | Số Trạm | Công Suất DC (kWp) | Công Suất BESS (kW) | Dung Lượng BESS (kWh) | CapEx Đầu Tư (500 AUD/kWh) | Năng Lượng Xả TOU + Clip (kWh/năm) | Gọt Đỉnh Phụ Tải (kW) |
 | :---: | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
@@ -100,7 +145,7 @@ Tổn thất cắt ngọn tập trung chủ yếu vào **5 tháng mùa hè và �
 
 ---
 
-## 4. Đánh Giá Hiệu Quả Tài Chính & Thời Gian Hoàn Vốn
+## 5. Đánh Giá Hiệu Quả Tài Chính & Thời Gian Hoàn Vốn
 
 * **Năng lượng BESS xả phục vụ tự dùng & cắt đỉnh:** **$712.182\,\text{kWh/năm}$**
 * **Doanh thu & Tiết kiệm chi phí điện:**
