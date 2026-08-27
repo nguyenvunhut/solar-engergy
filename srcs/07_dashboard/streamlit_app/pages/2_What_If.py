@@ -75,6 +75,11 @@ def _o(lop: str, noi_dung: str = "") -> str:
     return f'<div class="{lop}">{noi_dung}</div>'
 
 
+def phan_tram(truoc: float, sau: float) -> str:
+    """Muc cai thien tinh theo phan tram, de moi the KPI deu co mot con so % ."""
+    return f"{(sau - truoc) / truoc * 100:+.2f}%" if truoc else "—"
+
+
 def the(nhan: str, co_so: str, mo_phong: str, delta: str) -> str:
     """Mot the KPI.
 
@@ -115,19 +120,21 @@ st.markdown("### Tổng quan")
 st.caption("Chưa tích hạng mục nào thì đây là hiện trạng vận hành. Mỗi hạng mục được "
            "tích sẽ cộng thêm phần đóng góp của nó vào các chỉ số dưới đây."
            if not co_chon else
-           f"Đang áp dụng **{len(bat)}/7** hạng mục cải tiến.")
+           f"Đang áp dụng **{len(bat)}/{len(cfg.HANG_MUC_CAI_TIEN)}** hạng mục cải tiến.")
 
 st.markdown('<div class="tq">'
     + the("Điện làm ra", f"{c['e_kwh']/1e6:.2f} GWh", f"{s['e_kwh']/1e6:.2f} GWh",
           f"+{d['e_kwh']:,.0f} kWh ({d['ty_le_%']:+.2f}%)")
     + the("Hiệu suất thực tế (PR)", f"{c['pr_%']:.2f}%", f"{s['pr_%']:.2f}%",
-          f"{s['pr_%']-c['pr_%']:+.2f} điểm")
+          f"{s['pr_%']-c['pr_%']:+.2f} điểm ({phan_tram(c['pr_%'], s['pr_%'])})")
     + the("Mức chạy so với công suất lắp (CF)", f"{c['cf_%']:.2f}%", f"{s['cf_%']:.2f}%",
-          f"{s['cf_%']-c['cf_%']:+.2f} điểm")
+          f"{s['cf_%']-c['cf_%']:+.2f} điểm ({phan_tram(c['cf_%'], s['cf_%'])})")
     + the("Tiền điện tiết kiệm", tien_gon(c["revenue_aud"]), tien_gon(s["revenue_aud"]),
-          f"+{tien_str(d['revenue_aud'])}/năm")
+          f"+{tien_str(d['revenue_aud'])}/năm "
+          f"({phan_tram(c['revenue_aud'], s['revenue_aud'])})")
     + the("CO₂ giảm được", f"{c['co2_kg']/1000:,.0f} tấn", f"{s['co2_kg']/1000:,.0f} tấn",
-          f"+{d['co2_kg']/1000:,.0f} tấn/năm")
+          f"+{d['co2_kg']/1000:,.0f} tấn/năm "
+          f"({phan_tram(c['co2_kg'], s['co2_kg'])})")
     + '</div>', unsafe_allow_html=True)
 
 g1, g2 = st.columns([1.25, 1])
@@ -173,7 +180,7 @@ with g2:
         st.plotly_chart(style_fig(f2, 380), width="stretch")
 
 # ══ 2. BANG TONG HOP ═════════════════════════════════════════════════════════
-st.markdown("### Bảy hạng mục cải tiến")
+st.markdown(f"### {len(cfg.HANG_MUC_CAI_TIEN)} hạng mục cải tiến")
 with st.container(border=True):
     bb = pd.DataFrame(kq["hang_muc"]).sort_values("stt")
     hien = pd.DataFrame({
@@ -249,11 +256,14 @@ for h in sorted(kq["hang_muc"], key=lambda x: x["stt"]):
                 st.dataframe(pd.DataFrame({
                     "Khuôn viên": cp["campus"], "Số trạm": cp["so_tram"],
                     "Tỷ trọng": (cp["ty_trong"] * 100).round(1),
+                    "CS ước tính": cp["bess_kw"],
                     "kWh/năm": cp["kwh"].round(0)})
-                    .style.format({"Tỷ trọng": "{:.1f}%", "kWh/năm": "{:,.0f}"}),
+                    .style.format({"Tỷ trọng": "{:.1f}%",
+                                   "CS ước tính": "{:,.0f} kW",
+                                   "kWh/năm": "{:,.0f}"}),
                     width="stretch", hide_index=True, height=CAO)
 
-            st.markdown("**Tổn thất cắt ngọn theo tháng (kWh, không phải tỷ lệ)**")
+            st.markdown("**Tổn thất cắt ngọn theo tháng (kWh)**")
             t = phan_ra.clip_ton_that_thang()
             f2 = go.Figure()
             f2.add_bar(x=t["ten"], y=t["thu_hoi_kwh"], name="Thu hồi qua BESS",

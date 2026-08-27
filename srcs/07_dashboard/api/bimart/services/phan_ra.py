@@ -39,7 +39,8 @@ def ho_so_campus() -> pd.DataFrame:
     bang 451.713 / 712.182. Cot p_stc trong du lieu gio chi co gia tri o mot
     phan cac tram nen khong dung de suy ty trong duoc.
     """
-    g = pd.DataFrame([{"campus": k, "so_tram": v["so_tram"], "kwp": v["kwp"]}
+    g = pd.DataFrame([{"campus": k, "so_tram": v["so_tram"], "kwp": v["kwp"],
+                       "bess_kw": v["bess_kw"], "bess_kwh": v["bess_kwh"]}
                       for k, v in cfg.CAMPUS.items()])
     g["ty_trong"] = g["kwp"] / g["kwp"].sum()
     return g.sort_values("kwp", ascending=False).reset_index(drop=True)

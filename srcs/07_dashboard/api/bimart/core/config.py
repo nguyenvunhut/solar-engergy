@@ -73,12 +73,16 @@ CO_SO = {
 }
 
 # 5 khuon vien — brief muc 2
+# bess_kw / bess_kwh: cau hinh pin luu tru tung khuon vien, lay tu bang kiem
+# toan 01 muc 4. Luu y: cong cac dong lai duoc 950 kW va 2.375 kWh, trong khi
+# dong TONG cua chinh bang do ghi 1.000 kW va 2.500 kWh — chenh do lam tron
+# xuong so chan khi phan bo, nen day la CON SO UOC TINH.
 CAMPUS = {
-    "Bundoora":       {"kwp": 1540, "so_tram": 26},
-    "Bendigo":        {"kwp": 510,  "so_tram": 8},
-    "Albury-Wodonga": {"kwp": 240,  "so_tram": 4},
-    "Shepparton":     {"kwp": 78,   "so_tram": 2},
-    "Mildura":        {"kwp": 60,   "so_tram": 2},
+    "Bundoora":       {"kwp": 1540, "so_tram": 26, "bess_kw": 600, "bess_kwh": 1500},
+    "Bendigo":        {"kwp": 510,  "so_tram": 8,  "bess_kw": 210, "bess_kwh": 525},
+    "Albury-Wodonga": {"kwp": 240,  "so_tram": 4,  "bess_kw": 90,  "bess_kwh": 225},
+    "Shepparton":     {"kwp": 78,   "so_tram": 2,  "bess_kw": 30,  "bess_kwh": 75},
+    "Mildura":        {"kwp": 60,   "so_tram": 2,  "bess_kw": 20,  "bess_kwh": 50},
 }
 
 # Cac thanh phan ton that co so — brief muc 2
@@ -129,18 +133,23 @@ HANG_MUC_CAI_TIEN = {
         "hieu_suat": "+3,90%", "kwh": 71_850, "aud": 14_670,
         "capex_aud": 18_000, "payback": "1,23 năm", "ton_that": "tilt",
     },
-    "inverter": {
-        "stt": 5, "ten": "Che nắng bộ inverter, gắn bộ tối ưu DC",
-        "hieu_suat": "+1,65%", "kwh": 57_074, "aud": 11_415,
-        "capex_aud": 12_500, "payback": "1,10 năm", "ton_that": "shade",
-    },
+    # DA BO hang muc "Mai che Inverter & DC Optimizers" ngay 27/08/2026;
+    # cac muc sau da danh so lai lien mach 1-6. Bo comment de hien lai
+    # (nho tra so thu tu: rua pin ve 6, TOPCon ve 7). — bo comment de hien lai.
+    # An muc nay lam giam tong: -57.074 kWh, -11.415 AUD/nam, -12.500 AUD CapEx.
+    # PR khong doi vi PR_DIEM_HANG_MUC["inverter"] = 0.
+    # "inverter": {
+    #     "stt": 5, "ten": "Che nắng bộ inverter, gắn bộ tối ưu DC",
+    #     "hieu_suat": "+1,65%", "kwh": 57_074, "aud": 11_415,
+    #     "capex_aud": 12_500, "payback": "1,10 năm", "ton_that": "shade",
+    # },
     "washing": {
-        "stt": 6, "ten": "Lịch rửa pin thông minh theo mưa",
+        "stt": 5, "ten": "Lịch rửa pin thông minh theo mưa",
         "hieu_suat": "+1,80%", "kwh": 62_060, "aud": 18_412,
         "capex_aud": 0, "payback": "Ngay lập tức", "ton_that": "soiling",
     },
     "topcon": {
-        "stt": 7, "ten": "Thay tấm pin đời mới TOPCon",
+        "stt": 6, "ten": "Thay tấm pin đời mới TOPCon",
         "hieu_suat": "+6,20%", "kwh": 213_761, "aud": 42_752,
         "capex_aud": None, "payback": "Khi thay tấm pin (15–20 năm)", "ton_that": None,
     },
