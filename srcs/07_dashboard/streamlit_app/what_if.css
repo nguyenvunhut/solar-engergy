@@ -1,0 +1,71 @@
+/* Giao dien rieng cho trang Mo phong What-If.
+   Tach khoi 2_What_If.py de file do chi con Python thuan. */
+
+/* Checkbox sidebar -> the bam duoc. Streamlit dung emotion-css do uu tien cao nen
+   moi quy tac deu can !important; o vuong duoc an bang nhieu bien the selector vi
+   cau truc DOM khac nhau giua cac ban Streamlit. */
+section[data-testid="stSidebar"] div[data-testid="stCheckbox"]{
+  margin:0 0 7px!important;
+}
+section[data-testid="stSidebar"] div[data-testid="stCheckbox"] label{
+  position:relative!important;display:flex!important;align-items:center!important;
+  gap:0!important;width:100%!important;
+  padding:10px 13px!important;border:1px solid #E4E4F0!important;border-radius:10px!important;
+  background:#FCFCFE!important;cursor:pointer!important;
+  transition:background .13s ease,border-color .13s ease,transform .13s ease!important;
+}
+section[data-testid="stSidebar"] div[data-testid="stCheckbox"] label:hover{
+  background:#EEF0FB!important;border-color:#A5ACEC!important;transform:translateX(2px);
+}
+/* An o vuong ma khong dung toi khoi chu: chi giau nhung phan tu con truc tiep
+   vua KHONG phai khoi chu, vua KHONG chua khoi chu ben trong. Nho vay khong can
+   biet truoc Streamlit long the nao. Neu trinh duyet khong ho tro :has() thi ca
+   quy tac bi bo qua — o vuong hien lai, chu van con nguyen. */
+section[data-testid="stSidebar"] div[data-testid="stCheckbox"] label>*:not([data-testid="stMarkdownContainer"]):not(:has([data-testid="stMarkdownContainer"])){
+  position:absolute!important;width:1px!important;height:1px!important;
+  padding:0!important;margin:0!important;border:0!important;overflow:hidden!important;
+  clip:rect(0 0 0 0)!important;white-space:nowrap!important;opacity:0!important;
+}
+section[data-testid="stSidebar"] div[data-testid="stCheckbox"] p{
+  font-size:.88rem!important;line-height:1.38!important;color:#374151!important;
+  margin:0!important;font-weight:650!important;
+}
+/* Trang thai da tich */
+section[data-testid="stSidebar"] div[data-testid="stCheckbox"]:has(input:checked) label{
+  background:#6366F1!important;border-color:#6366F1!important;
+  box-shadow:0 1px 6px rgba(99,102,241,.28)!important;
+}
+section[data-testid="stSidebar"] div[data-testid="stCheckbox"]:has(input:checked) p{
+  color:#FFFFFF!important;font-weight:700!important;
+}
+section[data-testid="stSidebar"] div[data-testid="stCheckbox"]:has(input:checked) label:hover{
+  background:#5457D8!important;border-color:#5457D8!important;
+}
+/* Dai the tong quan: dung lai .kpi-card cua style.css de dong bo voi trang ML,
+   chi bo sung dong "co so" va co chu cho phan chenh lech. */
+details summary p, div[data-testid="stExpander"] summary p{
+  font-weight:650!important;color:#1F2937;
+}
+/* Dai card thong so dau moi hang muc */
+.ct{display:flex;gap:12px;flex-wrap:wrap;margin:4px 0 16px}
+.ct>div{flex:1 1 195px;min-width:195px;background:#FCFCFE;border:1px solid #E4E4F0;
+        border-radius:10px;padding:13px 15px}
+.ct-nhan{color:#6B7280;font-size:.78rem;font-weight:700;text-transform:uppercase;
+         letter-spacing:.03em;margin-bottom:5px}
+.ct-tri{color:#1F2937;font-size:1.2rem;font-weight:760;line-height:1.32}
+.tq{display:flex;gap:12px;flex-wrap:wrap;margin:2px 0 8px}
+.tq>div{flex:1 1 250px;min-width:250px}
+.kpi-doi-don{margin-top:7px}
+.kpi-doi{display:grid;grid-template-columns:1fr auto 1fr;
+         column-gap:8px;row-gap:1px;align-items:center;margin-top:7px}
+.kpi-doi>div{min-width:0}
+/* Mui ten nam o o giua cua HANG DUOI trong luoi, nen tu dong ngang hang voi
+   hai con so ma khong can chen le thu cong. */
+.kpi-mui{color:#A5ACEC;font-size:1.15rem;font-weight:800;line-height:1;
+         text-align:center;padding:0 2px}
+.kpi-cot-nhan{color:#98A2B3;font-size:.62rem;font-weight:700;text-transform:uppercase;
+              letter-spacing:.03em;margin-bottom:1px}
+.kpi-cot-tri{color:#1F2937;font-size:1.0rem;font-weight:760;line-height:1.25;
+             white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kpi-cot-tri.sim{color:#4F46E5}
+.kpi-delta{font-size:.98rem;font-weight:700;margin-top:4px;color:#16A34A}

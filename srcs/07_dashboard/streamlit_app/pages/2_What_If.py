@@ -12,15 +12,19 @@ Chay: cd srcs/07_dashboard && streamlit run streamlit_app/app.py
 """
 from __future__ import annotations
 
+from pathlib import Path
+
 from api.bimart.core import config as cfg
 from api.bimart.services import phan_ra
 from api.bimart.services.whatif import chay_kich_ban
-from dashboard_common import header_bao_cao, load_shared_css
+from dashboard_common import header_bao_cao, load_shared_css, nap_css
 import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 
 LUC, DO, XANH, LUOI = "#0E9F6E", "#DC2626", "#6366F1", "#D9DEE7"
+CAO = 330   # chieu cao dung chung: bieu do va bang canh no phai bang nhau,
+            # va moi cot chi duoc chua dung mot tieu de + mot khoi noi dung
 
 st.set_page_config(page_title="What-If Tối ưu hoá | BI Mart",
                    layout="wide", initial_sidebar_state="expanded")
@@ -29,67 +33,8 @@ header_bao_cao("Mô phỏng What-If — Tối ưu hoá hiệu suất & tài chí
                "42 trạm áp mái La Trobe · 2.428 kWp · 5 khuôn viên · dữ liệu 2020–2022",
                "BI MART")
 
-st.markdown("""
-<style>
-/* Checkbox sidebar -> the bam duoc. Streamlit dung emotion-css do uu tien cao nen
-   moi quy tac deu can !important; o vuong duoc an bang nhieu bien the selector vi
-   cau truc DOM khac nhau giua cac ban Streamlit. */
-section[data-testid="stSidebar"] div[data-testid="stCheckbox"]{
-  margin:0 0 7px!important;
-}
-section[data-testid="stSidebar"] div[data-testid="stCheckbox"] label{
-  position:relative!important;display:flex!important;align-items:center!important;
-  gap:0!important;width:100%!important;
-  padding:10px 13px!important;border:1px solid #E4E4F0!important;border-radius:10px!important;
-  background:#FCFCFE!important;cursor:pointer!important;
-  transition:background .13s ease,border-color .13s ease,transform .13s ease!important;
-}
-section[data-testid="stSidebar"] div[data-testid="stCheckbox"] label:hover{
-  background:#EEF0FB!important;border-color:#A5ACEC!important;transform:translateX(2px);
-}
-/* An o vuong ma khong dung toi khoi chu: chi giau nhung phan tu con truc tiep
-   vua KHONG phai khoi chu, vua KHONG chua khoi chu ben trong. Nho vay khong can
-   biet truoc Streamlit long the nao. Neu trinh duyet khong ho tro :has() thi ca
-   quy tac bi bo qua — o vuong hien lai, chu van con nguyen. */
-section[data-testid="stSidebar"] div[data-testid="stCheckbox"] label>*:not([data-testid="stMarkdownContainer"]):not(:has([data-testid="stMarkdownContainer"])){
-  position:absolute!important;width:1px!important;height:1px!important;
-  padding:0!important;margin:0!important;border:0!important;overflow:hidden!important;
-  clip:rect(0 0 0 0)!important;white-space:nowrap!important;opacity:0!important;
-}
-section[data-testid="stSidebar"] div[data-testid="stCheckbox"] p{
-  font-size:.88rem!important;line-height:1.38!important;color:#374151!important;
-  margin:0!important;font-weight:650!important;
-}
-/* Trang thai da tich */
-section[data-testid="stSidebar"] div[data-testid="stCheckbox"]:has(input:checked) label{
-  background:#6366F1!important;border-color:#6366F1!important;
-  box-shadow:0 1px 6px rgba(99,102,241,.28)!important;
-}
-section[data-testid="stSidebar"] div[data-testid="stCheckbox"]:has(input:checked) p{
-  color:#FFFFFF!important;font-weight:700!important;
-}
-section[data-testid="stSidebar"] div[data-testid="stCheckbox"]:has(input:checked) label:hover{
-  background:#5457D8!important;border-color:#5457D8!important;
-}
-/* Dai the tong quan: dung lai .kpi-card cua style.css de dong bo voi trang ML,
-   chi bo sung dong "co so" va co chu cho phan chenh lech. */
-details summary p, div[data-testid="stExpander"] summary p{
-  font-weight:650!important;color:#1F2937;
-}
-.tq{display:flex;gap:12px;flex-wrap:wrap;margin:2px 0 8px}
-.tq>div{flex:1 1 250px;min-width:250px}
-.kpi-doi{display:grid;grid-template-columns:1fr auto 1fr;gap:6px;
-         align-items:center;margin-top:7px}
-.kpi-doi>div{min-width:0}
-.kpi-mui{color:#A5ACEC;font-size:1.15rem;font-weight:800;line-height:1;padding:0 1px}
-.kpi-cot-nhan{color:#98A2B3;font-size:.62rem;font-weight:700;text-transform:uppercase;
-              letter-spacing:.03em;margin-bottom:1px}
-.kpi-cot-tri{color:#1F2937;font-size:1.0rem;font-weight:760;line-height:1.25;
-             white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.kpi-cot-tri.sim{color:#4F46E5}
-.kpi-delta{font-size:.98rem;font-weight:700;margin-top:4px}
-.kpi-delta.up{color:#16A34A}.kpi-delta.zero{color:#98A2B3}
-</style>""", unsafe_allow_html=True)
+_THU_MUC = Path(__file__).resolve().parent.parent
+nap_css(_THU_MUC / "what_if.css")
 
 
 # ── Sidebar ──────────────────────────────────────────────────────────────────
@@ -125,20 +70,34 @@ def tien_gon(aud: float) -> str:
     return f"{v:,.0f} {t['ky_hieu']}"
 
 
+def _o(lop: str, noi_dung: str = "") -> str:
+    """Mot the <div> mang lop CSS cho truoc. Gom lai de khoi lap the tho."""
+    return f'<div class="{lop}">{noi_dung}</div>'
+
+
 def the(nhan: str, co_so: str, mo_phong: str, delta: str) -> str:
-    """The KPI: hien nay -> sau cai tien, chenh lech nam phia duoi."""
-    cls = "up" if co_chon else "zero"
-    return (f'<div><div class="kpi-card">'
-            f'<div class="kpi-label">{nhan}</div>'
-            f'<div class="kpi-doi">'
-            f'<div><div class="kpi-cot-nhan">Hiện nay</div>'
-            f'<div class="kpi-cot-tri">{co_so}</div></div>'
-            f'<div class="kpi-mui">&#8594;</div>'
-            f'<div><div class="kpi-cot-nhan">Sau cải tiến</div>'
-            f'<div class="kpi-cot-tri sim">{mo_phong}</div></div>'
-            f'</div>'
-            f'<div class="kpi-delta {cls}">{delta}</div>'
-            f'</div></div>')
+    """Mot the KPI.
+
+    Chua tich hang muc nao: chi hien con so hien trang.
+    Da tich: hien "Co so -> Mo phong" tren mot luoi 3 cot x 2 hang (hang tren
+    la nhan, hang duoi la so, mui ten nam giua hang duoi), kem dong chenh lech.
+    Cac lop CSS tuong ung nam trong streamlit_app/what_if.css.
+    """
+    if not co_chon:
+        than = _o("kpi-doi-don", _o("kpi-cot-nhan", "Cơ sở") + _o("kpi-cot-tri", co_so))
+    else:
+        luoi = (_o("kpi-cot-nhan", "Cơ sở") + _o("") + _o("kpi-cot-nhan", "Mô phỏng")
+                + _o("kpi-cot-tri", co_so) + _o("kpi-mui", "&#8594;")
+                + _o("kpi-cot-tri sim", mo_phong))
+        than = _o("kpi-doi", luoi) + _o("kpi-delta up", delta)
+    return _o("", _o("kpi-card", _o("kpi-label", nhan) + than))
+
+
+def dai_card(muc: list[tuple[str, str]]) -> None:
+    """Ve mot dai card "nhan - gia tri" nam ngang, tu dong xuong hang khi hep."""
+    st.markdown(_o("ct", "".join(
+        _o("", _o("ct-nhan", nhan) + _o("ct-tri", gia_tri)) for nhan, gia_tri in muc)),
+        unsafe_allow_html=True)
 
 
 def style_fig(f: go.Figure, h: int = 340) -> go.Figure:
@@ -160,15 +119,15 @@ st.caption("Chưa tích hạng mục nào thì đây là hiện trạng vận h�
 
 st.markdown('<div class="tq">'
     + the("Điện làm ra", f"{c['e_kwh']/1e6:.2f} GWh", f"{s['e_kwh']/1e6:.2f} GWh",
-          f"+{d['e_kwh']:,.0f} kWh ({d['ty_le_%']:+.2f}%)" if co_chon else "chưa thay đổi")
+          f"+{d['e_kwh']:,.0f} kWh ({d['ty_le_%']:+.2f}%)")
     + the("Hiệu suất thực tế (PR)", f"{c['pr_%']:.2f}%", f"{s['pr_%']:.2f}%",
-          f"{s['pr_%']-c['pr_%']:+.2f} điểm" if co_chon else "chưa thay đổi")
+          f"{s['pr_%']-c['pr_%']:+.2f} điểm")
     + the("Mức chạy so với công suất lắp (CF)", f"{c['cf_%']:.2f}%", f"{s['cf_%']:.2f}%",
-          f"{s['cf_%']-c['cf_%']:+.2f} điểm" if co_chon else "chưa thay đổi")
-    + the("Tiền bán điện", tien_gon(c["revenue_aud"]), tien_gon(s["revenue_aud"]),
-          f"+{tien_str(d['revenue_aud'])}/năm" if co_chon else "chưa thay đổi")
+          f"{s['cf_%']-c['cf_%']:+.2f} điểm")
+    + the("Tiền điện tiết kiệm", tien_gon(c["revenue_aud"]), tien_gon(s["revenue_aud"]),
+          f"+{tien_str(d['revenue_aud'])}/năm")
     + the("CO₂ giảm được", f"{c['co2_kg']/1000:,.0f} tấn", f"{s['co2_kg']/1000:,.0f} tấn",
-          f"+{d['co2_kg']/1000:,.0f} tấn/năm" if co_chon else "chưa thay đổi")
+          f"+{d['co2_kg']/1000:,.0f} tấn/năm")
     + '</div>', unsafe_allow_html=True)
 
 g1, g2 = st.columns([1.25, 1])
@@ -176,7 +135,7 @@ with g1:
     with st.container(border=True):
         st.markdown("##### Điện tăng thêm nhờ từng hạng mục")
         b = pd.DataFrame([h for h in kq["hang_muc"] if h["bat"]])
-        ten = ["Cơ sở"] + ([f"{r.stt}. {r.ten[:24]}" for r in b.itertuples()] if len(b) else []) + ["Simulation"]
+        ten = ["Cơ sở"] + ([f"{r.stt}. {r.ten[:24]}" for r in b.itertuples()] if len(b) else []) + ["Mô phỏng"]
         gt = [c["e_kwh"]] + (b["delta_kwh"].tolist() if len(b) else []) + [0]
         f = go.Figure(go.Waterfall(orientation="v",
                                    measure=["absolute"] + ["relative"]*len(b) + ["total"],
@@ -190,7 +149,7 @@ with g1:
         st.plotly_chart(style_fig(f, 380), width="stretch")
 with g2:
     with st.container(border=True):
-        st.markdown("##### Điện bị mất — phần lấy lại được và phần còn lại")
+        st.markdown("##### Điện bị mất: lấy lại được và còn lại")
         t = pd.DataFrame(kq["ton_that"])
         t["da_khu_%"] = t["truoc_%"] - t["sau_%"]
         f2 = go.Figure()
@@ -220,7 +179,7 @@ with st.container(border=True):
     hien = pd.DataFrame({
         "Áp dụng": bb["bat"].map({True: "Có", False: "Không"}),
         "Hạng mục": bb["ten"],
-        "Tăng sản lượng": bb["delta_kwh"] / cfg.CO_SO["e_baseline_kwh"],
+        "Tỷ lệ cải thiện": bb["hieu_suat"],
         "Điện thêm (kWh/năm)": bb["delta_kwh"],
         f"Tiền thêm ({tien}/năm)": bb["delta_revenue_aud"].map(
             lambda v: cfg.quy_doi(v, tien)),
@@ -229,8 +188,7 @@ with st.container(border=True):
         "Bao lâu lấy lại vốn": bb["payback"],
     })
     st.dataframe(
-        hien.style.format({"Tăng sản lượng": "+{:.2%}",
-                           "Điện thêm (kWh/năm)": "{:,.0f}",
+        hien.style.format({"Điện thêm (kWh/năm)": "{:,.0f}",
                            f"Tiền thêm ({tien}/năm)": "{:,.0f}",
                            f"Tiền bỏ ra ({tien})":
                                lambda v: "—" if pd.isna(v) else f"{v:,.0f}"})
@@ -238,9 +196,6 @@ with st.container(border=True):
                                  low=.1, high=.6)
             .set_properties(subset=["Hạng mục"], **{"font-weight": "650"}),
         width="stretch", hide_index=True)
-    st.caption("Cột *Tăng sản lượng* tính chung một mẫu số — lấy phần điện tăng thêm chia "
-               f"cho sản lượng cả năm hiện nay ({cfg.CO_SO['e_baseline_kwh']:,.0f} kWh), "
-               "nên bảy hạng mục so sánh được trực tiếp với nhau.")
     m1, m2, m3 = st.columns(3)
     m1.metric("Tổng tiền phải bỏ ra", tien_str(d["capex_aud"]) if co_chon else "—")
     m2.metric("Tiền thu thêm", f"{tien_str(d['revenue_aud'])}/năm" if co_chon else "—")
@@ -249,7 +204,7 @@ with st.container(border=True):
 
 # ══ 3. CHI TIET TUNG HANG MUC ════════════════════════════════════════════════
 st.markdown("### Chi tiết từng hạng mục")
-st.caption("Bảng thông số lấy từ tài liệu; biểu đồ dựng từ dữ liệu vận hành thực tế "
+st.caption("Số liệu từ tài liệu; biểu đồ từ dữ liệu vận hành thực tế "
            "của 42 trạm (2020–2022).")
 
 for h in sorted(kq["hang_muc"], key=lambda x: x["stt"]):
@@ -259,69 +214,119 @@ for h in sorted(kq["hang_muc"], key=lambda x: x["stt"]):
     with st.expander(f"**Hạng mục {h['stt']} — {ct['tieu_de']}**  ·  {nhan}", expanded=False):
 
         st.markdown("**Bảng thông số**")
-        st.dataframe(pd.DataFrame([
-            {"Chỉ tiêu": "Tăng được bao nhiêu", "Giá trị": h["hieu_suat"]},
-            {"Chỉ tiêu": "Điện lấy lại được", "Giá trị": f"{h['delta_kwh']:,.0f} kWh/năm"},
-            {"Chỉ tiêu": "Tiền thu thêm mỗi năm", "Giá trị": f"{tien_str(h['delta_revenue_aud'])}/năm"},
-            {"Chỉ tiêu": "Tiền phải bỏ ra",
-             "Giá trị": tien_str(h["capex_aud"]) if h["capex_aud"]
-                        else "Gộp vào đợt thay tấm pin"},
-            {"Chỉ tiêu": "Bao lâu lấy lại vốn", "Giá trị": h["payback"]},
-        ]), width="stretch", hide_index=True)
+        dai_card([
+            ("Tỷ lệ cải thiện", h["hieu_suat"]),
+            ("Điện thu hồi", f"{h['delta_kwh']:,.0f} kWh/năm"),
+            ("Giá trị kinh tế", f"{tien_str(h['delta_revenue_aud'])}/năm"),
+            ("CapEx đầu tư", tien_str(h["capex_aud"]) if h["capex_aud"]
+                             else "Tích hợp kỳ đại tu"),
+            ("Thời gian hoàn vốn", h["payback"]),
+        ])
 
-        st.markdown(f"**Cơ chế.** {ct['co_che']}")
-        st.markdown(f"**Tác động chỉ số.** {ct['tac_dong']}")
+        with st.popover("Cơ chế & tác động"):
+            st.markdown(f"**Cơ chế.** {ct['co_che']}")
+            st.markdown(f"**Tác động chỉ số.** {ct['tac_dong']}")
 
         if ma == "bess":
-            c_l, c_r = st.columns(2)
+            cp = phan_ra.theo_campus("bess")
+            c_l, c_r = st.columns([1.15, 1], vertical_alignment="top")
             with c_l:
                 st.markdown("**Phân bổ theo khuôn viên**")
-                cp = phan_ra.theo_campus("bess")
                 f = go.Figure(go.Bar(x=cp["kwh"], y=cp["campus"], orientation="h",
                                      marker_color=XANH,
                                      text=[f"{v:,.0f} kWh" for v in cp["kwh"]],
                                      textposition="auto"))
                 f.update_layout(xaxis_title="kWh/năm", yaxis=dict(autorange="reversed"))
-                st.plotly_chart(style_fig(f, 280), width="stretch")
+                st.plotly_chart(style_fig(f, CAO), width="stretch")
+            with c_r:
+                st.markdown("**Số liệu từng khuôn viên**")
                 st.dataframe(pd.DataFrame({
                     "Khuôn viên": cp["campus"], "Số trạm": cp["so_tram"],
                     "Tỷ trọng": (cp["ty_trong"] * 100).round(1),
                     "kWh/năm": cp["kwh"].round(0)})
                     .style.format({"Tỷ trọng": "{:.1f}%", "kWh/năm": "{:,.0f}"}),
-                    width="stretch", hide_index=True)
-            with c_r:
-                st.markdown("**Tổn thất cắt ngọn theo tháng (kWh, không phải tỷ lệ)**")
-                t = phan_ra.clip_ton_that_thang()
-                f2 = go.Figure()
-                f2.add_bar(x=t["ten"], y=t["thu_hoi_kwh"], name="Thu hồi qua BESS",
-                           marker_color=LUC)
-                f2.add_bar(x=t["ten"], y=t["con_lai_kwh"], name="Còn mất", marker_color=DO)
-                f2.add_scatter(x=t["ten"], y=t["buc_xa"], name="Bức xạ TB (W/m²)",
-                               yaxis="y2", mode="lines+markers", line=dict(color="#6B7280"))
-                f2.update_layout(barmode="stack", yaxis_title="kWh",
-                                 yaxis2=dict(title="W/m²", overlaying="y", side="right",
-                                             showgrid=False))
-                st.plotly_chart(style_fig(f2, 300), width="stretch")
+                    width="stretch", hide_index=True, height=CAO)
+
+            st.markdown("**Tổn thất cắt ngọn theo tháng (kWh, không phải tỷ lệ)**")
+            t = phan_ra.clip_ton_that_thang()
+            f2 = go.Figure()
+            f2.add_bar(x=t["ten"], y=t["thu_hoi_kwh"], name="Thu hồi qua BESS",
+                       marker_color=LUC)
+            f2.add_bar(x=t["ten"], y=t["con_lai_kwh"], name="Còn mất", marker_color=DO)
+            f2.add_scatter(x=t["ten"], y=t["buc_xa"], name="Bức xạ TB (W/m²)",
+                           yaxis="y2", mode="lines+markers", line=dict(color="#6B7280"))
+            f2.update_layout(barmode="stack", yaxis_title="kWh",
+                             yaxis2=dict(title="W/m²", overlaying="y", side="right",
+                                         showgrid=False))
+            st.plotly_chart(style_fig(f2, 300), width="stretch")
 
         elif ma == "tilt":
-            st.markdown("**Cấu thành sản lượng theo mùa**")
             t = phan_ra.tilt_theo_mua()
-            f = go.Figure(go.Bar(x=t["mua"], y=t["kwh"],
-                                 marker_color=[LUC if v > 0 else DO for v in t["kwh"]],
-                                 text=[f"{v:+,.0f} kWh" for v in t["kwh"]],
-                                 textposition="outside"))
-            f.update_layout(yaxis_title="kWh/năm")
-            st.plotly_chart(style_fig(f, 300), width="stretch")
-            st.dataframe(t.rename(columns={"mua": "Thành phần", "kwh": "kWh/năm",
-                                           "ghi_chu": "Diễn giải"})
-                         .style.format({"kWh/năm": "{:+,.0f}"}),
-                         width="stretch", hide_index=True)
-            st.caption("Mùa hè giảm nhẹ do nắng gần thẳng đứng, nhưng mùa đông tăng mạnh "
-                       "nên tổng cả năm vẫn dương.")
+            st.markdown("**Điện tăng / giảm theo từng tháng**")
+            f = go.Figure()
+            f.add_bar(x=t["ten"], y=t["delta_kwh"], name="Điện thay đổi",
+                      marker_color=[LUC if v > 0 else DO for v in t["delta_kwh"]],
+                      text=[f"{v:+,.0f}" for v in t["delta_kwh"]],
+                      textposition="outside", textfont=dict(size=9))
+            f.add_scatter(x=t["ten"], y=t["ty_le_%"], name="Mức thay đổi (%)",
+                          mode="lines+markers", yaxis="y2",
+                          line=dict(color=XANH, width=2), marker=dict(size=6))
+            f.add_hline(y=0, line_width=1, line_color="#9CA3AF")
+            f.update_layout(yaxis_title="kWh/tháng",
+                            yaxis2=dict(title="%", overlaying="y", side="right",
+                                        showgrid=False, ticksuffix="%"))
+            st.plotly_chart(style_fig(f, 340), width="stretch")
+            st.caption("Hè giảm nhẹ 1,2–1,6%; đông tăng mạnh 13,7–20,8%.")
+
+            c_l, c_r = st.columns([1.1, 1], vertical_alignment="top")
+            with c_l:
+                st.markdown("**Hình dạng mùa: báo cáo so với dữ liệu**")
+            f2 = go.Figure()
+            f2.add_scatter(x=t["ten"], y=t["ty_le_bc_%"], name="Theo báo cáo",
+                           mode="lines+markers", line=dict(color="#9CA3AF", width=2,
+                                                           dash="dot"))
+            f2.add_scatter(x=t["ten"], y=t["ty_le_dl_%"], name="Đo trên dữ liệu",
+                           mode="lines+markers", line=dict(color=XANH, width=2))
+            f2.update_layout(yaxis_title="% sản lượng cả năm", yaxis_ticksuffix="%")
+            with c_l:
+                st.plotly_chart(style_fig(f2, CAO), width="stretch")
+
+            bang = pd.DataFrame({
+                "Tháng": t["ten"], "Mùa": t["mua"],
+                "Nắng trưa cao (°)": t["goc_cao"],
+                "Điện nền (kWh)": t["kwh_co_so"],
+                "Thay đổi (%)": t["ty_le_%"] / 100.0,
+                "Thay đổi (kWh)": t["delta_kwh"],
+                f"Tiền ({tien})": t["aud"].map(lambda v: cfg.quy_doi(v, tien)),
+            })
+            with c_r:
+                st.markdown("**Cân bằng năng lượng 12 tháng**")
+                st.dataframe(
+                    bang.style.format({"Nắng trưa cao (°)": "{:.1f}",
+                                       "Điện nền (kWh)": "{:,.0f}",
+                                       "Thay đổi (%)": "{:+.2%}",
+                                       "Thay đổi (kWh)": "{:+,.0f}",
+                                       f"Tiền ({tien})": "{:+,.0f}"})
+                        .background_gradient(subset=["Thay đổi (kWh)"], cmap="RdYlGn",
+                                             vmin=-12_000, vmax=12_000),
+                    width="stretch", hide_index=True, height=CAO)
+            st.caption("Hình dạng mùa khớp dữ liệu 42 trạm, r = "
+                       f"{t['ty_le_bc_%'].corr(t['ty_le_dl_%']):.3f}.")
+            c1, c2, c3 = st.columns(3)
+            c1.metric("Bốn tháng đông (T05–T08)",
+                      f"{t.loc[t['thang'].between(5, 8), 'delta_kwh'].sum():+,.0f} kWh")
+            c2.metric("Bốn tháng hè (T11–T02)",
+                      f"{t.loc[t['thang'].isin([11, 12, 1, 2]), 'delta_kwh'].sum():+,.0f} kWh")
+            c3.metric("Mưa tự rửa bùn viền đáy",
+                      f"+{cfg.TILT_TU_RUA_TROI_KWH:,.0f} kWh")
+            st.caption(f"Cộng lại {t['delta_kwh'].sum() + cfg.TILT_TU_RUA_TROI_KWH:+,.0f} "
+                       "kWh/năm.")
 
         elif ma == "ventilation":
-            st.markdown("**Nhiệt độ tấm pin theo tháng — áp mái so với có khe thông gió**")
             t = phan_ra.nhiet_cell_theo_thang()
+            c_l, c_r = st.columns([1.25, 1], vertical_alignment="top")
+            with c_l:
+                st.markdown("**Nhiệt độ tấm pin theo tháng**")
             f = go.Figure()
             f.add_scatter(x=t["ten"], y=t["t_flush"], name="Áp sát mái", mode="lines+markers",
                           line=dict(color=DO, width=2))
@@ -329,26 +334,34 @@ for h in sorted(kq["hang_muc"], key=lambda x: x["stt"]):
                           mode="lines+markers", line=dict(color=LUC, width=2), fill="tonexty",
                           fillcolor="rgba(14,159,110,.12)")
             f.update_layout(yaxis_title="Nhiệt độ tấm pin (°C)")
-            st.plotly_chart(style_fig(f, 300), width="stretch")
-            st.dataframe(pd.DataFrame({
-                "Tháng": t["ten"], "Áp mái (°C)": t["t_flush"].round(2),
-                "Thông gió (°C)": t["t_open"].round(2),
-                "Chênh lệch (°C)": t["delta_t"].round(2)}),
-                width="stretch", hide_index=True)
-            st.caption(f"Mức hạ nhiệt trung bình cả năm: **{t['delta_t'].mean():.2f} °C** "
-                       "(tính bằng mô hình Sandia SAPM trên dữ liệu nhiệt độ và gió thực đo).")
+            with c_l:
+                st.plotly_chart(style_fig(f, CAO), width="stretch")
+            with c_r:
+                st.markdown("**Chênh lệch từng tháng**")
+                st.dataframe(pd.DataFrame({
+                    "Tháng": t["ten"],
+                    "Áp sát mái (°C)": t["t_flush"],
+                    "Có khe thông gió (°C)": t["t_open"],
+                    "Chênh lệch (°C)": t["t_open"] - t["t_flush"]})
+                    .style.format({"Áp sát mái (°C)": "{:.2f}",
+                                   "Có khe thông gió (°C)": "{:.2f}",
+                                   "Chênh lệch (°C)": "{:+.2f}"}),
+                    width="stretch", hide_index=True, height=CAO)
+            st.caption(f"Hạ trung bình {t['delta_t'].mean():.2f} °C (mô hình Sandia SAPM).")
 
         elif ma == "cbm":
-            c_l, c_r = st.columns([1.1, 1])
+            c_l, c_r = st.columns([1.15, 1], vertical_alignment="top")
             with c_l:
-                st.markdown("**Sản lượng hụt theo mã nguyên nhân dị thường**")
+                st.markdown("**Điện hụt theo nguyên nhân**")
                 o = phan_ra.outlier_theo_ma_loi()
                 f = go.Figure(go.Bar(x=o["hut_kwh"], y=o["ma_loi"], orientation="h",
                                      marker_color=DO,
                                      text=[f"{v:,.0f} kWh" for v in o["hut_kwh"]],
                                      textposition="auto"))
                 f.update_layout(xaxis_title="kWh bị mất", yaxis=dict(autorange="reversed"))
-                st.plotly_chart(style_fig(f, 280), width="stretch")
+                st.plotly_chart(style_fig(f, CAO), width="stretch")
+            with c_r:
+                st.markdown("**Số liệu từng nguyên nhân**")
                 o2 = o.copy()
                 o2["khac_phuc_kwh"] = o2["hut_kwh"] * 0.857
                 st.dataframe(pd.DataFrame({
@@ -357,23 +370,22 @@ for h in sorted(kq["hang_muc"], key=lambda x: x["stt"]):
                     "Khắc phục được (kWh)": o2["khac_phuc_kwh"].round(0)})
                     .style.format({"Số dòng": "{:,.0f}", "Hụt (kWh)": "{:,.0f}",
                                    "Khắc phục được (kWh)": "{:,.0f}"}),
-                    width="stretch", hide_index=True)
-                st.caption("Hệ số cứu vãn 85,7% — rút MTTR từ 14 ngày xuống 2 ngày "
-                           "(brief mục 4.2 hạng mục 3).")
-            with c_r:
-                st.markdown("**Số dòng bị gắn cờ và sản lượng hụt theo tháng**")
-                m = phan_ra.outlier_theo_thang()
-                f2 = go.Figure()
-                f2.add_bar(x=m["ten"], y=m["hut_kwh"], name="Sản lượng hụt", marker_color=DO)
-                f2.add_scatter(x=m["ten"], y=m["so_co"], name="Số dòng gắn cờ", yaxis="y2",
-                               mode="lines+markers", line=dict(color="#6B7280"))
-                f2.update_layout(yaxis_title="kWh",
-                                 yaxis2=dict(title="số dòng", overlaying="y", side="right",
-                                             showgrid=False))
-                st.plotly_chart(style_fig(f2, 300), width="stretch")
+                    width="stretch", hide_index=True, height=CAO)
+            st.caption("Cứ 100 kWh mất thì lấy lại 85,7 kWh.")
+
+            st.markdown("**Số dòng gắn cờ và điện hụt theo tháng**")
+            m = phan_ra.outlier_theo_thang()
+            f2 = go.Figure()
+            f2.add_bar(x=m["ten"], y=m["hut_kwh"], name="Sản lượng hụt", marker_color=DO)
+            f2.add_scatter(x=m["ten"], y=m["so_co"], name="Số dòng gắn cờ", yaxis="y2",
+                           mode="lines+markers", line=dict(color="#6B7280"))
+            f2.update_layout(yaxis_title="kWh",
+                             yaxis2=dict(title="số dòng", overlaying="y", side="right",
+                                         showgrid=False))
+            st.plotly_chart(style_fig(f2, 300), width="stretch")
 
         elif ma == "inverter":
-            st.markdown("**Số giờ biến tần có nguy cơ giảm tải, theo tháng**")
+            st.markdown("**Số giờ biến tần có nguy cơ giảm tải**")
             t = phan_ra.gio_derating_theo_thang()
             f = go.Figure()
             f.add_bar(x=t["ten"], y=t["gio_canh_bao"], name="Cảnh báo (≥30°C & ≥700 W/m²)",
@@ -382,9 +394,8 @@ for h in sorted(kq["hang_muc"], key=lambda x: x["stt"]):
                       marker_color=DO)
             f.update_layout(barmode="overlay", yaxis_title="số giờ")
             st.plotly_chart(style_fig(f, 300), width="stretch")
-            st.caption(f"Tổng **{t['gio_derating'].sum():,.0f} giờ** chạm ngưỡng giảm tải và "
-                       f"**{t['gio_canh_bao'].sum():,.0f} giờ** chạm ngưỡng cảnh báo, dồn vào "
-                       "các tháng hè (T12–T2).")
+            st.caption(f"{t['gio_derating'].sum():,.0f} giờ giảm tải, "
+                       f"{t['gio_canh_bao'].sum():,.0f} giờ cảnh báo — dồn vào mùa hè.")
 
         elif ma == "washing":
             st.markdown("**Lượng mưa và tỷ lệ ngày khô theo tháng**")
@@ -398,32 +409,36 @@ for h in sorted(kq["hang_muc"], key=lambda x: x["stt"]):
                             yaxis2=dict(title="%", overlaying="y", side="right",
                                         showgrid=False, range=[0, 105]))
             st.plotly_chart(style_fig(f, 300), width="stretch")
-            st.caption("Ngưỡng kích hoạt rửa: chuỗi khô ≥ 21 ngày liên tục và mưa tích luỹ "
-                       "< 2 mm. Tháng nào tỷ lệ ngày khô cao thì tổn thất bám bụi tích tụ nhanh.")
+            st.caption("Rửa khi khô ≥ 21 ngày và mưa < 2 mm.")
 
         elif ma == "topcon":
-            st.markdown("**Lợi ích hệ số nhiệt TOPCon theo dải nhiệt độ tấm pin**")
             t = phan_ra.loi_ich_nhiet_topcon()
+            c_l, c_r = st.columns([1.2, 1], vertical_alignment="top")
+            with c_l:
+                st.markdown("**Lợi ích theo mức nóng tấm pin**")
             f = go.Figure(go.Bar(x=t["dai"].astype(str), y=t["loi_ich_kwh"],
                                  marker_color=XANH,
                                  text=[f"{v:,.0f}" for v in t["loi_ich_kwh"]],
                                  textposition="outside"))
             f.update_layout(yaxis_title="kWh thu hồi thêm", xaxis_title="Mức nóng của tấm pin")
-            st.plotly_chart(style_fig(f, 300), width="stretch")
-            st.dataframe(pd.DataFrame({
-                "Dải nhiệt độ": t["dai"].astype(str), "Số giờ": t["so_gio"],
-                "Sản lượng (kWh)": t["kwh"].round(0),
-                "Lợi ích nhiệt (kWh)": t["loi_ich_kwh"].round(0)})
-                .style.format({"Số giờ": "{:,.0f}", "Sản lượng (kWh)": "{:,.0f}",
-                               "Lợi ích nhiệt (kWh)": "{:,.0f}"}),
-                width="stretch", hide_index=True)
-            st.caption("Hệ số nhiệt cải thiện từ −0,38%/°C xuống −0,30%/°C, nên càng nóng "
-                       "thì lợi ích càng lớn.")
+            with c_l:
+                st.plotly_chart(style_fig(f, CAO), width="stretch")
+            with c_r:
+                st.markdown("**Số liệu từng dải nhiệt**")
+                st.dataframe(pd.DataFrame({
+                    "Dải nhiệt độ": t["dai"].astype(str), "Số giờ": t["so_gio"],
+                    "Sản lượng (kWh)": t["kwh"].round(0),
+                    "Lợi ích nhiệt (kWh)": t["loi_ich_kwh"].round(0)})
+                    .style.format({"Số giờ": "{:,.0f}", "Sản lượng (kWh)": "{:,.0f}",
+                                   "Lợi ích nhiệt (kWh)": "{:,.0f}"}),
+                    width="stretch", hide_index=True, height=CAO)
+            st.caption("Hệ số nhiệt −0,38 → −0,30 %/°C: càng nóng lợi càng nhiều.")
 
         if ct.get("cong_thuc_tex"):
-            st.markdown("**Công thức tính**")
-            for _ct in ct["cong_thuc_tex"]:
-                st.latex(_ct)
+            # Popover chu khong phai expander: Streamlit cam long expander trong expander.
+            with st.popover("Công thức tính"):
+                for _ct in ct["cong_thuc_tex"]:
+                    st.latex(_ct)
 
 # ══ Nguon ════════════════════════════════════════════════════════════════════
 with st.expander("Nguồn số liệu"):

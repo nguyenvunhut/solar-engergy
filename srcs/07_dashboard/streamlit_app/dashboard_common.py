@@ -85,10 +85,15 @@ def nap_runtime_cpp() -> list[str]:
     return da_nap
 
 
+def nap_css(duong_dan) -> None:
+    """Nap mot file .css vao trang. Dung cho CSS rieng cua tung trang."""
+    st.markdown(f"<style>{Path(duong_dan).read_text(encoding='utf-8')}</style>",
+                unsafe_allow_html=True)
+
+
 def load_shared_css() -> None:
     """Nap file style.css chung, tranh lap lai CSS o tung trang."""
-    css = _CSS_PATH.read_text(encoding="utf-8")
-    st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
+    nap_css(_CSS_PATH)
 
 
 def header_bao_cao(tieu_de: str, phu_de: str = "", nhan_phai: str = "") -> None:

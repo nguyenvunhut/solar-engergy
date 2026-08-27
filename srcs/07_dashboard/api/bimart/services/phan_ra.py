@@ -32,26 +32,24 @@ def _ho_so_thang() -> pd.DataFrame:
 
 
 def ho_so_campus() -> pd.DataFrame:
-    """San luong that cua tung khuon vien, gop tu 42 tram theo anh xa campus."""
-    h = repo.doc_hourly()
-    d = h.assign(campus=h["site_id"].map(cfg.SITE_TOI_CAMPUS))
-    g = (d.groupby("campus")
-           .agg(so_tram=("site_id", "nunique"), kwh_that=("e_hourly", "sum"))
-           .reset_index())
-    g["ty_trong"] = g["kwh_that"] / g["kwh_that"].sum()
-    return g.sort_values("kwh_that", ascending=False).reset_index(drop=True)
+    """Ho so 5 khuon vien: so tram va cong suat lap, lay tu cfg.CAMPUS.
+
+    Ty trong tinh theo CONG SUAT LAP chu khong theo san luong do duoc. Day la
+    cach bang kiem toan (file 01 muc 4) phan bo: 1.540 / 2.428 = 63,43% dung
+    bang 451.713 / 712.182. Cot p_stc trong du lieu gio chi co gia tri o mot
+    phan cac tram nen khong dung de suy ty trong duoc.
+    """
+    g = pd.DataFrame([{"campus": k, "so_tram": v["so_tram"], "kwp": v["kwp"]}
+                      for k, v in cfg.CAMPUS.items()])
+    g["ty_trong"] = g["kwp"] / g["kwp"].sum()
+    return g.sort_values("kwp", ascending=False).reset_index(drop=True)
 
 
 def theo_campus(ma: str) -> pd.DataFrame:
-    """Phan bo san luong thu hoi cho 5 khuon vien theo TY TRONG SAN LUONG THAT.
-
-    Khong dung ty trong kWp vi cot p_stc chi co gia tri o mot phan cac tram.
-    """
+    """Phan bo san luong thu hoi cua mot hang muc cho 5 khuon vien."""
     g = ho_so_campus()
-    kwh = cfg.HANG_MUC_CAI_TIEN[ma]["kwh"]
-    aud = cfg.HANG_MUC_CAI_TIEN[ma]["aud"]
-    g["kwh"] = kwh * g["ty_trong"]
-    g["aud"] = aud * g["ty_trong"]
+    g["kwh"] = cfg.HANG_MUC_CAI_TIEN[ma]["kwh"] * g["ty_trong"]
+    g["aud"] = cfg.HANG_MUC_CAI_TIEN[ma]["aud"] * g["ty_trong"]
     return g
 
 
@@ -63,13 +61,37 @@ def theo_thang(ma: str) -> pd.DataFrame:
     return g[["thang", "ten", "mua", "buc_xa", "kwh", "ty_trong", "thu_hoi_kwh"]]
 
 
+_SO_NGAY = {1: 31, 2: 28.25, 3: 31, 4: 30, 5: 31, 6: 30,
+            7: 31, 8: 31, 9: 30, 10: 31, 11: 30, 12: 31}
+
+
 def tilt_theo_mua() -> pd.DataFrame:
-    """Hang muc 4: mua dong tang, mua he giam nhe — brief muc 3 hang muc 4."""
-    return pd.DataFrame([
-        {"mua": "Mùa đông (T6–T8)", "kwh": 44_436, "ghi_chu": "Góc 15° đón nắng thấp"},
-        {"mua": "Mùa hè (T12–T2)", "kwh": -8_924, "ghi_chu": "Giảm nhẹ do nắng đứng"},
-        {"mua": "Tự rửa trôi bùn", "kwh": 18_500, "ghi_chu": "Dốc thoát nước viền đáy"},
-    ])
+    """Hang muc 4 — can bang nang luong 12 thang khi nang goc nghieng 15 do.
+
+    Cot du bao (kwh_co_so, ty_le_%, delta_kwh, aud) lay tu bang muc 6.1 cua bao
+    cao dinh luong. Do hang muc chua thi cong nen khong the do truc tiep.
+
+    Cot doi chieu duoc voi du lieu 42 tram la HINH DANG MUA: ty_le_bc_% la ty
+    trong san luong tung thang theo bao cao, ty_le_dl_% la ty trong do tren du
+    lieu gio thuc te. Hai cot nay khop nhau thi gia dinh mua cua bao cao dung.
+    """
+    t = pd.DataFrame(cfg.TILT_12_THANG,
+                     columns=["thang", "mua", "goc_cao", "kwh_co_so",
+                              "ty_le_%", "delta_kwh", "aud"])
+    t["ten"] = [f"T{m:02d}" for m in t["thang"]]
+    t["ty_le_bc_%"] = t["kwh_co_so"] / t["kwh_co_so"].sum() * 100.0
+
+    # Chuan hoa ve "thang du 30/31 ngay": du lieu dung o 23/04/2022 nen thang 1-4
+    # co 3 nam con thang 5-12 chi co 2 nam, cong thang se lech han.
+    h = repo.doc_hourly()
+    ngay = pd.to_datetime(h["date_id"].astype(str))
+    tam = pd.DataFrame({"thang": ngay.dt.month, "ngay": ngay.dt.date,
+                        "kwh": h["e_hourly"].fillna(0.0)})
+    g = tam.groupby("thang").agg(kwh=("kwh", "sum"), so_ngay=("ngay", "nunique"))
+    g["kwh_thang"] = g["kwh"] / g["so_ngay"] * [_SO_NGAY[m] for m in g.index]
+    t["ty_le_dl_%"] = (g["kwh_thang"] / g["kwh_thang"].sum() * 100.0)\
+        .reindex(t["thang"]).to_numpy()
+    return t
 
 
 def clip_ton_that_thang() -> pd.DataFrame:

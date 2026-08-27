@@ -59,6 +59,9 @@ def chay_kich_ban(bat: list[str] | None = None, nam: int | None = None) -> dict:
 
     e1 = e0 + tong_kwh
     he_so = e1 / e0
+    # PR cong don theo diem phan tram (xem PR_DIEM_HANG_MUC trong config), khong
+    # nhan theo ty le san luong — nhan se cho PR vuot 100%.
+    pr1 = cs["pr_baseline"] * 100.0 + sum(cfg.PR_DIEM_HANG_MUC[m] for m in bat)
     return {
         "co_so": {
             "e_kwh": e0,
@@ -72,7 +75,7 @@ def chay_kich_ban(bat: list[str] | None = None, nam: int | None = None) -> dict:
         },
         "sau_cai_tien": {
             "e_kwh": e1,
-            "pr_%": cs["pr_baseline"] * he_so * 100.0,
+            "pr_%": pr1,
             "cf_%": cs["cf_baseline"] * he_so * 100.0,
             "revenue_aud": cs["revenue_baseline_aud"] + tong_aud,
             "co2_kg": e1 * cs["co2_kg_moi_kwh"],

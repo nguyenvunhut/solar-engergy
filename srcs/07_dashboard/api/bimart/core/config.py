@@ -111,40 +111,74 @@ for _v in TON_THAT_CO_SO.values():
 HANG_MUC_CAI_TIEN = {
     "bess": {
         "stt": 1, "ten": "Lắp pin lưu trữ cho 5 khu (BESS 1MW/2,5MWh)",
-        "hieu_suat": "+20,6% điện cắt ngọn lấy lại được", "kwh": 712_182, "aud": 323_164,
+        "hieu_suat": "+20,6%", "kwh": 712_182, "aud": 323_164,
         "capex_aud": 1_250_000, "payback": "3,87 năm", "ton_that": "clip",
     },
     "ventilation": {
         "stt": 2, "ten": "Khe hở thông gió mái 10–15 cm",
-        "hieu_suat": "+3,40% toàn hệ thống", "kwh": 117_224, "aud": 23_445,
+        "hieu_suat": "+3,40%", "kwh": 117_224, "aud": 23_445,
         "capex_aud": 24_280, "payback": "1,04 năm", "ton_that": "temp",
     },
     "cbm": {
         "stt": 3, "ten": "Máy tự báo hỏng để sửa sớm (CBM + AI)",
-        "hieu_suat": "+2,04% toàn hệ thống", "kwh": 70_330, "aud": 29_066,
+        "hieu_suat": "+2,04%", "kwh": 70_330, "aud": 29_066,
         "capex_aud": 8_000, "payback": "Dưới 4 tháng", "ton_that": "anomaly",
     },
     "tilt": {
         "stt": 4, "ten": "Kê khung nghiêng 15° cho mái bằng",
-        "hieu_suat": "+3,90% ở nhóm mái 970 kWp", "kwh": 71_850, "aud": 14_670,
+        "hieu_suat": "+3,90%", "kwh": 71_850, "aud": 14_670,
         "capex_aud": 18_000, "payback": "1,23 năm", "ton_that": "tilt",
     },
     "inverter": {
         "stt": 5, "ten": "Che nắng bộ inverter, gắn bộ tối ưu DC",
-        "hieu_suat": "+1,65% toàn hệ thống", "kwh": 57_074, "aud": 11_415,
+        "hieu_suat": "+1,65%", "kwh": 57_074, "aud": 11_415,
         "capex_aud": 12_500, "payback": "1,10 năm", "ton_that": "shade",
     },
     "washing": {
         "stt": 6, "ten": "Lịch rửa pin thông minh theo mưa",
-        "hieu_suat": "+1,80% trong mùa khô", "kwh": 62_060, "aud": 18_412,
+        "hieu_suat": "+1,80%", "kwh": 62_060, "aud": 18_412,
         "capex_aud": 0, "payback": "Ngay lập tức", "ton_that": "soiling",
     },
     "topcon": {
         "stt": 7, "ten": "Thay tấm pin đời mới TOPCon",
-        "hieu_suat": "+6,20% toàn hệ thống", "kwh": 213_761, "aud": 42_752,
+        "hieu_suat": "+6,20%", "kwh": 213_761, "aud": 42_752,
         "capex_aud": None, "payback": "Khi thay tấm pin (15–20 năm)", "ton_that": None,
     },
 }
+
+# ═════════════════════════════════════════════════════════════════════════════
+#  HANG MUC 4 — CAN BANG NANG LUONG 12 THANG KHI NANG GOC NGHIENG 15 DO
+#
+#  Nguon: bao cao dinh luong 2026-08-25 (ban da kiem toan) muc 6.1 — nhom mai
+#  bang 970 kWp, san luong co so 1.377.400 kWh/nam. Co so vat ly la mo hinh
+#  Sandia (King et al., SAND2004-3535, tai lieu tham khao [4]).
+#
+#  Day la so DU BAO cho phuong an chua thi cong, khong phai so do duoc: hang muc
+#  chua lam thi khong co du lieu de do. Phan doi chieu duoc voi du lieu 42 tram
+#  la HINH DANG MUA cua san luong (xem phan_ra.tilt_theo_mua).
+#
+#  Cot: thang, mua, goc cao mat troi luc trua (do), san luong co so (kWh/thang),
+#       ty le thay doi (%), san luong thay doi (kWh/thang), gia tri (AUD)
+# ═════════════════════════════════════════════════════════════════════════════
+TILT_12_THANG = [
+    (1,  "Mùa hè",   75.5, 172_801,  -1.45,  -2_508,   -502),
+    (2,  "Mùa hè",   68.0, 147_757,  -1.16,  -1_715,   -343),
+    (3,  "Mùa thu",  56.5, 127_723,   1.74,   2_224,    445),
+    (4,  "Mùa thu",  44.5,  93_914,   8.22,   7_723,  1_545),
+    (5,  "Mùa đông", 34.0,  67_618,  15.96,  10_795,  2_159),
+    (6,  "Mùa đông", 29.0,  55_096,  20.80,  11_461,  2_292),
+    (7,  "Mùa đông", 31.5,  60_105,  19.16,  11_514,  2_303),
+    (8,  "Mùa đông", 39.5,  77_635,  13.74,  10_666,  2_133),
+    (9,  "Mùa xuân", 51.0, 101_427,   6.29,   6_379,  1_276),
+    (10, "Mùa xuân", 63.5, 130_227,   1.16,   1_512,    302),
+    (11, "Mùa hè",   72.5, 157_775,  -1.16,  -1_832,   -366),
+    (12, "Mùa hè",   76.5, 185_323,  -1.55,  -2_869,   -574),
+]
+
+# Loi ich rieng cua co che tu rua troi bun dong vien day (bao cao muc 6.2):
+# goc >= 10-15 do thi mua >= 10 mm cuon troi 95-98% bui, triet tieu dai bun lam
+# kich hoat bypass diode. Cong vao 53.350 kWh cua bang tren de ra 71.850 kWh.
+TILT_TU_RUA_TROI_KWH = 18_500
 
 # ═════════════════════════════════════════════════════════════════════════════
 #  SO LIEU NEN TANG
@@ -164,6 +198,37 @@ KET_QUA_HANG_MUC = {
     "bess":        {"delta_kwh": 712_182, "delta_revenue_aud": 323_164, "ty_le": 0.206},
     "ventilation": {"delta_kwh": 117_224, "delta_revenue_aud": 23_445,  "ty_le": 0.0340},
     "cbm":         {"delta_kwh": 70_330,  "delta_revenue_aud": 29_066,  "ty_le": 0.0204},
+}
+
+
+# ═════════════════════════════════════════════════════════════════════════════
+#  DONG GOP CUA TUNG HANG MUC VAO PERFORMANCE RATIO (diem phan tram)
+#
+#  PR do bang E / E_STC, nen moi kWh phat THEM se cong vao PR mot luong
+#  dE / E_STC, voi E_STC = E_baseline / PR_baseline = 4.572.626 kWh/nam.
+#
+#  KHONG duoc nhan PR voi ty le san luong (PR x E1/E0): lam vay thi bat ca 7
+#  hang muc se ra PR = 103,93%, tuc hieu suat vuot 100% — vo ly ve vat ly.
+#  Ly do: 712.182 kWh cua hang muc 1 la tong dien BESS XA RA (nap ban ngay,
+#  xa gio cao diem), khong phai dien phat them; chi 69.782 kWh thu hoi tu cat
+#  ngon moi that su la san luong moi.
+#
+#  Doi chieu file kiem toan 00 muc 4: bat 6 hang muc -> PR 83,95%;
+#  bat ca 7 -> PR 88,62%. Bon gia tri duoi day co san trong tai lieu
+#  (brief muc 3): thong gio 2,56 | CBM 1,54 | goc nghieng 1,57 | TOPCon 4,67.
+#  Hai gia tri con lai suy tu dE/E_STC. Hang muc 5 bang 0 — day la cach duy
+#  nhat tai lap dung ca hai con so 83,95% va 88,62% cua tai lieu.
+# ═════════════════════════════════════════════════════════════════════════════
+E_STC_KWH = 4_572_626.0          # = CO_SO["e_baseline_kwh"] / CO_SO["pr_baseline"]
+
+PR_DIEM_HANG_MUC = {
+    "bess":        1.526,   # 69.782 / E_STC — chi phan thu hoi cat ngon
+    "ventilation": 2.56,    # tai lieu
+    "cbm":         1.54,    # tai lieu
+    "tilt":        1.57,    # tai lieu
+    "inverter":    0.0,     # tai lieu khong neu; xem ghi chu tren
+    "washing":     1.357,   # 62.060 / E_STC
+    "topcon":      4.67,    # tai lieu
 }
 
 
@@ -338,12 +403,7 @@ def dinh_dang_tien(aud: float, ma_tien: str = TIEN_MAC_DINH) -> str:
 # ── Anh xa tram -> khuon vien ─────────────────────────────────────────────────
 # 42 tram thuoc 5 khuon vien. Lay tu datawarehouse (cot campus_name), khong phai
 # suy tu cong suat: materialized view cua bi_mart khong mang cot nay.
-TRAM_THEO_CAMPUS = {
-    "Albury-Wodonga": [1, 2, 3, 4, 5],
-    "Bendigo": [6, 7, 8, 9, 10, 11, 12, 13],
-    "Bundoora": [14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40],
-    "Mildura": [41],
-    "Shepparton": [42],
-}
-
-SITE_TOI_CAMPUS = {s: c for c, ds in TRAM_THEO_CAMPUS.items() for s in ds}
+# Bang anh xa site_id -> khuon vien DA GO BO ngay 27/08/2026: no chia 27/8/5/1/1
+# tram, mau thuan voi CAMPUS o tren (26/8/4/2/2) va voi bang kiem toan file 01
+# muc 4. Phan bo theo khuon vien nay lay ty trong CONG SUAT LAP tu CAMPUS
+# (xem phan_ra.ho_so_campus).
