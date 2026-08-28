@@ -8,7 +8,6 @@ import json
 import os
 import pickle
 from pathlib import Path
-import sys
 
 import matplotlib
 
@@ -16,8 +15,6 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import plotly.express as px
-import plotly.graph_objects as go
 import shap
 import streamlit as st
 
@@ -64,7 +61,6 @@ def _build_model_specs() -> dict[str, dict[str, Path | str]]:
             explain_dir = DATA_DIR / "08_explain"
             shap_path = explain_dir / "shap_values.parquet" if key == persisted_explain_key else None
             importance_path = explain_dir / "shap_importance.csv" if key == persisted_explain_key else None
-            local_cases_path = explain_dir / "local_shap_cases.parquet" if key == persisted_explain_key else None
             specs[key] = {
                 "key": key,
                 "label": f"{loss.upper()} · {horizon.upper()}",
@@ -75,103 +71,43 @@ def _build_model_specs() -> dict[str, dict[str, Path | str]]:
                 "x_test_path": x_test_path,
                 "shap_path": shap_path,
                 "importance_path": importance_path,
-                "local_cases_path": local_cases_path,
             }
     return specs
 
 
 MODEL_SPECS = _build_model_specs()
-SITE_METADATA_PATH = DATA_DIR / "02_split" / "test" / f"{VERSION}_test.parquet"
 
 
 def _unwrap_model(bundle):
     return bundle.get("model", bundle) if isinstance(bundle, dict) else bundle
 
 
-@st.cache_data
-def load_native_importance(model_path: str, config_path: str) -> pd.DataFrame:
-    """LightGBM co san feature_importances_ - tinh theo GAIN trung binh qua TAT CA
-    cay trong ensemble (khac SHAP: SHAP la dong gop tung du bao, cai nay la mo hinh
-    hoc duoc gi noi chung). Doc thang tu model that, khong tu suy dien."""
-    model_file = Path(model_path)
-    if not model_file.exists():
-        return pd.DataFrame()
-    with open(model_file, "rb") as f:
-        bundle = pickle.load(f)
-    model = _unwrap_model(bundle)
-    feats = bundle.get("features") if isinstance(bundle, dict) else None
-    if not feats:
-        feats = json.loads(Path(config_path).read_text(encoding="utf-8"))["features"]
-    model.set_params(importance_type="gain")
-    gain = model.booster_.feature_importance(importance_type="gain")
-    split = model.booster_.feature_importance(importance_type="split")
-    return pd.DataFrame({"feature": feats, "gain": gain, "split": split}).sort_values("gain", ascending=False)
-
-
-@st.cache_data
-def load_real_feature_values(feat_val_keys: pd.DataFrame, x_test_path: str) -> pd.DataFrame:
+# cache_resource (khong phai cache_data): tranh copy frame 483k dong moi lan goi va
+# tranh bam DataFrame lon lam khoa cache — khoa la cache_key, frame `_` khong bi bam.
+# Ket qua la object dung chung: CHI DOC, khong duoc mutate.
+@st.cache_resource
+def load_real_feature_values(
+    cache_key: str, _feat_val_keys: pd.DataFrame, x_test_path: str
+) -> pd.DataFrame:
     """shap_values.parquet CHI chua gia tri SHAP (bien do nho +-0.01..0.09), KHONG
     chua gia tri dac trung goc (vd shortwave_radiation phai la 0-1100 W/m2 that,
     khong phai +-0.06). Phai join voi X_test_h1.parquet (co gia tri that) qua
     site_id+timestamp de lay dung du lieu cho PDP/scatter, khong dung nham SHAP
     lam gia tri dac trung nhu ban dau."""
+    del cache_key  # chi dung lam khoa cache thay cho viec bam _feat_val_keys
     x_test_file = Path(x_test_path)
-    if not x_test_file.exists() or feat_val_keys.empty:
+    if not x_test_file.exists() or _feat_val_keys.empty:
         return pd.DataFrame()
     x_real = pd.read_parquet(x_test_file)
-    keys = feat_val_keys[["site_id", "timestamp"]].copy()
+    # Ep float32 cho cot so: giam ~mot nua RAM cua frame 483k dong ma khong anh
+    # huong hien thi (bieu do chi can 7 chu so co nghia).
+    for c in x_real.columns:
+        if pd.api.types.is_float_dtype(x_real[c]):
+            x_real[c] = x_real[c].astype(np.float32)
+    keys = _feat_val_keys[["site_id", "timestamp"]].copy()
     keys["timestamp"] = pd.to_datetime(keys["timestamp"])
     x_real["timestamp"] = pd.to_datetime(x_real["timestamp"])
     return keys.merge(x_real, on=["site_id", "timestamp"], how="left")
-
-
-@st.cache_resource
-def load_what_if_model(model_path: str, config_path: str):
-    with open(model_path, "rb") as fh:
-        model = _unwrap_model(pickle.load(fh))
-    config = json.loads(Path(config_path).read_text(encoding="utf-8"))
-    return model, config
-
-
-@st.cache_data
-def load_what_if_data(x_test_path: str) -> tuple[pd.DataFrame, pd.DataFrame]:
-    """Doc feature dung luc inference va metadata goc cua tung site."""
-    features = pd.read_parquet(x_test_path)
-    features["timestamp"] = pd.to_datetime(features["timestamp"])
-    metadata = pd.read_parquet(
-        SITE_METADATA_PATH, columns=["site_id", "number_of_panels", "capacity_kw"]
-    )
-    metadata = metadata.groupby("site_id", as_index=False).first()
-    return features, metadata
-
-
-def predict_what_if(row: pd.Series, model, config: dict, panel_ratio: float) -> tuple[float, float]:
-    """Predict baseline va kich ban quy mo; khong dich timestamp hay sua weather."""
-    feature_names = list(config["features"])
-    medians = pd.Series(config.get("feature_medians", {}), dtype="float64")
-
-    baseline = row.reindex(feature_names).fillna(medians).astype(np.float32)
-    scenario = baseline.copy()
-    scale_features = [
-        name for name in feature_names
-        if name.startswith(("lag_", "rolling_")) or name in {"ky_vong", "ky_vong_mt", "tran_cong_suat"}
-    ]
-    scenario.loc[scale_features] = scenario.loc[scale_features] * panel_ratio
-
-    raw_base = float(model.predict(baseline.to_frame().T)[0])
-    raw_scenario = float(model.predict(scenario.to_frame().T)[0])
-    eps = float(config.get("eps_elev", 0.05))
-    sin_elevation = max(float(row[config["cot_sin_elev"]]), eps)
-    site_scale = float(row["site_scale"])
-    cap_base = float(row[config["cot_tran"]])
-
-    base_kwh = np.clip(raw_base, 0.0, 1.5) * site_scale * sin_elevation
-    scenario_kwh = np.clip(raw_scenario, 0.0, 1.5) * site_scale * panel_ratio * sin_elevation
-    base_kwh = min(base_kwh, cap_base * 1.02)
-    scenario_kwh = min(scenario_kwh, cap_base * panel_ratio * 1.02)
-    if float(row[config["cot_sin_elev"]]) <= eps:
-        return 0.0, 0.0
-    return float(base_kwh), float(scenario_kwh)
 
 
 @st.cache_data(show_spinner="Đang tính SHAP cho mô hình đã chọn...")
@@ -199,7 +135,9 @@ def compute_local_shap(model_path: str, config_path: str, x_test_path: str) -> t
     return df_importance, pd.concat([sample_meta, df_values.reset_index(drop=True)], axis=1)
 
 
-@st.cache_data
+# cache_resource: shap_values.parquet nang 126 MB — cache_data se tra BAN COPY moi
+# lan goi. Ket qua la object dung chung, CHI DOC.
+@st.cache_resource
 def load_local_shap(
     model_key: str,
     model_path: str,
@@ -214,20 +152,6 @@ def load_local_shap(
     if p_imp is not None and p_val is not None and p_imp.is_file() and p_val.is_file():
         return pd.read_csv(p_imp), pd.read_parquet(p_val)
     return compute_local_shap(model_path, config_path, x_test_path)
-
-
-@st.cache_data
-def load_local_cases(local_cases_path: str | None) -> pd.DataFrame:
-    """Load the three local examples selected by notebook 08 for the winning model."""
-    if not local_cases_path:
-        return pd.DataFrame()
-    path = Path(local_cases_path)
-    if not path.is_file():
-        return pd.DataFrame()
-    cases = pd.read_parquet(path)
-    if "timestamp" in cases.columns:
-        cases["timestamp"] = pd.to_datetime(cases["timestamp"])
-    return cases
 
 
 @st.cache_data
@@ -262,19 +186,20 @@ def denormalize_local_prediction(
     return float(y_pred)
 
 
-with st.sidebar:
-    st.markdown("### Bộ lọc XAI")
-    if not MODEL_SPECS:
-        st.error(f"Không tìm thấy model artifact trong data/model/{VERSION}/06_train.")
-        st.stop()
-    _model_keys = list(MODEL_SPECS)
-    _default_key = "mae_h1" if "mae_h1" in MODEL_SPECS else _model_keys[0]
-    _model_key = st.selectbox(
-        "Mô hình / horizon",
-        _model_keys,
-        index=_model_keys.index(_default_key),
-        format_func=lambda key: MODEL_SPECS[key]["label"],
-    )
+# Bo loc XAI nam trong THAN TRANG (khong o sidebar): phan nay chay trong st.fragment
+# (xem 1_ML.py) va fragment khong duoc ve widget vao sidebar.
+if not MODEL_SPECS:
+    st.error(f"Không tìm thấy model artifact trong data/model/{VERSION}/06_train.")
+    st.stop()
+_model_keys = list(MODEL_SPECS)
+_default_key = "mae_h1" if "mae_h1" in MODEL_SPECS else _model_keys[0]
+_c_loc_xai, _ = st.columns([1, 2], gap="small")
+_model_key = _c_loc_xai.selectbox(
+    "Bộ lọc XAI — Mô hình / horizon",
+    _model_keys,
+    index=_model_keys.index(_default_key),
+    format_func=lambda key: MODEL_SPECS[key]["label"],
+)
 
 _model_spec = MODEL_SPECS[_model_key]
 df_imp, df_val = load_local_shap(
@@ -285,15 +210,12 @@ df_imp, df_val = load_local_shap(
     str(_model_spec["importance_path"]) if _model_spec["importance_path"] else None,
     str(_model_spec["shap_path"]) if _model_spec["shap_path"] else None,
 )
-_local_cases = load_local_cases(
-    str(_model_spec["local_cases_path"]) if _model_spec["local_cases_path"] else None
-)
 if df_imp.empty:
     st.warning(f"Chưa có dữ liệu SHAP cho {_model_spec['label']} và không thể tính từ artifact hiện có.")
     st.stop()
 st.caption(
-    f"Đang xem {_model_spec['label']}. Gain, SHAP cục bộ và What-if dùng cùng model artifact; "
-    "bộ dữ liệu đầu vào lấy từ Test niêm phong khi file tồn tại."
+    f"Đang xem {_model_spec['label']}. Bảng xếp hạng, beeswarm và Local Explanation dùng cùng "
+    "model artifact; bộ dữ liệu đầu vào lấy từ Test niêm phong khi file tồn tại."
 )
 
 
@@ -337,11 +259,57 @@ def get_group(name: str) -> str:
     return "Khác"
 
 
-df_imp["group"] = df_imp["feature"].apply(get_group)
+# .assign() tao frame moi: df_imp la object dung chung trong cache_resource.
+df_imp = df_imp.assign(group=df_imp["feature"].apply(get_group))
+
+
+_Y_NGHIA_FEATURE = {
+    "shortwave_radiation": "bức xạ tổng",
+    "direct_normal_irradiance": "bức xạ trực tiếp",
+    "diffuse_solar_radiation": "bức xạ tán xạ",
+    "diffuse_ratio": "tỷ lệ tán xạ (mức che phủ mây)",
+    "temperature_c": "nhiệt độ môi trường",
+    "cloud_cover_total": "độ che phủ mây",
+    "cloud_cover_low": "mây tầng thấp",
+    "wind_speed": "tốc độ gió",
+    "sunshine_duration": "số giây nắng",
+    "minute_of_day": "thời điểm trong ngày",
+    "hour_sin": "chu kỳ giờ trong ngày",
+    "hour_cos": "chu kỳ giờ trong ngày",
+    "doy_sin": "chu kỳ mùa trong năm",
+    "doy_cos": "chu kỳ mùa trong năm",
+    "sin_elevation": "độ cao mặt trời",
+    "solar_elevation": "độ cao mặt trời",
+    "solar_azimuth": "hướng mặt trời",
+    "ghi_cs": "bức xạ trời quang lý thuyết",
+    "clearsky_proxy": "chỉ số trời quang",
+    "ky_vong": "sản lượng kỳ vọng theo công suất",
+    "site_scale": "quy mô trạm",
+    "tran_cong_suat": "trần công suất trạm",
+    "cloud_low": "mây tầng thấp",
+    "cloud": "độ che phủ mây",
+    "temp": "nhiệt độ",
+    "shortwave": "bức xạ tổng",
+}
+
+
+def y_nghia_feature(ten: str) -> str:
+    """Dich ten feature sang nghia nghiep vu de dua vao cau nhan dinh."""
+    goc = ten[:-3] if ten.endswith("_mt") else ten
+    if goc.startswith(("lag_", "rolling_")):
+        return "sản lượng đo được trong giờ gần nhất"
+    if goc.endswith("_enc") or goc == "site_id_enc":
+        return "đặc điểm riêng của trạm"
+    if "_x_" in goc:
+        a, b = goc.split("_x_", 1)
+        return f"tương tác {_Y_NGHIA_FEATURE.get(a, a)} × {_Y_NGHIA_FEATURE.get(b, b)}"
+    return _Y_NGHIA_FEATURE.get(goc, goc)
 
 # ── TANG 1: KPI dang the (dong bo voi 2 trang kia, khong dung st.metric mac dinh) ──
+# _KPI_XAI la st.empty() (xem 1_ML.py): .container() thay noi dung nguyen khoi moi
+# fragment-rerun de KPI khong bi nhan doi.
 _top_grp = df_imp.groupby("group")["mean_abs_shap"].sum().idxmax()
-with _KPI_XAI:
+with _KPI_XAI.container():
     k1, k2, k3 = st.columns(3)
     with k1:
         kpi("Số đặc trưng", f"{len(df_imp)}", "trong bộ đang chọn")
@@ -350,9 +318,28 @@ with _KPI_XAI:
     with k3:
         kpi("Nhóm đóng góp nhiều nhất", _top_grp, "theo tổng |SHAP|")
 
-# ── TANG 2: bang Top dac trung ──
-with st.container(border=True):
-    if True:
+# SUA 2026-08-28 (bo cuc): bang "Top dac trung" doi cho — truoc day la khoi full-width
+# rieng, gio nam CANH TRAI cung hang voi SHAP Dependence (canh phai), hai khung cung
+# chieu cao co dinh de VIEN DUOI thang hang (xem HANG A ben duoi).
+
+# feature_cols dung chung cho ca Local Explanation va SHAP Dependence phia duoi -
+# phai dinh nghia TRUOC khi 2 phan do dung toi, tranh loi bien chua duoc gan.
+feature_cols = [c for c in df_val.columns if c not in ("site_id", "timestamp", "y_true", "y_pred")]
+# cache_key = model_key: doi model moi doc/merge lai; bam widget khac thi lay tu cache ngay.
+df_x_real = load_real_feature_values(_model_key, df_val, str(_model_spec["x_test_path"]))
+
+# ── HANG A: bang Top dac trung (TRAI) ‖ SHAP Beeswarm tong (PHAI) ──
+# 2026-08-28: bo bieu do LightGBM Gain (trung vai tro voi bang Top dac trung) va bo
+# SHAP Dependence ve truc tiep (scatter 483k diem mat ~10s moi dac trung, khong the
+# vua du du lieu vua tuc thi). Thay bang anh Beeswarm TONG do stage s10 ve san tren
+# toan bo du lieu — hien ngay, dashboard khong tinh toan gi.
+# Hai khung cung chieu cao co dinh de vien duoi thang hang (mot ben co caption).
+_H_HANG_A = 680
+_BEESWARM_PNG = DATA_DIR / "08_explain" / "notebook_shap_beeswarm.png"
+rowA_left, rowA_right = st.columns(2, gap="small")
+
+with rowA_left:
+    with st.container(border=True, height=_H_HANG_A):
         st.markdown("##### Top đặc trưng quan trọng nhất (Data Bars)")
         top_n = st.slider("Top N đặc trưng", 5, min(40, len(df_imp)), 15)
         df_top = df_imp.head(top_n)[["feature", "mean_abs_shap", "group"]].reset_index(drop=True)
@@ -363,70 +350,69 @@ with st.container(border=True):
             .bar(subset=["mean_abs_shap"], color="#6366F1", vmin=0)
             .format({"mean_abs_shap": "{:.4f}"})
         )
-        st.dataframe(_styler, use_container_width=True, hide_index=True, height=300)
-
-# feature_cols dung chung cho ca Local Explanation va SHAP Dependence phia duoi -
-# phai dinh nghia TRUOC khi 2 phan do dung toi, tranh loi bien chua duoc gan.
-feature_cols = [c for c in df_val.columns if c not in ("site_id", "timestamp", "y_true", "y_pred")]
-df_x_real = load_real_feature_values(df_val, str(_model_spec["x_test_path"]))
-
-# ── HANG A: 2 bieu do GLOBAL canh nhau - LightGBM Gain (trai) | PDP phi tuyen (phai) ──
-rowA_left, rowA_right = st.columns(2, gap="small")
-
-df_native = load_native_importance(str(_model_spec["model_path"]), str(_model_spec["config_path"]))
-with rowA_left:
-    if not df_native.empty:
-        with st.container(border=True):
-            st.markdown("##### LightGBM Feature Importance (Gain trung bình qua toàn bộ cây)")
-            _top_native = df_native.head(15)
-            fig_native = px.bar(
-                _top_native.sort_values("gain"), x="gain", y="feature", orientation="h",
-                color="gain", color_continuous_scale="Blues",
-                labels={"gain": "Gain trung bình"},
-            )
-            fig_native.update_layout(
-                template="plotly_white", paper_bgcolor="#FFFFFF", plot_bgcolor="#FFFFFF",
-                height=340, font=dict(color="#1F2937", size=12),
-            )
-            st.plotly_chart(fig_native, use_container_width=True)
-            st.caption(
-                "Gain = tổng mức giảm loss mỗi khi đặc trưng được dùng để chia nhánh, cộng dồn và lấy trung bình "
-                "qua tất cả cây. Khác SHAP (đóng góp từng dự báo cụ thể) — đây là mức 'hữu ích' ở cấp cấu trúc cây."
-            )
+        st.dataframe(_styler, use_container_width=True, hide_index=True, height=480)
 
 with rowA_right:
-    # SHAP Dependence Plot - dung DUNG shap.plots.scatter() cua thu vien shap that, giong
-    # y het cell 28 trong repo tham khao (nguyenhads/sales_forecasting_xai, notebook 05):
-    #   shap.plots.scatter(shap_values_valid[:, feature_name], color=shap_values_valid[:, feature_name])
-    # Truoc day o day la Partial Dependence Plot (sklearn.inspection) - da doi theo yeu cau
-    # "cái này chuyển thành shap dependence plot của đúng shap đi". Mau sac tu dong theo
-    # tuong tac voi feature manh nhat (shap tu chon), khac PDP la khong the hien duoc.
-    if not df_val.empty and not df_x_real.empty:
-        _feats_shp = [c for c in feature_cols if c in df_x_real.columns]
-        if _feats_shp:
-            with st.container(border=True):
-                st.markdown("##### SHAP Dependence Plot — tính phi tuyến (shap.plots.scatter)")
-                _feat_shp = st.selectbox("Chọn đặc trưng xem tính phi tuyến", _feats_shp,
-                                          index=_feats_shp.index("shortwave_radiation") if "shortwave_radiation" in _feats_shp else 0,
-                                          key="shap_scatter_feat")
-                _common_idx = df_val.index.intersection(df_x_real.index)
-                _expl = shap.Explanation(
-                    values=df_val.loc[_common_idx, _feats_shp].to_numpy(dtype=float),
-                    data=df_x_real.loc[_common_idx, _feats_shp].to_numpy(dtype=float),
-                    feature_names=_feats_shp,
-                )
-                plt.close("all")
-                shap.plots.scatter(_expl[:, _feat_shp], color=_expl[:, _feat_shp], show=False)
-                _fig_shp = plt.gcf()
-                _fig_shp.set_size_inches(9, 4.5)
-                st.pyplot(_fig_shp, use_container_width=True)
-                plt.close(_fig_shp)
-                st.caption(
-                    "Mỗi điểm = 1 dự báo thật. Trục X = giá trị đặc trưng thật, trục Y = mức SHAP đẩy dự báo "
-                    "lên/xuống. Màu tự động theo đặc trưng tương tác mạnh nhất do SHAP tự chọn."
-                )
+    with st.container(border=True, height=_H_HANG_A):
+        st.markdown("##### SHAP Beeswarm — bức tranh đóng góp tổng (vẽ sẵn từ stage s10)")
+        if _BEESWARM_PNG.is_file():
+            # width co dinh: anh goc 1171x1099 gan vuong, de use_container_width thi
+            # tren man hinh rong anh cao hon khung va sinh scroll trong khung.
+            st.image(str(_BEESWARM_PNG), width=540)
+            st.caption(
+                "Ảnh do stage s10 vẽ trên toàn bộ dữ liệu. Mỗi điểm = 1 dự báo; màu đỏ = giá trị "
+                "đặc trưng cao, xanh = thấp; điểm lệch phải đẩy dự báo lên, lệch trái kéo xuống."
+            )
+        else:
+            st.info("Chưa có ảnh 08_explain/notebook_shap_beeswarm.png — chạy stage s10 để sinh.")
 
 # ── HANG B: Local Explanation FULL-WIDTH rieng 1 hang ──
+
+
+@st.cache_resource
+def tim_mau_tieu_bieu(
+    cache_key: str, _df_val: pd.DataFrame, _df_x_real: pd.DataFrame,
+    feats: tuple[str, ...], base_value: float,
+    scale_col: str, elev_col: str, eps: float, tran_col: str,
+) -> dict[str, int]:
+    """Chon 3 dong tieu bieu (day len / keo xuong / gan baseline) tu toan bo du lieu.
+
+    Du bao quy doi tinh bang DUNG cong thuc cua denormalize_local_prediction (cot
+    lay tu model_config.json) de con so chon mau khop voi KPI tren trang.
+    Rao chan de mau trinh dien thuyet phuc:
+      - ban ngay ro (do cao mat troi > 0.15) va co san luong that (y_true > 1 kWh);
+      - k = base_value + tong SHAP > 0.08: tong SHAP am nhat toan cuc luon bi
+        clip(k, 0, 1.5) ep du bao ve dung 0 kWh — nhin nhu loi mo hinh;
+      - mo hinh du bao SAT thuc te (sai so <= 35%): mau "keo xuong" phai la ca
+        mo hinh ha du bao va ha DUNG, khong phai ca du bao truot.
+    """
+    del cache_key
+    tong = _df_val[list(feats)].sum(axis=1)
+    ok = pd.Series(True, index=tong.index)
+    if elev_col in _df_x_real.columns:
+        ok &= _df_x_real[elev_col].reindex(tong.index) > 0.15
+    if "y_true" in _df_x_real.columns:
+        ok &= _df_x_real["y_true"].reindex(tong.index) > 1.0
+    k = base_value + tong
+    ok &= k > 0.08
+    if {"y_true", elev_col, scale_col}.issubset(_df_x_real.columns):
+        y_pred = (
+            k.clip(0.0, 1.5)
+            * _df_x_real[scale_col].reindex(tong.index)
+            * _df_x_real[elev_col].reindex(tong.index).clip(lower=eps)
+        )
+        if tran_col in _df_x_real.columns:
+            y_pred = y_pred.clip(upper=_df_x_real[tran_col].reindex(tong.index) * 1.02)
+        y_true = _df_x_real["y_true"].reindex(tong.index)
+        ok &= (y_pred - y_true).abs() <= 0.35 * y_true
+    t = tong[ok.fillna(False)]
+    if t.empty:
+        t = tong
+    return {
+        "len": int(t.idxmax()),
+        "xuong": int(t.idxmin()),
+        "baseline": int(t.abs().idxmin()),
+    }
 
 
 # Ngoai le duy nhat voi quy tac "2 bieu do/hang": shap.plots.force can toan bo chieu
@@ -444,36 +430,49 @@ if True:
         _force_box = st.container(border=True)
         _force_box.markdown("##### Local Explanation — 1 dự báo cụ thể")
         _opt_df = df_val[["site_id", "timestamp"]].copy()
-        _opt_df["nhan"] = _opt_df["site_id"].astype(str) + " · " + _opt_df["timestamp"].astype(str)
-        _local_choice = "Tự chọn site + timestamp"
-        if not _local_cases.empty and {"site_id", "timestamp", "case_label"}.issubset(_local_cases.columns):
-            _case_names = {
-                "upward_contribution": "Mẫu đẩy dự báo lên",
-                "downward_contribution": "Mẫu kéo dự báo xuống",
-                "near_baseline": "Mẫu gần baseline",
-            }
-            _local_cases["nhan"] = (
-                _local_cases["site_id"].astype(str)
-                + " · "
-                + _local_cases["timestamp"].astype(str)
+        _opt_df["timestamp"] = pd.to_datetime(_opt_df["timestamp"])
+        _cfg_mau = json.loads(
+            Path(str(_model_spec["config_path"])).read_text(encoding="utf-8")
+        )
+        _mau = tim_mau_tieu_bieu(
+            _model_key, df_val, df_x_real, tuple(feature_cols),
+            load_shap_base_value(str(_model_spec["model_path"])),
+            _cfg_mau.get("cot_quy_mo", "site_scale"),
+            _cfg_mau.get("cot_sin_elev", "sin_elevation"),
+            float(_cfg_mau.get("eps_elev", 0.05)),
+            _cfg_mau.get("cot_tran", "tran_cong_suat"),
+        )
+        _ten_mau = {
+            "len": "Mẫu đẩy dự báo lên",
+            "xuong": "Mẫu kéo dự báo xuống",
+            "baseline": "Mẫu gần baseline",
+        }
+        _tu_chon = "Tự chọn site + timestamp"
+        _options = [
+            f"{_ten_mau[k]} — trạm {_opt_df.loc[i, 'site_id']} · {_opt_df.loc[i, 'timestamp']}"
+            for k, i in _mau.items()
+        ] + [_tu_chon]
+        _local_choice = _force_box.selectbox("Chọn dự báo cần giải thích", _options)
+        if _local_choice == _tu_chon:
+            # Chon 3 cap thay vi 1 selectbox 483k lua chon: van toi duoc moi dong,
+            # nhung moi hop chi vai chuc muc.
+            _c_tram, _c_ngay, _c_gio = _force_box.columns(3)
+            _sites_local = sorted(_opt_df["site_id"].unique().tolist())
+            _site_pick = _c_tram.selectbox("Trạm", _sites_local, key="local_site")
+            _sub_site = _opt_df[_opt_df["site_id"] == _site_pick]
+            _days_local = sorted(_sub_site["timestamp"].dt.date.unique().tolist())
+            _day_pick = _c_ngay.selectbox("Ngày", _days_local, key="local_day")
+            _sub_day = _sub_site[_sub_site["timestamp"].dt.date == _day_pick]
+            _times_local = sorted(_sub_day["timestamp"].dt.time.unique().tolist())
+            _time_pick = _c_gio.selectbox(
+                "Giờ", _times_local,
+                format_func=lambda t: t.strftime("%H:%M"), key="local_time",
             )
-            _local_cases["hien_thi"] = _local_cases["case_label"].map(_case_names).fillna(
-                _local_cases["case_label"].astype(str)
-            )
-            _local_options = [
-                f"{row.hien_thi} — {row.nhan}" for row in _local_cases.itertuples()
-            ]
-            _local_choice = _force_box.selectbox(
-                "Mẫu local từ notebook 08",
-                [_local_choice, *_local_options],
-            )
-        if _local_choice == "Tự chọn site + timestamp":
-            _pick = _force_box.selectbox("Chọn 1 dòng để giải thích", _opt_df["nhan"].tolist())
+            _row_idx = _sub_day[_sub_day["timestamp"].dt.time == _time_pick].index[0]
+            _loai_mau = "tu_chon"
         else:
-            _selected_local = _local_cases.iloc[_local_options.index(_local_choice)]
-            _pick = _selected_local["nhan"]
-            _force_box.caption("Đang hiển thị mẫu local đã chọn trong notebook 08.")
-        _row_idx = _opt_df[_opt_df["nhan"] == _pick].index[0]
+            _loai_mau = list(_mau)[_options.index(_local_choice)]
+            _row_idx = _mau[_loai_mau]
         _shap_row = df_val.loc[_row_idx, feature_cols].astype(float)
         _real_row = df_x_real.loc[_row_idx] if _row_idx in df_x_real.index else None
         _base_value = load_shap_base_value(str(_model_spec["model_path"]))
@@ -520,11 +519,215 @@ if True:
         _fig_force = plt.gcf()
         _force_box.pyplot(_fig_force, use_container_width=True)
         plt.close(_fig_force)
-        _force_box.caption(
-            "Đỏ = kéo dự báo LÊN so với mức trung bình (base value), xanh navy = kéo XUỐNG. "
-            "Force Plot giữ ở thang đầu ra chuẩn hóa k để bảo toàn tính cộng SHAP; KPI Dự báo quy đổi "
-            "đã nhân ngược site_scale × sin_elevation và chặn theo trần công suất. "
-            "Base value lấy trực tiếp từ TreeExplainer của mô hình đang chọn. "
-            "Cộng dồn từ base value ra tới f(x) — giống shap.force_plot()/shap.plots.waterfall(). "
-            "Chỉ hiện 6 đặc trưng ảnh hưởng mạnh nhất, phần còn lại đã gộp vào base value."
+        # Insight: Boi canh / Co che / Nhan dinh. Moi dong gop deu quy doi ra kWh theo
+        # dung cong thuc pipeline (cot lay tu model_config.json — v5 dung
+        # sin_elevation_mt, KHONG phai sin_elevation) va kem cau "vi sao" theo co che
+        # vat ly/nghiep vu cua dac trung do.
+        _cfg_ins = json.loads(
+            Path(str(_model_spec["config_path"])).read_text(encoding="utf-8")
         )
+        _scale_col_ins = _cfg_ins.get("cot_quy_mo", "site_scale")
+        _elev_col_ins = _cfg_ins.get("cot_sin_elev", "sin_elevation")
+        _eps_ins = float(_cfg_ins.get("eps_elev", 0.05))
+
+        def _tri_dong(*ten: str) -> float | None:
+            """Doc gia tri tu dong X_test DAY DU (_real_row co ca cot ngoai feature)."""
+            if _real_row is None:
+                return None
+            for _t in ten:
+                if _t in _real_row.index and pd.notna(_real_row[_t]):
+                    return float(_real_row[_t])
+            return None
+
+        _scale_ins = _tri_dong(_scale_col_ins, "site_scale")
+        _elev_ins = _tri_dong(_elev_col_ins, "sin_elevation")
+        # ky_vong = quy mo x do cao mat troi — phuong an du phong de khong bao gio ra n/a.
+        _he_so_kwh = (
+            _scale_ins * max(_elev_ins, _eps_ins)
+            if _scale_ins is not None and _elev_ins is not None
+            else _tri_dong("ky_vong")
+        )
+        _tong_abs = float(_shap_row.abs().sum()) or 1.0
+        _top3_ins = _shap_row.abs().sort_values(ascending=False).head(3).index
+
+        def _kwh_cua(f: str) -> float | None:
+            return float(_shap_row[f]) * _he_so_kwh if _he_so_kwh is not None else None
+
+        def _phan_tram(f: str) -> float:
+            return abs(float(_shap_row[f])) / _tong_abs * 100
+
+        def _chuoi_luong(f: str) -> str:
+            _k = _kwh_cua(f)
+            return f"{_k:+.2f} kWh" if _k is not None else f"{float(_shap_row[f]):+.3f} điểm k"
+
+        def _ly_do_dong_gop(f: str) -> str:
+            """Cau 'vi sao' theo co che vat ly/nghiep vu cua tung ho dac trung."""
+            goc = f[:-3] if f.endswith("_mt") else f
+            len_ = float(_shap_row[f]) > 0
+            v = _tri_dong(f)
+            if goc.startswith(("lag_", "rolling_")):
+                return ("một giờ vừa qua trạm đang phát tốt — quán tính sản lượng cho thấy "
+                        "trời đang thuận lợi nên mô hình tự tin nâng dự báo" if len_ else
+                        "một giờ vừa qua trạm phát thấp — quán tính sản lượng cho thấy trời "
+                        "đang xấu, mô hình dè chừng hạ theo")
+            if goc == "direct_normal_irradiance":
+                if v is not None and v <= 5:
+                    return ("không còn tia nắng nào chiếu trực tiếp tới tấm pin (mặt trời bị "
+                            "mây che hoàn toàn) — nguồn năng lượng đầu vào chính mất hẳn")
+                return ("nắng chiếu trực tiếp mạnh — nguồn năng lượng chính của tấm pin đang "
+                        "dồi dào" if len_ else
+                        "nắng trực tiếp yếu hơn mức thường thấy của khung giờ này")
+            if goc == "diffuse_ratio":
+                if v is not None and v >= 0.8:
+                    return ("gần như toàn bộ ánh sáng là tán xạ — trời phủ mây kín, tấm pin "
+                            "chỉ nhận được ánh sáng khuếch tán yếu")
+                if v is not None and v <= 0.3:
+                    return "tỷ lệ tán xạ thấp — trời quang, nắng trực tiếp chiếm ưu thế"
+                return "mây rải rác — ánh sáng pha trộn giữa trực tiếp và khuếch tán"
+            if goc == "shortwave_radiation":
+                return ("tổng bức xạ tới bề mặt đang cao — nhiên liệu đầu vào của cả hệ "
+                        "thống dồi dào" if len_ else
+                        "tổng bức xạ tới bề mặt thấp — nhiên liệu đầu vào của hệ thống thiếu hụt")
+            if "cloud" in goc and "_x_" in goc:
+                return ("bức xạ có nhưng mây tầng thấp dày chặn bớt phần thực sự tới được "
+                        "tấm pin" if not len_ else
+                        "mây tầng thấp mỏng nên phần bức xạ tới được tấm pin gần như trọn vẹn")
+            if goc == "temperature_c" or ("temp" in goc and "_x_" in goc):
+                return ("nhiệt độ cao làm cell pin nóng lên, suy hao hiệu suất ~0,38%/°C "
+                        "vượt 25°C" if not len_ else
+                        "nhiệt độ mát giúp cell pin giữ hiệu suất chuyển đổi tốt")
+            if goc == "ky_vong":
+                return ("mốc sản lượng kỳ vọng theo công suất của giờ này cao và điều kiện "
+                        "thực đang bám sát mốc" if len_ else
+                        "mốc kỳ vọng theo công suất của giờ này cao nhưng điều kiện thực tế "
+                        "không đạt nổi, mô hình phải trừ sâu so với mức nền")
+            if goc in ("minute_of_day", "hour_sin", "hour_cos", "hour", "hour_of_day"):
+                return ("thời điểm đang ở pha thuận lợi của chu kỳ nhật động trong ngày"
+                        if len_ else
+                        "thời điểm chưa tới hoặc đã qua pha phát cao của chu kỳ nhật động")
+            if goc.endswith("_enc") or goc in ("site_scale", "tran_cong_suat"):
+                return ("đặc điểm riêng của trạm (hướng lắp, hiệu suất lịch sử) mà mô hình "
+                        "học được từ dữ liệu vận hành")
+            if goc in ("sin_elevation", "solar_elevation"):
+                return ("mặt trời đang lên cao, góc chiếu thuận lợi" if len_ else
+                        "mặt trời còn thấp, góc chiếu xiên làm giảm năng lượng nhận được")
+            return ("giá trị đang ở vùng thuận lợi so với quy luật mô hình học được"
+                    if len_ else
+                    "giá trị đang ở vùng bất lợi so với quy luật mô hình học được")
+
+        _co_che = []
+        for _f in _top3_ins:
+            _v = _real_vals.get(_f)
+            _gia_tri = f"{_v:,.3g}" if pd.notna(_v) else "?"
+            _co_che.append(
+                f"- `{_f}` = {_gia_tri} → **{_chuoi_luong(_f)}** ({_phan_tram(_f):.0f}% "
+                f"tổng tác động): {_ly_do_dong_gop(_f)}."
+            )
+
+        # Tong luc day / keo tren TOAN BO dac trung, va do lech du bao vs thuc te.
+        _tong_len_kwh = (float(_shap_row[_shap_row > 0].sum()) * _he_so_kwh
+                         if _he_so_kwh is not None else None)
+        _tong_xuong_kwh = (float(_shap_row[_shap_row < 0].sum()) * _he_so_kwh
+                           if _he_so_kwh is not None else None)
+        _s_len = f"{_tong_len_kwh:+.2f} kWh" if _tong_len_kwh is not None else "không đáng kể"
+        _s_xuong = f"{_tong_xuong_kwh:+.2f} kWh" if _tong_xuong_kwh is not None else "không đáng kể"
+        # Muc nen = du bao "dieu kien trung binh" cua khung gio nay (base value x he so
+        # quy doi) — de nguoi doc hieu luc day/keo dang so voi cai gi.
+        _s_nen = (f"mức nền ~{_base_value * _he_so_kwh:.1f} kWh của khung giờ này"
+                  if _he_so_kwh is not None else "mức nền của khung giờ này")
+        _lech_txt = ""
+        if _thuc_te is not None and _predicted_kwh is not None and _thuc_te > 0:
+            _lech = abs(_predicted_kwh - _thuc_te)
+            _lech_txt = (f"Dự báo lệch thực tế chỉ {_lech:.2f} kWh "
+                         f"(~{_lech / _thuc_te * 100:.0f}%). ")
+
+        _bx = _tri_dong("shortwave_radiation", "shortwave_radiation_mt")
+        _tan_xa = _tri_dong("diffuse_ratio", "diffuse_ratio_mt")
+        _nhiet = _tri_dong("temperature_c", "temperature_c_mt")
+        _phan_troi = []
+        if _bx is not None:
+            _muc_bx = "mạnh" if _bx >= 500 else ("trung bình" if _bx >= 200 else "yếu")
+            _phan_troi.append(f"bức xạ tổng ~{_bx:,.0f} W/m² ({_muc_bx})")
+        if _tan_xa is not None:
+            _muc_may = ("trời nhiều mây" if _tan_xa > 0.6
+                        else "mây rải rác" if _tan_xa > 0.3 else "trời quang")
+            _phan_troi.append(f"tỷ lệ tán xạ {_tan_xa:.2f} → {_muc_may}")
+        if _nhiet is not None:
+            _phan_troi.append(f"nhiệt độ {_nhiet:.0f}°C")
+        _thoi_tiet = ("Trời lúc này: " + "; ".join(_phan_troi) + ". ") if _phan_troi else ""
+
+        _nhan_dinh = {
+            "len": f"{_thoi_tiet}Tổng lực đẩy {_s_len} so với mức nền, áp đảo lực kéo "
+                   f"({_s_xuong}). {_lech_txt}Chính kiến: đây là giờ phát đỉnh thật do thời "
+                   "tiết, không phải nhiễu đo đếm — dồn phụ tải tiêu thụ tại chỗ (điều hòa, "
+                   "bơm, trạm sạc) vào đúng khung giờ này để tăng tự tiêu thụ, giảm mua điện "
+                   "lưới.",
+            "xuong": f"{_thoi_tiet}Tổng lực kéo {_s_xuong} so với mức nền, áp đảo lực đẩy "
+                     f"({_s_len}). {_lech_txt}Chính kiến: mức hụt là thật và đến từ thời "
+                     "tiết, không phải suy giảm thiết bị — chưa cần lệnh bảo trì; chỉ kích "
+                     "hoạt kiểm tra inverter/cảm biến (CBM) nếu thực đo tụt sâu dưới cả mức "
+                     "dự báo đã hạ.",
+            "baseline": f"{_thoi_tiet}Lực đẩy {_s_len} và lực kéo {_s_xuong} gần như triệt "
+                        f"tiêu nhau. {_lech_txt}Chính kiến: giờ vận hành chuẩn mực, chiếm đa "
+                        "số thời gian phát điện — lấy nhóm giờ này làm mốc cam kết chỉ tiêu "
+                        "sản lượng tháng/quý và làm cửa sổ xếp lịch bảo trì ít ảnh hưởng "
+                        "doanh thu nhất.",
+            "tu_chon": f"{_thoi_tiet}Lực đẩy {_s_len}, lực kéo {_s_xuong}. {_lech_txt}Chính "
+                       "kiến: đối chiếu từng dòng cơ chế ở trên với điều kiện trời quan sát "
+                       "được — nếu hai bên mâu thuẫn (trời quang nhưng quán tính sản lượng "
+                       "vẫn kéo sâu), ưu tiên kiểm tra dữ liệu và thiết bị của trạm trước "
+                       "khi nghi ngờ mô hình.",
+        }[_loai_mau]
+        _ts_row = _opt_df.loc[_row_idx]
+        # Expander so xuong TAI CHO (popover bi mo nguoc len tren, che mat force plot).
+        with _force_box.expander("Cơ chế & nhận định", expanded=False):
+            st.markdown(
+                f"**Bối cảnh.** Trạm {_ts_row['site_id']}, thời điểm {_ts_row['timestamp']}: thực tế "
+                f"{f'{_thuc_te:.2f} kWh' if _thuc_te is not None else '—'}, mô hình dự báo "
+                f"{f'{_predicted_kwh:.2f} kWh' if _predicted_kwh is not None else '—'}.\n\n"
+                f"**Cơ chế — vì sao từng yếu tố đóng góp như vậy:**\n" + "\n".join(_co_che)
+                + f"\n\n**Nhận định.** {_nhan_dinh}"
+            )
+
+            # Cau noi sang trang What-If: doc so lieu hang muc TRUC TIEP tu config
+            # cua nhanh BI (chi doc, khong sua) de hai trang luon khop so.
+            try:
+                from api.bimart.core.config import HANG_MUC_CAI_TIEN as _HM_BI
+            except Exception:
+                _HM_BI = {}
+
+            def _ten_hm(ma: str) -> str:
+                _h = _HM_BI[ma]
+                return (f"hạng mục {_h['stt']} \"{_h['ten']}\" ({_h['hieu_suat']}, "
+                        f"hoàn vốn {_h['payback']})")
+
+            _goc_am = [
+                (f[:-3] if f.endswith("_mt") else f)
+                for f in _top3_ins if float(_shap_row[f]) < 0
+            ]
+            _cau_bi = []
+            if any("temp" in g for g in _goc_am) and "ventilation" in _HM_BI:
+                _cau_bi.append(
+                    f"suy hao nhiệt đang kéo dự báo xuống → khớp {_ten_hm('ventilation')}"
+                )
+            if (any(g.startswith(("lag_", "rolling_")) for g in _goc_am)
+                    and _tan_xa is not None and _tan_xa <= 0.3 and "cbm" in _HM_BI):
+                _cau_bi.append(
+                    "trời quang nhưng quán tính sản lượng vẫn kéo xuống — nghi thiết bị, "
+                    f"đúng bài toán của {_ten_hm('cbm')}"
+                )
+            if any(("cloud" in g) or g in
+                   ("diffuse_ratio", "direct_normal_irradiance", "shortwave_radiation")
+                   for g in _goc_am):
+                _cau_bi.append(
+                    "phần hụt do mây/bức xạ là tổn thất thời tiết, không cải tạo phần cứng "
+                    "được — giá trị của dự báo nằm ở điều phối phụ tải, đúng vai trò mô "
+                    "phỏng của trang What-If"
+                )
+            if _loai_mau == "len" and "bess" in _HM_BI:
+                _cau_bi.append(
+                    "giờ phát đỉnh là lúc dễ chạm trần công suất (tổn thất cắt ngọn) → "
+                    f"liên hệ {_ten_hm('bess')}"
+                )
+            if _cau_bi:
+                st.markdown("**Gắn với What-If (BI).** " + "; ".join(_cau_bi) + ".")

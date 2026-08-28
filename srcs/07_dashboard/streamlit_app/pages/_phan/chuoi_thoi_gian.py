@@ -204,7 +204,7 @@ with _KPI_TS:
         kpi("MAE", f"{mae:.4f} kWh" if mae else "n/a", "sai số tuyệt đối")
     with k5:
         _st = "up" if r2 and r2 >= 0.85 else "down" if r2 and r2 < 0.6 else None
-        kpi("R²", f"{r2:.4f}" if r2 else "n/a", "độ khớp mô hình", status=_st)
+        kpi("R²", f"{r2:.4f}" if r2 else "n/a", "% biến động sản lượng được giải thích", status=_st)
     with k6:
         kpi("RMSE", f"{rmse:.4f} kWh" if rmse else "n/a", f"{len(compare):,} dòng đang xem")
 
@@ -248,13 +248,9 @@ with t2_left:
         if compare.get("is_audit_outlier", pd.Series(dtype=bool)).any():
             _o = compare[compare["is_audit_outlier"]]
             fig.add_trace(go.Scatter(x=_o["display_timestamp"], y=_o["y_true"], mode="markers",
-                                     name="Outlier (loại khỏi train)",
+                                     name="Outlier (đã gắn nhãn nhóm)",
                                      marker=dict(symbol="x", size=9, color="#DC2626")))
         st.plotly_chart(style_fig(fig, 320), width='stretch')
-        st.caption(
-            "Đường chấm xanh lá là Prophet — mô hình chuỗi thời gian không dùng đặc trưng thời tiết. "
-            "Sao vàng/tím là đỉnh thực tế/dự báo từng ngày. Dấu X đỏ là outlier bị loại khỏi huấn luyện."
-        )
 
 with t2_right:
     with st.container(border=True):
@@ -268,7 +264,6 @@ with t2_right:
             st.plotly_chart(style_fig(_f, 300), width='stretch')
         else:
             st.info("Chưa có dữ liệu xếp hạng trạm.")
-        st.caption("Lệch quanh 0 và đối xứng nghĩa là mô hình không thiên vị theo một hướng.")
 # ══════════════════════════════════════════════════════════════════════════════
 #  Tang 3 — bang chi tiet
 # ══════════════════════════════════════════════════════════════════════════════

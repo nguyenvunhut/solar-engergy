@@ -16,7 +16,9 @@ header_bao_cao("Dự báo sản lượng điện mặt trời",
                "MACHINE LEARNING")
 
 _KPI_TS = st.container()
-_KPI_XAI = st.container()
+# _KPI_XAI la st.empty() vi phan XAI chay trong fragment: fragment rerun khong reset
+# container ngoai, viet thang vao container se nhan doi KPI moi lan bam widget.
+_KPI_XAI = st.empty()
 
 
 def _nap(ten: str, **bien) -> None:
@@ -26,4 +28,14 @@ def _nap(ten: str, **bien) -> None:
 
 
 _nap("chuoi_thoi_gian.py", _KPI_TS=_KPI_TS)
-_nap("giai_thich_mo_hinh.py", _KPI_XAI=_KPI_XAI)
+
+
+# Phan SHAP chay trong fragment: bam widget cua phan nay chi chay lai rieng no,
+# khong keo phan chuoi thoi gian chay theo. Widget cua fragment phai nam trong
+# than fragment nen bo loc XAI dat trong than trang, khong o sidebar.
+@st.fragment
+def _phan_xai() -> None:
+    _nap("giai_thich_mo_hinh.py", _KPI_XAI=_KPI_XAI)
+
+
+_phan_xai()

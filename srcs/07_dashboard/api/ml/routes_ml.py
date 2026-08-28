@@ -92,10 +92,11 @@ def khoi_dong() -> None:
     if p.exists():
         KHO["prophet_by_site"] = pd.read_csv(p)
 
-    for ten, p in (("shap_importance", DATA_DIR / "08_explain" / "shap_importance.csv"),
-                   ("shap_values", DATA_DIR / "08_explain" / "shap_values.parquet")):
-        if p.exists():
-            KHO[ten] = pd.read_csv(p) if p.suffix == ".csv" else pd.read_parquet(p)
+    # Khong nap shap_values.parquet (126 MB) o day: khong endpoint nao dung no,
+    # chi /shap/importance doc file CSV tong hop.
+    p = DATA_DIR / "08_explain" / "shap_importance.csv"
+    if p.exists():
+        KHO["shap_importance"] = pd.read_csv(p)
 
 
 def _sach_json(x):

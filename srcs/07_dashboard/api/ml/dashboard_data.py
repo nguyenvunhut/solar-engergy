@@ -63,7 +63,9 @@ GRID_COLOR = "#D9DEE7"
 # ══════════════════════════════════════════════════════════════════════════════
 #  Doc artifact
 # ══════════════════════════════════════════════════════════════════════════════
-@st.cache_data(ttl=60)
+# ttl=3600: artifact la file tinh, pipeline ghi mot lan. Chay lai pipeline xong thi
+# bam Rerun/xoa cache cua Streamlit de nap ban moi.
+@st.cache_data(ttl=3600)
 def load_prediction_audit() -> pd.DataFrame:
     """Ket qua model duoc chon tren tap test niem phong."""
     if not PREDICTION_AUDIT.exists():
@@ -73,7 +75,7 @@ def load_prediction_audit() -> pd.DataFrame:
     return df.dropna(subset=["timestamp"])
 
 
-@st.cache_data(ttl=60)
+@st.cache_data(ttl=3600)
 def load_prophet_predictions() -> pd.DataFrame:
     """Du bao Prophet tai cung cac moc thoi gian muc tieu voi mo hinh.
 
@@ -87,7 +89,7 @@ def load_prophet_predictions() -> pd.DataFrame:
     return d.dropna(subset=["timestamp"])
 
 
-@st.cache_data(ttl=60)
+@st.cache_data(ttl=3600)
 def load_prophet_summary() -> dict:
     """Tom tat Skill Score cua mo hinh so voi Prophet, tren cung tap dong."""
     if not PROPHET_SUMMARY.exists():
@@ -95,14 +97,14 @@ def load_prophet_summary() -> dict:
     return json.loads(PROPHET_SUMMARY.read_text(encoding="utf-8"))
 
 
-@st.cache_data(ttl=60)
+@st.cache_data(ttl=3600)
 def load_prophet_by_site() -> pd.DataFrame:
     if not PROPHET_BY_SITE.exists():
         return pd.DataFrame()
     return pd.read_csv(PROPHET_BY_SITE)
 
 
-@st.cache_data(ttl=60)
+@st.cache_data(ttl=3600)
 def load_best_loss() -> dict:
     """best_loss.json - ghi ro mo hinh nao thang va thang tren TAP NAO.
 
@@ -114,7 +116,7 @@ def load_best_loss() -> dict:
     return json.loads(BEST_LOSS.read_text(encoding="utf-8"))
 
 
-@st.cache_data(ttl=60)
+@st.cache_data(ttl=3600)
 def load_metrics(horizon: int) -> tuple[dict, pd.DataFrame]:
     """Metric chinh thuc do pipeline ghi ra (khong tinh lai trong dashboard)."""
     overall_path = FINAL_DIR / f"h{horizon}" / "metrics_overall.json"
@@ -126,7 +128,7 @@ def load_metrics(horizon: int) -> tuple[dict, pd.DataFrame]:
     return overall, site
 
 
-@st.cache_data(ttl=60)
+@st.cache_data(ttl=3600)
 def load_outlier_group() -> pd.DataFrame:
     """Nhan outlier that tu tap test - prediction_audit khong mang cot nay."""
     if not TEST_SELECTED.exists():
@@ -136,7 +138,7 @@ def load_outlier_group() -> pd.DataFrame:
     return d
 
 
-@st.cache_data(ttl=60)
+@st.cache_data(ttl=3600)
 def load_shap_importance() -> pd.DataFrame:
     path = SHAP_DIR / "shap_importance_no_lag1.csv"
     if not path.exists():
@@ -160,7 +162,7 @@ def _thong_ke(x: pd.DataFrame, tc: str, pc: str) -> dict:
     }
 
 
-@st.cache_data(ttl=60)
+@st.cache_data(ttl=3600)
 def audit_metrics(_df: pd.DataFrame, horizon: int, cache_key: str = "") -> tuple[dict, pd.DataFrame]:
     """Tinh metric tai cho cho bat ky nguon nao co y_true_h/y_pred_h."""
     df = _df
