@@ -6,6 +6,10 @@
 .windsurf/
 .aider*
 .continue/
+.gemini/
+.antigravity/
+implementation_plan.md
+walkthrough.md
 AGENTS.local.md
 CLAUDE.local.md
 NIXOS_LOCAL_SETUP.md
