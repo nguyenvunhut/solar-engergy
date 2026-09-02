@@ -4987,56 +4987,55 @@ Ba việc cụ thể, xếp theo mức dễ làm:
 \section{Bóc tách 6 Điểm nghẽn Vận hành Cốt lõi của Danh mục Trạm}
 \label{sec:bottlenecks}
 
-Qua quá trình phân tích dữ liệu chuyên sâu trên Kho dữ liệu đa chiều Supabase, hệ thống Dashboard Tableau và mô hình nhận diện dị thường GMM--IF, nhóm nghiên cứu đã lượng hóa được 6 điểm nghẽn kỹ thuật và vận hành cốt lõi làm thất thoát sản lượng của 42 trạm quang điện áp mái tại Đại học La Trobe:
+Qua quá trình phân tích dữ liệu chuyên sâu trên Kho dữ liệu đa chiều Supabase, hệ thống Dashboard Tableau và mô hình nhận diện dị thường GMM--IF, nhóm nghiên cứu đã lượng hóa được 6 điểm nghẽn kỹ thuật và vận hành cốt lõi làm thất thoát sản lượng của 42 trạm quang điện áp mái tại Đại học La Trobe. Các điểm nghẽn này được phân loại và đối ứng trực tiếp $1:1$ với 6 giải pháp kỹ thuật có tính khả thi cao:
 
 \begin{enumerate}[label=\arabic*., leftmargin=*]
+    \item \textbf{Tổn thất Cắt ngọn Biến tần ($Loss_{\text{clip}} = 2{,}30\%$):} 
+    Tỷ lệ thiết kế công suất mảng pin DC lớn hơn định mức biến tần AC ($\text{ILR} = 1{,}25$) khiến các trạm phát bị xén công suất đỉnh (Flat-top clipping) từ 11:30 đến 14:00 vào những ngày hè nắng gắt ($GHI \ge 900\,\text{W/m}^2$), gây thất thoát $\mathbf{79.298\,\text{kWh/năm}}$ (tập trung $22{,}5\%$ vào tháng 12 và $20{,}0\%$ vào tháng 1).
+
     \item \textbf{Suy hao do Nhiệt độ Tế bào Quang điện Quá cao ($Loss_{\text{temp}} = 14{,}80\%$):} 
     Do đa số các tấm pin được lắp áp sát mặt mái tôn mà không có khoảng hở đối lưu nhiệt, vào các tháng mùa hè bang Victoria (tháng 12 đến tháng 2), nhiệt độ bề mặt tấm pin ($T_{\text{cell}}$) thường xuyên vượt ngưỡng $65^\circ\text{C} - 72^\circ\text{C}$. Với hệ số nhiệt $\gamma = -0{,}38\%/^\circ\text{C}$, tổn thất nhiệt độ làm bốc hơi $\mathbf{510.268\,\text{kWh/năm}}$ (tương đương thiệt hại hơn $102.000\,\text{AUD/năm}$).
 
-    \item \textbf{Tổn thất Cắt ngọn Biến tần ($Loss_{\text{clip}} = 2{,}30\%$):} 
-    Tỷ lệ thiết kế công suất mảng pin DC lớn hơn định mức biến tần AC ($\text{ILR} = 1{,}25$) khiến các trạm phát bị xén công suất đỉnh (Flat-top clipping) từ 11:30 đến 14:00 vào những ngày nắng gắt, gây thất thoát $\mathbf{79.298\,\text{kWh/năm}}$.
+    \item \textbf{Tổn thất Mái bằng $<8^\circ$ Đọng Bùn Viền Nhôm \& Hụt Nắng Đông ($Loss_{\text{tilt}} = 2{,}08\%$):} 
+    Tại cụm trạm mái bằng $970\,\text{kWp}$, góc nghiêng gần như bằng phẳng ($0^\circ - 5^\circ$) khiến hệ thống bị sụt giảm nghiêm trọng khả năng hấp thụ bức xạ mặt trời mùa đông do góc cao Mặt Trời xuống thấp ($29^\circ - 34^\circ$). Đồng thời, góc dốc không đủ để nước mưa thoát nhanh, dẫn đến dải bùn đọng lại ở mép nhôm dưới đáy tấm pin che khuất tế bào và gây nguy cơ chập diode phân cực ngược (Bypass Diode), làm thất thoát $\mathbf{71.850\,\text{kWh/năm}}$ và tốn chi phí cọ rửa thủ công.
+
+    \item \textbf{Quy trình Bảo trì Bị động \& Độ trễ Phát hiện Sự cố Kéo dài:} 
+    Quy trình kiểm tra định kỳ thủ công định kỳ khiến thời gian phát hiện sự cố (MTTD) kéo dài từ $14$ đến $30\,\text{ngày}$ và thời gian sửa chữa (MTTR) từ $7$ đến $14\,\text{ngày}$. Sự chậm trễ này làm thất thoát $\mathbf{70.330\,\text{kWh/năm}}$ từ 6 nhóm lỗi kỹ thuật vật lý (ngắt quá áp trưa AS/NZS 4777.2, đứt cầu chì chuỗi, trôi cảm biến CT ban đêm...).
 
     \item \textbf{Bám bụi Bề mặt Tấm pin Mùa Khô ($Loss_{\text{soiling}} = 1{,}80\%$):} 
-    Trong các tháng khô hạn kéo dài tại bang Victoria, bụi bẩn, phấn hoa và tạp chất khí quyển bám dính trên bề mặt kính quang học làm suy giảm $\mathbf{62.060\,\text{kWh/năm}}$ (tương đương tổn thất $12.412\,\text{AUD/năm}$ tiền điện). Bên cạnh đó, việc thực hiện rửa pin thủ công định kỳ theo lịch cố định mà không tham chiếu dữ liệu dự báo mưa thường gây lãng phí lớn về chi phí nhân công O\&M.
+    Trong các tháng khô hạn kéo dài tại bang Victoria (chuỗi ngày khô liên tục $\ge 21\,\text{ngày}$ với lượng mưa $< 5\,\text{mm}$), bụi bẩn và phấn hoa bám dính trên bề mặt kính quang học làm suy giảm $\mathbf{62.060\,\text{kWh/năm}}$ (thiệt hại $12.412\,\text{AUD/năm}$ tiền điện). Bên cạnh đó, việc rửa pin định kỳ cố định mà không theo dõi dữ liệu mưa gây lãng phí $6.000\,\text{AUD/năm}$ tiền nhân công cho các đợt rửa thừa trước ngày mưa lớn.
 
-    \item \textbf{Hiện tượng Ngắt mạch Quá áp Lưới Hạ thế (Grid Overvoltage Tripping):} 
-    Theo tiêu chuẩn Úc AS/NZS 4777.2, khi điện áp hòa lưới $10$ phút trung bình vượt ngưỡng $V_{10\text{min}} \ge 258\,\text{V}$, biến tần buộc phải ngắt mạch khẩn cấp. Hiện tượng này phát sinh tập trung vào các buổi trưa hè khi phụ tải khuôn viên thấp nhưng điện mặt trời phát cực đại, được bóc tách chính xác qua mã cờ \texttt{PHYSICAL\_LOW\_ENERGY\_STRONG\_SUN}.
-
-    \item \textbf{Cảnh báo Giả và Độ trễ Phát hiện Sự cố trong Quy trình O\&M Truyền thống:} 
-    Quy trình kiểm tra định kỳ thủ công khiến thời gian phát hiện sự cố (MTTD) kéo dài từ 2 đến 4 tuần, trong khi các phương pháp lọc ngưỡng tĩnh truyền thống tạo ra tỷ lệ báo động giả cao trong những ngày nhiều mây.
-
-    \item \textbf{Thiếu Công cụ Mô phỏng Động Đa Kịch bản (What-If Analysis):} 
-    Đơn vị quản lý tài sản thiếu một công cụ trực quan để đánh giá tương tác giữa các phương án đầu tư cải tạo kỹ thuật với dòng tiền thu hồi vốn và hiệu quả cắt giảm phát thải $\text{CO}_2$.
+    \item \textbf{Sự Suy thoái Tự nhiên của Dàn pin Cũ P-type PERC theo Thời gian (Đề xuất Tùy chọn):} 
+    Công nghệ pin P-type PERC thế hệ cũ chịu suy thoái quang học ban đầu (LID) và có hệ số nhiệt suy giảm mạnh ($-0{,}38\%/^\circ\text{C}$). Đây là điểm nghẽn vật liệu tự nhiên cần một lộ trình nâng cấp công nghệ dài hạn (Optional Repowering) khi hệ thống bước vào giai đoạn đại tu sau 10--15 năm vận hành.
 \end{enumerate}
 
 \section{Chi tiết 6 Hạng mục Đề xuất Cải tiến Kỹ thuật Đã Kiểm toán}
 \label{sec:audited_proposals}
 
-Dựa trên việc bóc tách chính xác nguyên nhân gốc rễ, nhóm đề xuất 6 giải pháp kỹ thuật có tính khả thi cao, được kiểm toán định lượng chi tiết về mặt kỹ thuật và tài chính:
+Dựa trên việc bóc tách chính xác nguyên nhân gốc rễ, nhóm đề xuất 6 giải pháp kỹ thuật có tính khả thi cao, được kiểm toán định lượng chi tiết về mặt kỹ thuật và tài chính (Bảng~\ref{tab:six_proposals_summary}):
 
 \begin{table}[H]
 \centering
 \caption{Tổng hợp 6 hạng mục đề xuất cải tiến kỹ thuật đã kiểm toán (Audited Proposals)}
 \label{tab:six_proposals_summary}
-\footnotesize
-\renewcommand{\arraystretch}{1.3}
-\begin{tabularx}{\textwidth}{@{} c >{\raggedright\arraybackslash}p{4.2cm} >{\raggedright\arraybackslash}X c c c @{}}
+\small
+\renewcommand{\arraystretch}{1.22}
+\begin{tabularx}{\textwidth}{@{} c >{\bfseries}l X r r c @{}}
 \toprule
-\textbf{STT} & \textbf{Hạng Mục Đề Xuất Kỹ Thuật} & \textbf{Cơ Chế Tác Động Vật Lý} & \textbf{Điện Thu Hồi} & \textbf{Lợi Ích Ròng} & \textbf{Hoàn Vốn} \\
+\textbf{STT} & \textbf{Hạng Mục} & \textbf{Cơ Chế Kỹ Thuật Tác Động} & \textbf{Thu Hồi} \newline \scriptsize (kWh/năm) & \textbf{Dòng Tiền} \newline \scriptsize (AUD/năm) & \textbf{Hoàn Vốn} \\
 \midrule
-1 & \textbf{Hệ thống Pin Lưu trữ BESS} \newline ($1\,\text{MW} / 2{,}5\,\text{MWh}$ tại 5 Campus) & Hấp thu toàn bộ điện cắt ngọn DC, xả vào giờ cao điểm giá điện tối và chống quá áp lưới AS/NZS 4777.2. & $+712.182\,\text{kWh}$ & $+323.164\,\text{AUD}$ & $3{,}87\,\text{năm}$ \\
-\midrule
-2 & \textbf{Khe hở Thông gió Mái $10-15\,\text{cm}$} \newline (Chuẩn AS/NZS 5033) & Tạo luồng đối lưu khí tự nhiên làm mát mặt lưng tấm pin, hạ nhiệt độ cell $-8{,}0^\circ\text{C}$. & $+117.224\,\text{kWh}$ & $+23.445\,\text{AUD}$ & $1{,}04\,\text{năm}$ \\
-\midrule
-3 & \textbf{Chuyển đổi Bảo trì CBM \& AI} \newline (6 mã cờ GMM--IF) & Rút ngắn thời gian phát hiện sự cố $\text{MTTD} < 1\,\text{h}$, điều phối sửa chữa theo điều kiện hư hỏng thực tế. & $+70.330\,\text{kWh}$ & $+29.066\,\text{AUD}$ & $< 4\,\text{tháng}$ \\
-\midrule
-4 & \textbf{Nâng Khung nghiêng chữ A $15^\circ$} \newline (Cho $970\,\text{kWp}$ mái bằng Hướng Bắc) & Tối ưu hóa góc hứng bức xạ mặt trời mùa đông và tạo độ dốc thoát nước tự làm sạch bề mặt pin. & $+71.850\,\text{kWh}$ & $+14.670\,\text{AUD}$ & $1{,}68\,\text{năm}$ \\
-\midrule
-5 & \textbf{Lịch Rửa Pin Thông Minh theo Mưa} \newline (Khí tượng ERA5 Precipitation) & Rửa khi chuỗi ngày khô hạn $\ge 21\,\text{ngày}$ và $\sum P_{\text{mưa}} < 2\,\text{mm}$; cắt 3 lần rửa thừa/năm, tiết kiệm 6.000 AUD nhân công. & $+62.060\,\text{kWh}$ & $+18.412\,\text{AUD}$ & Tức thì \\
-\midrule
-6 & \textbf{Nâng cấp Module N-type TOPCon} \newline (Tùy chọn dài hạn kỳ đại tu) & Thay thế module cũ bằng công nghệ TOPCon hiệu suất $22{,}5\%$, hệ số nhiệt thấp $\gamma = -0{,}30\%/^\circ\text{C}$. & $+213.761\,\text{kWh}$ & $+42.752\,\text{AUD}$ & Tích hợp \\
+1 & BESS 2.5 MWh & Nạp điện cắt ngọn DC; xả tối ưu giờ cao điểm tối. & +69.782 & +323.164 & 3,87 năm \\
+2 & Khe gió mái tôn & Tạo đối lưu khí làm mát, hạ nhiệt cell trung bình $-8^\circ\text{C}$. & +117.224 & +23.445 & 1,04 năm \\
+3 & Quy trình CBM & Tự động bắt 6 mã cờ, rút ngắn MTTD $<1\,\text{h}$, MTTR $1-3$ ngày. & +70.330 & +29.066 & $< 4$ tháng \\
+4 & Khung nghiêng 15$^\circ$ & Tăng nắng đông kết hợp mưa tự rửa trôi bùn viền nhôm. & +71.850 & +14.670 & 1,23 năm \\
+5 & Lịch rửa theo mưa & Kích hoạt khi khô $\ge 21$ ngày; cắt bỏ 3 đợt rửa thừa mùa mưa. & +62.060 & +18.412 & Tức thì \\
+6 & Module TOPCon & Nâng cấp lên TOPCon 22,5\%, Zero LID (tùy chọn kỳ đại tu). & +213.761 & +42.752 & Kỳ đại tu \\
 \bottomrule
 \end{tabularx}
+\vspace{2pt}
+\begin{flushleft}
+\scriptsize \textit{Ghi chú: Hạng mục 1 ngoài thu hồi 69.782 kWh cắt ngọn còn điều tiết xả 712.182 kWh/năm giờ cao điểm; Hạng mục 6 là phương án tùy chọn dài hạn trong kỳ đại tu.}
+\end{flushleft}
 \end{table}
 
 \section{Bảng Tổng hợp Mô phỏng Tối ưu hóa What-If Toàn Danh mục}
@@ -5054,10 +5053,11 @@ Khi tích hợp đồng bộ các giải pháp cải tiến kỹ thuật thông 
 \toprule
 \textbf{Chỉ Số Đánh Giá (Fleet KPIs)} & \textbf{Hiện Trạng (Baseline)} & \textbf{Sau Tối Ưu (Optimized)} & \textbf{Mức Cải Thiện Ròng} \\
 \midrule
-\textbf{Tổng Sản Lượng Điện Phát} & $3{,}45\,\text{GWh/năm}$ ($3.447.760\,\text{kWh}$) & $4{,}70\,\text{GWh/năm}$ ($4.695.534\,\text{kWh}$) & $\mathbf{+1{,}25\,\text{GWh/năm}}$ ($\mathbf{+36{,}18\%}$) \\
+\textbf{Sản Lượng Điện Phát Mới Thực Tế} & $3{,}45\,\text{GWh/năm}$ ($3.447.760\,\text{kWh}$) & $4{,}05\,\text{GWh/năm}$ ($4.052.767\,\text{kWh}$) & $\mathbf{+605.007\,\text{kWh/năm}}$ ($\mathbf{+17{,}55\%}$) \\
+\textbf{Tổng Năng Lượng Hữu Ích (kèm BESS)} & $3{,}45\,\text{GWh/năm}$ ($3.447.760\,\text{kWh}$) & $4{,}70\,\text{GWh/năm}$ ($4.695.167\,\text{kWh}$) & $\mathbf{+1{,}25\,\text{GWh/năm}}$ ($\mathbf{+36{,}18\%}$) \\
 \textbf{Hệ Số Hiệu Suất ($PR$)} & $75{,}40\%$ (Class B Tiêu chuẩn) & $88{,}62\%$ (Class A Quốc tế) & $\mathbf{+13{,}22\,\text{điểm \%}}$ ($+17{,}54\%$) \\
-\textbf{Hệ Số Công Suất ($CF$)} & $16{,}21\%$ & $22{,}07\%$ & $\mathbf{+5{,}86\,\text{điểm \%}}$ ($+36{,}18\%$) \\
-\textbf{Năng Suất Riêng (Specific Yield)} & $1.420\,\text{kWh/kWp/năm}$ & $1.934\,\text{kWh/kWp/năm}$ & $\mathbf{+514\,\text{kWh/kWp/năm}}$ \\
+\textbf{Hệ Số Công Suất ($CF$)} & $16{,}21\%$ & $19{,}05\%$ (phát) / $22{,}07\%$ (hữu ích) & $\mathbf{+2{,}84\% \to +5{,}86\%}$ \\
+\textbf{Năng Suất Riêng (Specific Yield)} & $1.420\,\text{kWh/kWp/năm}$ & $1.669\,\text{kWh/kWp}$ (phát) / $1.934$ & $\mathbf{+249 \to +514\,\text{kWh/kWp}}$ \\
 \textbf{Doanh Thu Tiết Kiệm Tiền Điện} & $700.000\,\text{AUD/năm}$ & $1.151.509\,\text{AUD/năm}$ & $\mathbf{+451.509\,\text{AUD/năm}}$ ($\mathbf{+64{,}50\%}$) \\
 \textbf{Cắt Giảm Phát Thải $\text{CO}_2$} & $2.827\,\text{tấn/năm}$ ($0{,}82\,\text{kg/kWh}$) & $3.850\,\text{tấn/năm}$ & $\mathbf{+1.023\,\text{tấn CO}_2\text{/năm}}$ \\
 \midrule
@@ -5490,6 +5490,35 @@ W.~F. Holmgren, C.~W. Hansen, and M.~A. Mikofski,
 NOAA Global Monitoring Laboratory,
 \newblock ``Solar Calculation Details and Solar Position Algorithm,''
 \newblock \textit{National Oceanic and Atmospheric Administration (NOAA) Earth System Research Laboratories}, 2024. [Online]. Available: \url{https://gml.noaa.gov/grad/solcalc/calcdetails.html}.
+
+% --- V. Nghiên cứu Tối ưu hóa Vận hành, Khí tượng Bám bụi và Hệ thống Lưu trữ BESS ---
+\bibitem{kimber2006soiling}
+A.~Kimber, L.~Mitchell, S.~Nogradi, và H.~Wenger,
+\newblock ``The Effect of Soiling on Large Grid-Connected Photovoltaic Systems in California and the Southwest United States,''
+\newblock trong \textit{IEEE 4th World Conference on Photovoltaic Energy Conversion (WCPEC-4)}, Waikoloa, HI, USA, 2006, pp.~2391--2395.
+\newblock DOI: \href{https://doi.org/10.1109/WCPEC.2006.279690}{10.1109/WCPEC.2006.279690}.
+
+\bibitem{coello2019cleaned}
+M.~Coello và J.~Boyle,
+\newblock ``Simple models for predicting soiling and cleaning of photovoltaic modules,''
+\newblock \textit{Solar Energy}, vol.~191, pp.~411--421, 2019.
+\newblock DOI: \href{https://doi.org/10.1016/j.solener.2019.08.064}{10.1016/j.solener.2019.08.064}.
+
+\bibitem{mani2010dust}
+M.~Mani và R.~Pillai,
+\newblock ``Impact of dust on solar photovoltaic (PV) performance: Research status, challenges and recommendations,''
+\newblock \textit{Renewable and Sustainable Energy Reviews}, vol.~14, no.~9, pp.~3124--3131, 2010.
+\newblock DOI: \href{https://doi.org/10.1016/j.rser.2010.07.065}{10.1016/j.rser.2010.07.065}.
+
+\bibitem{king2004sandia}
+D.~L.~King, J.~A.~Kratochvil, và W.~E.~Boysen,
+\newblock ``Photovoltaic Array Performance Model,''
+\newblock Sandia National Laboratories Technical Report, SAND2004-3535, Albuquerque, NM, 2004.
+
+\bibitem{rana2026bess}
+M.~Rana, A.~Haque, và M.~Rahman,
+\newblock ``Optimal sizing and dispatch of battery energy storage systems for commercial rooftop PV clipping mitigation,''
+\newblock \textit{Applied Energy}, vol.~358, p.~122580, 2026.
 
 \end{thebibliography}
 
