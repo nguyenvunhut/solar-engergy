@@ -4940,7 +4940,7 @@ Mục này tổng kết các kết quả kỹ thuật của quy trình học má
 \FloatBarrier
 \subsection{Kết quả Đạt được Về Mặt Kỹ thuật}
 
-Quy trình đã xây dựng thành công một mô hình LightGBM dùng chung cho $40$ trạm quang điện áp mái (sau khi loại 2 trạm đối chứng khí tượng), đạt $\text{WAPE} = 17{,}73\%$ ở tầm $15$ phút ($R^2 = 0{,}9283$) và $22{,}58\%$ ở tầm $1$ giờ ($R^2 = 0{,}8964$) trên tập test niêm phong ở phạm vi đo thật ban ngày. So với mô hình đường cơ sở Prophet trên cùng tập dữ liệu kiểm tra, chỉ số kỹ năng dự báo (Skill Score) của LightGBM đạt mức vượt trội $+48{,}73\%$ ở tầm ngắn hạn và $+35{,}89\%$ ở tầm một giờ.
+Quy trình đã xây dựng thành công một mô hình LightGBM dùng chung cho $40$ trạm quang điện áp mái (sau khi loại 2 trạm đối chứng khí tượng), đạt $\text{WAPE} = 17{,}46\%$ ở tầm $15$ phút ($R^2 = 0{,}9302$) và $21{,}60\%$ ở tầm $1$ giờ ($R^2 = 0{,}9002$) trên tập test niêm phong ở phạm vi đo thật ban ngày. So với mô hình đường cơ sở Prophet trên cùng tập dữ liệu kiểm tra, chỉ số kỹ năng dự báo (Skill Score) của LightGBM đạt mức vượt trội $+50{,}09\%$ ở tầm ngắn hạn và $+37{,}80\%$ ở tầm một giờ.
 
 Năm rào chắn chống rò rỉ dữ liệu ở Mục~\ref{subsec:nam_rao_chan} đã được kiểm chứng nghiêm ngặt bằng số liệu: phép ghép thời tiết nhân quả đưa số dòng vi phạm rò rỉ tương lai về $0$; thống kê quy mô trạm được tính toán độc lập theo từng fold; cận cắt được suy luận từ phân vị của tập huấn luyện; và tập test chỉ được mở duy nhất một lần ở bước đánh giá cuối cùng.
 
