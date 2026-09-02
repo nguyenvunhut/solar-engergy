@@ -101,8 +101,13 @@ TON_THAT_CO_SO = {
                 "ty_le_nhom": 0.0204, "nhom": None},
     "tilt":    {"ten": "Mái phẳng, đọng bùn mép dưới", "kwh": 71_850, "sau": 0.0,
                 "ty_le_nhom": 0.0390, "nhom": "cụm 970 kWp mái bằng"},
-    "shade":   {"ten": "Bóng che và inverter quá nóng", "kwh": 57_074, "sau": 0.0,
-                "ty_le_nhom": 0.0165, "nhom": None},
+    # DA BO thanh phan "shade" ngay 02/09/2026, cung ly do voi viec bo hang muc
+    # "Mai che Inverter & DC Optimizers" (27/08): con so uoc luong 57.074 kWh khong du
+    # tin cay de dua vao bao cao. Bo o day thi bieu do "Dien bi mat" con 5 dong va
+    # tong ton that giam 57.074 kWh. Bo comment de hien lai (nho hien lai ca hang muc
+    # cai tien tuong ung o HANG_MUC_CAI_TIEN neu muon co phan "cat giam duoc").
+    # "shade":   {"ten": "Bóng che và inverter quá nóng", "kwh": 57_074, "sau": 0.0,
+    #             "ty_le_nhom": 0.0165, "nhom": None},
     "soiling": {"ten": "Bụi bám mùa khô", "kwh": 62_060, "sau": 0.0,
                 "ty_le_nhom": 0.0180, "nhom": None},
 }
