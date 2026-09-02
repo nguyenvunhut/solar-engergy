@@ -120,8 +120,9 @@ for _v in TON_THAT_CO_SO.values():
 HANG_MUC_CAI_TIEN = {
     "bess": {
         "stt": 1, "ten": "Lắp pin lưu trữ cho 5 khu (BESS 1MW/2,5MWh)",
-        "hieu_suat": "+20,6%", "kwh": 712_182, "aud": 323_164,
+        "hieu_suat": "+2,02%", "kwh": 69_782, "aud": 323_164,
         "capex_aud": 1_250_000, "payback": "3,87 năm", "ton_that": "clip",
+        "e_xahiuich_kwh": 712_182,
     },
     "ventilation": {
         "stt": 2, "ten": "Khe hở thông gió mái 10–15 cm",
@@ -204,12 +205,14 @@ NANG_SUAT_RIENG = 1420               # kWh/kWp/nam
 E_ACTUAL_NAM = 3_447_760             # = 1420 x 2428, dung lam MAU SO moi ty le
 SO_DONG_CO_FLAG = 6891               
 # Ton that cat ngon — bao cao audited muc 3.1
-E_CLIP_NAM = 79_298                  # kWh/nam
+E_CLIP_NAM = 79_298                  # kWh/nam (tong ton that cat ngon goc)
+E_CLIP_RECOVERED_NAM = 69_782        # kWh/nam (thu hoi thuc te qua BESS voi RTE 88%)
+BESS_E_XA_HUU_ICH_KWH = 712_182      # kWh/nam (tong nang luong BESS xa dieu tiet)
 TY_LE_CLIP = 0.0230                  # = 79.298 / 3.447.760
 
 # Ket qua tung hang muc — brief muc 3, bang tong hop.
 KET_QUA_HANG_MUC = {
-    "bess":        {"delta_kwh": 712_182, "delta_revenue_aud": 323_164, "ty_le": 0.206},
+    "bess":        {"delta_kwh": 69_782,  "delta_revenue_aud": 323_164, "ty_le": 0.0202, "e_xahiuich_kwh": 712_182},
     "ventilation": {"delta_kwh": 117_224, "delta_revenue_aud": 23_445,  "ty_le": 0.0340},
     "cbm":         {"delta_kwh": 70_330,  "delta_revenue_aud": 29_066,  "ty_le": 0.0204},
 }
@@ -278,22 +281,26 @@ def doanh_thu_theo_nam(ma: str, nam: int | None) -> float:
 CHI_TIET_HANG_MUC = {
     "bess": {
         "tieu_de": "Hệ thống Pin Lưu trữ BESS Phân tán 5 Campus (1 MW / 2,5 MWh)",
-        "co_che": "Thu hồi 88% năng lượng cắt ngọn biến tần (Inverter Clipping ILR = 1,25) "
-                  "qua cấu trúc BESS DC-Coupled, kết hợp chênh lệch giá giờ cao điểm "
-                  "(TOU Peak Arbitrage 17:00–21:00) và gọt đỉnh phụ tải (800 kW Demand Charge).",
-        "tac_dong": "ΔE = +69.782 kWh (thu hồi cắt ngọn) · Loss_clip giảm 2,30% → 0,28% · "
-                    "CapEx 1.250.000 AUD · hoàn vốn 3,87 năm.",
+        "co_che": "Vận hành song song 2 cơ chế: (1) Thu hồi trực tiếp 88% năng lượng cắt ngọn DC trước biến tần "
+                  "(Inverter Clipping ILR = 1,25, thu hồi +69.782 kWh điện sạch mới/năm, giảm tổn thất 2,30% → 0,28%); "
+                  "(2) Điều tiết xả năng lượng hữu ích 712.182 kWh/năm (1.980 kWh/ngày × 360 chu kỳ) "
+                  "vào giờ cao điểm TOU (17:00–21:00) và gọt đỉnh công suất phạt (800 kW Demand Charge).",
+        "tac_dong": "ΔE_thu_hồi = +69.782 kWh (điện sạch mới) · Điện xả điều tiết hữu ích = 712.182 kWh/năm · "
+                    "Loss_clip giảm 2,30% → 0,28% · PR tăng +1,526% · Dòng tiền +323.164 AUD/năm · "
+                    "CapEx 1.250.000 AUD · Hoàn vốn 3,87 năm.",
         "cong_thuc": [
-            "P_AC_max = p_stc / 1,25",
+            "P_AC_max = p_stc / 1,25 (Trần Inverter AC)",
             "Δe_clip(t) = max(0, e_stc_hourly × pr_adjusted − 0,80 × p_stc)",
-            "Δe_thu_hồi(t) = Δe_clip(t) × 0,88",
-            "ΔRevenue = Δe × (P_Peak − P_FIT) nếu 17≤h≤21, ngược lại × P_FIT",
+            "Δe_thu_hồi(t) = Δe_clip(t) × 0,88 (Thu hồi cắt ngọn = 69.782 kWh/năm)",
+            "E_xả_hữu_ích = 2.500 kWh × 90% DoD × 88% RTE × 360 chu kỳ = 712.182 kWh/năm",
+            "ΔRevenue = TOU Arbitrage (179.164 AUD) + Cắt đỉnh Demand Charge (144.000 AUD) = 323.164 AUD/năm",
         ],
         "cong_thuc_tex": [
             r"P_{AC,\max} \;=\; \frac{p_{stc}}{ILR} \;=\; \frac{p_{stc}}{1{,}25}",
             r"\Delta e_{clip}(t) \;=\; \max\!\Bigl(0,\; e_{stc}(t)\cdot PR_{adj}(t) \;-\; 0{,}80\,p_{stc}\Bigr)",
             r"\Delta e_{\text{thu hồi}}(t) \;=\; \eta_{RTE}\cdot\Delta e_{clip}(t),\qquad \eta_{RTE}=0{,}88",
-            r"\Delta R \;=\; \Delta e_{\text{thu hồi}}\cdot\begin{cases}P_{peak}-P_{FIT} & 17\le h\le 21\\[2pt] P_{FIT} & \text{giờ còn lại}\end{cases}",
+            r"E_{\text{xả hữu ích}} \;=\; E_{\text{BESS}}\cdot DoD\cdot \eta_{RTE}\cdot 360 \;\approx\; 712{.}182\ \text{kWh/năm}",
+            r"\Delta R \;=\; \Delta R_{\text{TOU}} \;+\; \Delta R_{\text{Demand}} \;=\; 179{.}164 \;+\; 144{.}000 \;=\; 323{.}164\ \text{AUD/năm}",
         ],
     },
     "ventilation": {

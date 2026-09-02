@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bộ Sưu Tập Sơ Đồ Kỹ Thuật High-DPI — DATN The Outliers</title>
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-color: #0f172a;
+            --border-color: #e2e8f0;
+            --primary: #2563eb;
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .container {
+            width: 100%;
+            max-width: 1100px;
+        }
+        .header {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 26px;
+            font-weight: 800;
+            color: #1e293b;
+        }
+        .header p {
+            font-size: 14px;
+            color: #64748b;
+            margin-top: 8px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
+            gap: 24px;
+        }
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            flex-direction: column;
+        }
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+        }
+        .card-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #1e3a8a;
+        }
+        .card-desc {
+            font-size: 13px;
+            color: #64748b;
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+        .card-preview {
+            background: #f1f5f9;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 16px;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .card-preview svg {
+            width: 100%;
+            height: auto;
+            max-height: 180px;
+        }
+        .card-footer {
+            margin-top: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: 6px;
+            text-decoration: none;
+            background: var(--primary);
+            color: #ffffff;
+            transition: background 0.15s;
+        }
+        .btn:hover {
+            background: #1d4ed8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎨 Bộ Sưu Tập Sơ Đồ Kỹ Thuật High-DPI</h1>
+            <p>4 Sơ Đồ Cơ Chế Tác Động Nền Tảng Streamlit — Định Dạng Vector 4K Phục Vụ Thuyết Trình Slide</p>
+        </div>
+        <div class="grid">
+            <div class="card">
+                <div class="card-title">Hạng Mục 1: BESS 1MW / 2.5MWh & Inverter Clipping</div>
+                <div class="card-desc">Đặc tuyến công suất theo thời gian P(t), thu hồi công suất cắt ngọn trưa hè và dịch chuyển năng lượng sang khung giờ cao điểm TOU.</div>
+                <div class="card-preview">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 540" width="100%" height="100%" style="background:#FFFFFF;font-family:'Segoe UI',Arial,sans-serif;">
+  <defs>
+    <linearGradient id="gSolarW" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#F59E0B" stop-opacity="0.28"/><stop offset="100%" stop-color="#F59E0B" stop-opacity="0.04"/></linearGradient>
+    <linearGradient id="gClipW" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#EF4444" stop-opacity="0.65"/><stop offset="100%" stop-color="#DC2626" stop-opacity="0.4"/></linearGradient>
+    <linearGradient id="gDischargeW" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#10B981" stop-opacity="0.85"/><stop offset="100%" stop-color="#059669" stop-opacity="0.45"/></linearGradient>
+    <filter id="shadowW" x="-2%" y="-2%" width="104%" height="104%"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000000" flood-opacity="0.07"/></filter>
+  </defs>
+
+  <!-- Title Header -->
+  <rect x="20" y="14" width="940" height="44" rx="6" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.5"/>
+  <text x="40" y="41" fill="#0F172A" font-size="14.5" font-weight="700">CƠ CHẾ TÁC ĐỘNG 1: THU HỒI CÔNG SUẤT CẮT NGỌN VÀ DỊCH CHUYỂN PHỤ TẢI BẰNG BESS DC-COUPLED</text>
+
+  <!-- Left Box: Power-Time Dispatch Curve -->
+  <g transform="translate(20, 70)" filter="url(#shadowW)">
+    <rect width="480" height="450" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.5"/>
+    <rect x="15" y="12" width="450" height="28" rx="4" fill="#F0F9FF"/>
+    <text x="25" y="31" fill="#0369A1" font-size="12" font-weight="700">ĐẶC TUYẾN CÔNG SUẤT THEO THỜI GIAN [P(t)]</text>
+    
+    <!-- Legend items at top of chart -->
+    <rect x="25" y="48" width="10" height="10" fill="#F59E0B" rx="2"/>
+    <text x="40" y="57" fill="#64748B" font-size="10">Công suất phát DC</text>
+
+    <rect x="155" y="48" width="10" height="10" fill="#EF4444" rx="2"/>
+    <text x="170" y="57" fill="#64748B" font-size="10">Vùng cắt ngọn (Nạp pin)</text>
+
+    <rect x="300" y="48" width="10" height="10" fill="#10B981" rx="2"/>
+    <text x="315" y="57" fill="#64748B" font-size="10">Vùng xả gọt đỉnh</text>
+
+    <!-- Axes -->
+    <line x1="45" y1="365" x2="455" y2="365" stroke="#94A3B8" stroke-width="1.5"/>
+    <line x1="45" y1="365" x2="45" y2="75" stroke="#94A3B8" stroke-width="1.5"/>
+    <text x="458" y="369" fill="#64748B" font-size="11">t (h)</text>
+    <text x="18" y="70" fill="#64748B" font-size="11">P (kW)</text>
+    
+    <!-- Time ticks -->
+    <text x="45" y="384" fill="#64748B" font-size="10" text-anchor="middle">00:00</text>
+    <text x="140" y="384" fill="#64748B" font-size="10" text-anchor="middle">06:00</text>
+    <text x="235" y="384" fill="#64748B" font-size="10" text-anchor="middle">12:00</text>
+    <text x="345" y="384" fill="#64748B" font-size="10" text-anchor="middle">18:00</text>
+    <text x="440" y="384" fill="#64748B" font-size="10" text-anchor="middle">24:00</text>
+
+    <!-- Solar generation curve -->
+    <path d="M 120 365 Q 170 355 200 215 Q 235 95 270 215 Q 300 355 350 365 Z" fill="url(#gSolarW)"/>
+    <path d="M 120 365 Q 170 355 200 215 Q 235 95 270 215 Q 300 355 350 365 Z" fill="none" stroke="#D97706" stroke-width="2"/>
+
+    <!-- Inverter Limit Line -->
+    <line x1="45" y1="215" x2="455" y2="215" stroke="#EF4444" stroke-width="1.5" stroke-dasharray="4,4"/>
+    <text x="50" y="208" fill="#DC2626" font-size="10.5" font-weight="600">Trần Inverter: P_AC_max</text>
+
+    <!-- Clipped Power Area -->
+    <path d="M 200 215 Q 235 95 270 215 Z" fill="url(#gClipW)"/>
+    
+    <!-- Transparent Clipping Label with SOLID BLACK TEXT -->
+    <text x="235" y="162" fill="#000000" font-size="12" font-weight="900" text-anchor="middle">CẮT NGỌN</text>
+    <text x="235" y="178" fill="#000000" font-size="10" font-weight="800" text-anchor="middle">P_DC &gt; P_AC_max</text>
+
+    <!-- Charge transfer curved arrow -->
+    <path d="M 245 125 Q 310 70 365 240" fill="none" stroke="#0284C7" stroke-width="2" stroke-dasharray="4,3"/>
+    <polygon points="367,246 360,238 368,239" fill="#0284C7"/>
+    <text x="315" y="98" fill="#0284C7" font-size="10" font-weight="700">Nạp BESS</text>
+
+    <!-- Campus Load curve -->
+    <path d="M 45 315 Q 150 305 240 285 Q 320 265 355 225 Q 380 265 445 325" fill="none" stroke="#64748B" stroke-width="1.5" stroke-dasharray="3,3"/>
+    <text x="395" y="285" fill="#64748B" font-size="10">Phụ tải trường</text>
+
+    <!-- Evening Discharge Area -->
+    <path d="M 330 280 Q 355 225 385 280 Z" fill="url(#gDischargeW)"/>
+    <text x="358" y="260" fill="#000000" font-size="10.5" font-weight="900" text-anchor="middle">XẢ ĐIỆN</text>
+
+    <!-- TOU Time bracket at bottom -->
+    <line x1="330" y1="365" x2="330" y2="400" stroke="#059669" stroke-width="1.5"/>
+    <line x1="385" y1="365" x2="385" y2="400" stroke="#059669" stroke-width="1.5"/>
+    <line x1="330" y1="400" x2="385" y2="400" stroke="#059669" stroke-width="1.5"/>
+    <text x="358" y="415" fill="#059669" font-size="10" font-weight="700" text-anchor="middle">17:00 - 21:00 (TOU Tối)</text>
+  </g>
+
+  <!-- Right Box: Physical Topology & Flow -->
+  <g transform="translate(515, 70)" filter="url(#shadowW)">
+    <rect width="445" height="450" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.5"/>
+    <rect x="15" y="12" width="415" height="28" rx="4" fill="#F0FDF4"/>
+    <text x="25" y="31" fill="#166534" font-size="12" font-weight="700">CẤU TRÚC KẾT NỐI VẬT LÝ DC-COUPLED</text>
+
+    <!-- PV Array Node -->
+    <rect x="25" y="55" width="120" height="65" rx="6" fill="#FFFBEB" stroke="#D97706" stroke-width="1.5"/>
+    <text x="85" y="82" fill="#92400E" font-size="11" font-weight="700" text-anchor="middle">GIÀN PIN PV</text>
+    <text x="85" y="100" fill="#B45309" font-size="10" text-anchor="middle">Nguồn phát P_DC</text>
+
+    <!-- DC Bus Node -->
+    <rect x="185" y="55" width="75" height="225" rx="6" fill="#F0F9FF" stroke="#0284C7" stroke-width="2"/>
+    <text x="222" y="165" fill="#0369A1" font-size="11.5" font-weight="800" text-anchor="middle" transform="rotate(-90 222 165)">DC BUS (600V - 1000V)</text>
+
+    <!-- Flow PV -> DC Bus -->
+    <line x1="145" y1="87" x2="180" y2="87" stroke="#D97706" stroke-width="2.5"/>
+    <polygon points="183,87 175,83 175,91" fill="#D97706"/>
+
+    <!-- Inverter Node -->
+    <rect x="300" y="55" width="120" height="65" rx="6" fill="#EEF2FF" stroke="#4F46E5" stroke-width="1.5"/>
+    <text x="360" y="82" fill="#3730A3" font-size="11" font-weight="700" text-anchor="middle">BIẾN TẦN AC</text>
+    <text x="360" y="100" fill="#DC2626" font-size="10" text-anchor="middle">Giới hạn P_AC_max</text>
+
+    <!-- Flow DC Bus -> Inverter -->
+    <line x1="260" y1="87" x2="295" y2="87" stroke="#4F46E5" stroke-width="2.5"/>
+    <polygon points="298,87 290,83 290,91" fill="#4F46E5"/>
+
+    <!-- AC Load Node -->
+    <rect x="300" y="150" width="120" height="58" rx="6" fill="#F8FAFC" stroke="#64748B" stroke-width="1.5"/>
+    <text x="360" y="176" fill="#1E293B" font-size="11" font-weight="700" text-anchor="middle">LƯỚI ĐIỆN NỘI BỘ</text>
+    <text x="360" y="193" fill="#64748B" font-size="10" text-anchor="middle">Phụ tải trường học</text>
+
+    <line x1="360" y1="120" x2="360" y2="145" stroke="#4F46E5" stroke-width="2"/>
+    <polygon points="360,148 356,140 364,140" fill="#4F46E5"/>
+
+    <!-- BESS Node -->
+    <rect x="25" y="215" width="120" height="65" rx="6" fill="#ECFDF5" stroke="#059669" stroke-width="1.5"/>
+    <text x="85" y="242" fill="#065F46" font-size="11" font-weight="700" text-anchor="middle">PIN LƯU TRỮ BESS</text>
+    <text x="85" y="260" fill="#047857" font-size="10" text-anchor="middle">LiFePO4 DC-Coupled</text>
+
+    <!-- Bidirectional DC Bus <-> BESS -->
+    <line x1="145" y1="247" x2="180" y2="247" stroke="#059669" stroke-width="2.5"/>
+    <polygon points="183,247 175,243 175,251" fill="#059669"/>
+    <polygon points="145,247 153,243 153,251" fill="#059669"/>
+
+    <!-- Mechanism Description Points -->
+    <rect x="15" y="295" width="415" height="140" rx="6" fill="#F8FAFC" stroke="#E2E8F0"/>
+    <text x="25" y="320" fill="#0284C7" font-size="11" font-weight="700">1. Thu hồi công suất cắt ngọn:</text>
+    <text x="35" y="338" fill="#334155" font-size="10.5">Phần điện DC vượt trần AC được nạp thẳng vào pin trước Inverter.</text>
+    
+    <text x="25" y="363" fill="#059669" font-size="11" font-weight="700">2. Giảm thiểu tổn hao chuyển đổi:</text>
+    <text x="35" y="381" fill="#334155" font-size="10.5">Nối DC-Coupled trực tiếp trên DC Bus, không qua nghịch lưu trung gian.</text>
+    
+    <text x="25" y="406" fill="#D97706" font-size="11" font-weight="700">3. Dịch chuyển và gọt đỉnh phụ tải:</text>
+    <text x="35" y="424" fill="#334155" font-size="10.5">Xả điện giờ cao điểm tối, giảm công suất cực đại nhận từ lưới điện.</text>
+  </g>
+</svg>
+                </div>
+                <div class="card-footer">
+                    <span style="font-size: 12px; color: #64748b;">Vector SVG • 4K Export</span>
+                    <a href="diagram_popover_01_bess.html" class="btn">🔍 Mở Toàn Màn Hình</a>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Hạng Mục 2: Khe Hở Thông Gió Mái 10–15 cm</div>
+                <div class="card-desc">Cơ chế truyền nhiệt đối lưu tự nhiên Sandia SAPM, hiệu ứng ống khói hạ nhiệt cell -8°C so với lắp áp sát mái.</div>
+                <div class="card-preview">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 540" width="100%" height="100%" style="background:#FFFFFF;font-family:'Segoe UI',Arial,sans-serif;">
+  <defs>
+    <linearGradient id="gHeatFlush" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#DC2626"/><stop offset="100%" stop-color="#991B1B"/></linearGradient>
+    <linearGradient id="gCoolAir" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#E0F2FE" stop-opacity="0.3"/><stop offset="100%" stop-color="#38BDF8" stop-opacity="0.6"/></linearGradient>
+    <filter id="shadowW2" x="-2%" y="-2%" width="104%" height="104%"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000000" flood-opacity="0.07"/></filter>
+  </defs>
+
+  <!-- Title Header -->
+  <rect x="20" y="14" width="940" height="44" rx="6" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.5"/>
+  <text x="40" y="41" fill="#0F172A" font-size="14.5" font-weight="700">CƠ CHẾ TÁC ĐỘNG 2: ĐỐI LƯU KHÍ ĐỘNG HỌC KHOẢNG HỞ 150mm VÀ PHỤC HỒI ĐẶC TUYẾN I-V</text>
+
+  <!-- Left Column: Flush Mount (Dinh sat truc tiep vao mat mai 100%) -->
+  <g transform="translate(20, 70)" filter="url(#shadowW2)">
+    <rect width="455" height="450" rx="8" fill="#FFFFFF" stroke="#EF4444" stroke-width="1.5"/>
+    <rect x="15" y="12" width="425" height="28" rx="4" fill="#FEF2F2"/>
+    <text x="25" y="31" fill="#B91C1C" font-size="12" font-weight="700">ÁP SÁT MẶT MÁI 100% (KHE HỞ = 0 mm)</text>
+
+    <!-- Sun rays -->
+    <text x="227" y="58" fill="#B45309" font-size="11" font-weight="700" text-anchor="middle">Bức xạ mặt trời GHI</text>
+    <line x1="120" y1="65" x2="140" y2="92" stroke="#D97706" stroke-width="2.5" stroke-dasharray="4,3"/>
+    <line x1="225" y1="65" x2="225" y2="92" stroke="#D97706" stroke-width="2.5" stroke-dasharray="4,3"/>
+    <line x1="330" y1="65" x2="310" y2="92" stroke="#D97706" stroke-width="2.5" stroke-dasharray="4,3"/>
+
+    <!-- PV Module DIRECTLY ON ROOF (Flush - No Gap) -->
+    <rect x="35" y="95" width="385" height="30" rx="3" fill="url(#gHeatFlush)" stroke="#B91C1C" stroke-width="2"/>
+    <text x="227" y="115" fill="#FFFFFF" font-size="12" font-weight="800" text-anchor="middle">TẤM PIN BỊ NUNG NÓNG: T_cell = 70°C</text>
+
+    <!-- Direct Contact Interface Line -->
+    <line x1="35" y1="125" x2="420" y2="125" stroke="#7F1D1D" stroke-width="3"/>
+
+    <!-- Roof Surface Directly Attached Underneath -->
+    <rect x="35" y="125" width="385" height="35" fill="#E2E8F0" stroke="#94A3B8" stroke-width="1.5"/>
+    <text x="227" y="147" fill="#475569" font-size="11" font-weight="700" text-anchor="middle">BỀ MẶT MÁI TÔN (TIẾP XÚC TRỰC TIẾP - KHÔNG CÓ GIÓ)</text>
+
+    <!-- Visual Warning Pill -->
+    <rect x="65" y="175" width="325" height="32" rx="16" fill="#FEF2F2" stroke="#EF4444" stroke-width="1.5"/>
+    <text x="227" y="196" fill="#000000" font-size="11.5" font-weight="800" text-anchor="middle">KHÔNG CÓ ĐỐI LƯU KHÍ (v_air = 0 m/s)</text>
+
+    <!-- Visual I-V Curve Representation (Shrunk Voltage) -->
+    <rect x="25" y="225" width="405" height="205" rx="6" fill="#F8FAFC" stroke="#CBD5E1"/>
+    <text x="40" y="248" fill="#B91C1C" font-size="11.5" font-weight="700">ĐẶC TUYẾN I-V BỊ CO RÚT DO QUÁ NHIỆT</text>
+    
+    <!-- I-V Axes -->
+    <line x1="60" y1="400" x2="390" y2="400" stroke="#94A3B8" stroke-width="1.5"/>
+    <line x1="60" y1="400" x2="60" y2="265" stroke="#94A3B8" stroke-width="1.5"/>
+    <text x="395" y="404" fill="#64748B" font-size="10">V (V)</text>
+    <text x="40" y="260" fill="#64748B" font-size="10">I (A)</text>
+
+    <!-- Shrunk I-V Curve (Tcell = 70C) -->
+    <path d="M 60 280 L 220 280 Q 260 285 275 400" fill="none" stroke="#DC2626" stroke-width="2.5"/>
+    
+    <!-- Max Power Point (P_mpp Hot) -->
+    <circle cx="240" cy="305" r="4.5" fill="#DC2626"/>
+    <text x="240" y="295" fill="#B91C1C" font-size="10" font-weight="700" text-anchor="middle">P_mpp (Sụt giảm)</text>
+
+    <!-- Voltage limit marker -->
+    <line x1="275" y1="400" x2="275" y2="385" stroke="#DC2626" stroke-width="2"/>
+    <text x="275" y="416" fill="#DC2626" font-size="10" font-weight="700" text-anchor="middle">V_oc (70°C)</text>
+
+    <text x="140" y="350" fill="#B91C1C" font-size="10.5" font-weight="600">Sụt giảm điện áp do dP/dT = -0,38%/°C</text>
+  </g>
+
+  <!-- Right Column: Ventilated Mount (150mm Bracket) -->
+  <g transform="translate(505, 70)" filter="url(#shadowW2)">
+    <rect width="455" height="450" rx="8" fill="#FFFFFF" stroke="#059669" stroke-width="1.5"/>
+    <rect x="15" y="12" width="425" height="28" rx="4" fill="#F0FDF4"/>
+    <text x="25" y="31" fill="#166534" font-size="12" font-weight="700">NÂNG KHUNG THÔNG GIÓ (KHE HỞ = 150 mm)</text>
+
+    <!-- Sun rays -->
+    <text x="227" y="58" fill="#B45309" font-size="11" font-weight="700" text-anchor="middle">Bức xạ mặt trời GHI</text>
+    <line x1="120" y1="65" x2="140" y2="92" stroke="#D97706" stroke-width="2.5" stroke-dasharray="4,3"/>
+    <line x1="225" y1="65" x2="225" y2="92" stroke="#D97706" stroke-width="2.5" stroke-dasharray="4,3"/>
+    <line x1="330" y1="65" x2="310" y2="92" stroke="#D97706" stroke-width="2.5" stroke-dasharray="4,3"/>
+
+    <!-- PV Module ELEVATED -->
+    <rect x="35" y="95" width="385" height="26" rx="3" fill="#1E3A8A" stroke="#1D4ED8" stroke-width="1.5"/>
+    <text x="227" y="112" fill="#FFFFFF" font-size="11.5" font-weight="800" text-anchor="middle">TẤM PIN ĐƯỢC GIẢI NHIỆT: T_cell = 58°C (-12°C)</text>
+
+    <!-- Air Gap with Chimney Flow -->
+    <rect x="35" y="121" width="385" height="48" fill="url(#gCoolAir)" stroke="#BAE6FD" stroke-width="1"/>
+    
+    <!-- Flow arrow passing along upper-middle part of gap -->
+    <path d="M 50 138 Q 140 128 230 128 Q 320 128 400 125" fill="none" stroke="#0284C7" stroke-width="2.5" stroke-dasharray="6,3"/>
+    <polygon points="405,125 397,121 398,129" fill="#0284C7"/>
+    
+    <!-- SOLID BLACK TEXT lowered to bottom of gap (y=158) to avoid arrow -->
+    <text x="227" y="158" fill="#000000" font-size="11" font-weight="900" text-anchor="middle">ĐỐI LƯU KHÔNG KHÍ TỰ NHIÊN (KHE 150 mm)</text>
+
+    <!-- Support Brackets -->
+    <rect x="75" y="121" width="10" height="48" fill="#64748B"/>
+    <rect x="365" y="121" width="10" height="48" fill="#64748B"/>
+
+    <!-- Roof Surface -->
+    <rect x="35" y="169" width="385" height="20" fill="#E2E8F0" stroke="#94A3B8"/>
+    <text x="227" y="183" fill="#475569" font-size="10" font-weight="600" text-anchor="middle">BỀ MẶT MÁI TÔN</text>
+
+    <!-- Visual I-V Curve Representation (Restored Voltage) -->
+    <rect x="25" y="225" width="405" height="205" rx="6" fill="#F8FAFC" stroke="#CBD5E1"/>
+    <text x="40" y="248" fill="#166534" font-size="11.5" font-weight="700">ĐẶC TUYẾN I-V ĐƯỢC MỞ RỘNG VÀ PHỤC HỒI</text>
+
+    <!-- I-V Axes -->
+    <line x1="60" y1="400" x2="390" y2="400" stroke="#94A3B8" stroke-width="1.5"/>
+    <line x1="60" y1="400" x2="60" y2="265" stroke="#94A3B8" stroke-width="1.5"/>
+    <text x="395" y="404" fill="#64748B" font-size="10">V (V)</text>
+    <text x="40" y="260" fill="#64748B" font-size="10">I (A)</text>
+
+    <!-- Hot Curve (Reference Dashed) -->
+    <path d="M 60 280 L 220 280 Q 260 285 275 400" fill="none" stroke="#DC2626" stroke-width="1.5" stroke-dasharray="3,3"/>
+    
+    <!-- Expanded I-V Curve (Tcell = 58C) -->
+    <path d="M 60 280 L 270 280 Q 320 285 345 400" fill="none" stroke="#059669" stroke-width="2.5"/>
+    
+    <!-- Max Power Point (P_mpp Cool) -->
+    <circle cx="295" cy="298" r="4.5" fill="#059669"/>
+    <text x="295" y="288" fill="#166534" font-size="10" font-weight="700" text-anchor="middle">P_mpp (Phục hồi)</text>
+
+    <!-- Voltage limit marker -->
+    <line x1="345" y1="400" x2="345" y2="385" stroke="#059669" stroke-width="2"/>
+    <text x="345" y="416" fill="#059669" font-size="10" font-weight="700" text-anchor="middle">V_oc (58°C)</text>
+
+    <!-- Gain Arrow -->
+    <path d="M 278 395 L 340 395" stroke="#0284C7" stroke-width="2"/>
+    <polygon points="343,395 336,392 336,398" fill="#0284C7"/>
+    <text x="310" y="388" fill="#0284C7" font-size="9.5" font-weight="700" text-anchor="middle">+ΔV_oc</text>
+
+    <text x="155" y="350" fill="#059669" font-size="10.5" font-weight="700">Phục hồi công suất cực đại về gần lý tưởng</text>
+  </g>
+</svg>
+                </div>
+                <div class="card-footer">
+                    <span style="font-size: 12px; color: #64748b;">Vector SVG • 4K Export</span>
+                    <a href="diagram_popover_02_ventilation.html" class="btn">🔍 Mở Toàn Màn Hình</a>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Hạng Mục 3: Quy Trình Bảo Trì CBM & 6 Mã Cờ GMM-IF</div>
+                <div class="card-desc">Chuyển đổi quy trình bảo trì thủ công bị động (MTTD 14–30 ngày) sang giám sát SCADA tự động (MTTD dưới 1 giờ) khép kín.</div>
+                <div class="card-preview">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 540" width="100%" height="100%" style="background:#FFFFFF;font-family:'Segoe UI',Arial,sans-serif;">
+  <defs>
+    <filter id="shadowW3" x="-2%" y="-2%" width="104%" height="104%"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000000" flood-opacity="0.07"/></filter>
+  </defs>
+
+  <!-- Title Header -->
+  <rect x="20" y="14" width="940" height="44" rx="6" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.5"/>
+  <text x="40" y="41" fill="#0F172A" font-size="14.5" font-weight="700">CƠ CHẾ TÁC ĐỘNG 3: CHU TRÌNH BẢO TRÌ DỰ BÁO CBM DỰA TRÊN AI GMM-IF VÀ RÚT NGẮN MTTR</text>
+
+  <!-- Timeline 1: Reactive / Time-based (Manual) -->
+  <g transform="translate(20, 70)" filter="url(#shadowW3)">
+    <rect width="940" height="200" rx="8" fill="#FFFFFF" stroke="#EF4444" stroke-width="1.5"/>
+    <rect x="15" y="12" width="460" height="26" rx="4" fill="#FEF2F2"/>
+    <text x="25" y="30" fill="#B91C1C" font-size="12" font-weight="700">QUY TRÌNH BẢO TRÌ TRUYỀN THỐNG (REACTIVE O&amp;M - THỤ ĐỘNG)</text>
+
+    <!-- Stage 1: Fault -->
+    <rect x="25" y="48" width="170" height="135" rx="6" fill="#F8FAFC" stroke="#E2E8F0"/>
+    <rect x="35" y="58" width="150" height="22" rx="4" fill="#FEE2E2"/>
+    <text x="110" y="73" fill="#B91C1C" font-size="11" font-weight="700" text-anchor="middle">SỰ CỐ VẬT LÝ</text>
+    <text x="35" y="100" fill="#334155" font-size="10.5">• Đứt cầu chì chuỗi DC</text>
+    <text x="35" y="120" fill="#334155" font-size="10.5">• Hỏng Bypass Diode</text>
+    <text x="35" y="140" fill="#334155" font-size="10.5">• Ngắt quá áp biến tần</text>
+    <text x="35" y="166" fill="#DC2626" font-size="10" font-weight="600">Sản lượng sụt giảm ngay</text>
+
+    <!-- Arrow 1 -->
+    <line x1="195" y1="115" x2="230" y2="115" stroke="#EF4444" stroke-width="2"/>
+    <polygon points="235,115 227,111 227,119" fill="#EF4444"/>
+
+    <!-- Stage 2: MTTD -->
+    <rect x="240" y="48" width="210" height="135" rx="6" fill="#F8FAFC" stroke="#EF4444"/>
+    <rect x="250" y="58" width="190" height="22" rx="4" fill="#FEE2E2"/>
+    <text x="345" y="73" fill="#B91C1C" font-size="11" font-weight="700" text-anchor="middle">PHÁT HIỆN: MTTD = 14-30 NGÀY</text>
+    <text x="250" y="100" fill="#334155" font-size="10.5">• Không có giám sát vi mô</text>
+    <text x="250" y="120" fill="#334155" font-size="10.5">• Lỗi bị che lấp bởi thời tiết</text>
+    <text x="250" y="140" fill="#334155" font-size="10.5">• Chỉ biết khi kiểm toán định kỳ</text>
+    <text x="250" y="166" fill="#DC2626" font-size="10" font-weight="700">Mất điện âm thầm kéo dài</text>
+
+    <!-- Arrow 2 -->
+    <line x1="450" y1="115" x2="485" y2="115" stroke="#EF4444" stroke-width="2"/>
+    <polygon points="490,115 482,111 482,119" fill="#EF4444"/>
+
+    <!-- Stage 3: MTTR -->
+    <rect x="495" y="48" width="210" height="135" rx="6" fill="#F8FAFC" stroke="#EF4444"/>
+    <rect x="505" y="58" width="190" height="22" rx="4" fill="#FEE2E2"/>
+    <text x="600" y="73" fill="#B91C1C" font-size="11" font-weight="700" text-anchor="middle">SỬA CHỮA: MTTR = 7-14 NGÀY</text>
+    <text x="505" y="100" fill="#334155" font-size="10.5">• Kỹ sư đi kiểm tra ngẫu nhiên</text>
+    <text x="505" y="120" fill="#334155" font-size="10.5">• Dò thủ công từng hộp gom dây</text>
+    <text x="505" y="140" fill="#334155" font-size="10.5">• Phải quay về lấy vật tư thay thế</text>
+    <text x="505" y="166" fill="#DC2626" font-size="10" font-weight="700">Tốn nhiều thời gian xử lý</text>
+
+    <!-- Arrow 3 -->
+    <line x1="705" y1="115" x2="740" y2="115" stroke="#EF4444" stroke-width="2"/>
+    <polygon points="745,115 737,111 737,119" fill="#EF4444"/>
+
+    <!-- Impact Result -->
+    <rect x="750" y="48" width="165" height="135" rx="6" fill="#FEF2F2" stroke="#EF4444" stroke-width="1.5"/>
+    <text x="832" y="78" fill="#7F1D1D" font-size="11" font-weight="800" text-anchor="middle">TỔNG THỜI GIAN CHẾT</text>
+    <text x="832" y="102" fill="#B91C1C" font-size="15" font-weight="900" text-anchor="middle">21 - 44 NGÀY</text>
+    <text x="832" y="128" fill="#7F1D1D" font-size="10.5" text-anchor="middle">Năng lượng tổn thất</text>
+    <text x="832" y="150" fill="#DC2626" font-size="12.5" font-weight="800" text-anchor="middle">MẤT 100%</text>
+  </g>
+
+  <!-- Timeline 2: Predictive CBM (Closed Loop) -->
+  <g transform="translate(20, 285)" filter="url(#shadowW3)">
+    <rect width="940" height="235" rx="8" fill="#FFFFFF" stroke="#059669" stroke-width="1.5"/>
+    <rect x="15" y="12" width="510" height="26" rx="4" fill="#F0FDF4"/>
+    <text x="25" y="30" fill="#166534" font-size="12" font-weight="700">QUY TRÌNH BẢO TRÌ DỰ BÁO CBM DỰA TRÊN AI GMM-IF (CHỦ ĐỘNG KHÉP KÍN)</text>
+
+    <!-- Step 1: Telemetry Analysis -->
+    <rect x="25" y="48" width="190" height="170" rx="6" fill="#F8FAFC" stroke="#059669"/>
+    <rect x="35" y="58" width="170" height="22" rx="4" fill="#DCFCE7"/>
+    <text x="120" y="73" fill="#166534" font-size="11" font-weight="700" text-anchor="middle">PHÁT HIỆN: MTTD &lt; 1 GIỜ</text>
+    <text x="35" y="100" fill="#0284C7" font-size="10.5" font-weight="700">• AI GMM-IF quét chuỗi 15p</text>
+    <text x="35" y="120" fill="#334155" font-size="10.5">• So khớp E_actual vs E_pred</text>
+    <text x="35" y="140" fill="#334155" font-size="10.5">• Tách biệt dị thường vật lý</text>
+    <text x="35" y="160" fill="#334155" font-size="10.5">  khỏi biến động thời tiết</text>
+    <text x="35" y="195" fill="#059669" font-size="10" font-weight="700">Cảnh báo tự động tức thời</text>
+
+    <!-- Arrow 1 -->
+    <line x1="215" y1="133" x2="245" y2="133" stroke="#059669" stroke-width="2"/>
+    <polygon points="250,133 242,129 242,137" fill="#059669"/>
+
+    <!-- Step 2: Root Cause Classification & Dispatch -->
+    <rect x="255" y="48" width="225" height="170" rx="6" fill="#F8FAFC" stroke="#059669"/>
+    <rect x="265" y="58" width="205" height="22" rx="4" fill="#DCFCE7"/>
+    <text x="367" y="73" fill="#166534" font-size="11" font-weight="700" text-anchor="middle">PHÂN LOẠI &amp; ĐIỀU PHỐI TỰ ĐỘNG</text>
+    <text x="265" y="100" fill="#334155" font-size="10.5">• Gán 1 trong 6 mã cờ sự cố</text>
+    <text x="265" y="120" fill="#334155" font-size="10.5">• Chỉ rõ: Tên trạm, tủ gom dây</text>
+    <text x="265" y="140" fill="#334155" font-size="10.5">• Xuất lệnh Work Order điện tử</text>
+    <text x="265" y="160" fill="#334155" font-size="10.5">• Đề xuất linh kiện cần mang</text>
+    <text x="265" y="195" fill="#0284C7" font-size="10" font-weight="700">Thông tin đích danh chính xác</text>
+
+    <!-- Arrow 2 -->
+    <line x1="480" y1="133" x2="510" y2="133" stroke="#059669" stroke-width="2"/>
+    <polygon points="515,133 507,129 507,137" fill="#059669"/>
+
+    <!-- Step 3: Targeted Repair -->
+    <rect x="520" y="48" width="205" height="170" rx="6" fill="#F8FAFC" stroke="#059669"/>
+    <rect x="530" y="58" width="185" height="22" rx="4" fill="#DCFCE7"/>
+    <text x="622" y="73" fill="#166534" font-size="11" font-weight="700" text-anchor="middle">KHẮC PHỤC: MTTR = 1-2 NGÀY</text>
+    <text x="530" y="100" fill="#334155" font-size="10.5">• Kỹ sư đến đúng vị trí trạm</text>
+    <text x="530" y="120" fill="#334155" font-size="10.5">• Thay đúng cầu chì / diode</text>
+    <text x="530" y="140" fill="#334155" font-size="10.5">• Reset rơ-le / hiệu chỉnh CT</text>
+    <text x="530" y="160" fill="#334155" font-size="10.5">• Đóng chu trình bảo trì</text>
+    <text x="530" y="195" fill="#059669" font-size="10" font-weight="700">Xử lý dứt điểm nhanh</text>
+
+    <!-- Arrow 3 -->
+    <line x1="725" y1="133" x2="755" y2="133" stroke="#059669" stroke-width="2"/>
+    <polygon points="760,133 752,129 752,137" fill="#059669"/>
+
+    <!-- Impact Result -->
+    <rect x="765" y="48" width="150" height="170" rx="6" fill="#F0FDF4" stroke="#059669" stroke-width="1.5"/>
+    <text x="840" y="78" fill="#065F46" font-size="11" font-weight="800" text-anchor="middle">HIỆU QUẢ CỨU VÃN</text>
+    <text x="840" y="108" fill="#059669" font-size="20" font-weight="900" text-anchor="middle">85,7%</text>
+    <text x="840" y="134" fill="#047857" font-size="11" font-weight="700" text-anchor="middle">HỆ SỐ f_cbm</text>
+    <text x="840" y="156" fill="#334155" font-size="10" text-anchor="middle">f_cbm = 1 - (2 / 14)</text>
+    <text x="840" y="190" fill="#0284C7" font-size="10.5" font-weight="700" text-anchor="middle">Khôi phục vận hành</text>
+  </g>
+</svg>
+                </div>
+                <div class="card-footer">
+                    <span style="font-size: 12px; color: #64748b;">Vector SVG • 4K Export</span>
+                    <a href="diagram_popover_03_cbm.html" class="btn">🔍 Mở Toàn Màn Hình</a>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Hạng Mục 4: Khung Nghiêng 15° & Cơ Chế Tự Rửa Trôi</div>
+                <div class="card-desc">Mô hình hình học góc chiếu mặt trời mùa đông Victoria (37°S) và cơ chế nước mưa tự rửa trôi 95% bùn đọng mép dưới.</div>
+                <div class="card-preview">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 540" width="100%" height="100%" style="background:#FFFFFF;font-family:'Segoe UI',Arial,sans-serif;">
+  <defs>
+    <linearGradient id="gSludge" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#78350F"/><stop offset="100%" stop-color="#92400E"/></linearGradient>
+    <filter id="shadowW4" x="-2%" y="-2%" width="104%" height="104%"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000000" flood-opacity="0.07"/></filter>
+  </defs>
+
+  <!-- Title Header -->
+  <rect x="20" y="14" width="940" height="44" rx="6" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.5"/>
+  <text x="40" y="41" fill="#0F172A" font-size="14.5" font-weight="700">CƠ CHẾ TÁC ĐỘNG 4: HÌNH HỌC QUANG HỌC GÓC NGHIÊNG 15° VÀ CƠ CHẾ NƯỚC MƯA TỰ RỬA TRÔI BÙN ĐỌNG</text>
+
+  <!-- ========================================================================= -->
+  <!-- LEFT COLUMN: FLAT ROOF 0 DEGREE (RED BORDER)                              -->
+  <!-- ========================================================================= -->
+  <g transform="translate(20, 70)" filter="url(#shadowW4)">
+    <rect width="455" height="450" rx="8" fill="#FFFFFF" stroke="#EF4444" stroke-width="1.5"/>
+    <rect x="15" y="10" width="425" height="26" rx="4" fill="#FEF2F2"/>
+    <text x="25" y="28" fill="#B91C1C" font-size="12" font-weight="700">MÁI BẰNG NẰM PHẲNG (GÓC NGHIÊNG = 0°)</text>
+
+    <!-- Zone 1: Two Seasons Solar Geometry -->
+    <rect x="15" y="42" width="425" height="175" rx="6" fill="#F8FAFC" stroke="#E2E8F0"/>
+    <text x="25" y="60" fill="#B91C1C" font-size="11" font-weight="700">1. HÌNH HỌC QUANG HỌC 2 MÙA (HƯỚNG BẮC BÊN PHẢI)</text>
+
+    <!-- Summer Ray (Text at y=78,92 - Ray starts below at y=106) -->
+    <text x="90" y="78" fill="#D97706" font-size="10" font-weight="700" text-anchor="middle">Mùa hè (Đỉnh trời 76°)</text>
+    <text x="90" y="92" fill="#B45309" font-size="9.5" text-anchor="middle">Chiếu dốc đứng</text>
+    <line x1="103" y1="106" x2="90" y2="158" stroke="#D97706" stroke-width="2.5" stroke-dasharray="4,3"/>
+    <polygon points="89,162 86,153 94,155" fill="#D97706"/>
+    <!-- 76 deg arc -->
+    <path d="M 125 160 A 35 35 0 0 0 98 126" fill="none" stroke="#D97706" stroke-width="1.5"/>
+    <text x="122" y="145" fill="#D97706" font-size="9.5" font-weight="700">76°</text>
+
+    <!-- Winter Ray (Text at y=78,92 - Ray starts below at y=106) -->
+    <text x="330" y="78" fill="#DC2626" font-size="10" font-weight="700" text-anchor="middle">Mùa đông (Góc thấp 29°)</text>
+    <text x="330" y="92" fill="#991B1B" font-size="9.5" text-anchor="middle">Chiếu xiên góc rất lớn</text>
+    <line x1="308" y1="106" x2="210" y2="158" stroke="#DC2626" stroke-width="2.5" stroke-dasharray="4,3"/>
+    <polygon points="206,160 215,155 212,163" fill="#DC2626"/>
+    <!-- 29 deg arc -->
+    <path d="M 270 160 A 60 60 0 0 0 255 135" fill="none" stroke="#DC2626" stroke-width="1.5"/>
+    <text x="272" y="152" fill="#DC2626" font-size="10" font-weight="800">29°</text>
+
+    <!-- Compass Indicator -->
+    <text x="40" y="172" fill="#64748B" font-size="9" font-weight="700">Nam (S)</text>
+    <text x="415" y="172" fill="#64748B" font-size="9" font-weight="700" text-anchor="end">Bắc (N)</text>
+
+    <!-- PV Module Horizontal -->
+    <rect x="70" y="160" width="315" height="16" rx="2" fill="#1E3A8A" stroke="#1D4ED8" stroke-width="1.5"/>
+    <text x="227" y="172" fill="#FFFFFF" font-size="10" font-weight="700" text-anchor="middle">TẤM PIN NẰM PHẲNG 0° TRÊN MÁI</text>
+
+    <!-- Roof Line -->
+    <rect x="35" y="176" width="385" height="8" fill="#E2E8F0" stroke="#94A3B8"/>
+
+    <!-- Summary note of Zone 1 -->
+    <text x="227" y="202" fill="#B91C1C" font-size="10" font-weight="700" text-anchor="middle">Mùa hè phát điện tốt · Mùa đông sụt giảm sâu do góc chiếu xiên 29°</text>
+
+    <!-- Zone 2: Sludge Band & Bypass Diode Activation -->
+    <rect x="15" y="225" width="425" height="210" rx="6" fill="#F8FAFC" stroke="#E2E8F0"/>
+    <text x="25" y="244" fill="#B91C1C" font-size="11" font-weight="700">2. NƯỚC TÙ ĐỌNG &amp; DẢI BÙN CẶN CHE HÀNG CELL ĐÁY</text>
+
+    <!-- PV Module Cross Section Diagram -->
+    <rect x="35" y="256" width="385" height="42" rx="3" fill="#1E3A8A" stroke="#1D4ED8" stroke-width="1.5"/>
+    
+    <!-- Cell 1 Normal (Left) -->
+    <rect x="48" y="261" width="115" height="32" rx="2" fill="#2563EB"/>
+    <text x="105" y="276" fill="#FFFFFF" font-size="10" font-weight="700" text-anchor="middle">Cell Đỉnh</text>
+    <text x="105" y="289" fill="#93C5FD" font-size="8.5" text-anchor="middle">Hoạt động bình thường</text>
+
+    <!-- Cell 2 Normal (Middle) -->
+    <rect x="175" y="261" width="115" height="32" rx="2" fill="#2563EB"/>
+    <text x="232" y="276" fill="#FFFFFF" font-size="10" font-weight="700" text-anchor="middle">Cell Giữa</text>
+    <text x="232" y="289" fill="#93C5FD" font-size="8.5" text-anchor="middle">Hoạt động bình thường</text>
+
+    <!-- Cell 3 Shaded by Sludge (Right / North Edge) -->
+    <rect x="300" y="261" width="115" height="32" rx="2" fill="url(#gSludge)" stroke="#451A03" stroke-width="1.5"/>
+    <text x="357" y="276" fill="#FFFFFF" font-size="10" font-weight="900" text-anchor="middle">BÙN ĐỌNG CHE KÍN</text>
+    <text x="357" y="289" fill="#FEF3C7" font-size="8.5" font-weight="700" text-anchor="middle">(Cell đáy ngừng phát)</text>
+
+    <!-- Aluminum bottom frame rim on the right (North edge) -->
+    <rect x="415" y="250" width="13" height="54" fill="#64748B" stroke="#475569"/>
+
+    <!-- Sludge callout label -->
+    <text x="227" y="314" fill="#78350F" font-size="10" font-weight="800" text-anchor="middle">Gờ nhôm cản nước → Nước tù bốc hơi đọng dải bùn cặn dày</text>
+
+    <!-- Explanation Box -->
+    <rect x="25" y="326" width="405" height="98" rx="4" fill="#FEF2F2" stroke="#EF4444"/>
+    <text x="35" y="347" fill="#991B1B" font-size="10.5" font-weight="700">• Nước mưa không có độ dốc để tự thoát khỏi gờ nhôm đáy.</text>
+    <text x="35" y="369" fill="#DC2626" font-size="10.5" font-weight="800">• Dải bùn kích hoạt Bypass Diode ngắn mạch → MẤT 1/3 CÔNG SUẤT.</text>
+    <text x="35" y="391" fill="#7F1D1D" font-size="10.5" font-weight="700">• Tấm pin bị nóng cục bộ (Hotspot) làm suy thoái tuổi thọ nặng nề.</text>
+    <text x="35" y="413" fill="#B91C1C" font-size="10" font-weight="600">→ Hụt mất 18.500 kWh/năm do bùn cặn viền nhôm đáy.</text>
+  </g>
+
+  <!-- ========================================================================= -->
+  <!-- RIGHT COLUMN: TILTED NORTH 15 DEGREE (TILT RIGHT TO NORTH)                -->
+  <!-- ========================================================================= -->
+  <g transform="translate(505, 70)" filter="url(#shadowW4)">
+    <rect width="455" height="450" rx="8" fill="#FFFFFF" stroke="#059669" stroke-width="1.5"/>
+    <rect x="15" y="10" width="425" height="26" rx="4" fill="#F0FDF4"/>
+    <text x="25" y="28" fill="#166534" font-size="12" font-weight="700">NÂNG KHUNG NGHIÊNG 15° HƯỚNG BẮC (NGHIÊNG SANG PHẢI)</text>
+
+    <!-- Zone 1: Two Seasons Solar Geometry -->
+    <rect x="15" y="42" width="425" height="175" rx="6" fill="#F8FAFC" stroke="#E2E8F0"/>
+    <text x="25" y="60" fill="#166534" font-size="11" font-weight="700">1. HÌNH HỌC QUANG HỌC 2 MÙA (ĐÓN NẮNG PHƯƠNG BẮC)</text>
+
+    <!-- Summer Ray (Text at y=78,92 - Ray starts below at y=106) -->
+    <text x="90" y="78" fill="#D97706" font-size="10" font-weight="700" text-anchor="middle">Mùa hè (76° đỉnh trời)</text>
+    <text x="90" y="92" fill="#B45309" font-size="9.5" text-anchor="middle">Lệch nhẹ ~15° (-1,5%)</text>
+    <line x1="102" y1="106" x2="90" y2="153" stroke="#D97706" stroke-width="2.5" stroke-dasharray="4,3"/>
+    <polygon points="89,157 86,148 94,150" fill="#D97706"/>
+
+    <!-- Winter Ray (Text at y=78,92 - Ray starts below at y=106) -->
+    <text x="330" y="78" fill="#059669" font-size="10" font-weight="800" text-anchor="middle">Mùa đông (Góc thấp 29°)</text>
+    <text x="330" y="92" fill="#166534" font-size="9.5" font-weight="700" text-anchor="middle">GÓC ĐÓN VUÔNG GÓC (+20,8%)</text>
+    <line x1="295" y1="106" x2="180" y2="158" stroke="#059669" stroke-width="3" stroke-dasharray="5,3"/>
+    <polygon points="176,160 185,155 182,163" fill="#059669"/>
+    <!-- 29 deg angle arc -->
+    <path d="M 270 178 A 70 70 0 0 0 250 142" fill="none" stroke="#059669" stroke-width="1.5"/>
+    <text x="270" y="165" fill="#059669" font-size="10" font-weight="800">29°</text>
+
+    <!-- Compass Indicator -->
+    <text x="40" y="172" fill="#64748B" font-size="9" font-weight="700">Nam (S)</text>
+    <text x="415" y="172" fill="#64748B" font-size="9" font-weight="700" text-anchor="end">Bắc (N)</text>
+
+    <!-- Tilted PV Module: Elevated at Left/South (75, 130), Sloping Down to Right/North (265, 178) -->
+    <polygon points="75,130 265,178 262,192 72,144" fill="#1E3A8A" stroke="#1D4ED8" stroke-width="1.5"/>
+    <text x="170" y="162" fill="#FFFFFF" font-size="9.5" font-weight="700" text-anchor="middle" transform="rotate(14.1 170 162)">PIN NGHIÊNG 15° HƯỚNG BẮC</text>
+
+    <!-- Triangular Aluminum Support Structure -->
+    <polygon points="72,144 72,186 262,186" fill="#F1F5F9" stroke="#64748B" stroke-width="1.5"/>
+    <text x="105" y="180" fill="#0369A1" font-size="8.5" font-weight="700">Khung 15°</text>
+
+    <!-- Roof Line at y=186 -->
+    <rect x="35" y="186" width="385" height="8" fill="#E2E8F0" stroke="#94A3B8"/>
+
+    <!-- Summary note of Zone 1 -->
+    <text x="227" y="206" fill="#059669" font-size="10" font-weight="700" text-anchor="middle">Tăng vọt sản lượng mùa đông (+44.436 kWh), bù đắp đúng đỉnh phụ tải</text>
+
+    <!-- Zone 2: Rain Self-Cleaning & Full Power Preservation (Height 210px) -->
+    <rect x="15" y="225" width="425" height="210" rx="6" fill="#F8FAFC" stroke="#E2E8F0"/>
+    <text x="25" y="244" fill="#166534" font-size="11" font-weight="700">2. NƯỚC MƯA TỰ RỬA TRÔI &amp; BẢO TOÀN 100% CÔNG SUẤT</text>
+
+    <!-- Rain Self-cleaning Tag Centered at top of Zone 2 -->
+    <rect x="135" y="252" width="185" height="20" rx="4" fill="#E0F2FE" stroke="#0284C7"/>
+    <text x="227" y="266" fill="#0369A1" font-size="9.5" font-weight="800" text-anchor="middle">Dòng nước mưa tự rửa trôi</text>
+
+    <!-- Rain Runoff Arrow: Parallel, strictly 13px ABOVE the glass surface -->
+    <line x1="70" y1="263" x2="360" y2="311" stroke="#0284C7" stroke-width="3" stroke-dasharray="6,3"/>
+    <polygon points="365,312 355,310 358,302" fill="#0284C7"/>
+
+    <!-- Tilted Module Frame Body -->
+    <polygon points="75,276 365,324 362,342 72,294" fill="#1E3A8A" stroke="#1D4ED8" stroke-width="1.5"/>
+
+    <!-- 3 Clean Cells -->
+    <!-- Cell 3 (Top Left: x=85 to x=170) -->
+    <polygon points="83,281 168,295 166,310 81,296" fill="#2563EB"/>
+    <text x="125" y="302" fill="#FFFFFF" font-size="9" font-weight="700" text-anchor="middle" transform="rotate(9.4 125 302)">Cell 3 Sạch</text>
+
+    <!-- Cell 2 (Middle: x=180 to x=265) -->
+    <polygon points="178,297 263,311 261,326 176,312" fill="#2563EB"/>
+    <text x="220" y="318" fill="#FFFFFF" font-size="9" font-weight="700" text-anchor="middle" transform="rotate(9.4 220 318)">Cell 2 Sạch</text>
+
+    <!-- Cell 1 (Bottom Right: x=275 to x=360) -->
+    <polygon points="273,313 358,327 356,342 271,328" fill="#2563EB"/>
+    <text x="315" y="334" fill="#FFFFFF" font-size="9" font-weight="700" text-anchor="middle" transform="rotate(9.4 315 334)">Cell 1 Sạch</text>
+
+    <!-- Explanation Box -->
+    <rect x="25" y="348" width="405" height="78" rx="4" fill="#F0FDF4" stroke="#059669"/>
+    <text x="35" y="366" fill="#166534" font-size="10.5" font-weight="700">• Độ dốc 15° tạo động năng cho nước mưa tự chảy tràn sang phải.</text>
+    <text x="35" y="386" fill="#059669" font-size="10.5" font-weight="800">• Bụi bẩn và bùn cặn bị cuốn trôi hoàn toàn qua gờ nhôm đáy.</text>
+    <text x="35" y="406" fill="#047857" font-size="10.5" font-weight="700">• Triệt tiêu che bóng → Bảo toàn 100% công suất (+18.500 kWh/năm).</text>
+  </g>
+</svg>
+                </div>
+                <div class="card-footer">
+                    <span style="font-size: 12px; color: #64748b;">Vector SVG • 4K Export</span>
+                    <a href="diagram_popover_04_tilt.html" class="btn">🔍 Mở Toàn Màn Hình</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

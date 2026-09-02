@@ -51,6 +51,8 @@ def theo_campus(ma: str) -> pd.DataFrame:
     g = ho_so_campus()
     g["kwh"] = cfg.HANG_MUC_CAI_TIEN[ma]["kwh"] * g["ty_trong"]
     g["aud"] = cfg.HANG_MUC_CAI_TIEN[ma]["aud"] * g["ty_trong"]
+    if ma == "bess":
+        g["e_xa_kwh"] = cfg.BESS_E_XA_HUU_ICH_KWH * g["ty_trong"]
     return g
 
 

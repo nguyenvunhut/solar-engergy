@@ -221,14 +221,23 @@ for h in sorted(kq["hang_muc"], key=lambda x: x["stt"]):
     with st.expander(f"**Hạng mục {h['stt']} — {ct['tieu_de']}**  ·  {nhan}", expanded=False):
 
         st.markdown("**Bảng thông số**")
-        dai_card([
-            ("Tỷ lệ cải thiện", h["hieu_suat"]),
-            ("Điện thu hồi", f"{h['delta_kwh']:,.0f} kWh/năm"),
-            ("Giá trị kinh tế", f"{tien_str(h['delta_revenue_aud'])}/năm"),
-            ("CapEx đầu tư", tien_str(h["capex_aud"]) if h["capex_aud"]
-                             else "Tích hợp kỳ đại tu"),
-            ("Thời gian hoàn vốn", h["payback"]),
-        ])
+        if ma == "bess":
+            dai_card([
+                ("Thu hồi cắt ngọn", "69.782 kWh/năm (+1,53% PR)"),
+                ("Điện xả hữu ích", "712.182 kWh/năm"),
+                ("Giá trị kinh tế", f"{tien_str(h['delta_revenue_aud'])}/năm"),
+                ("CapEx đầu tư", tien_str(h["capex_aud"])),
+                ("Thời gian hoàn vốn", h["payback"]),
+            ])
+        else:
+            dai_card([
+                ("Tỷ lệ cải thiện", h["hieu_suat"]),
+                ("Điện thu hồi", f"{h['delta_kwh']:,.0f} kWh/năm"),
+                ("Giá trị kinh tế", f"{tien_str(h['delta_revenue_aud'])}/năm"),
+                ("CapEx đầu tư", tien_str(h["capex_aud"]) if h["capex_aud"]
+                                 else "Tích hợp kỳ đại tu"),
+                ("Thời gian hoàn vốn", h["payback"]),
+            ])
 
         with st.popover("Cơ chế & tác động"):
             st.markdown(f"**Cơ chế.** {ct['co_che']}")
@@ -241,26 +250,29 @@ for h in sorted(kq["hang_muc"], key=lambda x: x["stt"]):
                 st.image(str(so_do_tep), use_container_width=True)
 
         if ma == "bess":
+            st.caption("💡 **Cơ chế kép của BESS:** (1) Thu hồi trực tiếp **69.782 kWh/năm** điện sạch bị biến tần xén bỏ trưa hè (giảm tổn thất cắt ngọn từ 2,30% về 0,28%); (2) Điều tiết xả **712.182 kWh/năm** vào giờ cao điểm TOU (17:00–21:00) và gọt đỉnh **800 kW** phụ tải trường học.")
             cp = phan_ra.theo_campus("bess")
             c_l, c_r = st.columns([1.15, 1], vertical_alignment="top")
             with c_l:
-                st.markdown("**Phân bổ theo khuôn viên**")
+                st.markdown("**Phân bổ thu hồi cắt ngọn theo khuôn viên**")
                 f = go.Figure(go.Bar(x=cp["kwh"], y=cp["campus"], orientation="h",
                                      marker_color=XANH,
                                      text=[f"{v:,.0f} kWh" for v in cp["kwh"]],
                                      textposition="auto"))
-                f.update_layout(xaxis_title="kWh/năm", yaxis=dict(autorange="reversed"))
+                f.update_layout(xaxis_title="kWh thu hồi / năm", yaxis=dict(autorange="reversed"))
                 st.plotly_chart(style_fig(f, CAO), width="stretch")
             with c_r:
-                st.markdown("**Số liệu từng khuôn viên**")
+                st.markdown("**Số liệu định cỡ & xả điện từng khuôn viên**")
                 st.dataframe(pd.DataFrame({
                     "Khuôn viên": cp["campus"], "Số trạm": cp["so_tram"],
-                    "Tỷ trọng": (cp["ty_trong"] * 100).round(1),
-                    "CS ước tính": cp["bess_kw"],
-                    "kWh/năm": cp["kwh"].round(0)})
-                    .style.format({"Tỷ trọng": "{:.1f}%",
-                                   "CS ước tính": "{:,.0f} kW",
-                                   "kWh/năm": "{:,.0f}"}),
+                    "CS BESS": cp["bess_kw"],
+                    "Dung lượng": cp["bess_kwh"],
+                    "Thu hồi cắt ngọn": cp["kwh"].round(0),
+                    "Điện xả hữu ích": cp["e_xa_kwh"].round(0)})
+                    .style.format({"CS BESS": "{:,.0f} kW",
+                                   "Dung lượng": "{:,.0f} kWh",
+                                   "Thu hồi cắt ngọn": "{:,.0f} kWh",
+                                   "Điện xả hữu ích": "{:,.0f} kWh"}),
                     width="stretch", hide_index=True, height=CAO)
 
             st.markdown("**Tổn thất cắt ngọn theo tháng (kWh)**")
