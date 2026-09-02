@@ -392,7 +392,7 @@ Hiện tượng Cường hóa Bức xạ do Mây (Cloud Enhancement hoặc Mép 
 
 * **Cơ chế:** Cầu chì $gPV$ bảo vệ chuỗi DC trong tủ Combiner Box bị nổ do sét lan truyền hoặc ngắn mạch nội tại. Một chuỗi pin trong mảng 3 chuỗi song song bị hở mạch hoàn toàn.
 * **Dấu hiệu Nhận diện Dữ liệu:** Biến tần vẫn đo được điện áp hở mạch $V_{\text{DC}} \approx 700\,\text{V}$ hoàn toàn bình thường, nhưng dòng điện tổng $I_{\text{DC}}$ và công suất phát bị sụt giảm chính xác **$33{,}3\%$ (mất 1 chuỗi/3 chuỗi) hoặc $50{,}0\%$ (mất 1 chuỗi/2 chuỗi)** trong suốt cả ngày (`PHYSICAL_DISTRIBUTION_JUMP`).
-* **Giá trị AI-CBM:** Giúp phát hiện sự cố trong **$< 1\,\text{giờ}$**, thay vì mất $14 - 30\,\text{ngày}$ kiểm tra thủ công.
+* **Giá trị CBM:** Giúp phát hiện sự cố trong **$< 1\,\text{giờ}$**, thay vì mất $14 - 30\,\text{ngày}$ kiểm tra thủ công.
 
 ---
 
@@ -1050,7 +1050,7 @@ pie title Tỷ Trọng Đóng Góp Của Các Nhóm Đặc Trưng Trong TreeSHAP
 * **Cơ chế:** Chêm giá đỡ tạo khe hở đối lưu tự nhiên $\ge 150\,\text{mm}$, hạ nhiệt cell trung bình **$-8{,}0^\circ\text{C}$** (Mùa hè hạ $-11^\circ\text{C} \text{ đến } -12^\circ\text{C}$).
 * **Hiệu quả:** Thu hồi **$+117.224\,\text{kWh/năm}$** ($+23.445\,\text{AUD/năm}$), CapEx $24.280\,\text{AUD}$, **Hoàn vốn sau $1{,}04\,\text{năm}$ ($12{,}4\,\text{tháng}$)**.
 
-### Hạng Mục 3: Quy Trình AI-CBM Tự Động Từ 6 Mã Cờ Dị Thường GMM-IF
+### Hạng Mục 3: Quy Trình CBM Dựa Trên Dữ Liệu 6 Mã Cờ Dị Thường GMM-IF
 * **Cơ chế:** Giám sát SCADA $15\,\text{phút}$ thời gian thực, rút ngắn MTTD $< 1\,\text{giờ}$ và MTTR $1 - 3\,\text{ngày}$.
 * **Hiệu quả:** Thu hồi **$+70.330\,\text{kWh/năm}$** ($+29.066\,\text{AUD/năm}$), Chi phí duy trì $8.000\,\text{AUD/năm}$, **Hoàn vốn $< 4\,\text{tháng}$**.
 

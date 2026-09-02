@@ -390,8 +390,6 @@ data/mlmart_base/v3_*
 # Scrum 8 defense presentation/report PDF
 docs/scrum_8_project_delivery_defense/*.pdf
 docs/scrum_8_project_delivery_defense/**/*.pdf
-docs/scrum_8_project_delivery_defense/*Kich_Ban*.md
-docs/scrum_8_project_delivery_defense/*kich_ban*.md
 docs/scrum_8_project_delivery_defense/2026_08_23_Kich_Ban_Thuyet_Trinh_BI_Mart_Tableau_Insights.md
 
 # Ban sao luu artifact truoc lan chay lai 16/08/2026 - KHONG dua vao git,
