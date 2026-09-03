@@ -134,21 +134,21 @@
 > Nhìn trực tiếp vào biểu đồ phân rã trên màn hình Streamlit, nhóm em xin khẳng định: **Dữ liệu dị thường được bóc tách chính là những 'bệnh án kỹ thuật' cụ thể, khoanh vùng chính xác chuyện gì đang xảy ra ngoài hiện trường:**
 > 
 > `[05:30]` *(Chỉ vào thanh đỏ dài nhất: GMM_IF_CONSENSUS)*  
-> - **1. Nhóm nguyên nhân `GMM_IF_CONSENSUS`:**  
->   Thầy/Cô có thể thấy đây là thanh màu đỏ dài nhất, chiếm tới **11.639 kWh** điện hụt (gần $73\%$ tổng lượng điện tổn thất).  
->   - *Về mặt kỹ thuật dữ liệu:* Đây là cờ **Đồng thuận Machine Learning**, tức là khi cả 2 thuật toán độc lập — **GMM** (phân tích mật độ cụm theo điều kiện bức xạ và nhiệt độ) và **Isolation Forest** (cô lập điểm bất thường đa chiều) — **cùng 100% đồng thuận** đánh dấu điểm dữ liệu này là bất thường.  
->   - *Trong thực tế, nó khoanh vùng được những hiện tượng gì?* Cờ này khoanh vùng các sự cố **Suy hao âm thầm (Silent Degradation)** mà các cảnh báo ngưỡng thông thường không thể phát hiện được:  
->     + **Tấm pin bị nứt tế bào (micro-cracks) hoặc xuất hiện điểm nóng (hotspot):** Tấm pin vẫn phát điện, nhìn bằng mắt thường khó thấy, nhưng nội trở tăng cao làm méo mó đường cong phát điện.  
->     + **Bóng che cục bộ bất thường:** Có cây cối xung quanh mới mọc cao che mất góc giàn pin vào khung giờ cố định, hoặc có công trình xây dựng tạm chắn nắng.  
+> - **1. Nhóm nguyên nhân `GMM_IF_CONSENSUS` (Thanh màu đỏ dài nhất — Chiếm 11.639 kWh hụt, gần 73% tổng điện hụt):**  
+>   - **Consensus là gì?** Trong Khoa học Dữ liệu, *Consensus* nghĩa là **Sự Đồng Thuận**. Ở đây, nhóm không dùng một mô hình đơn lẻ mà kết hợp mô hình Ensemble lai: **GMM** (phân tích mật độ cụm theo bức xạ & nhiệt độ) và **Isolation Forest** (cô lập điểm bất thường đa chiều toàn cục). Khi **cả hai mô hình độc lập này cùng 100% đồng thuận** bắt trúng một điểm dữ liệu, cờ `GMM_IF_CONSENSUS` được kích hoạt. Nhờ cơ chế đồng thuận này, nhóm triệt tiêu được các báo động giả, chỉ giữ lại những bất thường có độ tin cậy cực cao!  
+>   - **Trong thực tế khoanh vùng được hiện tượng gì?** Cờ này khoanh vùng các sự cố **Suy hao âm thầm (Silent Degradation)** mà các cảnh báo ngưỡng thông thường không tài nào nhìn ra được:  
+>     + **Tấm pin bị nứt vi mô tế bào (Micro-cracks) hoặc xuất hiện điểm nóng (Hotspots):** Tấm pin vẫn phát điện, nhìn bằng mắt thường khó thấy, nhưng nội trở tăng cao làm méo mó đường cong phát điện so với toàn mạng lưới.  
+>     + **Bóng che cục bộ bất thường (Dynamic Shading):** Cây cối xung quanh mới mọc cao che mất một góc giàn pin vào khung giờ cố định, hoặc có công trình xây dựng tạm chắn nắng.  
 >     + **Bụi bẩn bám loang lổ hoặc phân chim che kín một vài cell pin:** Kích hoạt các diode bảo vệ chặn dòng, làm tụt công suất âm thầm của cả chuỗi pin.  
->   - *Hành động thực tế của kỹ sư:* Kỹ sư không cần đi mò mẫm 42 trạm, mà chỉ cần mang thiết bị bay chụp ảnh nhiệt hồng ngoại (Drone Thermal IR) hoặc đo đặc tuyến I-V đến đúng mảng pin bị AI gắn cờ để xử lý, cứu lại ngay **9.974 kWh/năm**!
+>   - **Hành động thực tế:** Kỹ sư không cần đi tuần tra thủ công 42 trạm, mà chỉ cần mang thiết bị bay chụp ảnh nhiệt hồng ngoại (Drone Thermal IR) hoặc đo đặc tuyến I-V đến đúng mảng pin bị cờ Consensus chỉ định để thay thế tấm pin suy thoái, cứu lại ngay **9.974 kWh/năm**!
 > 
 > `[06:00]` *(Chỉ vào thanh đỏ thứ hai: PHYSICAL_DISTRIBUTION_JUMP)*  
-> - **2. Nhóm nguyên nhân `PHYSICAL_DISTRIBUTION_JUMP`:**  
->   Thanh màu đỏ thứ hai trên màn hình, chiếm **4.238 kWh** hụt (1.376 dòng dữ liệu).  
->   - *Khoanh vùng thực tế:* Sản lượng đang phát bình thường bỗng nhiên bị rơi tụt gãy một nấc lớn (khoảng 33% hoặc 50% công suất).  
->   - Đây chính là hiện tượng **đứt cầu chì chuỗi pin (Blown string fuse)** hoặc **đứt cáp DC nhánh**: Trong một tủ gom combiner box có 3 chuỗi pin mắc song song, khi 1 chuỗi bị nổ cầu chì thì công suất trạm ngay lập tức tụt gãy đúng 1/3.  
->   - *Hành động thực tế:* Kỹ sư chỉ cần cầm đồng hồ ampe kìm kẹp đo dòng từng chuỗi tại tủ điện là tìm ra chuỗi bị đứt cầu chì để thay ngay trong 15 phút, thu hồi lại **3.632 kWh/năm**!
+> - **2. Nhóm nguyên nhân `PHYSICAL_DISTRIBUTION_JUMP` (Thanh màu đỏ thứ hai — Chiếm 4.238 kWh hụt, 1.376 dòng dữ liệu):**  
+>   - **Distribution Jump là gì?** Trong phân tích chuỗi thời gian, *Distribution Jump* nghĩa là **Bước Nhảy / Tụt Gãy Phân Phối Đột Ngột**. Công suất của trạm đang phát biến thiên mượt mà theo mặt trời thì bỗng nhiên tại một thời điểm $t$, công suất bị **rơi tụt gãy thẳng đứng một nấc lớn** lệch hẳn ra ngoài 4 lần khoảng tứ phân vị ($> 4 \times \text{IQR}$) so với 2 giờ xung quanh.  
+>   - **Trong thực tế khoanh vùng được hiện tượng gì?** Đây là hiện tượng kinh điển trong vận hành điện mặt trời: **ĐỨT CẦU CHÌ CHUỖI PIN (Blown String Fuse) hoặc ĐỨT CÁP DC NHÁNH**.  
+>     + Trong một tủ gom Combiner Box thường có 3 đến 4 chuỗi pin mắc song song. Khi một chuỗi bị nổ cầu chì, công suất toàn trạm ngay lập tức bị **tụt gãy đúng 1 bậc: giảm ngay 33% hoặc 50%**. Hệ thống giám sát cũ không báo động vì trạm... vẫn đang phát điện! Nhưng thuật toán của nhóm phát hiện ra cú rơi phân phối này ngay lập tức.  
+>     + Ngoài ra, nó còn khoanh vùng các sự cố biến tần bị trip ngắn hạn rồi tự khởi động lại, hoặc mất kết nối truyền dữ liệu SCADA.  
+>   - **Hành động thực tế:** Kỹ sư chỉ cần mở tủ điện Combiner Box dưới đất, cầm đồng hồ ampe kìm kẹp đo dòng từng chuỗi trong 5 phút là tìm ra chuỗi bị đứt cầu chì để thay thế ngay, thu hồi lại **3.632 kWh/năm**!
 > 
 > `[06:20]` *(Chỉ vào dòng PHYSICAL_LOW_ENERGY_STRONG_SUN)*  
 > - **3. Nhóm nguyên nhân `PHYSICAL_LOW_ENERGY_STRONG_SUN`:**  
