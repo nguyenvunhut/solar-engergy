@@ -15,7 +15,7 @@
 | :--- | :--- | :--- | :---: | :---: |
 | **Slide 1** | **Khái Quát Chặng Đường & 5 Vấn Đề Cốt Lõi (Pain Points)** | Slide tổng hợp vấn đề thực tế | `01:45` | `00:00 - 01:45` |
 | **Slide 2** | **Ma Trận 5 Giải Pháp (Hạ Tầng vs Vận Hành)** | Slide cấu trúc giải pháp đối ứng | `01:15` | `01:45 - 03:00` |
-| **Slide 3** | **Chi Tiết Giải Pháp, 6 Mã Cờ CBM & Demo Streamlit** | **Thao tác Demo trực tiếp Streamlit** | `03:30` | `03:00 - 06:30` |
+| **Slide 3** | **Chi Tiết Giải Pháp, Bóc Tách Mã Cờ CBM & Demo Streamlit** | **Thao tác Demo trực tiếp Streamlit** | `03:30` | `03:00 - 06:30` |
 | **Slide 4** | **Kết Luận: Giá Trị Dự Án, Thuận Lợi & Khó Khăn** | Slide tổng kết giá trị & bài học | `01:30` | `06:30 - 08:00` |
 | **Slide 5** | **Định Hướng Phát Triển Tương Lai & Mời Hội Đồng Q&A** | Slide 3 giai đoạn mở rộng & Chào kết | `01:30` | `08:00 - 09:30` |
 | **TỔNG** | **Toàn Bộ Phần Thuyết Trình** | **Đầy đủ, mạch lạc, kiểm soát giờ tốt** | **~09:30** | **< 10 phút** |
@@ -33,7 +33,7 @@
     1. **Nắng to nhưng bị nghẽn công suất giữa trưa (Cắt ngọn Inverter):** Thất thoát **$79.298\,\text{kWh/năm}$**.
     2. **Tấm pin bị nung quá nóng vào mùa hè (Mất $14{,}8\%$ sản lượng):** Thất thoát **$510.268\,\text{kWh/năm}$** ($>102.000\,\text{AUD/năm}$).
     3. **Cụm 970 kWp mái bằng bị hụt nắng mùa đông và đọng bùn viền đáy:** Thất thoát **$71.850\,\text{kWh/năm}$**.
-    4. **Bảo trì bị động, phát hiện hư hỏng chậm (mất 2-4 tuần):** Thất thoát **$70.330\,\text{kWh/năm}$**.
+    4. **Bảo trì bị động, phát hiện sự cố chậm (mất 2-4 tuần):** Thất thoát **$70.330\,\text{kWh/năm}$**.
     5. **Bụi bám mùa khô và tốn tiền rửa pin không cần thiết:** Mất **$62.060\,\text{kWh/năm}$** và lãng phí nhân công trước các đợt mưa.
 
 ---
@@ -70,7 +70,7 @@
     2. *Kê cao khe thông gió mái 10–15 cm* $\leftrightarrow$ Dùng gió tự nhiên làm mát pin.
     3. *Lắp khung nghiêng 15° cho cụm mái bằng* $\leftrightarrow$ Đón nắng đông và giúp nước mưa tự rửa trôi bùn bẩn.
   * **Nhóm 2: Giải pháp về Vận hành & Quy trình Dữ liệu (2 Giải pháp):**
-    4. *Quy trình bảo trì dựa trên điều kiện (CBM)* $\leftrightarrow$ Dựa vào 6 mã cờ bất thường để sửa đúng chỗ, đúng lúc.
+    4. *Quy trình bảo trì dựa trên điều kiện (CBM)* $\leftrightarrow$ Bóc tách các mã cờ dị thường để khoanh vùng đúng hư hỏng thực tế.
     5. *Lịch rửa pin thông minh theo dữ liệu mưa* $\leftrightarrow$ Chỉ rửa khi nắng hạn kéo dài, không rửa thừa.
 
 ---
@@ -88,7 +88,7 @@
 > 
 > `[02:30]` *(Trình bày mạch lạc nhóm 2)*  
 > - **Nhóm thứ hai — Tối ưu hóa Vận hành nhờ Trí tuệ Dữ liệu:** Gồm 2 giải pháp khai thác trực tiếp kết quả phân tích của nhóm:  
->   (4) Chuyển sang **Quy trình bảo trì dựa trên điều kiện (CBM)** — sử dụng 6 mã cờ bất thường mà mô hình đã bóc tách để phát hiện và khoanh vùng sự cố ngay lập tức;  
+>   (4) Chuyển sang **Quy trình bảo trì dựa trên điều kiện (CBM)** — sử dụng các mã cờ bất thường mà mô hình đã bóc tách để phát hiện và khoanh vùng sự cố ngay lập tức;  
 >   (5) Xây dựng **Lịch rửa pin thông minh theo dữ liệu mưa** từ API thời tiết để tối ưu chi phí nhân công.
 > 
 > `[02:50]` *(Chuyển sang màn hình demo trực tiếp)*  
@@ -96,14 +96,14 @@
 
 ---
 
-## SLIDE 3: CHI TIẾT KỸ THUẬT, 6 MÃ CỜ CBM & DEMO TRỰC TIẾP STREAMLIT WHAT-IF
+## SLIDE 3: CHI TIẾT KỸ THUẬT, BÓC TÁCH MÃ CỜ DỊ THƯỜNG CBM & DEMO TRỰC TIẾP STREAMLIT WHAT-IF
 
 ### Thông tin Slide & Bố cục Trình chiếu (Slide Layout)
 * **Thời lượng mục tiêu:** `03:30` (Mốc: `03:00 - 06:30`)
 * **Hình thức:** Chuyển sang tab trình duyệt Streamlit (`pages/2_What_If.py`), người thuyết trình vừa nói vừa click chuột bật các checkbox, chỉ vào các con số KPI và biểu đồ trên màn hình.
 * **Nội dung trọng tâm:**
   1. *Giải thích cơ chế và số liệu từng hạng mục (BESS, Khe gió, Khung nghiêng, Lịch rửa mưa).*
-  2. *ĐIỂM NHẤN ĐẶC BIỆT: Bóc tách thực tế 6 mã cờ dị thường trong quy trình CBM (Chứng minh dân Data giải quyết đúng bài toán nghiệp vụ, không phải làm toán vu vơ).*
+  2. *ĐIỂM NHẤN ĐẶC BIỆT: Bóc tách thực tế các mã cờ dị thường trong What-If Analysis (Đặc biệt là `GMM_IF_CONSENSUS` khoanh vùng các hiện tượng nào trong thực tế, cùng các mã vật lý khác).*
   3. *Tổng kết kết quả khi áp dụng trọn vẹn 5 giải pháp cốt lõi.*
 
 ---
@@ -125,27 +125,47 @@
 > `[04:35]` *(Click chọn Checkbox 4: Lịch rửa pin theo mưa)*  
 > - **Thứ tư là Lịch rửa pin thông minh theo dữ liệu thời tiết:** Hệ thống dữ liệu tự động đếm số ngày khô hạn. Chỉ khi nào liên tục **từ 21 ngày trở lên không có mưa hoặc mưa quá nhỏ dưới 5 mm**, hệ thống mới đề xuất lệnh cho công nhân đi rửa pin. Nhờ đó lấy lại được **62.000 số điện**, đồng thời cắt bỏ hoàn toàn 3 đợt rửa thừa trước mùa mưa, tiết kiệm **6.000 AUD** tiền nhân công mà không tốn một đồng vốn đầu tư nào — mang lại hiệu quả tức thì!
 > 
-> `[05:00]` *(Click chọn Checkbox 5: Quy trình CBM — Dừng lại giải thích sâu sắc về 6 mã cờ)*  
-> Và giải pháp thứ năm, cũng là giải pháp thể hiện rõ nhất giá trị của chuyên ngành Xử lý Dữ liệu chúng em: **Quy trình Bảo trì Dựa trên Điều kiện (CBM)**.
+> `[05:00]` *(Click chọn Checkbox 5: Quy trình CBM — Mở rộng phần 'Cơ chế & tác động', màn hình hiện ra Biểu đồ 'Điện hụt theo nguyên nhân' và Bảng 'Số liệu từng nguyên nhân')*  
+> Và giải pháp thứ năm, thể hiện rõ nhất năng lực và giá trị của chuyên ngành Xử lý Dữ liệu chúng em: **Quy trình Bảo trì Dựa trên Điều kiện (CBM)**.
 > 
-> `[05:10]` *(Nhìn thẳng vào Hội đồng, giọng nói tự tin, gần gũi)*  
-> Thưa Thầy/Cô, khi làm đề tài về phát hiện dị thường, có một câu hỏi rất tự nhiên là: **'Các em tìm ra Outliers xong thì để làm gì? Có giúp ích gì cho thực tế không hay chỉ là thuật toán phân cụm trên máy tính?'**  
+> `[05:10]` *(Chỉ tay vào biểu đồ thanh màu đỏ và bảng số liệu trên màn hình Streamlit)*  
+> Thưa Thầy/Cô, khi làm về phát hiện dị thường, có một câu hỏi phản biện rất quan trọng: **'Các em gắn cờ Outliers xong thì giúp ích gì cho thực tế? Liệu có phải chỉ là chạy thuật toán toán học trên máy tính cho vui?'**  
 > 
-> Nhóm em xin khẳng định: **Chúng em không hề gán nhãn dị thường cho vui!**  
-> Sáu mã cờ bất thường mà mô hình GMM--IF bóc tách chính là **6 'bệnh án kỹ thuật' cụ thể** phản ánh chính xác chuyện gì đang xảy ra ngoài hiện trường:
+> Nhìn trực tiếp vào biểu đồ phân rã trên màn hình Streamlit, nhóm em xin khẳng định: **Dữ liệu dị thường được bóc tách chính là những 'bệnh án kỹ thuật' cụ thể, khoanh vùng chính xác chuyện gì đang xảy ra ngoài hiện trường:**
 > 
-> `[05:30]` *(Giải thích 6 mã cờ bằng ngôn ngữ đời thường, mạch lạc)*  
-> 1. Mã cờ `LOW_ENERGY_STRONG_SUN`: Trời nắng chang chang giữa trưa mà sản lượng đột ngột rớt về 0 $\rightarrow$ Báo hiệu **nhảy cầu dao (Aptomat)** hoặc điện áp đường dây quá cao khiến thiết bị tự ngắt an toàn.
-> 2. Mã cờ `ZERO_DAY_ANOMALY`: Ban ngày trời nắng đều mà cả ngày trạm không phát ra một số điện nào $\rightarrow$ Báo hiệu **cháy cầu chì chuỗi pin, đứt dây cáp hoặc hỏng bo mạch**.
-> 3. Mã cờ `FLAT_TOP_CLIPPING`: Đồ thị phát điện bị xén bằng phẳng lì như bị chặt đầu $\rightarrow$ Báo hiệu **biến tần bị quá tải công suất**, chỉ đúng vị trí này cần lắp pin BESS để hứng điện thừa.
-> 4. Mã cờ `NIGHT_GHOST_GENERATION`: Ban đêm trời tối om mà đồng hồ đo vẫn nhảy số phát điện $\rightarrow$ Báo hiệu **cảm biến đo dòng điện bị 'lú' (trôi điểm 0) hoặc bị nhiễu điện**, cần kỹ thuật viên đến cân chỉnh lại cảm biến.
-> 5. Mã cờ `VOLTAGE_SPIKE_TRIP`: Điện áp nhảy vọt bất thường rồi sụt nguồn $\rightarrow$ Báo hiệu **mất cân bằng pha hoặc trạm biến áp của trường bị quá tải cục bộ**.
-> 6. Và mã cờ `SENSOR_DRIFT_IRR`: Nắng vẫn to mà số điện phát cứ tụt dần đều theo ngày $\rightarrow$ Báo hiệu **mắt cảm biến đo bức xạ bị bụi bám mờ hoặc bị lệch chuẩn**.
+> `[05:30]` *(Chỉ vào thanh đỏ dài nhất: GMM_IF_CONSENSUS)*  
+> - **1. Nhóm nguyên nhân `GMM_IF_CONSENSUS`:**  
+>   Thầy/Cô có thể thấy đây là thanh màu đỏ dài nhất, chiếm tới **11.639 kWh** điện hụt (gần $73\%$ tổng lượng điện tổn thất).  
+>   - *Về mặt kỹ thuật dữ liệu:* Đây là cờ **Đồng thuận Machine Learning**, tức là khi cả 2 thuật toán độc lập — **GMM** (phân tích mật độ cụm theo điều kiện bức xạ và nhiệt độ) và **Isolation Forest** (cô lập điểm bất thường đa chiều) — **cùng 100% đồng thuận** đánh dấu điểm dữ liệu này là bất thường.  
+>   - *Trong thực tế, nó khoanh vùng được những hiện tượng gì?* Cờ này khoanh vùng các sự cố **Suy hao âm thầm (Silent Degradation)** mà các cảnh báo ngưỡng thông thường không thể phát hiện được:  
+>     + **Tấm pin bị nứt tế bào (micro-cracks) hoặc xuất hiện điểm nóng (hotspot):** Tấm pin vẫn phát điện, nhìn bằng mắt thường khó thấy, nhưng nội trở tăng cao làm méo mó đường cong phát điện.  
+>     + **Bóng che cục bộ bất thường:** Có cây cối xung quanh mới mọc cao che mất góc giàn pin vào khung giờ cố định, hoặc có công trình xây dựng tạm chắn nắng.  
+>     + **Bụi bẩn bám loang lổ hoặc phân chim che kín một vài cell pin:** Kích hoạt các diode bảo vệ chặn dòng, làm tụt công suất âm thầm của cả chuỗi pin.  
+>   - *Hành động thực tế của kỹ sư:* Kỹ sư không cần đi mò mẫm 42 trạm, mà chỉ cần mang thiết bị bay chụp ảnh nhiệt hồng ngoại (Drone Thermal IR) hoặc đo đặc tuyến I-V đến đúng mảng pin bị AI gắn cờ để xử lý, cứu lại ngay **9.974 kWh/năm**!
 > 
-> `[06:05]` *(Nhấn mạnh giá trị của CBM)*  
-> Nhờ có 6 mã cờ này, các kỹ sư của trường Đại học La Trobe không còn phải đi tuần tra mò mẫm từng trạm nữa. Nhìn vào màn hình là biết ngay trạm nào bị bệnh gì để mang đúng đồ nghề đến sửa. Thời gian phát hiện sự cố rút từ cả tháng xuống **dưới 1 giờ**, thời gian sửa chữa từ 2 tuần xuống **1 đến 3 ngày**, giúp thu hồi hơn **70.000 số điện**, mang lại **29.000 AUD mỗi năm** và hoàn vốn chỉ sau **chưa đầy 4 tháng**!
+> `[06:00]` *(Chỉ vào thanh đỏ thứ hai: PHYSICAL_DISTRIBUTION_JUMP)*  
+> - **2. Nhóm nguyên nhân `PHYSICAL_DISTRIBUTION_JUMP`:**  
+>   Thanh màu đỏ thứ hai trên màn hình, chiếm **4.238 kWh** hụt (1.376 dòng dữ liệu).  
+>   - *Khoanh vùng thực tế:* Sản lượng đang phát bình thường bỗng nhiên bị rơi tụt gãy một nấc lớn (khoảng 33% hoặc 50% công suất).  
+>   - Đây chính là hiện tượng **đứt cầu chì chuỗi pin (Blown string fuse)** hoặc **đứt cáp DC nhánh**: Trong một tủ gom combiner box có 3 chuỗi pin mắc song song, khi 1 chuỗi bị nổ cầu chì thì công suất trạm ngay lập tức tụt gãy đúng 1/3.  
+>   - *Hành động thực tế:* Kỹ sư chỉ cần cầm đồng hồ ampe kìm kẹp đo dòng từng chuỗi tại tủ điện là tìm ra chuỗi bị đứt cầu chì để thay ngay trong 15 phút, thu hồi lại **3.632 kWh/năm**!
 > 
-> `[06:20]` *(Chỉ vào hàng thẻ KPI Tổng kết trên Streamlit khi cả 5 checkbox đều bật)*  
+> `[06:20]` *(Chỉ vào dòng PHYSICAL_LOW_ENERGY_STRONG_SUN)*  
+> - **3. Nhóm nguyên nhân `PHYSICAL_LOW_ENERGY_STRONG_SUN`:**  
+>   Chiếm 39 dòng trên bảng (hụt 80 kWh).  
+>   - *Khoanh vùng thực tế:* Giữa trưa hè trời nắng gay gắt mà sản lượng lại rơi về 0. Đây là hiện tượng **biến tần bị nhảy ngắt quá áp an toàn** theo chuẩn lưới điện (khi điện áp lưới tăng quá cao trên 253V - 258V), hoặc do **nhảy Aptomat / quạt làm mát biến tần bị kẹt** gây quá nhiệt làm biến tần tự tắt để tự bảo vệ. Kỹ sư đến chỉnh lại nấc máy biến áp hoặc vệ sinh quạt tản nhiệt là trạm hoạt động bình thường trở lại, cứu lại **69 kWh/năm**.
+> 
+> `[06:40]` *(Chỉ vào 2 dòng cuối: HIGH_ENERGY_LOW_RADIATION & HIGH_ENERGY_NO_SUN)*  
+> - **4. Hai nhóm nguyên nhân `PHYSICAL_HIGH_ENERGY_NO_SUN` và `LOW_RADIATION`:**  
+>   Chiếm 140 dòng dữ liệu (hụt 0 kWh).  
+>   - *Khoanh vùng thực tế:* Ban đêm trời tối om hoặc trời râm tối mà công tơ vẫn nhảy số phát điện. Đây là hiện tượng **cảm biến đo dòng điện bị trôi điểm 0 (Zero-drift) hoặc bị nhiễu sóng hài** từ trạm biến áp, gây ra 'sản lượng ảo'. Kỹ thuật viên đến cân chỉnh lại mốc 0 của cảm biến, giúp nhà trường tránh việc dữ liệu bị sai lệch hoặc báo cáo tài chính ảo.
+> 
+> `[06:55]` *(Chỉ vào dòng chú thích dưới chân bảng: 'Cứ 100 kWh mất thì lấy lại 85.7 kWh')*  
+> - **Ý nghĩa của dòng chú thích: 'Cứ 100 kWh mất thì lấy lại 85.7 kWh':**  
+>   Trước đây theo cách bảo trì cũ, mất trung bình 14 ngày kiểm tra thủ công mới phát hiện và sửa xong. Nay nhờ có hệ thống bóc tách 5 nhóm bệnh án cụ thể này, kỹ sư đến sửa dứt điểm chỉ trong vòng 2 ngày. Rút ngắn thời gian sửa chữa từ 14 ngày xuống 2 ngày giúp chúng ta đạt **tỷ lệ cứu vãn năng lượng là 85,7%**.  
+>   Nhờ đó, toàn bộ quy trình CBM thu hồi được **70.330 kWh/năm**, mang lại dòng tiền **29.066 AUD/năm**, với chi phí duy trì phần mềm chỉ **8.000 AUD**, mang lại thời gian hoàn vốn cực nhanh — **Dưới 4 tháng**!
+> 
+> `[07:15]` *(Chỉ vào hàng thẻ KPI Tổng kết trên Streamlit khi cả 5 checkbox đều bật)*  
 > Và đây là bức tranh tổng thể khi **áp dụng đồng bộ cả 5 giải pháp cốt lõi**:
 > - **Sản lượng điện phát thêm ròng:** Đạt hơn **391.000 kWh/năm** (tăng thêm **+11,35%** sản lượng sạch).
 > - **Hiệu suất vận hành PR toàn trường:** Tăng vọt từ $75,4\%$ lên **86,75%** (tăng $+11,35$ điểm phần trăm).
@@ -158,7 +178,7 @@
 ## SLIDE 4: KẾT LUẬN — TỔNG KẾT GIÁ TRỊ DỰ ÁN, THUẬN LỢI VÀ KHÓ KHĂN
 
 ### Thông tin Slide & Bố cục Trình chiếu (Slide Layout)
-* **Thời lượng mục tiêu:** `01:30` (Mốc: `06:30 - 08:00`)
+* **Thời lượng mục tiêu:** `01:30` (Mốc: `07:30 - 09:00`)
 * **Tone giọng:** Chân thành, đúc kết, khiêm tốn nhưng khẳng định được khối lượng công việc nhóm đã hoàn thành.
 * **Nội dung hiển thị trên slide (Theo 2 cột chuẩn nội dung):**
   * **Cột trái — Tổng kết giá trị dự án:**
@@ -175,10 +195,10 @@
 
 ### Kịch Bản Lời Thoại (Spoken Script)
 
-> `[06:30]` *(Chuyển sang Slide Kết Luận, ánh mắt ấm áp, giọng nói truyền cảm)*  
+> `[07:30]` *(Chuyển sang Slide Kết Luận, ánh mắt ấm áp, giọng nói truyền cảm)*  
 > "Kính thưa Hội đồng, nhìn lại toàn bộ quá trình thực hiện đồ án tốt nghiệp, nhóm The Outliers xin được tổng kết lại những giá trị dự án đạt được cũng như những bài học thực tế quý báu:
 > 
-> `[06:45]` *(Nhìn vào cột Tổng kết giá trị)*  
+> `[07:45]` *(Nhìn vào cột Tổng kết giá trị)*  
 > **Về mặt giá trị đóng góp của dự án:**  
 > - Nhóm đã xây dựng thành công **Pipeline 6 lớp hoàn chỉnh**, xử lý mượt mà hơn **2,7 triệu dòng dữ liệu** mà không để xảy ra lỗi rò rỉ dữ liệu tương lai.  
 > - Các mô hình dữ liệu đã giúp **xóa bỏ hoàn toàn các điểm mù trong vận hành**, chuyển các con số khô khan thành nguyên nhân kỹ thuật có thể xử lý được.  
@@ -186,7 +206,7 @@
 > - Phát triển **mô hình dự báo sản lượng LightGBM** giảm sai số từ 37% đến hơn 50% so với mô hình chuẩn Prophet.  
 > - Và quan trọng nhất, đã đưa ra được **các phương án cải tiến có tính khả thi cao**, mang lại giá trị kinh tế hơn 400.000 AUD mỗi năm cho trường.
 > 
-> `[07:25]` *(Nhìn sang cột Thuận lợi và khó khăn)*  
+> `[08:15]` *(Nhìn sang cột Thuận lợi và khó khăn)*  
 > **Về thuận lợi và khó khăn trong quá trình làm đề tài:**  
 > - *Về thuận lợi:* Nhóm may mắn được làm việc trên bộ dữ liệu thực tế rất lớn của 42 trạm tại Đại học La Trobe, cùng với hệ thống tài liệu và tiêu chuẩn quốc tế rất rõ ràng, giúp nhóm có cơ sở đối chiếu số liệu vững chắc.  
 > - *Về khó khăn:* Dữ liệu thực tế không bao giờ sạch đẹp như bài tập mẫu trên lớp, dữ liệu bị đứt đoạn, mất kết nối và cảm biến bị đo sai ban đêm rất nhiều, đòi hỏi nhóm phải tìm hiểu kỹ thuật xử lý dữ liệu nhân quả khắt khe. Ngoài ra, việc kết hợp giữa kiến thức Xử lý Dữ liệu với kiến thức về năng lượng mặt trời là một thử thách liên ngành lớn, nhưng cũng là cơ hội để nhóm học hỏi được rất nhiều điều bổ ích."
@@ -196,7 +216,7 @@
 ## SLIDE 5: ĐỊNH HƯỚNG PHÁT TRIỂN TƯƠNG LAI & LỜI MỜI HỘI ĐỒNG ĐÁNH GIÁ
 
 ### Thông tin Slide & Bố cục Trình chiếu (Slide Layout)
-* **Thời lượng mục tiêu:** `01:30` (Mốc: `08:00 - 09:30`)
+* **Thời lượng mục tiêu:** `01:30` (Mốc: `09:00 - 10:30`)
 * **Tone giọng:** Tươi sáng, nhiệt huyết, khiêm tốn và cầu thị.
 * **Nội dung hiển thị trên slide (Lộ trình 3 giai đoạn & Việc gần nhất):**
   * **Lộ trình 3 Giai đoạn phát triển:**
@@ -210,18 +230,18 @@
 
 ### Kịch Bản Lời Thoại (Spoken Script)
 
-> `[08:00]` *(Ánh mắt rạng rỡ, giọng nói đầy nhiệt huyết)*  
+> `[09:00]` *(Ánh mắt rạng rỡ, giọng nói đầy nhiệt huyết)*  
 > "Kính thưa Hội đồng, để dự án có thể phát triển xa hơn nữa và ứng dụng vào thực tế thương mại, nhóm The Outliers đã vạch ra **Lộ trình phát triển 3 giai đoạn**:
 > 
-> `[08:15]` *(Trình bày ngắn gọn, súc tích 3 giai đoạn)*  
+> `[09:15]` *(Trình bày ngắn gọn, súc tích 3 giai đoạn)*  
 > - **Giai đoạn 1 — Làm giàu dữ liệu thời tiết:** Nhóm sẽ kết nối thêm các nguồn dữ liệu mở miễn phí về nồng độ bụi không khí và sương mù. Điều này giúp mô hình nhận biết được khi nào không khí ô nhiễm làm mờ tấm pin để điều chỉnh dự báo chính xác hơn mà không cần mua cảm biến đắt tiền.
 > - **Giai đoạn 2 — Xây dựng nền tảng MLOps:** Khi thời gian trôi qua, tấm pin sẽ già đi và các mùa trong năm thay đổi, tạo ra hiện tượng **trôi dạt dữ liệu (Data Drift)** làm mô hình dự báo kém chính xác dần. Nhóm sẽ cài đặt hệ thống tự động phát hiện sự thay đổi này để tự động huấn luyện lại mô hình mà không cần con người can thiệp thủ công.
 > - **Giai đoạn 3 — Gửi cảnh báo tự động về điện thoại:** Nhóm sẽ tích hợp hệ thống với Telegram Bot và Zalo ZNS. Người quản lý hay kỹ sư không cần ngồi canh máy tính mở dashboard mà hệ thống sẽ chủ động gửi báo cáo sản lượng mỗi ngày hoặc cảnh báo có sự cố khẩn cấp ngay trên màn hình điện thoại.
 > 
-> `[08:55]` *(Nêu việc làm được ngay)*  
+> `[09:45]` *(Nêu việc làm được ngay)*  
 > Trong các hướng đi trên, **việc gần nhất mà nhóm có thể triển khai được ngay** là hạ độ hạt thời tiết bằng ảnh mây vệ tinh tầm cao — đây là cách nhanh nhất để giảm sai số dự báo trong những ngày mây che cục bộ mà hoàn toàn không tốn chi phí phần cứng.
 > 
-> `[09:10]` *(Đứng thẳng trang nghiêm, hai tay khép nhẹ, ánh mắt bao quát toàn thể Thầy/Cô Hội đồng)*  
+> `[10:00]` *(Đứng thẳng trang nghiêm, hai tay khép nhẹ, ánh mắt bao quát toàn thể Thầy/Cô Hội đồng)*  
 > 
 > Kính thưa Quý Thầy/Cô trong Hội đồng Ban Giám khảo!  
 > 
