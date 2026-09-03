@@ -1,6 +1,6 @@
 # Notebook 05b — Thực nghiệm hợp lệ hoá tham số (chi tiết đầy đủ)
 
-> ⚠️ **Về các con số trong file này:** một số giá trị mô tả lượt chạy ngày 19/08 hoặc
+>  **Về các con số trong file này:** một số giá trị mô tả lượt chạy ngày 19/08 hoặc
 > trưa 20/08. Giá trị **hiện hành** và lý do từng con số thay đổi được liệt kê đầy đủ ở
 > [`20_GIAI_THICH_SO_MAU_THUAN.md`](20_GIAI_THICH_SO_MAU_THUAN.md). Đọc file đó trước khi
 > trích bất kỳ con số nào vào báo cáo.
